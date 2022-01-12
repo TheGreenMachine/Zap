@@ -1,0 +1,4 @@
+opencv-python
+flask_opencv_streamer
+simplejpeg
+pynetworktables
