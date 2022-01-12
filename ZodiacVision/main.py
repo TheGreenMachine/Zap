@@ -3,12 +3,10 @@ import yaml
 
 from vision import *
 import time
-
-time.sleep(1)
 path = 'vision.yml'
 with open(path, 'r') as file:
     data = yaml.safe_load(file)
-print(data)
+# print(data)
 net = networktables.NetworkTables(data, path)
 net.setupCalib()
 
@@ -19,7 +17,7 @@ width = int(net.yml_data['stream']['line'])
 fpsCounter = fps.FPS()
 
 
-while True:
+for i in range(1000):
     fpsCounter.reset()
     fpsCounter.start()
     if net.update_exposure:
