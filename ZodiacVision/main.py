@@ -1,7 +1,7 @@
 import cv2
 import yaml
 
-from vision import *
+from vision import networktables, camera, detect, stream, fps
 import time
 path = 'vision.yml'
 with open(path, 'r') as file:
