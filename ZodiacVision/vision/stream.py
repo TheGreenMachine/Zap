@@ -1,4 +1,4 @@
-from flask_opencv_streamer.streamer import Streamer as strm
+from flask_opencv.streamer import Streamer as strm
 
 
 class Streamer:
