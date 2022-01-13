@@ -35,7 +35,6 @@ class Detector:
         else:
             self.nt.clearTable()
             return -1
-        print(ratio)
         if ratio > .2:
             cx = rect[0] + (rect[2] * .5)
             cy = rect[1]
