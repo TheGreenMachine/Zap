@@ -1,7 +1,7 @@
 import cv2
 import yaml
 
-from vision import networktables, camera, detect, stream, fps
+from vision import networktables, camera, detect, stream, fps, socketserver
 import time
 path = 'vision.yml'
 with open(path, 'r') as file:
@@ -11,6 +11,8 @@ net = networktables.NetworkTables(data, path)
 net.setupCalib()
 
 visionCamera = camera.Camera()
+socket = socketserver.SocketServer()
+
 detector = detect.Detector(net, visionCamera)
 streamer = stream.Streamer(data['stream']['port'])
 width = int(net.yml_data['stream']['line'])

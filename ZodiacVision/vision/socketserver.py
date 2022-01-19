@@ -22,9 +22,9 @@ class SocketServer:
             self.server.send(bytes("distance|"+dist+"\n"))
         elif msg == 'center_x':
             self.server.send(bytes("center_x|"+cx+"\n"))
-        elif msg == 'center_x and center_y':
+        elif msg == 'cxy':
             self.server.send(bytes(""+cx+","+cy))
-        elif msg == 'center_x and distance':
+        elif msg == 'cxd':
             self.server.send(bytes(""+cx+","+cy+","+dist))
 
     def listenMessage(self,Cy,Cx, distance):
