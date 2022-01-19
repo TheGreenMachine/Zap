@@ -239,7 +239,7 @@ public class Turret extends Subsystem implements PidProvider {
             turret.setPose(
                 xPos,
                 yPos,
-                Rotation2d.fromDegrees(getActualTurretPositionDegrees()) //I'm not sure if this is right
+                Rotation2d.fromDegrees(getActualTurretPositionDegrees())
             );
         }
     }
