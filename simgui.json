@@ -1,0 +1,45 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/LiveWindow/Ungrouped/DigitalInput[0]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalOutput[1]": "Digital Output",
+      "/SmartDashboard/Auto mode": "String Chooser",
+      "/SmartDashboard/Drive Algorithm": "String Chooser",
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/SendableChooser[2]": "String Chooser",
+      "/SmartDashboard/Starting Position": "String Chooser",
+      "/SmartDashboard/Turret Sim": "Mechanism2d"
+    },
+    "windows": {
+      "/SmartDashboard/Auto mode": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Field": {
+        "Robot": {
+          "arrows": false
+        },
+        "Turret": {
+          "arrowSize": 52,
+          "style": "Line",
+          "visible": true
+        },
+        "turret": {
+          "style": "Line"
+        },
+        "window": {
+          "visible": true
+        }
+      }
+    }
+  },
+  "NetworkTables": {
+    "SmartDashboard": {
+      "Field": {
+        "open": true
+      }
+    }
+  }
+}

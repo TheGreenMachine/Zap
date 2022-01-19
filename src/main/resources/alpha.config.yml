@@ -1,0 +1,85 @@
+subsystems:
+    drivetrain:
+        implemented: true
+        talons:
+            leftMain: 15
+            leftFollower: -1
+            rightMain: 13
+            rightFollower: -1
+        pidConfig:
+            slot0:
+                kP: 1.6 #/ 0.18 # TODO: tune PID, these are temporary PID values from Zeta
+                kI: 0.001 # 0.018
+                kD: 15 # 3.6
+                kF: 0.538
+                iZone: 30
+            slot1:
+                kP: 3.0
+                kI: 0.018
+                kD: 4.2
+                kF: 0.042
+        invertMotor:
+            - rightMain
+        constants:
+            pigeonId: 9
+            pigeonOnTalon: -1
+            currentFloorCheck: .12
+            currentEpsilonCheck: .2
+            kP: 3.0 # 0.18 # TODO: tune PID, these are temporary PID values from Zeta
+            kI: 0.03 # 0.018
+            kD: 36 # 3.6
+            kF: 0.96
+            rpmFloorCheck: 2000
+            rpmEpsilonCheck: 60
+            openLoopRampRate: 0.8
+            isSwerve: 0
+            encPPR: 999
+            azimuthEncPPR: 4096
+            azimuthAllowableErrorTicks: 10
+    turret:
+        implemented: true
+        talons:
+            turret: 3
+        pidConfig:
+            slot0:
+                kP: 2
+                kI: 0
+                kD: 10
+                kF: 0 # Should be 0 for position control
+                iZone: 200
+            slot1:
+                kP: 1
+                kI: 0
+                kD: 20
+                kF: 0 # Should be 0 for position control
+                iZone: 200
+        constants:
+            encPPR: 4096
+            revLimit: 960
+            fwdLimit: 2990
+            currentFloorCheck: 0
+            currentEpsilonCheck: .2
+            rpmFloorCheck: 0
+            absPosTicksSouth: 4035
+            invert_sensor_phase: 0
+            rpmEpsilonCheck: 60
+pcm: 8
+constants:
+    maxTicks: 14000 # ticks per 100ms TODO test actual maxTicks value
+    sensorPhase: 0
+    kLooperDt: .010
+    kTrackScrubFactor: 1.0
+    pathKs: 2
+    isSwerve: 0
+    verbose: 0 # 0 or 1
+    compressorEnabled: 0 # 0 or 1
+    useAutoAim: 1
+    maxVel: 120 # inches/s
+    maxAccel: 60 # inches/s^2
+    trackWidth: 23 # inches
+    wheelbaseLength: 21.5 #inches
+    wheelDiameter: 6.122 #inches
+    logTeleOp: 1
+    logAuto: 1
+    teleopFieldCentric: 0
+    badLogEnabled: 1

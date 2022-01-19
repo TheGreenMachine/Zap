@@ -1,0 +1,81 @@
+subsystems:
+    drivetrain:
+        implemented: true
+        talons:
+            leftMain: 2
+            leftSlaveOne: -1
+            leftSlaveTwo: -1
+            rightMain: 1
+            rightSlaveOne: -1
+            rightSlaveTwo: -1
+        invertMotor:
+            - leftMain
+        pidConfig:
+            slot0:
+                kP: 1.6
+                kI: .001
+                kD: 15
+                kF: 0.5383998
+                iZone: 30
+        constants:
+            pigeonId: 13
+            pigeonOnTalon: 0
+            encPPR: 4096 # CTRE mag encoder
+            kShifterSolenoidId: 0
+            currentFloorCheck: .1
+            currentEpsilonCheck: .2
+            rpmFloorCheck: 250
+            rpmEpsilonCheck: 60
+            openLoopRampRate: 1
+    ledmanager:
+        implemented: true
+        canifier: 12
+        constants:
+            maxLevel: 25
+            raveEnabled: 0
+            raveSpeed: .05
+    turret:
+        implemented: true
+        talons:
+            turret: 3
+        pidConfig:
+            slot0:
+                kP: 2
+                kI: 0
+                kD: 10
+                kF: 0 # Should be 0 for position control
+                iZone: 200
+            slot1:
+                kP: 1
+                kI: 0
+                kD: 20
+                kF: 0 # Should be 0 for position control
+                iZone: 200
+        constants:
+            encPPR: 4096
+            revLimit: 960
+            fwdLimit: 2990
+            currentFloorCheck: 0
+            currentEpsilonCheck: .2
+            rpmFloorCheck: 0
+            absPosTicksSouth: 4035
+            invert_sensor_phase: 0
+            rpmEpsilonCheck: 60
+pcm: -1
+constants:
+    wheelDiameter: 4.058
+    trackWidth: 15.75
+    maxVel: 30
+    maxTicks: 2000 # ticks per 100ms
+    maxAccel: 50
+    sensorPhase: 0
+    kLooperDt: .020
+    kTrackScrubFactor: 2
+    kPCMId: 0
+    pathKs: .0125
+    verbose: 0
+    logAuto: 1
+    logTeleOp: 1
+    badLogEnabled: 1
+    useAutoAim: 1
+    compressorEnabled: 0

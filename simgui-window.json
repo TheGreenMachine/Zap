@@ -1,0 +1,85 @@
+{
+  "MainWindow": {
+    "GLOBAL": {
+      "height": "1051",
+      "maximized": "1",
+      "style": "0",
+      "userScale": "2",
+      "width": "1920",
+      "xpos": "0",
+      "ypos": "29"
+    }
+  },
+  "Window": {
+    "###/SmartDashboard/Auto mode": {
+      "Collapsed": "0",
+      "Pos": "7,128",
+      "Size": "307,60"
+    },
+    "###/SmartDashboard/Field": {
+      "Collapsed": "0",
+      "Pos": "349,32",
+      "Size": "761,351"
+    },
+    "###/SmartDashboard/Starting Position": {
+      "Collapsed": "0",
+      "Pos": "60,60",
+      "Size": "254,54"
+    },
+    "###/SmartDashboard/Turret Sim": {
+      "Collapsed": "0",
+      "Pos": "519,299",
+      "Size": "109,114"
+    },
+    "###FMS": {
+      "Collapsed": "0",
+      "Pos": "10,372",
+      "Size": "202,214"
+    },
+    "###Joysticks": {
+      "Collapsed": "0",
+      "Pos": "249,664",
+      "Size": "976,82"
+    },
+    "###Keyboard 0 Settings": {
+      "Collapsed": "0",
+      "Pos": "1493,87",
+      "Size": "300,560"
+    },
+    "###Keyboard 1 Settings": {
+      "Collapsed": "0",
+      "Pos": "320,50",
+      "Size": "300,560"
+    },
+    "###NetworkTables": {
+      "Collapsed": "0",
+      "Pos": "353,455",
+      "Size": "750,185"
+    },
+    "###Other Devices": {
+      "Collapsed": "0",
+      "Pos": "1189,43",
+      "Size": "250,695"
+    },
+    "###System Joysticks": {
+      "Collapsed": "0",
+      "Pos": "11,547",
+      "Size": "232,254"
+    },
+    "###Timing": {
+      "Collapsed": "0",
+      "Pos": "12,189",
+      "Size": "162,142"
+    },
+    "Debug##Default": {
+      "Collapsed": "0",
+      "Pos": "60,60",
+      "Size": "400,400"
+    },
+    "Robot State": {
+      "Collapsed": "0",
+      "Pos": "5,20",
+      "Size": "109,114"
+    }
+  }
+}
