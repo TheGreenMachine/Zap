@@ -17,11 +17,15 @@ class SocketServer:
         self.server.listen(10)
         self.conn, self.addr = self.server.accept()
 
-    def sendValues(self, msg, dist, Cx,Cy):
+    def sendValues(self, msg, dist, cx,cy):
         if msg == 'distance':
-            self.server.send(bytes(""+dist))
+            self.server.send(bytes("distance|"+dist+"\n"))
         elif msg == 'center_x':
-            self.server.send(bytes(""+Cx+","+Cy))
+            self.server.send(bytes("center_x|"+cx+"\n"))
+        elif msg == 'center_x and center_y':
+            self.server.send(bytes(""+cx+","+cy))
+        elif msg == 'center_x and distance':
+            self.server.send(bytes(""+cx+","+cy+","+dist))
 
     def listenMessage(self,Cy,Cx, distance):
         data = self.conn.recv(1024)
