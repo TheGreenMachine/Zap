@@ -1,5 +1,5 @@
 # Zodiac
-Zodiac is FRC Team 1816's robot for the 2020 FRC season, *FIRST Infinite Recharge*. This software uses Java 11, the [WPILib](https://github.com/wpilibsuite/allwpilib) library, and the [CTRE Phoenix](https://github.com/CrossTheRoadElec/Phoenix-api) library.
+Zodiac is FRC Team 1816's robot for the 2022 FRC season, *FIRST Rapid React*. This software uses Java 11, the [WPILib](https://github.com/wpilibsuite/allwpilib) library, and the [CTRE Phoenix](https://github.com/CrossTheRoadElec/Phoenix-api) library.
 
 ## Prerequisites
 1. You must have Java 11 installed on your system. You can [download OpenJDK 11 here](https://openjdk.java.net/projects/jdk/11/) or [download Oracle's JDK 11 here](https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html). Alternatively, this will be installed through the WPILib One-Click Installer.
@@ -11,7 +11,7 @@ Zodiac is FRC Team 1816's robot for the 2020 FRC season, *FIRST Infinite Recharg
 
 Open a new Bash shell and clone:
 ```bash
-$ git clone https://github.com/TheGreenMachine/Zodiac.git
+$ git clone https://github.com/TheGreenMachine/Zap.git
 ```
 ## Importing
 
@@ -51,4 +51,4 @@ To clear previous built binaries and minimize the possibility of bugs, it is rec
 $ ./gradlew clean deploy
 ```
 ---
-2020 - FRC Team 1816 The Green Machine
+2022 - FRC Team 1816 The Green Machine
