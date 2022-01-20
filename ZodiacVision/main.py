@@ -11,15 +11,21 @@ net = networktables.NetworkTables(data, path)
 net.setupCalib()
 
 visionCamera = camera.Camera()
-socket = socketserver.SocketServer()
+socket = socketserver.SocketServer(data, path, 5802)
 
 detector = detect.Detector(net, visionCamera)
-streamer = stream.Streamer(data['stream']['port'])
+# streamer = stream.Streamer(data['stream']['port'])
 width = int(net.yml_data['stream']['line'])
 fpsCounter = fps.FPS()
 
+socket.startServer()
 
-for i in range(1000):
+for i in range(10000):
+    socket.listenMessage(1816, 1, 1)
+
+
+
+while True:
     fpsCounter.reset()
     fpsCounter.start()
     if net.update_exposure:
@@ -33,17 +39,20 @@ for i in range(1000):
     mask = detector.preProcessFrame(frame)
     if mask.all() == -1:
         continue
-    contour = detector.findTarget(mask)
+    contour, center_x, center_y = detector.findTarget(mask)
+
+    socket.listenMessage(1816 ,center_x, center_y)
+
     stream_image = detector.postProcess(frame, contour)
     fpsCounter.update()
     fpsCounter.stop()
-    stream_image = fps.putIterationsPerSec(stream_image, fpsCounter.fps())
-
-    if net.line:
-        width = int(net.yml_data['stream']['line'])
-        net.line = False
-    stream_image = cv2.line(stream_image, (width, 0), (width, int(stream_image.shape[0])), (0, 255, 0), 3)
-    if net.calib_camera:
-        streamer.write(mask)
-    else:
-        streamer.write(stream_image)
+    # stream_image = fps.putIterationsPerSec(stream_image, fpsCounter.fps())
+    #
+    # if net.line:
+    #     width = int(net.yml_data['stream']['line'])
+    #     net.line = False
+    # stream_image = cv2.line(stream_image, (width, 0), (width, int(stream_image.shape[0])), (0, 255, 0), 3)
+    # if net.calib_camera:
+    #     streamer.write(mask)
+    # else:
+    #     streamer.write(stream_image)

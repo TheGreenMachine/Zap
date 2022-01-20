@@ -9,6 +9,7 @@ class Detector:
         self.nt = nt
         self.camera = camera
 
+
     def preProcessFrame(self, frame):
         lower = self.nt.yml_data['color']['lower']
         upper = self.nt.yml_data['color']['upper']
@@ -34,18 +35,20 @@ class Detector:
                 ratio = 0
         else:
             self.nt.clearTable()
-            return -1
+            return -1, -2, -2
         if ratio > .2:
             cx = rect[0] + (rect[2] * .5)
             cy = rect[1]
             self.nt.putValue('center_x', cx)
             self.nt.putValue('center_y', cy)
+            return c,cx,cy
             self.camera.findTargetInfo(self.nt, cx, cy)
-            return c
+
         self.nt.clearTable()
-        return -1
+        return -1, -2, -2
     def postProcess(self, frame, target):
         if target is -1:
             return frame
         drawnimage = cv2.drawContours(frame, [target], -1, (0, 255, 255), 2)
         return drawnimage
+

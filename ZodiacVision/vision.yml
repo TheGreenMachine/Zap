@@ -1,9 +1,24 @@
-camera: {exposure: 15.237219274172837, fps: 100}
+camera:
+  exposure: 15.237219274172837
+  fps: 100
 color:
-  lower: {H: 53.39727443817964, S: 38.04583732057415, V: 130.39696525912}
-  upper: {H: 109.23476344949093, S: 255.0, V: 255.0}
-main: {device-ip: 10.18.16.16, team-number: 1816}
+  lower:
+    H: 53.39727443817964
+    S: 38.04583732057415
+    V: 130.39696525912
+  upper:
+    H: 109.23476344949093
+    S: 255.0
+    V: 255.0
+main:
+  device-ip: 10.18.16.16
+  team-number: 1816
 network:
   nt-ip: 10.18.16.2
-  variables: [center_x, center_y, distance]
-stream: {line: 336.0, port: 1180}
+  variables:
+  - center_x
+  - center_y
+  - distance
+stream:
+  line: 336.0
+  port: 1180

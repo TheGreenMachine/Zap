@@ -13,24 +13,35 @@ class SocketServer:
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def startServer(self):
-        self.server.bind(('',self.port))
-        self.server.listen(10)
+        self.server.bind(('172.20.99.92',self.port))
+
+
+
+    def sendValues(self, dist, cx,cy,msg):
+
+
+
+        if msg == 'distance':
+            self.server.send(("distance|"+dist+"\n").encode())
+        elif msg == 'center_x':
+            self.server.send(("center_x|"+cx+"\n").encode())
+        elif msg == 'cxy':
+            self.server.send((""+cx+","+cy).encode())
+        elif msg == 'cxd':
+            self.server.send((""+cx+","+cy+","+dist).encode())
+        else :
+            self.server.send(("spel rite dum poo poo head").encode())
+    def listenMessage(self,distance,Cy,Cx ):
+        self.server.listen()
         self.conn, self.addr = self.server.accept()
 
-    def sendValues(self, msg, dist, cx,cy):
-        if msg == 'distance':
-            self.server.send(bytes("distance|"+dist+"\n"))
-        elif msg == 'center_x':
-            self.server.send(bytes("center_x|"+cx+"\n"))
-        elif msg == 'cxy':
-            self.server.send(bytes(""+cx+","+cy))
-        elif msg == 'cxd':
-            self.server.send(bytes(""+cx+","+cy+","+dist))
+        print("Server started")
 
-    def listenMessage(self,Cy,Cx, distance):
-        data = self.conn.recv(1024)
-        if data != '':
-            self.sendValues(data, distance,Cy, Cx)
+        data = self.conn.recv(1024).decode()
+
+        print(data)
+
+        self.sendValues(distance,Cy, Cx,data)
 
 
 
