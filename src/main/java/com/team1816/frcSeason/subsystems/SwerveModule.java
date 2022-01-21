@@ -2,6 +2,7 @@ package com.team1816.frcSeason.subsystems;
 
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.sensors.CANCoder;
 import com.team1816.frcSeason.Constants;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.loops.ILooper;
@@ -78,6 +79,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
     // Components
     private final IMotorControllerEnhanced mDriveMotor;
     private final IMotorControllerEnhanced mAzimuthMotor;
+    public static CANCoder mCanCoder;
 
     // State
     private PeriodicIO mPeriodicIO = new PeriodicIO();
@@ -123,14 +125,14 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
             factory.getMotor(
                 subsystemName,
                 constants.kDriveMotorName,
-                factory.getSubsystem(subsystemName).swerveModules.get(constants.kName).azimuthPID
+                factory.getSubsystem(subsystemName).swerveModules.azimuthPID
             );
         driveMotorIsInverted = mDriveMotor.getInverted();
         mAzimuthMotor =
             factory.getMotor(
                 subsystemName,
                 constants.kAzimuthMotorName,
-                factory.getSubsystem(subsystemName).swerveModules.get(constants.kName).drivePID
+                factory.getSubsystem(subsystemName).swerveModules.drivePID
             );
         var currentLimitConfig = new SupplyCurrentLimitConfiguration(
             true,
@@ -149,6 +151,59 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
             constants.kAzimuthClosedLoopAllowableError,
             Constants.kLongCANTimeoutMs
         );
+        System.out.println("  " + this);
+
+        this.startingPosition = startingPosition;
+        zeroSensors();
+    }
+
+    public SwerveModule(
+        String subsystemName,
+        SwerveModuleConstants constants,
+        CANCoder canCoder,
+        Translation2d startingPosition
+    ) {
+        super(constants.kName);
+        mConstants = constants;
+        System.out.println(
+            "Configuring Swerve Module " +
+                constants.kName +
+                " on subsystem " +
+                subsystemName
+        );
+
+        mDriveMotor =
+            factory.getMotor(
+                subsystemName,
+                constants.kDriveMotorName,
+                factory.getSubsystem(subsystemName).swerveModules.azimuthPID
+            );
+        driveMotorIsInverted = mDriveMotor.getInverted();
+        mAzimuthMotor =
+            factory.getMotor(
+                subsystemName,
+                constants.kAzimuthMotorName,
+                factory.getSubsystem(subsystemName).swerveModules.drivePID
+            );
+        var currentLimitConfig = new SupplyCurrentLimitConfiguration(
+            true,
+            25,
+            0,
+            0
+        );
+
+        mAzimuthMotor.configSupplyCurrentLimit(currentLimitConfig, Constants.kLongCANTimeoutMs);
+        mAzimuthMotor.setSensorPhase(constants.kInvertAzimuthSensorPhase);
+        mAzimuthMotor.configPeakOutputForward(.4, Constants.kLongCANTimeoutMs);
+        mAzimuthMotor.configPeakOutputReverse(-.4, Constants.kLongCANTimeoutMs);
+        mAzimuthMotor.setNeutralMode(NeutralMode.Brake);
+        mAzimuthMotor.configAllowableClosedloopError(
+            0,
+            constants.kAzimuthClosedLoopAllowableError,
+            Constants.kLongCANTimeoutMs
+        );
+        mCanCoder = canCoder;
+
         System.out.println("  " + this);
 
         this.startingPosition = startingPosition;

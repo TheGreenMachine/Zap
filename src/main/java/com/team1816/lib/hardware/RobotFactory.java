@@ -1,6 +1,7 @@
 package com.team1816.lib.hardware;
 
 import com.ctre.phoenix.motorcontrol.IMotorController;
+import com.ctre.phoenix.sensors.*;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.team1816.frcSeason.subsystems.SwerveModule;
 import com.team1816.lib.hardware.components.CanifierImpl;
@@ -166,7 +167,7 @@ public class RobotFactory {
         Translation2d startPos
     ) {
         var subsystem = getSubsystem(subsystemName);
-        SwerveModuleConfiguration module = subsystem.swerveModules.get(name);
+        ModuleConfiguration module = subsystem.swerveModules.modules.get(name);
         if (module == null) {
             DriverStation.reportError(
                 "No swerve module with name " + name + " subsystem " + subsystemName,
@@ -177,14 +178,38 @@ public class RobotFactory {
 
         var swerveConstants = new SwerveModule.SwerveModuleConstants();
         swerveConstants.kName = name;
-        swerveConstants.kAzimuthMotorName = module.modules.get(name).azimuth; //getAzimuth and drive give ID i think - not the module name (ex: leftRear)
-        swerveConstants.kAzimuthPid = subsystem.swerveModules.get(name).azimuthPID.get(0);
-        swerveConstants.kDriveMotorName = module.modules.get(name).drive;
-        swerveConstants.kDrivePid = subsystem.swerveModules.get(name).drivePID.get(0);
-        swerveConstants.kAzimuthEncoderHomeOffset = module.modules.get(name).constants.get("encoderOffset");
-        swerveConstants.kInvertAzimuthSensorPhase = module.constants.get("invertedSensorPhase") == 1; //boolean
+        swerveConstants.kAzimuthMotorName = module.azimuth; //getAzimuth and drive give ID i think - not the module name (ex: leftRear)
+        swerveConstants.kAzimuthPid = subsystem.swerveModules.azimuthPID.get("slot0");
+        swerveConstants.kDriveMotorName = module.drive;
+        swerveConstants.kDrivePid = subsystem.swerveModules.drivePID.get("slot0");
+        swerveConstants.kAzimuthEncoderHomeOffset = module.constants.get("encoderOffset");
+        swerveConstants.kInvertAzimuthSensorPhase =
+            (module.constants.get("invertedSensorPhase")!=null)
+            && (module.constants.get("invertedSensorPhase")==1); //boolean
 
-        return new SwerveModule(subsystemName, swerveConstants, startPos);
+        var canCoder = getCanCoder(subsystemName, name);
+
+        var swerveModule = new SwerveModule(subsystemName, swerveConstants, canCoder, startPos);
+        return swerveModule;
+    }
+
+    public boolean hasCanCoder(String subsystemName, String name) {
+        if(getSubsystem(subsystemName).swerveModules.modules.get(name).canCoder!=null) {
+            return true;
+        }
+        return false;
+    }
+
+    public CANCoder getCanCoder(String subsystemName, String name) {
+        var subsystem = getSubsystem(subsystemName);
+        var module = subsystem.swerveModules.modules.get(name);
+        CANCoder canCoder = null;
+        if(hasCanCoder(subsystemName, name)&&module.canCoder>=0) {
+            canCoder = CtreMotorFactory.createCanCoder(module.canCoder);
+        } else {
+            // ghost. potentially implement this in the future
+        }
+        return canCoder;
     }
 
     @Nonnull

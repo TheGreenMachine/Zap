@@ -3,11 +3,14 @@ package com.team1816.lib.hardware;
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
+import com.ctre.phoenix.sensors.CANCoder;
 import com.team1816.lib.hardware.components.motor.GhostMotorControllerEnhanced;
 import com.team1816.lib.hardware.components.motor.IConfigurableMotorController;
 import com.team1816.lib.hardware.components.motor.LazyTalonFX;
 import com.team1816.lib.hardware.components.motor.LazyTalonSRX;
 import edu.wpi.first.wpilibj.RobotBase;
+import org.checkerframework.checker.units.qual.C;
+
 import java.util.*;
 
 /**
@@ -189,6 +192,11 @@ public class CtreMotorFactory {
                 slotConfig.allowableClosedloopError = pidConfiguration.allowableError;
         }
         return slotConfig;
+    }
+
+    public static CANCoder createCanCoder(int canCoderID) {
+        CANCoder canCoder = new CANCoder(canCoderID);
+        return canCoder;
     }
 
     private static void configureMotorController(
