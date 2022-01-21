@@ -194,7 +194,7 @@ public class RobotFactory {
     }
 
     public boolean hasCanCoder(String subsystemName, String name) {
-        if(getSubsystem(subsystemName).swerveModules.modules.get(name).canCoder!=null) {
+        if(getSubsystem(subsystemName).swerveModules.modules.get(name).cancoder!=null) {
             return true;
         }
         return false;
@@ -204,8 +204,8 @@ public class RobotFactory {
         var subsystem = getSubsystem(subsystemName);
         var module = subsystem.swerveModules.modules.get(name);
         CANCoder canCoder = null;
-        if(hasCanCoder(subsystemName, name)&&module.canCoder>=0) {
-            canCoder = CtreMotorFactory.createCanCoder(module.canCoder);
+        if(hasCanCoder(subsystemName, name)&&module.cancoder>=0) {
+            canCoder = CtreMotorFactory.createCanCoder(module.cancoder);
         } else {
             // ghost. potentially implement this in the future
         }

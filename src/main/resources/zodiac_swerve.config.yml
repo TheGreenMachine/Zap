@@ -1,0 +1,170 @@
+subsystems:
+    drivetrain:
+        implemented: true
+        falcons:
+            flDrive: 13
+            blDrive: 1 #1
+            frDrive: 2 #13
+            brDrive: 14
+        talons:
+            flAzimuth: 4
+            frAzimuth: 11
+            blAzimuth: 3
+            brAzimuth: 12
+        invertMotor:
+            - frAzimuth
+            - blAzimuth
+            - brAzimuth
+            - frDrive
+            - brDrive
+        swerveModules:
+            modules:
+                frontLeft:
+                    drive: flDrive
+                    azimuth: flAzimuth
+                    constants:
+                        encoderOffset: 1443
+                        invertSensorPhase: 0
+                frontRight:
+                    drive: frDrive
+                    azimuth: frAzimuth
+                    constants:
+                        encoderOffset: 3356
+                        invertSensorPhase: 1
+                backLeft:
+                    drive: blDrive
+                    azimuth: blAzimuth
+                    constants:
+                        encoderOffset: 3450
+                        invertSensorPhase: 1
+                backRight:
+                    drive: brDrive
+                    azimuth: brAzimuth
+                    constants:
+                        encoderOffset: 2551
+                        invertSensorPhase: 1
+            drivePID:
+                slot0:
+                    kP: 0.1
+                    kI: 0.0001
+                    kD: 4.0
+                    kF: 0.0499
+            azimuthPID:
+                slot0:
+                    kP: 9.0 # 6.0
+                    kI: 0.0005
+                    kD: 30
+                    kF: 0
+        constants:
+            pigeonId: 32
+            pigeonOnTalon: -1
+            kP: 0.1 # 0.18 # TODO: tune PID, these are temporary PID values from Zeta
+            kI: 0.0001 # 0.018
+            kD: 4.0 # 3.6
+            kF: 0.0475813
+            iZone: 0
+            currentFloorCheck: .12
+            currentEpsilonCheck: .2
+            rpmFloorCheck: 2000
+            rpmEpsilonCheck: 60
+            openLoopRampRate: 0.8
+            isSwerve: 1
+            encPPR: 12275.7
+            azimuthEncPPR: 4096
+            azimuthAllowableErrorTicks: 20
+            azimuthHomeAdjustmentDegrees: 1
+    ledmanager:
+        implemented: true
+        canifier: 18
+        constants:
+            raveEnabled: 0
+            raveSpeed: 0.05
+            cameraLed: 1
+    turret:
+        implemented: true
+        pid:
+            -   kP: 4 # 1.981 # 1.645
+                kI: 0
+                kD: 40
+                kF: 0 # Should be 0 for position control
+        talons:
+            turret: 9
+        invertSensorPhase:
+            - turret
+        constants:
+            revLimit: -3762
+            absPosTicksSouth: -3451
+            fwdLimit: -1147
+            encPPR: 4096
+    shooter:
+        implemented: true
+        invertMotor:
+            - shooterMain
+        falcons:
+            shooterMain: 16
+            shooterFollower: 15
+        solenoids:
+            hood: 1
+        pid:
+            -   kP: 0.15 #0.30
+                kI: 0
+                kD: 2.5 #4.5
+                kF: 0.05671 #0.00953253
+        constants:
+            currentFloorCheck: .12
+            currentEpsilonCheck: .2
+            rpmFloorCheck: 2000
+            rpmEpsilonCheck: 60
+            velocityThreshold: 500
+    climber:
+        implemented: true
+        talons:
+            elevator: 6
+        solenoids:
+            deployer: 2
+    hopper:
+        implemented: true
+        talons:
+            spindexer: 10
+            elevator: 5
+        solenoids:
+            feederFlap: -1
+        constants:
+            ballSensor: 0
+    collector:
+        implemented: true
+        talons:
+            intake: 7
+        invertMotor:
+            - intake
+        solenoids:
+            arm: 0
+pcm: 8
+constants:
+    sensorPhase: 0
+    kTrackScrubFactor: 1.0
+    pathKs: 2
+    verbose: 0 # 0 or 1
+    useAutoAim: 1
+    ## Drivetrain characterization ##
+    trackWidth: 21 #inches
+    wheelbaseLength: 21.5 #inches
+    wheelDiameter: 3.8989736842 #inches
+    ## Path following ##
+    maxVel: 120 # 160 # 240 # inches/s # 22560 native units ---30
+    maxAccel: 100 # inches/s^2
+    maxDecel: 170 # inches/s^2 # Start with this matching maxAccel and then adjust as needed
+    maxCentripetalAccel: 120 # 160 #inches/s^2
+    ## Heading Controller ##
+    heading_kP: 0.0012
+    heading_kI: 0
+    heading_kD: 0
+    heading_kF: 0
+    ## Logging ##
+    logTeleOp: 1 # 0 or 1
+    logAuto: 1 # 0 or 1
+    badLogEnabled: 1 # 0 or 1
+    ## General ##
+    teleopFieldCentric: 1 # 0 or 1
+    compressorEnabled: 0 # 0 or 1
+    kLooperDt: .020 # seconds

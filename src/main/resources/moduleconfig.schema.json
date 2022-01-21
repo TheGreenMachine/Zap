@@ -4,6 +4,7 @@
     "properties": {
         "drive": {"type": "string"},
         "azimuth": {"type": "string"},
-        "constants": { "$ref": "double.map.schema.json"}
+        "constants": { "$ref": "double.map.schema.json"},
+        "cancoder": {"type": "integer"}
     }
 }
