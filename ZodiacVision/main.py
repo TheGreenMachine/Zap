@@ -20,8 +20,7 @@ fpsCounter = fps.FPS()
 
 socket.startServer()
 
-for i in range(10000):
-    socket.listenMessage(1816, 1, 1)
+
 
 
 
@@ -41,7 +40,7 @@ while True:
         continue
     contour, center_x, center_y = detector.findTarget(mask)
 
-    socket.listenMessage(1816 ,center_x, center_y)
+    socket.listenMessage(1816 ,1, 1)
 
     stream_image = detector.postProcess(frame, contour)
     fpsCounter.update()

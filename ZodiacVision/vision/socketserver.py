@@ -1,4 +1,5 @@
 import socket
+import threading
 
 
 class SocketServer:
@@ -13,8 +14,8 @@ class SocketServer:
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def startServer(self):
-        self.server.bind(('172.20.99.92',self.port))
-
+        self.server.bind(('172.20.99.92', self.port))
+        self.server.listen(5)
 
 
     def sendValues(self, dist, cx,cy,msg):
@@ -29,15 +30,16 @@ class SocketServer:
             self.server.send((""+cx+","+cy).encode())
         elif msg == 'cxd':
             self.server.send((""+cx+","+cy+","+dist).encode())
-        else :
-            self.server.send(("spel rite dum poo poo head").encode())
+        else:
+            self.server.send('spel rite dum poo poo head')
+
     def listenMessage(self,distance,Cy,Cx ):
-        self.server.listen()
+
         self.conn, self.addr = self.server.accept()
 
         print("Server started")
 
-        data = self.conn.recv(1024).decode()
+        data = self.conn.recv(1024)
 
         print(data)
 
