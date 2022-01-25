@@ -11,10 +11,10 @@ net = networktables.NetworkTables(data, path)
 net.setupCalib()
 
 visionCamera = camera.Camera()
-socket = socketserver.SocketServer(data, path, 5802)
+socket = socketserver.SocketServer(data, path, 1180)
 
 detector = detect.Detector(net, visionCamera)
-# streamer = stream.Streamer(data['stream']['port'])
+#streamer = stream.Streamer(data['stream']['port'])
 width = int(net.yml_data['stream']['line'])
 fpsCounter = fps.FPS()
 

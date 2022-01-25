@@ -14,7 +14,7 @@ class SocketServer:
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def startServer(self):
-        self.server.bind(('172.20.99.92', self.port))
+        self.server.bind(('192.168.68.118', self.port))
         self.server.listen(5)
 
 
@@ -31,12 +31,12 @@ class SocketServer:
         elif msg == 'cxd':
             self.server.send((""+cx+","+cy+","+dist).encode())
         else:
-            self.server.send('spel rite dum poo poo head')
+            self.server.sendall(b'spel rite dum poo poo head')
 
     def listenMessage(self,distance,Cy,Cx ):
 
         self.conn, self.addr = self.server.accept()
-
+        print('Connected by ', self.addr )
         print("Server started")
 
         data = self.conn.recv(1024)

@@ -1,36 +1,13 @@
 import socket
 
 Vision = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-Vision.connect(('172.20.99.92', 5802))
+Vision.connect(('192.168.68.118', 1180))
 
 while True:
     from_client = ''
-    from_server = ''
-    send = (input("Send Command: "))
-    Vision.send(send.encode())
+    from_server = b''
+    send = b''
+    send += input('Send Command: ').encode()
+    Vision.sendall(send)
     from_server = Vision.recv(1024)
-    print(from_server)
-
-Vision.close()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    print(repr(from_server))
