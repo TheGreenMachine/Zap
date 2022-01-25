@@ -12,6 +12,7 @@ import com.team1816.lib.subsystems.Subsystem;
 import com.team254.lib.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.RobotBase;
 
 import java.util.List;
 import java.util.Map;
@@ -88,14 +89,19 @@ public class RobotFactory {
             motor = CtreMotorFactory.createGhostTalon();
         }
 
-        // Motor configuration
-        if (subsystem.implemented && subsystem.invertMotor.contains(name)) {
-            System.out.println("Inverting " + name + " with ID " + motor.getDeviceID());
-            motor.setInverted(true);
-        }
-        if (subsystem.implemented && subsystem.invertSensorPhase.contains(name)) {
-            System.out.println("Inverting sensor phase of " + name + " with ID " + motor.getDeviceID());
-            motor.setSensorPhase(true);
+        var motorId = motor.getDeviceID();
+
+        //no need to invert of print if ghosted
+        if(motorId >=0 ) {
+            // Motor configuration
+            if (subsystem.implemented && subsystem.invertMotor.contains(name)) {
+                System.out.println("Inverting " + name + " with ID " + motorId);
+                motor.setInverted(true);
+            }
+            if (subsystem.implemented && subsystem.invertSensorPhase.contains(name)) {
+                System.out.println("Inverting sensor phase of " + name + " with ID " + motorId);
+                motor.setSensorPhase(true);
+            }
         }
 
         return motor;
@@ -158,7 +164,7 @@ public class RobotFactory {
     }
 
     private boolean isHardwareValid(Integer hardwareId) {
-        return hardwareId != null && hardwareId > -1;
+        return hardwareId != null && hardwareId > -1 && RobotBase.isReal();
     }
 
     public SwerveModule getSwerveModule(
