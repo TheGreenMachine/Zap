@@ -48,13 +48,12 @@ class Camera:
         if self.isZed:
             import pyzed.sl as sl
             self.zed.set_camera_settings(sl.VIDEO_SETTINGS.EXPOSURE, net.yml_data['camera']['exposure'])
-    def findTargetInfo(self, nt, cx, cy):
+    def findTargetDistance(self, cx, cy):
         if self.isZed:
-            import pyzed.sl as sl
             err, point3D = self.point_cloud.get_value(cx, cy)
             distance = math.sqrt(point3D[0] * point3D[0] + point3D[1] * point3D[1] + point3D[2] * point3D[2])
             if math.isnan(distance) or math.isinf(distance):
-                nt.putValue('distance', -1)
-            nt.putValue('distance', round(distance))
+                return -1
+            return round(distance)
         else:
-            nt.putValue('distance', -1)
+            return -1
