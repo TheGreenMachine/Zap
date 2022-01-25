@@ -42,7 +42,6 @@ class Detector:
             self.nt.putValue('center_x', cx)
             self.nt.putValue('center_y', cy)
             return c,cx,cy
-            self.camera.findTargetInfo(self.nt, cx, cy)
 
         self.nt.clearTable()
         return -1, -2, -2
