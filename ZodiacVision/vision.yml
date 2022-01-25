@@ -13,6 +13,7 @@ color:
 main:
   device-ip: 10.18.16.16
   team-number: 1816
+  port: 5802
 network:
   nt-ip: 10.18.16.2
   variables:
