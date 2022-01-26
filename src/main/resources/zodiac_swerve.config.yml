@@ -152,6 +152,7 @@ constants:
     wheelDiameter: 3.8989736842 #inches
     ## Path following ##
     maxVel: 120 # 160 # 240 # inches/s # 22560 native units ---30
+    maxTicks: 14000 # ticks per 100ms TODO test actual maxTicks value
     maxAccel: 100 # inches/s^2
     maxDecel: 170 # inches/s^2 # Start with this matching maxAccel and then adjust as needed
     maxCentripetalAccel: 120 # 160 #inches/s^2

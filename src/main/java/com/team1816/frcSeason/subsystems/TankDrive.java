@@ -220,7 +220,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     }
 
     @Override
-    protected void updateOpenLoopPeriodic() {
+    protected void updateOpenLoopPeriodic(double timestamp) {
         // no openLoop update needed
     }
 

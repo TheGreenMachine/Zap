@@ -200,7 +200,7 @@ public abstract class Drive
                         mPeriodicIO.timestamp = timestamp;
                         switch (mDriveControlState) {
                             case OPEN_LOOP:
-                                updateOpenLoopPeriodic();
+                                updateOpenLoopPeriodic(timestamp);
                                 break;
                             case TRAJECTORY_FOLLOWING:
                                 updatePathFollower(timestamp);
@@ -224,7 +224,7 @@ public abstract class Drive
         );
     }
 
-    protected abstract void updateOpenLoopPeriodic();
+    protected abstract void updateOpenLoopPeriodic(double timestamp);
 
     protected abstract void updatePathFollower(double timestamp);
 

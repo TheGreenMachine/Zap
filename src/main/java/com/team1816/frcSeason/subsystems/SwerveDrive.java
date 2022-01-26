@@ -373,7 +373,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     @Override
-    protected void updateOpenLoopPeriodic() {
+    protected void updateOpenLoopPeriodic(double timestamp) {
         var driveHelper = driveHelperChooser.getSelected();
         setOpenLoop(
             driveHelper.calculateDriveSignal(
@@ -385,6 +385,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 mPeriodicIO.use_heading_controller
             )
         );
+        updatePose(timestamp);
     }
 
     @Override

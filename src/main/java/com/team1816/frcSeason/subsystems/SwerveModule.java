@@ -16,6 +16,8 @@ import com.team254.lib.util.Util;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 
+import static com.team1816.frcSeason.subsystems.Drive.maxVelTicksPer100ms;
+
 public class SwerveModule extends Subsystem implements ISwerveModule {
 
     public static class PeriodicIO {
@@ -307,9 +309,13 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
     @Override
     public void readPeriodicInputs() {
         if (RobotBase.isSimulation()) {
-            driveEncoderSimPosition += mPeriodicIO.drive_demand * TICK_RATIO_PER_LOOP;
+            double adjDriveDemand = mPeriodicIO.drive_demand;
+            if (mControlState == ControlState.OPEN_LOOP) {
+                adjDriveDemand = adjDriveDemand * maxVelTicksPer100ms;
+            }
+            driveEncoderSimPosition += adjDriveDemand * TICK_RATIO_PER_LOOP;
             mPeriodicIO.drive_encoder_ticks = driveEncoderSimPosition;
-            mPeriodicIO.velocity_ticks_per_100ms = mPeriodicIO.drive_demand;
+            mPeriodicIO.velocity_ticks_per_100ms = adjDriveDemand;
             mPeriodicIO.azimuth_encoder_ticks = mPeriodicIO.azimuth_demand;
         } else {
             mPeriodicIO.drive_encoder_ticks = mDriveMotor.getSelectedSensorPosition(0);
