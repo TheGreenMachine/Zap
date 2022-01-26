@@ -10,7 +10,6 @@ import com.team1816.frcSeason.paths.TrajectorySet;
 import com.team1816.frcSeason.subsystems.*;
 import com.team1816.lib.LibModule;
 import com.team1816.lib.auto.AutoModeExecutor;
-import com.team1816.lib.auto.actions.DriveTrajectory;
 import com.team1816.lib.auto.modes.AutoModeBase;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.RobotFactory;
@@ -26,7 +25,6 @@ import com.team254.lib.util.LatchedBoolean;
 import com.team254.lib.util.SwerveDriveSignal;
 import com.team254.lib.util.TimeDelayedBoolean;
 import edu.wpi.first.wpilibj.*;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -106,34 +104,34 @@ public class Robot extends TimedRobot {
         try {
             mControlBoard = injector.getInstance(IControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
-            var logFile = new SimpleDateFormat("MMdd_HH-mm").format(new Date());
-            var robotName = System.getenv("ROBOT_NAME");
-            if (robotName == null) robotName = "default";
-            var logFileDir = "/home/lvuser/";
-            // if there is a usb drive use it
-            if (Files.exists(Path.of("/media/sda1"))) {
-                logFileDir = "/media/sda1/";
-            }
-            if (RobotBase.isSimulation()) {
-                if (System.getProperty("os.name").toLowerCase().contains("win")) {
-                    logFileDir = System.getenv("temp") + "\\";
-                } else {
-                    logFileDir = System.getProperty("user.dir") + "/";
-                }
-            }
-            var filePath = logFileDir + robotName + "_" + logFile + ".bag";
-            logger = BadLog.init(filePath);
-
-            BadLog.createValue(
-                "Max Velocity",
-                String.valueOf(Constants.kPathFollowingMaxVel)
-            );
-            BadLog.createValue(
-                "Max Acceleration",
-                String.valueOf(Constants.kPathFollowingMaxAccel)
-            );
-
             if (Constants.kIsBadlogEnabled) {
+                var logFile = new SimpleDateFormat("MMdd_HH-mm").format(new Date());
+                var robotName = System.getenv("ROBOT_NAME");
+                if (robotName == null) robotName = "default";
+                var logFileDir = "/home/lvuser/";
+                // if there is a usb drive use it
+                if (Files.exists(Path.of("/media/sda1"))) {
+                    logFileDir = "/media/sda1/";
+                }
+                if (RobotBase.isSimulation()) {
+                    if (System.getProperty("os.name").toLowerCase().contains("win")) {
+                        logFileDir = System.getenv("temp") + "\\";
+                    } else {
+                        logFileDir = System.getProperty("user.dir") + "/";
+                    }
+                }
+                var filePath = logFileDir + robotName + "_" + logFile + ".bag";
+                logger = BadLog.init(filePath);
+
+                BadLog.createValue(
+                    "Max Velocity",
+                    String.valueOf(Constants.kPathFollowingMaxVel)
+                );
+                BadLog.createValue(
+                    "Max Acceleration",
+                    String.valueOf(Constants.kPathFollowingMaxAccel)
+                );
+
                 BadLog.createTopic(
                     "Timings/Looper",
                     "ms",
@@ -156,20 +154,21 @@ public class Robot extends TimedRobot {
                     "hide"
                 );
 
-                BadLog.createTopic("PDP/Current", "Amps", pdp::getTotalCurrent);
-
                 DrivetrainLogger.init(mDrive);
-                mDrive.CreateBadLogValue("Drivetrain PID", mDrive.pidToString());
-                mTurret.CreateBadLogValue("Turret PID", mTurret.pidToString());
+                if (RobotBase.isReal()) {
+                    BadLog.createTopic("PDP/Current", "Amps", pdp::getTotalCurrent);
 
-                BadLog.createTopic(
-                    "Vision/DeltaXAngle",
-                    "Degrees",
-                    camera::getDeltaXAngle
-                );
-                BadLog.createTopic("Vision/Distance", "inches", camera::getDistance);
-                BadLog.createTopic("Vision/CenterX", "pixels", camera::getRawCenterX);
+                    mDrive.CreateBadLogValue("Drivetrain PID", mDrive.pidToString());
+                    mTurret.CreateBadLogValue("Turret PID", mTurret.pidToString());
 
+                    BadLog.createTopic(
+                        "Vision/DeltaXAngle",
+                        "Degrees",
+                        camera::getDeltaXAngle
+                    );
+                    BadLog.createTopic("Vision/Distance", "inches", camera::getDistance);
+                    BadLog.createTopic("Vision/CenterX", "pixels", camera::getRawCenterX);
+                }
                 mTurret.CreateBadLogTopic(
                     "Turret/ActPos",
                     "NativeUnits",
@@ -231,7 +230,6 @@ public class Robot extends TimedRobot {
 
             ledManager.registerEnabledLoops(mEnabledLooper);
             ledManager.registerEnabledLoops(mDisabledLooper);
-
 
             // Robot starts forwards.
             mRobotState.reset(
