@@ -1,2 +1,4 @@
 ZodiacVision/venv
 .idea
+build
+.gradle
