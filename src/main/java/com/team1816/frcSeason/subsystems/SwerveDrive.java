@@ -159,7 +159,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 robotWidthTicks;
             //mPeriodicIO.gyro_heading_no_offset = getDesiredRotation2d().rotateBy(Rotation2d.fromDegrees(gyroDrift));
             var rot2d = new edu.wpi.first.math.geometry.Rotation2d(
-                mPeriodicIO.gyro_heading_no_offset.getRadians()
+                mPeriodicIO.rotation //still jank
             );
             var xPos = Units.inches_to_meters(mRobotState.getEstimatedX());
             var yPos = Units.inches_to_meters(mRobotState.getEstimatedY()) + 3.5;
