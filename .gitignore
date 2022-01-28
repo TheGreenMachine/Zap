@@ -2,3 +2,4 @@ ZodiacVision/venv
 .idea
 build
 .gradle
+simgui-window.json
