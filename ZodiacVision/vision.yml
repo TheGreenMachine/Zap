@@ -7,3 +7,5 @@ network:
   nt-ip: 10.18.16.2
   variables: [center_x, center_y, distance]
 stream: {line: 336.0, port: 1180}
+zed: true
+gstreamer: true
