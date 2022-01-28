@@ -161,6 +161,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             var rot2d = new edu.wpi.first.math.geometry.Rotation2d(
                 mPeriodicIO.rotation //still jank
             );
+            System.out.println("SWERVE DRIVE LINE 164: " + getHeadingDegrees());
             var xPos = Units.inches_to_meters(mRobotState.getEstimatedX());
             var yPos = Units.inches_to_meters(mRobotState.getEstimatedY()) + 3.5;
             mRobotState.field.setRobotPose(xPos, yPos, rot2d);
@@ -296,65 +297,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
     }
 
-    public synchronized void alternatePoseUpdate(double timestamp) {
-        double x = 0.0;
-        double y = 0.0;
-        Rotation2d heading = Rotation2d.fromDegrees(getHeadingDegrees()); // temporary heading, some yaw calculation is being done here
-
-        double[] distances = new double[4];
-
-        for (int i = 0; i < 4; i++) {
-            swerveModules[i].updatePose(heading);
-            double distance =
-                swerveModules[i].getEstimatedRobotPose()
-                    .getTranslation()
-                    .distance(pose.getTranslation());
-            distances[i] = distance;
-        }
-
-        Arrays.sort(distances); // Doing some kind of sort for some reason, not sure why
-
-        List<SwerveModule> modulesToUse = new ArrayList<>();
-        double firstDifference = distances[1] - distances[0];
-        double secondDifference = distances[2] - distances[1];
-        double thirdDifference = distances[3] - distances[2];
-
-        if (secondDifference > (1.5 * firstDifference)) {
-            modulesToUse.add(swerveModules[0]);
-            modulesToUse.add(swerveModules[1]);
-        } else if (thirdDifference > (1.5 * firstDifference)) {
-            modulesToUse.add(swerveModules[0]);
-            modulesToUse.add(swerveModules[1]);
-            modulesToUse.add(swerveModules[2]);
-        } else {
-            modulesToUse.add(swerveModules[0]);
-            modulesToUse.add(swerveModules[1]);
-            modulesToUse.add(swerveModules[2]);
-            modulesToUse.add(swerveModules[3]);
-        }
-
-        SmartDashboard.putNumber("Modules Used", modulesToUse.size());
-
-        for (SwerveModule m : modulesToUse) {
-            x += m.getEstimatedRobotPose().getTranslation().x();
-            y += m.getEstimatedRobotPose().getTranslation().y();
-        }
-
-        Pose2d updatedPose = new Pose2d(
-            new Translation2d(x / modulesToUse.size(), y / modulesToUse.size()),
-            heading
-        );
-        double deltaPos = updatedPose.getTranslation().distance(pose.getTranslation());
-        mPeriodicIO.drive_distance_inches += deltaPos;
-        mPeriodicIO.velocity_inches_per_second =
-            deltaPos / (timestamp - lastUpdateTimestamp);
-        pose = updatedPose;
-
-        for (SwerveModule mModule : swerveModules) {
-            mModule.resetPose(pose);
-        }
-    }
-
     public Pose2d getPose() {
         return pose;
     }
@@ -414,7 +356,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     public void setTeleopInputs(
         double forward,
         double strafe,
-        double rotation,
+        double rotationDemand,
         boolean low_power,
         boolean use_heading_controller
     ) {
@@ -424,7 +366,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
         mPeriodicIO.forward = forward;
         mPeriodicIO.strafe = strafe;
-        mPeriodicIO.rotation = rotation;
+        mPeriodicIO.rotation += rotationDemand*0.05;
         mPeriodicIO.low_power = low_power;
         mPeriodicIO.use_heading_controller = use_heading_controller;
     }
@@ -544,7 +486,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
                 mPeriodicIO.forward = driveVector.x();
                 mPeriodicIO.strafe = driveVector.y();
-                mPeriodicIO.rotation = 0;
+                mPeriodicIO.rotation = driveVector.direction().getRadians();
 
                 double rotationInput = Util.deadBand(
                     Util.limit(

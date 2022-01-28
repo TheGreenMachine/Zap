@@ -151,6 +151,8 @@ public abstract class Drive
         public double forward;
         public double strafe;
         public double rotation;
+        public double rotation_demand;
+        public double rotation_velocity;
         public boolean low_power;
         public boolean field_relative = factory.getConstant("teleopFieldCentric") > 0;
         public boolean use_heading_controller;
