@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 
 import static com.team1816.frcSeason.subsystems.Drive.maxVelTicksPer100ms;
+import static com.team1816.frcSeason.subsystems.SwerveModule.ControlState.OPEN_LOOP;
 
 public class SwerveModule extends Subsystem implements ISwerveModule {
 
@@ -85,7 +86,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
 
     // State
     private PeriodicIO mPeriodicIO = new PeriodicIO();
-    private ControlState mControlState = ControlState.OPEN_LOOP;
+    private ControlState mControlState = OPEN_LOOP;
     private boolean isBrakeMode = false;
     private double driveEncoderSimPosition = 0;
     private double previousEncDistance = 0;
@@ -284,8 +285,8 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
     }
 
     public synchronized void setOpenLoop(double speed, Rotation2d azimuth) {
-        if (mControlState != ControlState.OPEN_LOOP) {
-            mControlState = ControlState.OPEN_LOOP;
+        if (mControlState != OPEN_LOOP) {
+            mControlState = OPEN_LOOP;
         }
 
         mPeriodicIO.drive_demand = speed;
@@ -310,7 +311,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
     public void readPeriodicInputs() {
         if (RobotBase.isSimulation()) {
             double adjDriveDemand = mPeriodicIO.drive_demand;
-            if (mControlState == ControlState.OPEN_LOOP) {
+            if (mControlState == OPEN_LOOP) {
                 adjDriveDemand = adjDriveDemand * maxVelTicksPer100ms;
             }
             driveEncoderSimPosition += adjDriveDemand * TICK_RATIO_PER_LOOP;
@@ -339,7 +340,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
 
     @Override
     public void writePeriodicOutputs() {
-        if (mControlState == ControlState.OPEN_LOOP) {
+        if (mControlState == OPEN_LOOP) {
             if (
                 Util.epsilonEquals(
                     mPeriodicIO.drive_demand,
@@ -505,6 +506,9 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
 
     @Override
     public double getDriveVelocityDemand() {
+        if (mControlState == OPEN_LOOP) {
+            return mPeriodicIO.drive_demand * maxVelTicksPer100ms;
+        }
         return mPeriodicIO.drive_demand;
     }
 
