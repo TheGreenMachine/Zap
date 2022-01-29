@@ -3,7 +3,7 @@ package com.team1816.frcSeason.planners;
 import com.team1816.frcSeason.Constants;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Pose2dWithCurvature;
-import com.team254.lib.geometry.Rotation2d;
+import com.team1816.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.physics.DCMotorTransmission;
 import com.team254.lib.physics.DifferentialDrive;
@@ -139,7 +139,7 @@ public class TankMotionPlanner implements CSVWritable {
         int slowdown_chunks
     ) {
         List<Pose2d> waypoints_maybe_flipped = waypoints;
-        final Pose2d flip = Pose2d.fromRotation(new Rotation2d(-1, 0, false));
+        final Pose2d flip = Pose2d.fromRotation(new Rotation2d(-1, 0));
         // TODO re-architect the spline generator to support reverse.
         if (reversed) {
             waypoints_maybe_flipped = new ArrayList<>(waypoints.size());

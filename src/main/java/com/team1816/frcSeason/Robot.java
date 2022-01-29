@@ -12,6 +12,7 @@ import com.team1816.lib.LibModule;
 import com.team1816.lib.auto.AutoModeExecutor;
 import com.team1816.lib.auto.modes.AutoModeBase;
 import com.team1816.lib.controlboard.IControlBoard;
+import com.team1816.lib.geometry.Rotation2d;
 import com.team1816.lib.hardware.RobotFactory;
 import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.lib.loops.Looper;
@@ -20,7 +21,6 @@ import com.team1816.lib.subsystems.Infrastructure;
 import com.team1816.lib.subsystems.RobotStateEstimator;
 import com.team1816.lib.subsystems.SubsystemManager;
 import com.team254.lib.geometry.Pose2d;
-import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.util.LatchedBoolean;
 import com.team254.lib.util.SwerveDriveSignal;
 import com.team254.lib.util.TimeDelayedBoolean;
@@ -52,7 +52,6 @@ public class Robot extends TimedRobot {
     private final PowerDistribution pdp = new PowerDistribution();
     private final LedManager ledManager;
     private final Turret mTurret;
-    // private final Spinner spinner = Spinner.getInstance();
     private final Camera camera;
     private final RobotStateEstimator mRobotStateEstimator;
 

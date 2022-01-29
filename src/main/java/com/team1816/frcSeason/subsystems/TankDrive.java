@@ -14,7 +14,7 @@ import com.team1816.lib.hardware.EnhancedMotorChecker;
 import com.team1816.lib.subsystems.DifferentialDrivetrain;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Pose2dWithCurvature;
-import com.team254.lib.geometry.Rotation2d;
+import com.team1816.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.trajectory.TrajectoryIterator;
 import com.team254.lib.trajectory.timing.TimedState;

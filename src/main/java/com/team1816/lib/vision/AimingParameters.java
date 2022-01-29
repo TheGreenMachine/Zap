@@ -1,7 +1,7 @@
 package com.team1816.lib.vision;
 
 import com.team254.lib.geometry.Pose2d;
-import com.team254.lib.geometry.Rotation2d;
+import com.team1816.lib.geometry.Rotation2d;
 
 public class AimingParameters {
 

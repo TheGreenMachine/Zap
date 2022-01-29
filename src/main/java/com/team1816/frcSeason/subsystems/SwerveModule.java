@@ -14,7 +14,7 @@ import com.team1816.lib.math.Conversions;
 import com.team1816.lib.subsystems.ISwerveModule;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team254.lib.geometry.Pose2d;
-import com.team254.lib.geometry.Rotation2d;
+import com.team1816.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.util.Util;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -216,8 +216,8 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
         double deltaEncDistance = (currentEncDistance - previousEncDistance);
         Rotation2d currentWheelAngle = getFieldCentricAngle(robotHeading);
         Translation2d deltaPosition = new Translation2d(
-            currentWheelAngle.cos() * deltaEncDistance,
-            currentWheelAngle.sin() * deltaEncDistance
+            currentWheelAngle.getCos() * deltaEncDistance,
+            currentWheelAngle.getSin() * deltaEncDistance
         );
 
         //        double xScrubFactor = Constants.kXScrubFactor;
@@ -551,7 +551,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
     }
 
     public synchronized Rotation2d getAngle() {
-        return Rotation2d.fromRadians((encoderUnitsToRadians(getAzimuthPosition())));
+        return new Rotation2d(encoderUnitsToRadians(getAzimuthPosition()));
     }
 
     public synchronized Rotation2d getAngleToDegrees() {
