@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.frcSeason.Constants;
 import com.team1816.frcSeason.RobotState;
+import com.team1816.lib.geometry.Rotation2d;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.lib.loops.Loop;
@@ -13,11 +14,11 @@ import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.subsystems.TrackableDrivetrain;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Pose2dWithCurvature;
-import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.trajectory.TrajectoryIterator;
 import com.team254.lib.trajectory.timing.TimedState;
 import com.team254.lib.util.*;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -40,6 +41,7 @@ public abstract class Drive
 
     protected PigeonIMU mPigeon;
     protected SwerveModule[] swerveModules;
+    protected SwerveModuleState[] swerveModuleStates;
 
     // control states
     protected DriveControlState mDriveControlState = DriveControlState.OPEN_LOOP;
