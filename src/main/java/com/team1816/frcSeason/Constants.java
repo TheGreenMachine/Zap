@@ -5,8 +5,7 @@ import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.team1816.frcSeason.subsystems.Drive;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.RobotFactory;
-import com.team254.lib.geometry.Pose2d;
-import com.team254.lib.geometry.Translation2d;
+import com.team1816.lib.geometry.Pose2d;import com.team254.lib.geometry.Translation2d;
 
 public class Constants {
 

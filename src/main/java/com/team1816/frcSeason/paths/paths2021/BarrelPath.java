@@ -2,8 +2,7 @@ package com.team1816.frcSeason.paths.paths2021;
 
 import com.team1816.lib.paths.PathContainer;
 import com.team254.lib.control.Path;
-import com.team254.lib.geometry.Pose2d;
-import java.util.List;
+import com.team1816.lib.geometry.Pose2d;import java.util.List;
 
 public class BarrelPath implements PathContainer {
 
@@ -13,7 +12,7 @@ public class BarrelPath implements PathContainer {
     }
 
     @Override
-    public List<Pose2d> buildWaypoints() {
+    public List<com.team1816.lib.geometry.Pose2d> buildWaypoints() {
         return List.of(
             new Pose2d(46, 98, 0),
             new Pose2d(168, 115, 0),
