@@ -1,5 +1,9 @@
 package com.team1816.frcSeason;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
+import com.team1816.frcSeason.subsystems.Drive;
+import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.RobotFactory;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Translation2d;
@@ -61,6 +65,57 @@ public class Constants {
         "drivetrain",
         "openLoopRampRate"
     );
+
+    public static class Swerve {
+
+        public String kName = "Name";
+        public String kDriveMotorName = "";
+        public String kAzimuthMotorName = "";
+
+        public static final int AZIMUTH_TICK_MASK = 0xFFF;
+        public static final double AZIMUTH_ADJUSTMENT_OFFSET_DEGREES = factory.getConstant(
+            "drive",
+            "azimuthHomeAdjustmentDegrees",
+            0
+        );
+
+        public static final int kFrontLeft = 0;
+        public static final int kFrontRight = 1;
+        public static final int kBackRight = 2;
+        public static final int kBackLeft = 3;
+
+        // general azimuth
+        public boolean kInvertAzimuth = false;
+        public boolean kInvertAzimuthSensorPhase = false;
+        public NeutralMode kAzimuthInitNeutralMode = NeutralMode.Brake; // neutral mode could change
+        public double kAzimuthTicksPerRadian = 4096.0 / (2 * Math.PI); // for azimuth
+        public double kAzimuthEncoderHomeOffset = 0;
+        public double kAzimuthAdjustmentOffset;
+
+        // azimuth motion
+        public PIDSlotConfiguration kAzimuthPid;
+        public int kAzimuthClosedLoopAllowableError = (int) factory.getConstant(
+            "drivetrain",
+            "azimuthAllowableErrorTicks"
+        );
+
+        // azimuth current/voltage
+        public VelocityMeasPeriod kAzimuthVelocityMeasurementPeriod =
+            VelocityMeasPeriod.Period_100Ms; // dt for velocity measurements, ms
+
+        // general drive
+        public PIDSlotConfiguration kDrivePid;
+        public double kWheelDiameter = Constants.kDriveWheelDiameterInches; // Probably should tune for each individual wheel maybe
+        public double kDriveTicksPerUnitDistance =
+            (1 / Drive.DRIVE_ENCODER_PPR) * (Math.PI * kWheelDiameter);
+        public double kDriveDeadband = 0.01;
+
+        // drive current/voltage
+
+        // drive measurement
+        public VelocityMeasPeriod kDriveVelocityMeasurementPeriod =
+            VelocityMeasPeriod.Period_100Ms; // dt for velocity measurements, ms
+    }
 
     // Swerve Heading Controller -- CHEESY Constants
     public static final double kSwerveHeadingControllerErrorTolerance = 1.0; // degrees
@@ -145,6 +200,7 @@ public class Constants {
     public static final boolean kIsLoggingAutonomous = factory.getConstant("logAuto") > 0;
 
     public static final boolean kUseAutoAim = factory.getConstant("useAutoAim") > 0;
+
     // Do not change anything after this line unless you rewire the robot and
     // update the spreadsheet!
     // Port assignments should match up with the spreadsheet here:

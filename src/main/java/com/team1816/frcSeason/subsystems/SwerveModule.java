@@ -7,12 +7,12 @@ import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.team1816.frcSeason.Constants;
-import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.lib.loops.Loop;
 import com.team1816.lib.math.Conversions;
 import com.team1816.lib.subsystems.ISwerveModule;
 import com.team1816.lib.subsystems.Subsystem;
+import com.team1816.lib.util.ModuleState;
 import com.team254.lib.geometry.Pose2d;
 import com.team1816.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
@@ -42,45 +42,6 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
         VELOCITY,
     }
 
-    public static class SwerveModuleConstants {
-
-        public String kName = "Name";
-        public String kDriveMotorName = "";
-        public String kAzimuthMotorName = "";
-
-        // general azimuth
-        public boolean kInvertAzimuth = false;
-        public boolean kInvertAzimuthSensorPhase = false;
-        public NeutralMode kAzimuthInitNeutralMode = NeutralMode.Brake; // neutral mode could change
-        public double kAzimuthTicksPerRadian = 4096.0 / (2 * Math.PI); // for azimuth
-        public double kAzimuthEncoderHomeOffset = 0;
-        public double kAzimuthAdjustmentOffset;
-
-        // azimuth motion
-        public PIDSlotConfiguration kAzimuthPid;
-        public int kAzimuthClosedLoopAllowableError = (int) factory.getConstant(
-            "drivetrain",
-            "azimuthAllowableErrorTicks"
-        );
-
-        // azimuth current/voltage
-        public VelocityMeasPeriod kAzimuthVelocityMeasurementPeriod =
-            VelocityMeasPeriod.Period_100Ms; // dt for velocity measurements, ms
-
-        // general drive
-        public PIDSlotConfiguration kDrivePid;
-        public double kWheelDiameter = Constants.kDriveWheelDiameterInches; // Probably should tune for each individual wheel maybe
-        public double kDriveTicksPerUnitDistance =
-            (1 / Drive.DRIVE_ENCODER_PPR) * (Math.PI * kWheelDiameter);
-        public double kDriveDeadband = 0.01;
-
-        // drive current/voltage
-
-        // drive measurement
-        public VelocityMeasPeriod kDriveVelocityMeasurementPeriod =
-            VelocityMeasPeriod.Period_100Ms; // dt for velocity measurements, ms
-    }
-
     // Components
     private final IMotorControllerEnhanced mDriveMotor;
     private final IMotorControllerEnhanced mAzimuthMotor;
@@ -98,71 +59,13 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
     private final boolean driveMotorIsInverted;
 
     // Constants
-    private final SwerveModuleConstants mConstants;
+    private final Constants.Swerve mConstants;
     private static final double TICK_RATIO_PER_LOOP = Constants.kLooperDt / 0.1;
-    public static final int AZIMUTH_TICK_MASK = 0xFFF;
-    public static final double AZIMUTH_ADJUSTMENT_OFFSET_DEGREES = factory.getConstant(
-        "drive",
-        "azimuthHomeAdjustmentDegrees",
-        0
-    );
 
-    public static final int kFrontLeft = 0;
-    public static final int kFrontRight = 1;
-    public static final int kBackRight = 2;
-    public static final int kBackLeft = 3;
 
     public SwerveModule(
         String subsystemName,
-        SwerveModuleConstants constants,
-        Translation2d startingPosition
-    ) {
-        super(constants.kName);
-        mConstants = constants;
-        System.out.println(
-            "Configuring Swerve Module " +
-            constants.kName +
-            " on subsystem " +
-            subsystemName
-        );
-
-        mDriveMotor =
-            factory.getMotor(
-                subsystemName,
-                constants.kDriveMotorName,
-                factory.getSubsystem(subsystemName).swerveModules.azimuthPID
-            );
-        driveMotorIsInverted = mDriveMotor.getInverted();
-        mAzimuthMotor =
-            factory.getMotor(
-                subsystemName,
-                constants.kAzimuthMotorName,
-                factory.getSubsystem(subsystemName).swerveModules.drivePID
-            );
-        var currentLimitConfig = new SupplyCurrentLimitConfiguration(true, 25, 0, 0);
-
-        mAzimuthMotor.configSupplyCurrentLimit(
-            currentLimitConfig,
-            Constants.kLongCANTimeoutMs
-        );
-        mAzimuthMotor.setSensorPhase(constants.kInvertAzimuthSensorPhase);
-        mAzimuthMotor.configPeakOutputForward(.4, Constants.kLongCANTimeoutMs);
-        mAzimuthMotor.configPeakOutputReverse(-.4, Constants.kLongCANTimeoutMs);
-        mAzimuthMotor.setNeutralMode(NeutralMode.Brake);
-        mAzimuthMotor.configAllowableClosedloopError(
-            0,
-            constants.kAzimuthClosedLoopAllowableError,
-            Constants.kLongCANTimeoutMs
-        );
-        System.out.println("  " + this);
-
-        this.startingPosition = startingPosition;
-        zeroSensors();
-    }
-
-    public SwerveModule(
-        String subsystemName,
-        SwerveModuleConstants constants,
+        Constants.Swerve constants,
         CANCoder canCoder,
         Translation2d startingPosition
     ) {
@@ -300,7 +203,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
         var isFront = mConstants.kName.startsWith("front");
         var sign = isFront ? 1 : -1;
         var azimuthAdjustmentRadians =
-            sign * Math.toRadians(AZIMUTH_ADJUSTMENT_OFFSET_DEGREES);
+            sign * Math.toRadians(Constants.Swerve.AZIMUTH_ADJUSTMENT_OFFSET_DEGREES);
         mPeriodicIO.azimuth_demand =
             (int) radiansToEncoderUnits(azimuth.getRadians() + azimuthAdjustmentRadians);
     }
@@ -328,7 +231,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
 
             mPeriodicIO.azimuth_encoder_ticks_unmasked = normalizedEncoderTicks;
             mPeriodicIO.azimuth_encoder_ticks =
-                normalizedEncoderTicks & AZIMUTH_TICK_MASK;
+                normalizedEncoderTicks & Constants.Swerve.AZIMUTH_TICK_MASK;
         }
     }
 
@@ -417,7 +320,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
         if (mAzimuthMotor instanceof TalonSRX) {
             var sensors = ((TalonSRX) mAzimuthMotor).getSensorCollection();
             sensors.setQuadraturePosition(
-                sensors.getPulseWidthPosition() & AZIMUTH_TICK_MASK,
+                sensors.getPulseWidthPosition() & Constants.Swerve.AZIMUTH_TICK_MASK,
                 Constants.kLongCANTimeoutMs
             );
         }
@@ -428,7 +331,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
         if (mAzimuthMotor instanceof TalonSRX) {
             int rawValue =
                 ((TalonSRX) mAzimuthMotor).getSensorCollection().getPulseWidthPosition() &
-                AZIMUTH_TICK_MASK;
+                Constants.Swerve.AZIMUTH_TICK_MASK;
             return rawValue;
         }
         return 0;
@@ -596,6 +499,25 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
             mConstants.kAzimuthClosedLoopAllowableError
         );
     }
+
+    public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop){
+        //below method wants our Rotation2D but getState().angle has to return a wpilib Rot2D because it's defined through SwerveModuleState
+        desiredState = ModuleState.optimize(desiredState, getState().angle); //Custom optimize command, since default WPILib optimize assumes continuous controller which CTRE is not
+
+        if(isOpenLoop){
+            double percentOutput = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;
+            mDriveMotor.set(ControlMode.PercentOutput, percentOutput);
+        }
+        else {
+            double velocity = Conversions.MPSToFalcon(desiredState.speedMetersPerSecond, Constants.Swerve.wheelCircumference, Constants.Swerve.driveGearRatio);
+            mDriveMotor.set(ControlMode.Velocity, velocity, DemandType.ArbitraryFeedForward, feedforward.calculate(desiredState.speedMetersPerSecond));
+        }
+
+        double angle = (Math.abs(desiredState.speedMetersPerSecond) <= (Constants.maxSpeed * 0.01)) ? lastAngle : desiredState.angle.getDegrees(); //Prevent rotating module if speed is less then 1%. Prevents Jittering.
+        mAzimuthMotor.set(ControlMode.Position, Conversions.degreesToFalcon(angle, Constants.angleGearRatio));
+        lastAngle = angle;
+    }
+
     private void resetToAbsolute(){
         double absolutePosition = Conversions.degreesToFalcon(getCanCoder().getDegrees() - angleOffset, Constants.Swerve.angleGearRatio);
         mAzimuthMotor.setSelectedSensorPosition(absolutePosition);
@@ -634,4 +556,6 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
             " }"
         );
     }
+
 }
+

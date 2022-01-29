@@ -5,7 +5,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.frcSeason.AutoModeSelector;
 import com.team1816.frcSeason.Constants;
-import com.team1816.frcSeason.SwerveKinematics;
 import com.team1816.frcSeason.planners.SwerveMotionPlanner;
 import com.team1816.lib.geometry.Rotation2d;
 import com.team1816.lib.subsystems.PidProvider;
@@ -68,21 +67,21 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         setOpenLoop(SwerveDriveSignal.NEUTRAL);
 
         // start all Talons in open loop mode
-        swerveModules[SwerveModule.kFrontLeft] =
+        swerveModules[Constants.Swerve.kFrontLeft] =
             factory.getSwerveModule(
                 NAME,
                 "frontLeft",
                 Constants.kFrontLeftModulePosition
             );
-        swerveModules[SwerveModule.kFrontRight] =
+        swerveModules[Constants.Swerve.kFrontRight] =
             factory.getSwerveModule(
                 NAME,
                 "frontRight",
                 Constants.kFrontRightModulePosition
             );
-        swerveModules[SwerveModule.kBackLeft] =
+        swerveModules[Constants.Swerve.kBackLeft] =
             factory.getSwerveModule(NAME, "backLeft", Constants.kBackLeftModulePosition);
-        swerveModules[SwerveModule.kBackRight] =
+        swerveModules[Constants.Swerve.kBackRight] =
             factory.getSwerveModule(
                 NAME,
                 "backRight",

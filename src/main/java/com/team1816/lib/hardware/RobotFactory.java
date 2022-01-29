@@ -3,6 +3,7 @@ package com.team1816.lib.hardware;
 import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.sensors.*;
+import com.team1816.frcSeason.Constants;
 import com.team1816.frcSeason.subsystems.SwerveModule;
 import com.team1816.lib.hardware.components.CanifierImpl;
 import com.team1816.lib.hardware.components.GhostCanifier;
@@ -183,7 +184,7 @@ public class RobotFactory {
             return null;
         }
 
-        var swerveConstants = new SwerveModule.SwerveModuleConstants();
+        var swerveConstants = new Constants.Swerve();
         swerveConstants.kName = name;
         swerveConstants.kAzimuthMotorName = module.azimuth; //getAzimuth and drive give ID i think - not the module name (ex: leftRear)
         swerveConstants.kAzimuthPid = subsystem.swerveModules.azimuthPID.get("slot0");
