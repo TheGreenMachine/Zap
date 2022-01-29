@@ -26,9 +26,12 @@
           "style": "Line",
           "visible": true
         },
+        "height": 8.229599952697754,
+        "image": "season.png",
         "turret": {
           "style": "Line"
         },
+        "width": 16.459199905395508,
         "window": {
           "visible": true
         }
