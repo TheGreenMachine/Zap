@@ -1,3 +1,5 @@
+import threading
+
 import yaml
 import cv2
 
@@ -24,6 +26,13 @@ if isGstreamer:
 else:
     streamer = stream.Streamer(data['stream']['port'])
 net.setupCalib()
+
+vs = visionserver.ThreadedVisionServer('', 5802)
+server_thread = threading.Thread(target=vs.listen)
+# Exit the server thread when the main thread terminates
+server_thread.daemon = True
+server_thread.start()
+
 cap = 0
 if isZed:
     # Set configuration parameters
@@ -46,7 +55,7 @@ if isZed:
 else:
     cap = cv2.VideoCapture(0)
 
-detector = detect.Detector(net)
+detector = detect.Detector(net, vs)
 width = int(net.yml_data['stream']['line'])
 fpsCounter = fps.FPS()
 while True:
@@ -67,7 +76,7 @@ while True:
             mask = detector.preProcessFrame(frame)
             if mask.all() == -1:
                 continue
-            contour = detector.findTargetZED(mask, zed, point_cloud, frame)
+            contour = detector.findTarget(mask, zed, point_cloud, frame)
             stream_image = detector.postProcess(frame, contour)
             fpsCounter.update()
             fpsCounter.stop()

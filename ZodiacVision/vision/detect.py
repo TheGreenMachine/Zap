@@ -10,9 +10,10 @@ import math
 
 
 class Detector:
-    def __init__(self, nt):
+    def __init__(self, nt, vs):
         self.frame = 0
         self.nt = nt
+        self.vs = vs
 
     def preProcessFrame(self, frame):
         lower = self.nt.yml_data['color']['lower']
@@ -43,20 +44,23 @@ class Detector:
             distance = math.sqrt(point3D[0] * point3D[0] + point3D[1] * point3D[1] + point3D[2] * point3D[2])
             if math.isnan(distance) or math.isinf(distance):
                 self.nt.putValue('distance', -1)
+                self.vs.updateSavedDistance(-1)
                 return -1
             self.nt.putValue('distance', round(distance))
+            self.vs.updateSavedDistance(round(distance))
             return -1
         if ratio > .2:
             cx = rect[0] + (rect[2] * .5)
             cy = rect[1]
             self.nt.putValue('center_x', cx)
             self.nt.putValue('center_y', cy)
-
+            self.vs.updateSavedCenter(cx, cy)
             err, point3D = point_cloud.get_value(cx, cy)
             distance = math.sqrt(point3D[0] * point3D[0] + point3D[1] * point3D[1] + point3D[2] * point3D[2])
             if math.isnan(distance) or math.isinf(distance):
                 distance = -1
             self.nt.putValue('distance', round(distance))
+            self.vs.updateSavedDistance(round(distance))
             return c
         self.nt.clearTable()
         return -1
@@ -74,14 +78,16 @@ class Detector:
                 ratio = 0
         else:
             self.nt.putValue('distance', -1)
+            self.vs.updateSavedDistance(-1)
             return -1
         if ratio > .2:
             cx = rect[0] + (rect[2] * .5)
             cy = rect[1]
             self.nt.putValue('center_x', cx)
             self.nt.putValue('center_y', cy)
-
             self.nt.putValue('distance', -1)
+            self.vs.updateSavedCenter(cx, cy)
+            self.vs.updateSavedDistance(-1)
             return c
         self.nt.clearTable()
         return -1
