@@ -9,8 +9,6 @@ import com.team1816.lib.hardware.components.motor.IConfigurableMotorController;
 import com.team1816.lib.hardware.components.motor.LazyTalonFX;
 import com.team1816.lib.hardware.components.motor.LazyTalonSRX;
 import edu.wpi.first.wpilibj.RobotBase;
-import org.checkerframework.checker.units.qual.C;
-
 import java.util.*;
 
 /**
@@ -175,21 +173,20 @@ public class CtreMotorFactory {
         return victor;
     }
 
-    private static SlotConfiguration toSlotConfiguration(PIDSlotConfiguration pidConfiguration){
+    private static SlotConfiguration toSlotConfiguration(
+        PIDSlotConfiguration pidConfiguration
+    ) {
         SlotConfiguration slotConfig = new SlotConfiguration();
-        if(pidConfiguration!=null) {
-            if(pidConfiguration.kP!=null)
-                slotConfig.kP = pidConfiguration.kP;
-            if(pidConfiguration.kI!=null)
-                slotConfig.kI = pidConfiguration.kI;
-            if(pidConfiguration.kD!=null)
-                slotConfig.kD = pidConfiguration.kD;
-            if(pidConfiguration.kP!=null)
-                slotConfig.kF = pidConfiguration.kF;
-            if(pidConfiguration.iZone!=null)
-                slotConfig.integralZone = pidConfiguration.iZone;
-            if(pidConfiguration.allowableError!=null)
-                slotConfig.allowableClosedloopError = pidConfiguration.allowableError;
+        if (pidConfiguration != null) {
+            if (pidConfiguration.kP != null) slotConfig.kP = pidConfiguration.kP;
+            if (pidConfiguration.kI != null) slotConfig.kI = pidConfiguration.kI;
+            if (pidConfiguration.kD != null) slotConfig.kD = pidConfiguration.kD;
+            if (pidConfiguration.kP != null) slotConfig.kF = pidConfiguration.kF;
+            if (pidConfiguration.iZone != null) slotConfig.integralZone =
+                pidConfiguration.iZone;
+            if (
+                pidConfiguration.allowableError != null
+            ) slotConfig.allowableClosedloopError = pidConfiguration.allowableError;
         }
         return slotConfig;
     }
@@ -321,5 +318,4 @@ public class CtreMotorFactory {
         motor.setInverted(subsystem.invertMotor.contains(name));
         motor.setSensorPhase(subsystem.invertSensorPhase.contains(name));
     }
-
 }

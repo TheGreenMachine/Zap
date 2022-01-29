@@ -25,7 +25,6 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,8 +38,10 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     // Controllers
     private final SwerveMotionPlanner motionPlanner;
+
     @Inject
     private static SwerveHeadingController headingController;
+
     @Inject
     private static AutoModeSelector autoModeSelector;
 
@@ -83,8 +84,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 "backRight",
                 Constants.kBackRightModulePosition
             );
-
-
 
         setOpenLoopRampRate(Constants.kOpenLoopRampRate);
 
@@ -161,8 +160,12 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             var rot2d = new edu.wpi.first.math.geometry.Rotation2d(
                 mPeriodicIO.rotation //still jank
             );
-            var xPos = Units.inches_to_meters(mRobotState.getEstimatedX());
-            var yPos = Units.inches_to_meters(mRobotState.getEstimatedY()) + 3.5;
+            var xPos =
+                Units.inches_to_meters(mRobotState.getEstimatedX()) +
+                Constants.StartingPose.getTranslation().x();
+            var yPos =
+                Units.inches_to_meters(mRobotState.getEstimatedY()) +
+                Constants.StartingPose.getTranslation().y();
             mRobotState.field.setRobotPose(xPos, yPos, rot2d);
         } else {
             mPeriodicIO.gyro_heading_no_offset =
@@ -180,13 +183,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     public synchronized void writePeriodicOutputs() {
         for (int i = 0; i < swerveModules.length; i++) {
             if (swerveModules[i] != null) {
-                // change speeds to add some imperfection in tuning to cause rotation
-                if (
-                    RobotBase.isSimulation() &&
-                    (i == SwerveModule.kBackRight || i == SwerveModule.kFrontRight)
-                ) {
-                    mPeriodicIO.wheel_speeds[i] *= .95;
-                }
                 if (mDriveControlState == DriveControlState.OPEN_LOOP) {
                     // TODO: 5/5/21 fix
                     if (
@@ -291,6 +287,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         mPeriodicIO.velocity_inches_per_second =
             deltaPos / (timestamp - lastUpdateTimestamp);
         pose = updatedPose;
+        System.out.println(updatedPose);
         for (SwerveModule module : swerveModules) {
             module.resetPose(pose);
         }

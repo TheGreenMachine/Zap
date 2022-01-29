@@ -7,8 +7,10 @@ public class DrivetrainLogger {
     public static void init(TrackableDrivetrain drivetrain) {
         var isSwerve = drivetrain instanceof SwerveDrivetrain;
         var subsystem = (Subsystem) drivetrain;
-        if(isSwerve) {
-            for (ISwerveModule module : ((SwerveDrivetrain)drivetrain).getSwerveModules()) {
+        if (isSwerve) {
+            for (ISwerveModule module : (
+                (SwerveDrivetrain) drivetrain
+            ).getSwerveModules()) {
                 var name = module.getSubsystemName();
                 var prefix = "Drivetrain/" + name;
 
@@ -65,9 +67,7 @@ public class DrivetrainLogger {
                     "join:Drivetrain/DriveError"
                 );
             }
-        }
-        else {
-
+        } else {
             subsystem.CreateBadLogTopic(
                 "Drivetrain/LeftActVel",
                 "NativeUnits",
@@ -110,7 +110,6 @@ public class DrivetrainLogger {
                 "hide",
                 "join:Drivetrain/VelocityError"
             );
-
         }
         subsystem.CreateBadLogTopic(
             "Drivetrain/X Desired",

@@ -1,7 +1,6 @@
 package com.team1816.lib.auto;
 
 import com.team1816.lib.auto.modes.AutoModeBase;
-
 import javax.inject.Singleton;
 
 /**

@@ -1,5 +1,8 @@
 package com.team1816.frcSeason.subsystems;
 
+import static com.team1816.frcSeason.subsystems.Drive.maxVelTicksPer100ms;
+import static com.team1816.frcSeason.subsystems.SwerveModule.ControlState.OPEN_LOOP;
+
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.CANCoder;
@@ -15,9 +18,6 @@ import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.util.Util;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
-
-import static com.team1816.frcSeason.subsystems.Drive.maxVelTicksPer100ms;
-import static com.team1816.frcSeason.subsystems.SwerveModule.ControlState.OPEN_LOOP;
 
 public class SwerveModule extends Subsystem implements ISwerveModule {
 
@@ -137,14 +137,12 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
                 constants.kAzimuthMotorName,
                 factory.getSubsystem(subsystemName).swerveModules.drivePID
             );
-        var currentLimitConfig = new SupplyCurrentLimitConfiguration(
-            true,
-            25,
-            0,
-            0
-        );
+        var currentLimitConfig = new SupplyCurrentLimitConfiguration(true, 25, 0, 0);
 
-        mAzimuthMotor.configSupplyCurrentLimit(currentLimitConfig, Constants.kLongCANTimeoutMs);
+        mAzimuthMotor.configSupplyCurrentLimit(
+            currentLimitConfig,
+            Constants.kLongCANTimeoutMs
+        );
         mAzimuthMotor.setSensorPhase(constants.kInvertAzimuthSensorPhase);
         mAzimuthMotor.configPeakOutputForward(.4, Constants.kLongCANTimeoutMs);
         mAzimuthMotor.configPeakOutputReverse(-.4, Constants.kLongCANTimeoutMs);
@@ -170,9 +168,9 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
         mConstants = constants;
         System.out.println(
             "Configuring Swerve Module " +
-                constants.kName +
-                " on subsystem " +
-                subsystemName
+            constants.kName +
+            " on subsystem " +
+            subsystemName
         );
 
         mDriveMotor =
@@ -188,14 +186,12 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
                 constants.kAzimuthMotorName,
                 factory.getSubsystem(subsystemName).swerveModules.drivePID
             );
-        var currentLimitConfig = new SupplyCurrentLimitConfiguration(
-            true,
-            25,
-            0,
-            0
-        );
+        var currentLimitConfig = new SupplyCurrentLimitConfiguration(true, 25, 0, 0);
 
-        mAzimuthMotor.configSupplyCurrentLimit(currentLimitConfig, Constants.kLongCANTimeoutMs);
+        mAzimuthMotor.configSupplyCurrentLimit(
+            currentLimitConfig,
+            Constants.kLongCANTimeoutMs
+        );
         mAzimuthMotor.setSensorPhase(constants.kInvertAzimuthSensorPhase);
         mAzimuthMotor.configPeakOutputForward(.4, Constants.kLongCANTimeoutMs);
         mAzimuthMotor.configPeakOutputReverse(-.4, Constants.kLongCANTimeoutMs);

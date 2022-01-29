@@ -10,6 +10,7 @@ import com.team1816.lib.auto.modes.AutoModeBase;
 public class LivingRoomMode extends AutoModeBase {
 
     private DriveTrajectory mDriveTrajectory;
+
     @Inject
     private static TrajectorySet trajectorySet;
 

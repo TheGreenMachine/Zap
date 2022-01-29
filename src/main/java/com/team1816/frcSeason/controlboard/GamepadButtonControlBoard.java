@@ -5,7 +5,6 @@ import com.google.inject.Singleton;
 import com.team1816.frcSeason.Constants;
 import com.team1816.lib.controlboard.Controller;
 import com.team1816.lib.controlboard.IButtonControlBoard;
-import com.team1816.lib.controlboard.LogitechController;
 import com.team254.lib.util.DelayedBoolean;
 import edu.wpi.first.wpilibj.Timer;
 

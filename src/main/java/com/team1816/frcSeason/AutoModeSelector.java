@@ -6,9 +6,8 @@ import com.team1816.lib.auto.modes.DoNothingMode;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import javax.inject.Singleton;
 import java.util.Optional;
+import javax.inject.Singleton;
 
 @Singleton
 public class AutoModeSelector {

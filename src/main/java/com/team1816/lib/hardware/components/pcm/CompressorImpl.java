@@ -18,4 +18,3 @@ public class CompressorImpl extends Compressor implements ICompressor {
         return 0;
     }
 }
-

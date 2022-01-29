@@ -10,6 +10,7 @@ import com.team1816.lib.auto.modes.AutoModeBase;
 public class DriveStraightMode extends AutoModeBase {
 
     private DriveTrajectory mDriveStraight;
+
     @Inject
     private static TrajectorySet trajectorySet;
 

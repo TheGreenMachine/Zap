@@ -9,8 +9,6 @@ import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 
-
-
 public class GhostMotorControllerEnhanced implements IMotorControllerEnhanced {
 
     private double encoderTicks;
@@ -44,9 +42,7 @@ public class GhostMotorControllerEnhanced implements IMotorControllerEnhanced {
     @Override
     public void setInverted(boolean invert) {}
 
-    public void setInverted(InvertType invertType) {
-
-    }
+    public void setInverted(InvertType invertType) {}
 
     @Override
     public boolean getInverted() {
@@ -127,7 +123,10 @@ public class GhostMotorControllerEnhanced implements IMotorControllerEnhanced {
         return 0;
     }
 
-    public ErrorCode configVelocityMeasurementPeriod(SensorVelocityMeasPeriod period, int timeoutMs) {
+    public ErrorCode configVelocityMeasurementPeriod(
+        SensorVelocityMeasPeriod period,
+        int timeoutMs
+    ) {
         return null;
     }
 
@@ -173,7 +172,11 @@ public class GhostMotorControllerEnhanced implements IMotorControllerEnhanced {
         return null;
     }
 
-    public ErrorCode configRemoteFeedbackFilter(BaseTalon talonRef, int remoteOrdinal, int timeoutMs) {
+    public ErrorCode configRemoteFeedbackFilter(
+        BaseTalon talonRef,
+        int remoteOrdinal,
+        int timeoutMs
+    ) {
         return null;
     }
 

@@ -14,6 +14,7 @@ public class Camera {
 
     // Components
     private final NetworkTable networkTable;
+
     @Inject
     private static LedManager led;
 

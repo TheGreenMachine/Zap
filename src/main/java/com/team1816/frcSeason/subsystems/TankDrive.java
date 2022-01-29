@@ -24,7 +24,6 @@ import com.team254.lib.util.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
-
 import java.util.List;
 
 @Singleton
@@ -130,7 +129,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         setBrakeMode(mIsBrakeMode);
 
         mMotionPlanner = new TankMotionPlanner();
-
     }
 
     @Override
@@ -176,8 +174,12 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             var rot2d = new edu.wpi.first.math.geometry.Rotation2d(
                 mPeriodicIO.gyro_heading_no_offset.getRadians()
             );
-            var xPos = Units.inches_to_meters(mRobotState.getEstimatedX());
-            var yPos = Units.inches_to_meters(mRobotState.getEstimatedY()) + 3.5;
+            var xPos =
+                Units.inches_to_meters(mRobotState.getEstimatedX()) +
+                Constants.StartingPose.getTranslation().x();
+            var yPos =
+                Units.inches_to_meters(mRobotState.getEstimatedY()) +
+                Constants.StartingPose.getTranslation().y();
             mRobotState.field.setRobotPose(xPos, yPos, rot2d);
         } else {
             mPeriodicIO.left_position_ticks = mLeftMaster.getSelectedSensorPosition(0);

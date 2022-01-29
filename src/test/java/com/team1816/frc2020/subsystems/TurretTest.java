@@ -58,6 +58,7 @@ public class TurretTest extends TestCase {
         );
         assertEquals(Turret.ControlMode.FIELD_FOLLOWING, turret.getControlMode());
     }
+
     public void testTurretAutoHome() {
         target.setControlMode(Turret.ControlMode.CAMERA_FOLLOWING);
     }

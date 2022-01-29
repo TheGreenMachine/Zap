@@ -97,6 +97,15 @@ public class RobotState {
             new InterpolatingDouble(start_time),
             initial_vehicle_to_turret
         );
+        field.setRobotPose(
+            new edu.wpi.first.math.geometry.Pose2d(
+                Constants.StartingPose.getTranslation().x(),
+                Constants.StartingPose.getTranslation().y(),
+                new edu.wpi.first.math.geometry.Rotation2d(
+                    Constants.StartingPose.getRotation().getRadians()
+                )
+            )
+        );
     }
 
     public synchronized void reset(double start_time, Pose2d initial_field_to_vehicle) {
@@ -376,8 +385,8 @@ public class RobotState {
 
     public synchronized void outputToSmartDashboard() {
         SmartDashboard.putString("Robot Velocity", getMeasuredVelocity().toString());
-            SmartDashboard.putNumber("Estimated Pose X", getEstimatedX());
-            SmartDashboard.putNumber("Estimated Pose Y", getEstimatedY());
+        SmartDashboard.putNumber("Estimated Pose X", getEstimatedX());
+        SmartDashboard.putNumber("Estimated Pose Y", getEstimatedY());
 
         SmartDashboard.putNumber("Field to Turret", getLatestFieldToTurret());
         SmartDashboard.putNumber(

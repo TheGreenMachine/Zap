@@ -9,6 +9,7 @@ import com.team1816.lib.auto.modes.AutoModeBase;
 public class BarrelMode extends AutoModeBase {
 
     private DriveTrajectory trajectory;
+
     @Inject
     private static TrajectorySet trajectorySet;
 

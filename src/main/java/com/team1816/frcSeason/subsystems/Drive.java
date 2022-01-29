@@ -37,6 +37,7 @@ public abstract class Drive
     // Components
     @Inject
     protected static LedManager ledManager;
+
     protected PigeonIMU mPigeon;
     protected SwerveModule[] swerveModules;
 
@@ -103,30 +104,49 @@ public abstract class Drive
     public double getKP() {
         PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
         defaultPIDConfig.kP = 0.0;
-        return (!factory.getSubsystem(NAME).implemented)?
-            factory.getSubsystem(NAME).pidConfig.getOrDefault(pidSlot, defaultPIDConfig).kP:0.0;
+        return (!factory.getSubsystem(NAME).implemented)
+            ? factory
+                .getSubsystem(NAME)
+                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+                .kP
+            : 0.0;
     }
 
     @Override
     public double getKI() {
         PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
         defaultPIDConfig.kI = 0.0;
-        return (!factory.getSubsystem(NAME).implemented)?
-            factory.getSubsystem(NAME).pidConfig.getOrDefault(pidSlot, defaultPIDConfig).kI:0.0;    }
+        return (!factory.getSubsystem(NAME).implemented)
+            ? factory
+                .getSubsystem(NAME)
+                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+                .kI
+            : 0.0;
+    }
 
     @Override
     public double getKD() {
         PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
         defaultPIDConfig.kD = 0.0;
-        return (!factory.getSubsystem(NAME).implemented)?
-            factory.getSubsystem(NAME).pidConfig.getOrDefault(pidSlot, defaultPIDConfig).kD:0.0;    }
+        return (!factory.getSubsystem(NAME).implemented)
+            ? factory
+                .getSubsystem(NAME)
+                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+                .kD
+            : 0.0;
+    }
 
     @Override
     public double getKF() {
         PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
         defaultPIDConfig.kF = 0.0;
-        return (!factory.getSubsystem(NAME).implemented)?
-            factory.getSubsystem(NAME).pidConfig.getOrDefault(pidSlot, defaultPIDConfig).kF:0.0;    }
+        return (!factory.getSubsystem(NAME).implemented)
+            ? factory
+                .getSubsystem(NAME)
+                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+                .kF
+            : 0.0;
+    }
 
     @Singleton
     public static class PeriodicIO {

@@ -39,5 +39,4 @@ public class YamlConfig {
     public String toString() {
         return FORMATTER.dump(this);
     }
-
 }

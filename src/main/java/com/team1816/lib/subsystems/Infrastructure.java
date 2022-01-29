@@ -2,13 +2,10 @@ package com.team1816.lib.subsystems;
 
 import com.google.inject.Inject;
 import com.team1816.frcSeason.subsystems.Superstructure;
-import com.team1816.frcSeason.Constants;
 import com.team1816.lib.hardware.components.pcm.ICompressor;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.lib.loops.Loop;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 /**
  * Subsystem to ensure the compressor never runs while the superstructure moves
@@ -30,7 +27,7 @@ public class Infrastructure extends Subsystem {
     public Infrastructure() {
         super("Infrastructure");
         mCompressor = factory.getCompressor();
-        if( factory.getConstant("compressorEnabled")>0) {
+        if (factory.getConstant("compressorEnabled") > 0) {
             mCompressor.stop();
         }
     }
@@ -63,10 +60,8 @@ public class Infrastructure extends Subsystem {
                                     lastCompressorOn = true;
                                 }
                             }
-                        }
-                        else{
+                        } else {
                             stopCompressor();
-
                         }
                     }
                 }

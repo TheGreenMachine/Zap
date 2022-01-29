@@ -12,8 +12,6 @@ public class ActionManager {
         this.update(); //Used to insured actions are in intialized state and doesn't get triggered on enabling
     }
 
-
-
     public void update() {
         actions.forEach(ControlUtils.ButtonAction::update);
     }

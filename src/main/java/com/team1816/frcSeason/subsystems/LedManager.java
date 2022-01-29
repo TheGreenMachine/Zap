@@ -9,9 +9,8 @@ import com.team1816.lib.subsystems.Subsystem;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.Timer;
-
-import javax.inject.Singleton;
 import java.awt.*;
+import javax.inject.Singleton;
 
 @Singleton
 public class LedManager extends Subsystem {
@@ -57,7 +56,8 @@ public class LedManager extends Subsystem {
         super(NAME);
         this.canifier = factory.getCanifier(NAME);
         this.cameraCanifier = factory.getCanifier("camera");
-        this.cameraLed = new DigitalOutput((int) factory.getConstant(NAME, "cameraLed", 1));
+        this.cameraLed =
+            new DigitalOutput((int) factory.getConstant(NAME, "cameraLed", 1));
 
         configureCanifier(canifier);
         configureCanifier(cameraCanifier);
@@ -165,10 +165,10 @@ public class LedManager extends Subsystem {
         if (cameraLed != null) {
             if (outputsChanged) {
                 cameraLed.set(cameraLedOn);
-//                cameraCanifier.setLEDOutput(
-//                    cameraLedOn ? 1 : 0,
-//                    CANifier.LEDChannel.LEDChannelB
-//                );
+                //                cameraCanifier.setLEDOutput(
+                //                    cameraLedOn ? 1 : 0,
+                //                    CANifier.LEDChannel.LEDChannelB
+                //                );
             }
         }
         if (canifier != null) {

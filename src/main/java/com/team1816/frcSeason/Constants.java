@@ -1,13 +1,14 @@
 package com.team1816.frcSeason;
 
 import com.team1816.lib.hardware.RobotFactory;
+import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Translation2d;
 
 public class Constants {
 
     private static final RobotFactory factory = Robot.getFactory();
 
-    public static final double kLooperDt = factory.getConstant("kLooperDt",.020);
+    public static final double kLooperDt = factory.getConstant("kLooperDt", .020);
 
     // Drivetrain characterization
     public static final double kDriveWheelTrackWidthInches = factory.getConstant(
@@ -48,6 +49,8 @@ public class Constants {
         kBackRightModulePosition,
         kBackLeftModulePosition,
     };
+
+    public static final Pose2d StartingPose = new Pose2d(.5, 3.5, 0);
 
     // CAN Timeouts
     public static final int kCANTimeoutMs = 10; // use for important on the fly updates

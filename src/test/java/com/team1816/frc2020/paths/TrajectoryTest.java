@@ -18,6 +18,7 @@ import org.junit.Test;
 public class TrajectoryTest {
 
     public static final double kTestEpsilon = 1e-5;
+
     @Inject
     private static TrajectorySet set;
 

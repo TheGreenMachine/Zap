@@ -5,7 +5,6 @@ import com.team1816.frcSeason.paths.paths2021.*;
 import com.team254.lib.geometry.Pose2dWithCurvature;
 import com.team254.lib.trajectory.Trajectory;
 import com.team254.lib.trajectory.timing.TimedState;
-
 import javax.inject.Singleton;
 
 @Singleton

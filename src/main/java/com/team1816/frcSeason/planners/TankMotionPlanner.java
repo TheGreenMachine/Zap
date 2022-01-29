@@ -15,11 +15,10 @@ import com.team254.lib.trajectory.timing.TimingUtil;
 import com.team254.lib.util.CSVWritable;
 import com.team254.lib.util.Units;
 import com.team254.lib.util.Util;
-
-import javax.inject.Singleton;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import javax.inject.Singleton;
 
 @Singleton
 public class TankMotionPlanner implements CSVWritable {

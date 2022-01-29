@@ -42,17 +42,21 @@ public class Turret extends Subsystem implements PidProvider {
         NAME,
         "encPPR"
     );
-    private static final int TURRET_ENCODER_MASK = TURRET_ENCODER_PPR-1;
+    private static final int TURRET_ENCODER_MASK = TURRET_ENCODER_PPR - 1;
     private static final int ALLOWABLE_ERROR_TICKS = 5;
     private static Turret INSTANCE;
     // Components
     private final IMotorControllerEnhanced turret;
+
     @Inject
     private static Camera camera;
+
     @Inject
     private static RobotState robotState;
+
     @Inject
     private static LedManager led;
+
     private final String pidSlot = "slot0";
     private final double kP;
     private final double kI;
@@ -231,8 +235,12 @@ public class Turret extends Subsystem implements PidProvider {
         turretAngleRelativeToField =
             robotState.getHeadingRelativeToInitial().getDegrees();
         if (RobotBase.isSimulation()) {
-            double xPos = Units.inches_to_meters(robotState.getEstimatedX());
-            double yPos = Units.inches_to_meters(robotState.getEstimatedY()) + 3.5;
+            double xPos =
+                Units.inches_to_meters(robotState.getEstimatedX()) +
+                Constants.StartingPose.getTranslation().x();
+            double yPos =
+                Units.inches_to_meters(robotState.getEstimatedY()) +
+                Constants.StartingPose.getTranslation().y();
             // show turret
             var turret = robotState.field.getObject("turret");
             //TODO get turret to work in simulator and double check if math/whatever variable it's using is correct
@@ -270,12 +278,11 @@ public class Turret extends Subsystem implements PidProvider {
             convertTurretDegreesToTicks(angle * .10) +
             followingTurretPos -
             ABS_TICKS_SOUTH;
-//        System.out.println(angle + " " + adj + " " + followingTurretPos);
+        //        System.out.println(angle + " " + adj + " " + followingTurretPos);
         if (adj != followingTurretPos) {
             followingTurretPos = adj;
             outputsChanged = true;
         }
-
     }
 
     private void trackGyro() {

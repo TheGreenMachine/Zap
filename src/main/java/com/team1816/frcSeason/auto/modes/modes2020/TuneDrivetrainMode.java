@@ -11,6 +11,7 @@ import com.team254.lib.geometry.Rotation2d;
 public class TuneDrivetrainMode extends AutoModeBase {
 
     private DriveTrajectory trajectory;
+
     @Inject
     private static TrajectorySet trajectorySet;
 
