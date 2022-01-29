@@ -2,8 +2,7 @@ package com.team1816.frcSeason.paths.paths2020;
 
 import com.team1816.lib.paths.PathContainer;
 import com.team254.lib.control.Path;
-import com.team254.lib.geometry.Pose2d;
-import com.team1816.lib.geometry.Rotation2d;
+import com.team1816.lib.geometry.Pose2d;import com.team1816.lib.geometry.Rotation2d;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +14,7 @@ public class LivingRoomPath implements PathContainer {
     }
 
     @Override
-    public List<Pose2d> buildWaypoints() {
+    public List<com.team1816.lib.geometry.Pose2d> buildWaypoints() {
         List<Pose2d> waypoints = new ArrayList<>();
         waypoints.add(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0)));
         waypoints.add(new Pose2d(79.5, 11.0, Rotation2d.fromDegrees(45)));

@@ -3,8 +3,7 @@ package com.team1816.lib.paths;
 import com.team1816.frcSeason.Robot;
 import com.team1816.frcSeason.planners.SwerveMotionPlanner;
 import com.team254.lib.control.Path;
-import com.team254.lib.geometry.Pose2d;
-import com.team254.lib.geometry.Pose2dWithCurvature;
+import com.team1816.lib.geometry.Pose2d;import com.team1816.lib.geometry.Pose2dWithCurvature;
 import com.team1816.lib.geometry.Rotation2d;
 import com.team254.lib.trajectory.Trajectory;
 import com.team254.lib.trajectory.TrajectoryUtil;
@@ -35,7 +34,7 @@ public interface PathContainer {
 
     Path buildPath();
 
-    List<Pose2d> buildWaypoints();
+    List<com.team1816.lib.geometry.Pose2d> buildWaypoints();
 
     default Trajectory<TimedState<Pose2dWithCurvature>> generateTrajectory() {
         return generateBaseTrajectory(isReversed(), buildWaypoints());
