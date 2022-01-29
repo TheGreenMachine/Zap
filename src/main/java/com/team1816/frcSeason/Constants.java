@@ -20,6 +20,7 @@ public class Constants {
     public static final double kDriveWheelDiameterInches = factory.getConstant(
         "wheelDiameter"
     );
+    public static final double kWheelCircumference = kDriveWheelDiameterInches * Math.PI;
     public static final double kDriveWheelRadiusInches = kDriveWheelDiameterInches / 2.0;
     public static double kTrackScrubFactor = factory.getConstant("kTrackScrubFactor");
 

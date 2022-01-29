@@ -10,12 +10,14 @@ import com.team1816.frcSeason.Constants;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.lib.loops.Loop;
+import com.team1816.lib.math.Conversions;
 import com.team1816.lib.subsystems.ISwerveModule;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.util.Util;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -593,6 +595,21 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
             getAzimuthPosition(),
             mConstants.kAzimuthClosedLoopAllowableError
         );
+    }
+    private void resetToAbsolute(){
+        double absolutePosition = Conversions.degreesToFalcon(getCanCoder().getDegrees() - angleOffset, Constants.Swerve.angleGearRatio);
+        mAzimuthMotor.setSelectedSensorPosition(absolutePosition);
+    }
+
+    public Rotation2d getCanCoder(){
+        return Rotation2d.fromDegrees(mCanCoder.getAbsolutePosition());
+    }
+
+
+    public SwerveModuleState getState(){
+        double velocity = Conversions.falconToMPS(mDriveMotor.getSelectedSensorVelocity(0), Constants.kWheelCircumference, Constants.driveGearRatio);
+        Rotation2d angle = Rotation2d.fromDegrees(Conversions.falconToDegrees(mAzimuthMotor.getSelectedSensorPosition(0), Constants.angleGearRatio));
+        return new SwerveModuleState(velocity, angle);
     }
 
     @Override
