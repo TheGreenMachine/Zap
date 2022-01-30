@@ -12,14 +12,13 @@ import com.team1816.frcSeason.Constants;
 import com.team1816.frcSeason.planners.TankMotionPlanner;
 import com.team1816.lib.hardware.EnhancedMotorChecker;
 import com.team1816.lib.subsystems.DifferentialDrivetrain;
-import com.team1816.lib.geometry.Pose2d;import com.team1816.lib.geometry.Pose2dWithCurvature;
-import com.team1816.lib.geometry.Rotation2d;
-import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.trajectory.TrajectoryIterator;
 import com.team254.lib.trajectory.timing.TimedState;
 import com.team254.lib.util.CheesyDriveHelper;
 import com.team254.lib.util.DriveSignal;
 import com.team254.lib.util.Units;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -175,10 +174,10 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             );
             var xPos =
                 Units.inches_to_meters(mRobotState.getEstimatedX()) +
-                Constants.StartingPose.getTranslation().x();
+                Constants.StartingPose.getTranslation().getX();
             var yPos =
                 Units.inches_to_meters(mRobotState.getEstimatedY()) +
-                Constants.StartingPose.getTranslation().y();
+                Constants.StartingPose.getTranslation().getY();
             mRobotState.field.setRobotPose(xPos, yPos, rot2d);
         } else {
             mPeriodicIO.left_position_ticks = mLeftMaster.getSelectedSensorPosition(0);
@@ -281,14 +280,14 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         mPeriodicIO.left_demand = driveSignal.getLeft();
         mPeriodicIO.right_demand = driveSignal.getRight();
     }
-
-    @Override
-    public void setVelocity(List<Translation2d> driveVectors) {
-        setVelocity(
-            new DriveSignal(driveVectors.get(0).norm(), driveVectors.get(1).norm()),
-            DriveSignal.NEUTRAL
-        );
-    }
+//
+//    @Override
+//    public void setVelocity(List<Translation2d> driveVectors) {
+//        setVelocity(
+//            new DriveSignal(driveVectors.get(0).norm(), driveVectors.get(1).norm()),
+//            DriveSignal.NEUTRAL
+//        );
+//    }
 
     /**
      * Configure talons for velocity control
@@ -480,7 +479,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     public void zeroSensors() {
         System.out.println("Zeroing drive sensors!");
         resetPigeon();
-        setHeading(Rotation2d.identity());
+        setHeading(new Rotation2d());
         resetEncoders();
         if (mPigeon.getLastError() != ErrorCode.OK) {
             // BadLog.createValue("PigeonErrorDetected", "true");

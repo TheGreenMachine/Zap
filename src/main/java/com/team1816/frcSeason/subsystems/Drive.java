@@ -5,19 +5,18 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.frcSeason.Constants;
 import com.team1816.frcSeason.RobotState;
-import com.team1816.lib.geometry.Rotation2d;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.lib.loops.Loop;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.subsystems.TrackableDrivetrain;
-import com.team1816.lib.geometry.Pose2d;
-import com.team1816.lib.geometry.Pose2dWithCurvature;
-import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.trajectory.TrajectoryIterator;
 import com.team254.lib.trajectory.timing.TimedState;
 import com.team254.lib.util.*;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -50,14 +49,14 @@ public abstract class Drive
     protected static RobotState mRobotState;
 
     // Odometry variables
-    protected Pose2d pose = Pose2d.identity();
-    protected Pose2d startingPosition = Pose2d.identity();
+    protected Pose2d pose = new Pose2d();
+    protected Pose2d startingPosition = new Pose2d();
     protected double lastUpdateTimestamp = 0;
 
     // hardware states
     protected String pidSlot = "slot0";
     protected boolean mIsBrakeMode;
-    protected Rotation2d mGyroOffset = Rotation2d.identity();
+    protected Rotation2d mGyroOffset = new Rotation2d();
     protected double openLoopRampRate;
 
     protected PeriodicIO mPeriodicIO;
@@ -77,10 +76,10 @@ public abstract class Drive
     public static final double maxVelTicksPer100ms = factory.getConstant("maxTicks");
     public static final double DRIVE_ENCODER_PPR = factory.getConstant(NAME, "encPPR");
     public static final List<Translation2d> ZERO_DRIVE_VECTOR = List.of(
-        Translation2d.identity(),
-        Translation2d.identity(),
-        Translation2d.identity(),
-        Translation2d.identity()
+        new Translation2d(),
+        new Translation2d(),
+        new Translation2d(),
+        new Translation2d()
     );
 
     protected Drive() {
@@ -155,10 +154,10 @@ public abstract class Drive
 
         // INPUTS
         public double timestamp;
-        public Rotation2d gyro_heading = Rotation2d.identity();
+        public Rotation2d gyro_heading = new Rotation2d();
         // no_offset = Relative to initial position, unaffected by reset
-        public Rotation2d gyro_heading_no_offset = Rotation2d.identity();
-        public Pose2d error = Pose2d.identity();
+        public Rotation2d gyro_heading_no_offset = new Rotation2d();
+        public Pose2d error = new Pose2d();
         public double drive_distance_inches;
         public double velocity_inches_per_second = 0;
         public double left_position_ticks;
@@ -186,16 +185,16 @@ public abstract class Drive
         public double right_feedforward;
         public double[] wheel_speeds = new double[] { 0, 0, 0, 0 };
         public Rotation2d[] wheel_azimuths = new Rotation2d[] {
-            Rotation2d.identity(),
-            Rotation2d.identity(),
-            Rotation2d.identity(),
-            Rotation2d.identity(),
+            new Rotation2d(),
+            new Rotation2d(),
+            new Rotation2d(),
+            new Rotation2d(),
         };
-        public Rotation2d desired_heading = Rotation2d.identity();
+        public Rotation2d desired_heading = new Rotation2d();
         TimedState<Pose2dWithCurvature> path_setpoint = new TimedState<>(
             Pose2dWithCurvature.identity()
         );
-        public Translation2d drive_vector = Translation2d.identity();
+        public Translation2d drive_vector = new Translation2d();
     }
 
     @Override
@@ -321,7 +320,7 @@ public abstract class Drive
         System.out.println("set heading: " + heading.getDegrees());
 
         mGyroOffset =
-            heading.rotateBy(Rotation2d.fromDegrees(mPigeon.getFusedHeading()).inverse());
+            heading.minus(Rotation2d.fromDegrees(mPigeon.getFusedHeading()));
         System.out.println("gyro offset: " + mGyroOffset.getDegrees());
 
         mPeriodicIO.desired_heading = heading;
@@ -352,7 +351,7 @@ public abstract class Drive
 
     @Override
     public void zeroSensors() {
-        zeroSensors(Pose2d.identity());
+        zeroSensors(new Pose2d());
     }
 
     public abstract void zeroSensors(Pose2d pose);

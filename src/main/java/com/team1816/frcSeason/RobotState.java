@@ -1,15 +1,16 @@
 package com.team1816.frcSeason;
 
 import com.google.inject.Singleton;
-import com.team1816.lib.geometry.Pose2d;import com.team1816.lib.geometry.Rotation2d;
-import com.team254.lib.geometry.Translation2d;
-import com.team254.lib.geometry.Twist2d;
 import com.team254.lib.util.InterpolatingDouble;
 import com.team254.lib.util.InterpolatingTreeMap;
 import com.team254.lib.util.MovingAverageTwist2d;
 import com.team254.lib.vision.AimingParameters;
 import com.team254.lib.vision.GoalTracker;
 import com.team254.lib.vision.GoalTracker.TrackReportComparator;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -73,13 +74,13 @@ public class RobotState {
     List<Translation2d> mCameraToVisionTargetPosesLow = new ArrayList<>();
     List<Translation2d> mCameraToVisionTargetPosesHigh = new ArrayList<>();
 
-    private Rotation2d headingRelativeToInitial = Rotation2d.identity();
+    private Rotation2d headingRelativeToInitial = new Rotation2d();
 
     public final Field2d field = new Field2d();
 
     public RobotState() {
         SmartDashboard.putData("Field", field);
-        reset(0.0, Pose2d.identity(), Rotation2d.identity());
+        reset(0.0, new Pose2d(), new Rotation2d());
     }
 
     /**
@@ -98,8 +99,8 @@ public class RobotState {
         );
         field.setRobotPose(
             new edu.wpi.first.math.geometry.Pose2d(
-                Constants.StartingPose.getTranslation().x(),
-                Constants.StartingPose.getTranslation().y(),
+                Constants.StartingPose.getTranslation().getX(),
+                Constants.StartingPose.getTranslation().getY(),
                 new edu.wpi.first.math.geometry.Rotation2d(
                     Constants.StartingPose.getRotation().getRadians()
                 )
@@ -108,19 +109,19 @@ public class RobotState {
     }
 
     public synchronized void reset(double start_time, Pose2d initial_field_to_vehicle) {
-        field_to_vehicle_ = new InterpolatingTreeMap<>(kObservationBufferSize);
+        field_to_vehicle_ = new InterpolatingTreeMap<UNGALABUNGAWUNGA>(kObservationBufferSize);
         field_to_vehicle_.put(
             new InterpolatingDouble(start_time),
             initial_field_to_vehicle
         );
-        vehicle_velocity_predicted_ = Twist2d.identity();
-        vehicle_velocity_measured_ = Twist2d.identity();
+        vehicle_velocity_predicted_ = new Twist2d();
+        vehicle_velocity_measured_ = new Twist2d();
         vehicle_velocity_measured_filtered_ = new MovingAverageTwist2d(25);
         distance_driven_ = 0.0;
     }
 
     public synchronized void reset() {
-        reset(Timer.getFPGATimestamp(), Pose2d.identity(), Rotation2d.identity());
+        reset(Timer.getFPGATimestamp(), new Pose2d(), new Rotation2d());
     }
 
     /**
@@ -129,25 +130,25 @@ public class RobotState {
      */
 
     public synchronized double getEstimatedX() {
-        return field_to_vehicle_.lastEntry().getValue().getTranslation().x();
+        return field_to_vehicle_.lastEntry().getValue().getTranslation().getX();
     }
 
     public synchronized double getEstimatedY() {
-        return field_to_vehicle_.lastEntry().getValue().getTranslation().y();
+        return field_to_vehicle_.lastEntry().getValue().getTranslation().getY();
     }
 
     public synchronized double getPoseX(double timestamp) {
         return field_to_vehicle_
             .getInterpolated(new InterpolatingDouble(timestamp))
             .getTranslation()
-            .x();
+            .getX();
     }
 
     public synchronized double getPoseY(double timestamp) {
         return field_to_vehicle_
             .getInterpolated(new InterpolatingDouble(timestamp))
             .getTranslation()
-            .y();
+            .getY();
     }
 
     public synchronized Pose2d getFieldToVehicle(double timestamp) {
@@ -379,7 +380,7 @@ public class RobotState {
         //     return Pose2d.fromTranslation(new Translation2d(-6.0, 0.0));
         // }
 
-        return Pose2d.identity();
+        return new Pose2d();
     }
 
     public synchronized void outputToSmartDashboard() {

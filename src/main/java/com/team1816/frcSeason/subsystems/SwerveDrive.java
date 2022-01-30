@@ -6,30 +6,21 @@ import com.google.inject.Singleton;
 import com.team1816.frcSeason.AutoModeSelector;
 import com.team1816.frcSeason.Constants;
 import com.team1816.frcSeason.planners.SwerveMotionPlanner;
-import com.team1816.lib.geometry.Rotation2d;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.SwerveDrivetrain;
 import com.team254.lib.control.SwerveHeadingController;
-import com.team1816.lib.geometry.Pose2d;import com.team1816.lib.geometry.Pose2dWithCurvature;
-import com.team254.lib.geometry.Translation2d;
-import com.team254.lib.trajectory.TrajectoryIterator;
-import com.team254.lib.trajectory.timing.TimedState;
-import com.team254.lib.util.DriveSignal;
 import com.team254.lib.util.SwerveDriveSignal;
 import com.team254.lib.util.Units;
-import com.team254.lib.util.Util;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @Singleton
 public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider {
@@ -48,8 +39,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     private static AutoModeSelector autoModeSelector;
 
     // Odometry variables
-    private Pose2d pose = Pose2d.identity();
-    private Pose2d startingPosition = Pose2d.identity();
+    private Pose2d pose = new Pose2d();
+    private Pose2d startingPosition = new Pose2d();
     private double lastUpdateTimestamp = 0;
     private SwerveDriveOdometry swerveOdometry;
 
@@ -165,10 +156,10 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             );
             var xPos =
                 Units.inches_to_meters(mRobotState.getEstimatedX()) +
-                Constants.StartingPose.getTranslation().x();
+                Constants.StartingPose.getTranslation().getX();
             var yPos =
                 Units.inches_to_meters(mRobotState.getEstimatedY()) +
-                Constants.StartingPose.getTranslation().y();
+                Constants.StartingPose.getTranslation().getY();
             mRobotState.field.setRobotPose(xPos, yPos, rot2d);
         } else {
             mPeriodicIO.gyro_heading_no_offset =
@@ -425,7 +416,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         System.out.println("Zeroing drive sensors!");
         resetPigeon();
         setHeading(pose.getRotation());
-        resetPose(pose);
+        resetOdometry(pose);
 
         for (SwerveModule module : swerveModules) {
             if (module != null) {
@@ -442,15 +433,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         //        } else {
         autoModeSelector.setHardwareFailure(false);
         //        }
-    }
-
-    public void resetPose(Pose2d pose) {
-        this.pose = pose;
-        mPeriodicIO.drive_distance_inches = 0;
-        mPeriodicIO.velocity_inches_per_second = 0;
-        for (SwerveModule module : swerveModules) {
-            module.resetPose(pose);
-        }
     }
 
 

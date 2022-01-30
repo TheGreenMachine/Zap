@@ -5,9 +5,12 @@ import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.team1816.frcSeason.subsystems.Drive;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.RobotFactory;
-import com.team1816.lib.geometry.Pose2d;import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.util.Units;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
 
 public class Constants {
 
@@ -62,7 +65,7 @@ public class Constants {
         kBackLeftModulePosition,
     };
 
-    public static final Pose2d StartingPose = new Pose2d(.5, 3.5, 0);
+    public static final Pose2d StartingPose = new Pose2d(.5, 3.5, new Rotation2d());
 
     // CAN Timeouts
     public static final int kCANTimeoutMs = 10; // use for important on the fly updates
@@ -124,10 +127,10 @@ public class Constants {
             VelocityMeasPeriod.Period_100Ms; // dt for velocity measurements, ms
 
         public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
-            new edu.wpi.first.math.geometry.Translation2d(Constants.kDriveWheelbaseLengthMeters / 2.0, Constants.kDriveWheelTrackWidthMeters / 2.0),
-            new edu.wpi.first.math.geometry.Translation2d(Constants.kDriveWheelbaseLengthMeters / 2.0, -Constants.kDriveWheelTrackWidthMeters / 2.0),
-            new edu.wpi.first.math.geometry.Translation2d(-Constants.kDriveWheelbaseLengthMeters / 2.0, Constants.kDriveWheelTrackWidthMeters / 2.0),
-            new edu.wpi.first.math.geometry.Translation2d(-Constants.kDriveWheelbaseLengthMeters / 2.0, -Constants.kDriveWheelTrackWidthMeters / 2.0));
+            new Translation2d(Constants.kDriveWheelbaseLengthMeters / 2.0, Constants.kDriveWheelTrackWidthMeters / 2.0),
+            new Translation2d(Constants.kDriveWheelbaseLengthMeters / 2.0, -Constants.kDriveWheelTrackWidthMeters / 2.0),
+            new Translation2d(-Constants.kDriveWheelbaseLengthMeters / 2.0, Constants.kDriveWheelTrackWidthMeters / 2.0),
+            new Translation2d(-Constants.kDriveWheelbaseLengthMeters / 2.0, -Constants.kDriveWheelTrackWidthMeters / 2.0));
     }
 
     // Swerve Heading Controller -- CHEESY Constants
@@ -213,6 +216,12 @@ public class Constants {
     public static final boolean kIsLoggingAutonomous = factory.getConstant("logAuto") > 0;
 
     public static final boolean kUseAutoAim = factory.getConstant("useAutoAim") > 0;
+
+    TrajectoryConfig config = // to be called alongside every path we make b/c wpilib generateTrajectory requires a config
+        new TrajectoryConfig(
+            Units.inches_to_meters(Constants.kPathFollowingMaxVel),
+            Units.inches_to_meters(Constants.kPathFollowingMaxAccel))
+            .setKinematics(Constants.Swerve.swerveKinematics or tank plz); // TODO make the kinematics constant choose tank or swerve for yml?
 
     // Do not change anything after this line unless you rewire the robot and
     // update the spreadsheet!

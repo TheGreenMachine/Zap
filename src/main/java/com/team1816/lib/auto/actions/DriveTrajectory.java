@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.team1816.frcSeason.RobotState;
 import com.team1816.frcSeason.subsystems.Drive;
 import com.team1816.frcSeason.subsystems.SwerveDrive;
-import com.team1816.lib.geometry.Rotation2d;
 import com.team1816.lib.geometry.Pose2dWithCurvature;
 import com.team254.lib.trajectory.TimedView;
 import com.team254.lib.trajectory.TrajectoryIterator;

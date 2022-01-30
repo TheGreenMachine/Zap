@@ -1,8 +1,7 @@
 package com.team1816.frcSeason.planners;
 
 import com.team1816.frcSeason.Constants;
-import com.team1816.lib.geometry.Pose2d;import com.team1816.lib.geometry.Pose2dWithCurvature;
-import com.team1816.lib.geometry.Rotation2d;
+import com.team1816.lib.geometry.Pose2dWithCurvature;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.physics.DCMotorTransmission;
 import com.team254.lib.physics.DifferentialDrive;
@@ -14,6 +13,8 @@ import com.team254.lib.trajectory.timing.TimingUtil;
 import com.team254.lib.util.CSVWritable;
 import com.team254.lib.util.Units;
 import com.team254.lib.util.Util;
+import edu.wpi.first.math.geometry.Pose2d;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;

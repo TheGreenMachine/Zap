@@ -3,7 +3,6 @@ package com.team1816.lib.paths;
 import com.team1816.lib.hardware.RobotFactory;
 import com.team254.lib.control.Path;
 import com.team254.lib.control.PathSegment;
-import com.team1816.lib.geometry.Pose2d;import com.team1816.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
 import java.util.List;
 

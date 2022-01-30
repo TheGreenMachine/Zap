@@ -1,8 +1,7 @@
 package com.team1816.frcSeason.planners;
 
 import com.team1816.frcSeason.Constants;
-import com.team1816.lib.geometry.Pose2d;import com.team1816.lib.geometry.Pose2dWithCurvature;
-import com.team1816.lib.geometry.Rotation2d;
+import com.team1816.lib.geometry.Pose2dWithCurvature;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.trajectory.*;
 import com.team254.lib.trajectory.timing.TimedState;

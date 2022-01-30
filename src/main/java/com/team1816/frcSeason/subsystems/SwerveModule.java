@@ -14,11 +14,10 @@ import com.team1816.lib.math.Conversions;
 import com.team1816.lib.subsystems.ISwerveModule;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.util.ModuleState;
-import com.team254.lib.geometry.Pose2d;
-import com.team1816.lib.geometry.Rotation2d;
-import com.team254.lib.geometry.Translation2d;
-import com.team254.lib.util.Util;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
@@ -56,7 +55,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
     private boolean isBrakeMode = false;
     private double driveEncoderSimPosition = 0;
     private double previousEncDistance = 0;
-    private Translation2d position = Translation2d.identity();
+    private Translation2d position = new Translation2d();
     private final Translation2d startingPosition;
     private Pose2d estimatedRobotPose = new Pose2d();
     private double lastAngle;
@@ -138,13 +137,6 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
         return estimatedRobotPose;
     }
 
-    public synchronized void resetPose(Pose2d robotPose) {
-        Translation2d modulePosition = robotPose
-            .transformBy(Pose2d.fromTranslation(startingPosition))
-            .getTranslation();
-        position = modulePosition;
-    }
-
 //    public synchronized void setOpenLoop(double speed, Rotation2d azimuth) {
 //        if (mControlState != OPEN_LOOP) {
 //            mControlState = OPEN_LOOP;
@@ -170,7 +162,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
             driveEncoderSimPosition += adjDriveDemand * TICK_RATIO_PER_LOOP;
             mPeriodicIO.drive_encoder_ticks = driveEncoderSimPosition;
             mPeriodicIO.velocity_ticks_per_100ms = adjDriveDemand;
-            mPeriodicIO.azimuth_encoder_ticks = mPeriodicIO.azimuth_position;
+            mPeriodicIO.azimuth_encoder_ticks = mPeriodicIO.azimuth_position.converstionstuff;
         } else {
             mPeriodicIO.drive_encoder_ticks = mDriveMotor.getSelectedSensorPosition(0);
             mPeriodicIO.velocity_ticks_per_100ms =
@@ -193,7 +185,6 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
 
     @Override
     public void writePeriodicOutputs() {
-        // TODO setDesiredState is basically this call?
 
         if(mControlState == OPEN_LOOP) {
             double percentOutput = mPeriodicIO.desired_state.speedMetersPerSecond / Constants.Swerve.maxSpeed;
@@ -459,14 +450,14 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
         var isFront = mConstants.kName.startsWith("front");
         var sign = isFront ? 1 : -1;
         var azimuthAdjustmentRadians =
-            sign * Math.toRadians(Constants.Swerve.AZIMUTH_ADJUSTMENT_OFFSET_DEGREES);
+            sign * Math.toRadians(mConstants.kAzimuthAdjustmentOffset);
 
         mPeriodicIO.drive_demand = mPeriodicIO.desired_state.speedMetersPerSecond;
         mPeriodicIO.azimuth_position = mPeriodicIO.desired_state.angle.rotateBy(new Rotation2d(azimuthAdjustmentRadians));
     }
 
     private void resetToAbsolute(){
-        double absolutePosition = Conversions.degreesToFalcon(getCanCoder().getDegrees() - angleOffset, Constants.Swerve.angleGearRatio);
+        double absolutePosition = Conversions.degreesToFalcon(getCanCoder().getDegrees() - mConstants.kAzimuthAdjustmentOffset , Constants.Swerve.angleGearRatio);
         mAzimuthMotor.setSelectedSensorPosition(absolutePosition, 0, Constants.kCANTimeoutMs); // TODO see if kCANTimeoutMs or kLongCANTimeoutMs
     }
 

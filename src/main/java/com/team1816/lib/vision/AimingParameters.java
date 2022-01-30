@@ -1,7 +1,7 @@
 package com.team1816.lib.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import com.team1816.lib.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 
 public class AimingParameters {
 
@@ -26,7 +26,7 @@ public class AimingParameters {
         this.field_to_vision_target_normal = field_to_vision_target_normal;
         this.field_to_goal = field_to_goal;
         this.range = robot_to_goal.getTranslation().getNorm();
-        this.robot_to_goal_rotation = robot_to_goal.getTranslation().direction();
+        this.robot_to_goal_rotation = robot_to_goal.getRotation(); // used to be robot_to_goal.getTranslation().direction() - dk if equivalent
         this.last_seen_timestamp = last_seen_timestamp;
         this.stability = stability;
         this.track_id = track_id;

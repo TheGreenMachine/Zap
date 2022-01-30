@@ -9,7 +9,7 @@ import com.team1816.lib.hardware.components.CanifierImpl;
 import com.team1816.lib.hardware.components.GhostCanifier;
 import com.team1816.lib.hardware.components.ICanifier;
 import com.team1816.lib.hardware.components.pcm.*;
-import com.team254.lib.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotBase;

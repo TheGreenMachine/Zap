@@ -12,7 +12,6 @@ import com.team1816.lib.LibModule;
 import com.team1816.lib.auto.AutoModeExecutor;
 import com.team1816.lib.auto.modes.AutoModeBase;
 import com.team1816.lib.controlboard.IControlBoard;
-import com.team1816.lib.geometry.Rotation2d;
 import com.team1816.lib.hardware.RobotFactory;
 import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.lib.loops.Looper;
@@ -20,9 +19,11 @@ import com.team1816.lib.subsystems.DrivetrainLogger;
 import com.team1816.lib.subsystems.Infrastructure;
 import com.team1816.lib.subsystems.RobotStateEstimator;
 import com.team1816.lib.subsystems.SubsystemManager;
-import com.team1816.lib.geometry.Pose2d;import com.team254.lib.util.LatchedBoolean;
+import com.team254.lib.util.LatchedBoolean;
 import com.team254.lib.util.SwerveDriveSignal;
 import com.team254.lib.util.TimeDelayedBoolean;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -232,10 +233,10 @@ public class Robot extends TimedRobot {
             // Robot starts forwards.
             mRobotState.reset(
                 Timer.getFPGATimestamp(),
-                Pose2d.identity(),
-                Rotation2d.identity()
+                new Pose2d(),
+                new Rotation2d()
             );
-            mDrive.setHeading(Rotation2d.identity());
+            mDrive.setHeading(new Rotation2d());
 
             mAutoModeSelector.updateModeCreator();
 
@@ -311,10 +312,10 @@ public class Robot extends TimedRobot {
             // Robot starts forwards.
             mRobotState.reset(
                 Timer.getFPGATimestamp(),
-                Pose2d.identity(),
-                Rotation2d.identity()
+                new Pose2d(),
+                new Rotation2d()
             );
-            mDrive.setHeading(Rotation2d.identity());
+            mDrive.setHeading(new Rotation2d());
 
             mHasBeenEnabled = true;
 
@@ -419,10 +420,10 @@ public class Robot extends TimedRobot {
                 mTurret.zeroSensors();
                 mRobotState.reset(
                     Timer.getFPGATimestamp(),
-                    Pose2d.identity(),
-                    Rotation2d.identity()
+                    new Pose2d(),
+                    new Rotation2d()
                 );
-                mDrive.setHeading(Rotation2d.identity());
+                mDrive.setHeading(new Rotation2d());
                 ledManager.indicateStatus(LedManager.RobotStatus.SEEN_TARGET);
             } else {
                 ledManager.indicateDefaultStatus();

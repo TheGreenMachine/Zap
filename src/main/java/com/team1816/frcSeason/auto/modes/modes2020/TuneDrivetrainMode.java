@@ -6,7 +6,6 @@ import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.actions.DriveTrajectory;
 import com.team1816.lib.auto.actions.WaitAction;
 import com.team1816.lib.auto.modes.AutoModeBase;
-import com.team1816.lib.geometry.Rotation2d;
 
 public class TuneDrivetrainMode extends AutoModeBase {
 

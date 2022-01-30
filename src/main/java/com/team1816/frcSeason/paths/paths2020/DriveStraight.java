@@ -2,8 +2,7 @@ package com.team1816.frcSeason.paths.paths2020;
 
 import com.team1816.lib.paths.PathContainer;
 import com.team254.lib.control.Path;
-import com.team1816.lib.geometry.Pose2d;
-import com.team1816.lib.geometry.Rotation2d;
+
 import java.util.ArrayList;
 import java.util.List;
 

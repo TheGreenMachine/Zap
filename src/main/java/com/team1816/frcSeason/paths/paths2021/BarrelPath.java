@@ -2,7 +2,8 @@ package com.team1816.frcSeason.paths.paths2021;
 
 import com.team1816.lib.paths.PathContainer;
 import com.team254.lib.control.Path;
-import com.team1816.lib.geometry.Pose2d;import java.util.List;
+
+import java.util.List;
 
 public class BarrelPath implements PathContainer {
 

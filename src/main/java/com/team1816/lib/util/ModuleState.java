@@ -1,6 +1,6 @@
 package com.team1816.lib.util;
 
-import com.team1816.lib.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 public class ModuleState {

@@ -1,7 +1,7 @@
 package com.team1816.lib.vision;
 
 import com.team1816.frcSeason.Constants;
-import com.team1816.lib.geometry.Pose2d;import com.team254.lib.vision.GoalTrack;
+import com.team254.lib.vision.GoalTrack;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;

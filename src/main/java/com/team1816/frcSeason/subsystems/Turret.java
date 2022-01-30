@@ -237,10 +237,10 @@ public class Turret extends Subsystem implements PidProvider {
         if (RobotBase.isSimulation()) {
             double xPos =
                 Units.inches_to_meters(robotState.getEstimatedX()) +
-                Constants.StartingPose.getTranslation().x();
+                Constants.StartingPose.getTranslation().getX();
             double yPos =
                 Units.inches_to_meters(robotState.getEstimatedY()) +
-                Constants.StartingPose.getTranslation().y();
+                Constants.StartingPose.getTranslation().getY();
             // show turret
             var turret = robotState.field.getObject("turret");
             //TODO get turret to work in simulator and double check if math/whatever variable it's using is correct
