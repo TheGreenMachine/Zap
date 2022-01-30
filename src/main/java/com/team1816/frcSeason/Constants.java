@@ -6,6 +6,8 @@ import com.team1816.frcSeason.subsystems.Drive;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.RobotFactory;
 import com.team1816.lib.geometry.Pose2d;import com.team254.lib.geometry.Translation2d;
+import com.team254.lib.util.Units;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
 public class Constants {
 
@@ -23,8 +25,14 @@ public class Constants {
     public static final double kDriveWheelDiameterInches = factory.getConstant(
         "wheelDiameter"
     );
-    public static final double kWheelCircumference = kDriveWheelDiameterInches * Math.PI;
+    public static final double kWheelCircumferenceInches = kDriveWheelDiameterInches * Math.PI;
     public static final double kDriveWheelRadiusInches = kDriveWheelDiameterInches / 2.0;
+
+    public static final double kDriveWheelTrackWidthMeters = Units.inches_to_meters(kDriveWheelTrackWidthInches);
+    public static final double kDriveWheelbaseLengthMeters = Units.inches_to_meters(kDriveWheelbaseLengthInches);
+    public static final double kDriveWheelDiameterMeters = Units.inches_to_meters(kDriveWheelDiameterInches);
+    public static final double kWheelCircumferenceMeters = Units.inches_to_meters(kWheelCircumferenceInches);
+    public static final double kDriveWheelRadiusMeters = Units.inches_to_meters(kDriveWheelRadiusInches);
     public static double kTrackScrubFactor = factory.getConstant("kTrackScrubFactor");
 
     private static final double moduleDeltaX = kDriveWheelbaseLengthInches / 2.0;
@@ -114,6 +122,12 @@ public class Constants {
         // drive measurement
         public VelocityMeasPeriod kDriveVelocityMeasurementPeriod =
             VelocityMeasPeriod.Period_100Ms; // dt for velocity measurements, ms
+
+        public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
+            new edu.wpi.first.math.geometry.Translation2d(Constants.kDriveWheelbaseLengthMeters / 2.0, Constants.kDriveWheelTrackWidthMeters / 2.0),
+            new edu.wpi.first.math.geometry.Translation2d(Constants.kDriveWheelbaseLengthMeters / 2.0, -Constants.kDriveWheelTrackWidthMeters / 2.0),
+            new edu.wpi.first.math.geometry.Translation2d(-Constants.kDriveWheelbaseLengthMeters / 2.0, Constants.kDriveWheelTrackWidthMeters / 2.0),
+            new edu.wpi.first.math.geometry.Translation2d(-Constants.kDriveWheelbaseLengthMeters / 2.0, -Constants.kDriveWheelTrackWidthMeters / 2.0));
     }
 
     // Swerve Heading Controller -- CHEESY Constants

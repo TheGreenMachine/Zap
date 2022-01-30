@@ -18,6 +18,7 @@ import com.team254.lib.util.DriveSignal;
 import com.team254.lib.util.SwerveDriveSignal;
 import com.team254.lib.util.Units;
 import com.team254.lib.util.Util;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -63,8 +64,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         super();
         swerveModules = new SwerveModule[4];
 
-        setOpenLoop(SwerveDriveSignal.NEUTRAL);
-
         // start all Talons in open loop mode
         swerveModules[Constants.Swerve.kFrontLeft] =
             factory.getSwerveModule(
@@ -79,7 +78,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 Constants.kFrontRightModulePosition
             );
         swerveModules[Constants.Swerve.kBackLeft] =
-            factory.getSwerveModule(NAME, "backLeft", Constants.kBackLeftModulePosition);
+            factory.getSwerveModule(NAME,
+                "backLeft",
+                Constants.kBackLeftModulePosition);
         swerveModules[Constants.Swerve.kBackRight] =
             factory.getSwerveModule(
                 NAME,
@@ -90,7 +91,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         setOpenLoopRampRate(Constants.kOpenLoopRampRate);
 
         mPigeon = new PigeonIMU((int) factory.getConstant(NAME, "pigeonId", -1));
-
         mPigeon.configFactoryDefault();
 
         setOpenLoop(SwerveDriveSignal.NEUTRAL);
@@ -100,6 +100,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         setBrakeMode(mIsBrakeMode);
 
         motionPlanner = new SwerveMotionPlanner();
+        swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw());
     }
 
     @Override
@@ -132,21 +133,21 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         return 0;
     }
 
-    @Override
-    public double getDesiredHeading() {
-        if (mDriveControlState == DriveControlState.TRAJECTORY_FOLLOWING) {
-            return headingController.getTargetHeading();
-        }
-        return mPeriodicIO.desired_heading.getDegrees();
-    }
-
-    public void requireModuleConfiguration() {
-        modulesReady = false;
-    }
-
-    public void alwaysConfigureModules() {
-        alwaysConfigureModules = true;
-    }
+//    @Override
+//    public double getDesiredHeading() {
+//        if (mDriveControlState == DriveControlState.TRAJECTORY_FOLLOWING) {
+//            return headingController.getTargetHeading();
+//        }
+//        return mPeriodicIO.desired_heading.getDegrees();
+//    }
+//
+//    public void requireModuleConfiguration() {
+//        modulesReady = false;
+//    }
+//
+//    public void alwaysConfigureModules() {
+//        alwaysConfigureModules = true;
+//    }
 
     @Override
     public synchronized void readPeriodicInputs() {
@@ -183,127 +184,27 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     @Override
     public synchronized void writePeriodicOutputs() {
-        for (int i = 0; i < swerveModules.length; i++) {
-            if (swerveModules[i] != null) {
-                if (mDriveControlState == DriveControlState.OPEN_LOOP) {
-                    // TODO: 5/5/21 fix
-                    if (
-                        Util.shouldReverse(
-                            swerveModules[i].getAngle().getDegrees(),
-                            mPeriodicIO.wheel_azimuths[i].getDegrees()
-                        )
-                    ) {
-                        swerveModules[i].setOpenLoop(
-                                -mPeriodicIO.wheel_speeds[i],
-                                mPeriodicIO.wheel_azimuths[i].rotateBy(
-                                        Rotation2d.fromDegrees(180)
-                                    )
-                            );
-                    } else {
-                        swerveModules[i].setOpenLoop(
-                                mPeriodicIO.wheel_speeds[i],
-                                mPeriodicIO.wheel_azimuths[i]
-                            );
-                    }
-                } else if (mDriveControlState == DriveControlState.TRAJECTORY_FOLLOWING) {
-                    if (
-                        Util.shouldReverse(
-                            swerveModules[i].getAngle().getDegrees(),
-                            mPeriodicIO.wheel_azimuths[i].getDegrees()
-                        )
-                    ) {
-                        swerveModules[i].setVelocity(
-                                -mPeriodicIO.wheel_speeds[i],
-                                mPeriodicIO.wheel_azimuths[i].rotateBy(
-                                        Rotation2d.fromDegrees(180)
-                                    )
-                            );
-                    } else {
-                        swerveModules[i].setVelocity(
-                                mPeriodicIO.wheel_speeds[i],
-                                mPeriodicIO.wheel_azimuths[i]
-                            );
-                    }
-                }
-                swerveModules[i].writePeriodicOutputs();
-            }
-        }
-    }
 
-    /** The tried and true algorithm for keeping track of position */
-    public synchronized void updatePose(double timestamp) {
+        SwerveModuleState[] swerveModuleStates =
+            Constants.Swerve.swerveKinematics.toSwerveModuleStates(
+                Constants.fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
+                    mPeriodicIO.forward,
+                    mPeriodicIO.strafe,
+                    mPeriodicIO.rotation,
+                    getYaw()
+                )
+                    : new ChassisSpeeds(
+                    mPeriodicIO.forward,
+                    mPeriodicIO.strafe,
+                    mPeriodicIO.rotation)
+            );
+        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed); // TODO get swerve max speed in meters/s
 
-        swerveOdometry.updateWithTime(timestamp,getHeading(),swerveModuleStates);
-
-        double x = 0.0;
-        double y = 0.0;
-        Rotation2d heading = getHeading();
-
-        double averageDistance = 0.0;
-        double[] distances = new double[4];
-        for (int i = 0; i < swerveModules.length; i++) {
-            SwerveModule m = swerveModules[i];
-            m.updatePose(heading);
-            double distance = m
-                .getEstimatedRobotPose()
-                .getTranslation()
-                .translateBy(pose.getTranslation().inverse())
-                .norm();
-            distances[i] = distance;
-            averageDistance += distance;
-        }
-        averageDistance /= swerveModules.length;
-
-        int minDevianceIndex = 0;
-        double minDeviance = 100.0;
-        List<SwerveModule> modulesToUse = new ArrayList<>();
-        for (int i = 0; i < swerveModules.length; i++) {
-            SwerveModule m = swerveModules[i];
-            double deviance = Math.abs(distances[i] - averageDistance);
-            if (deviance < minDeviance) {
-                minDeviance = deviance;
-                minDevianceIndex = i;
-            }
-            if (deviance <= 0.01) {
-                modulesToUse.add(m);
-            }
-        }
-
-        if (modulesToUse.isEmpty()) {
-            modulesToUse.add(swerveModules[minDevianceIndex]);
-        }
-
-        //SmartDashboard.putNumber("Modules Used", modulesToUse.size());
-
-        for (SwerveModule m : modulesToUse) {
-            x += m.getEstimatedRobotPose().getTranslation().x();
-            y += m.getEstimatedRobotPose().getTranslation().y();
-        }
-
-        Pose2d updatedPose = new Pose2d(
-            new Translation2d(x / modulesToUse.size(), y / modulesToUse.size()),
-            heading
-        );
-        double deltaPos = updatedPose
-            .getTranslation()
-            .translateBy(pose.getTranslation().inverse())
-            .norm();
-        mPeriodicIO.drive_distance_inches += deltaPos;
-        mPeriodicIO.velocity_inches_per_second =
-            deltaPos / (timestamp - lastUpdateTimestamp);
-        pose = updatedPose;
-        System.out.println(updatedPose);
-        for (SwerveModule module : swerveModules) {
-            module.resetPose(pose);
-        }
-    }
-
-    public void resetPose(Pose2d pose) {
-        this.pose = pose;
-        mPeriodicIO.drive_distance_inches = 0;
-        mPeriodicIO.velocity_inches_per_second = 0;
-        for (SwerveModule module : swerveModules) {
-            module.resetPose(pose);
+        for(int i = 0; i < 4; i++) {
+            // Gutted if (mDriveControlState == DriveControlState.TRAJECTORY_FOLLOWING) b/c else statement after does same thing
+            swerveModules[i].setDesiredState(swerveModuleStates[i], mDriveControlState == DriveControlState.OPEN_LOOP);
+            //below used to be in its own for loop @ bottom - necessary?
+            swerveModules[i].writePeriodicOutputs();
         }
     }
 
@@ -311,43 +212,41 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         this.startingPosition = pose;
     }
 
-    @Override
-    protected void updateOpenLoopPeriodic(double timestamp) {
-        var driveHelper = driveHelperChooser.getSelected();
-        setOpenLoop(
-            driveHelper.calculateDriveSignal(
-                mPeriodicIO.forward,
-                mPeriodicIO.strafe,
-                mPeriodicIO.rotation,
-                mPeriodicIO.low_power,
-                mPeriodicIO.field_relative,
-                mPeriodicIO.use_heading_controller
-            )
-        );
-        updatePose(timestamp);
-    }
-
-    @Override
-    public void setOpenLoop(DriveSignal signal) {
-        if (mDriveControlState != DriveControlState.OPEN_LOOP) {
-            setBrakeMode(false);
-            System.out.println("switching to open loop");
-            System.out.println(signal);
-            mDriveControlState = DriveControlState.OPEN_LOOP;
-        }
-        SwerveDriveSignal swerveSignal = (SwerveDriveSignal) signal;
-
-        mPeriodicIO.wheel_speeds = swerveSignal.getWheelSpeeds();
-        mPeriodicIO.wheel_azimuths = swerveSignal.getWheelAzimuths();
-    }
-
-    @Override
-    public void setOpenLoopRampRate(double openLoopRampRate) {
-        super.setOpenLoopRampRate(openLoopRampRate);
-        for (SwerveModule module : swerveModules) {
-            module.setOpenLoopRampRate(openLoopRampRate);
-        }
-    }
+//    @Override
+//    protected void updateOpenLoopPeriodic(double timestamp) {
+//        var driveHelper = driveHelperChooser.getSelected();
+//        setOpenLoop(
+//            driveHelper.calculateDriveSignal(
+//                mPeriodicIO.forward,
+//                mPeriodicIO.strafe,
+//                mPeriodicIO.rotation,
+//                mPeriodicIO.low_power,
+//                mPeriodicIO.field_relative,
+//                mPeriodicIO.use_heading_controller
+//            )
+//        );
+//    }
+//
+//    @Override
+//    public void setOpenLoop(DriveSignal signal) {
+//        if (mDriveControlState != DriveControlState.OPEN_LOOP) {
+//            setBrakeMode(false);
+//            System.out.println("switching to open loop");
+//            System.out.println(signal);
+//            mDriveControlState = DriveControlState.OPEN_LOOP;
+//        }
+//        SwerveDriveSignal swerveSignal = (SwerveDriveSignal) signal;
+//
+//        mPeriodicIO.wheel_speeds = swerveSignal.getWheelSpeeds();
+//        mPeriodicIO.wheel_azimuths = swerveSignal.getWheelAzimuths();
+//    }
+//    @Override
+//    public void setOpenLoopRampRate(double openLoopRampRate) {
+//        super.setOpenLoopRampRate(openLoopRampRate);
+//        for (SwerveModule module : swerveModules) {
+//            module.setOpenLoopRampRate(openLoopRampRate);
+//        }
+//    }
 
     @Override
     public void setTeleopInputs(
@@ -370,34 +269,34 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     /**
      * Configure talons for velocity control
-     */
-    @Override
-    public synchronized void setVelocity(List<Translation2d> driveVectors) {
-        if (mDriveControlState == DriveControlState.OPEN_LOOP) {
-            setBrakeMode(false);
-            System.out.println("Switching to Velocity");
-        }
-        double[] speedsNorm = new double[4];
-        for (int i = 0; i < swerveModules.length; i++) {
-            mPeriodicIO.wheel_azimuths[i] = driveVectors.get(i).direction();
-            speedsNorm[i] = driveVectors.get(i).norm();
-            mPeriodicIO.wheel_speeds[i] =
-                inchesPerSecondToTicksPer100ms(
-                    driveVectors.get(i).norm() * Constants.kPathFollowingMaxVel
-                );
-        }
-        if (RobotBase.isSimulation()) {
-            mPeriodicIO.gyro_heading_no_offset.rotateBy(
-                Rotation2d.fromDegrees(
-                    SwerveKinematics.forwardKinematics(
-                        speedsNorm,
-                        mPeriodicIO.wheel_azimuths
-                    )
-                        .dtheta
-                )
-            );
-        }
-    }
+   */
+//    @Override
+//    public synchronized void setVelocity(List<Translation2d> driveVectors) {
+//        if (mDriveControlState == DriveControlState.OPEN_LOOP) {
+//            setBrakeMode(false);
+//            System.out.println("Switching to Velocity");
+//        }
+//        double[] speedsNorm = new double[4];
+//        for (int i = 0; i < swerveModules.length; i++) {
+//            mPeriodicIO.wheel_azimuths[i] = driveVectors.get(i).direction();
+//            speedsNorm[i] = driveVectors.get(i).norm();
+//            mPeriodicIO.wheel_speeds[i] =
+//                inchesPerSecondToTicksPer100ms(
+//                    driveVectors.get(i).norm() * Constants.kPathFollowingMaxVel
+//                );
+//        }
+//        if (RobotBase.isSimulation()) {
+//            mPeriodicIO.gyro_heading_no_offset.rotateBy(
+//                Rotation2d.fromDegrees(
+//                    SwerveKinematics.forwardKinematics(
+//                        speedsNorm,
+//                        mPeriodicIO.wheel_azimuths
+//                    )
+//                        .dtheta
+//                )
+//            );
+//        }
+//    }
 
     @Override
     public synchronized void setBrakeMode(boolean on) {
@@ -424,32 +323,32 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
         return ret_val;
     }
+//
+//    public void setWantReset(boolean wantReset) {
+//        this.wantReset = wantReset;
+//    }
+//
+//    public boolean wantsReset() {
+//        return wantReset;
+//    }
 
-    public void setWantReset(boolean wantReset) {
-        this.wantReset = wantReset;
-    }
-
-    public boolean wantsReset() {
-        return wantReset;
-    }
-
-    @Override
-    public synchronized void setTrajectory(
-        TrajectoryIterator<TimedState<Pose2dWithCurvature>> trajectory,
-        Rotation2d targetHeading
-    ) {
-        if (motionPlanner != null) {
-            hasStartedFollowing = false;
-            moduleConfigRequested = false;
-            System.out.println("Now setting trajectory");
-            setBrakeMode(true);
-            mOverrideTrajectory = false;
-            headingController.setSnapTarget(targetHeading.getDegrees());
-            motionPlanner.reset();
-            mDriveControlState = DriveControlState.TRAJECTORY_FOLLOWING;
-            motionPlanner.setTrajectory(trajectory);
-        }
-    }
+//    @Override
+//    public synchronized void setTrajectory(
+//        TrajectoryIterator<TimedState<Pose2dWithCurvature>> trajectory,
+//        Rotation2d targetHeading
+//    ) {
+//        if (motionPlanner != null) {
+//            hasStartedFollowing = false;
+//            moduleConfigRequested = false;
+//            System.out.println("Now setting trajectory");
+//            setBrakeMode(true);
+//            mOverrideTrajectory = false;
+//            headingController.setSnapTarget(targetHeading.getDegrees());
+//            motionPlanner.reset();
+//            mDriveControlState = DriveControlState.TRAJECTORY_FOLLOWING;
+//            motionPlanner.setTrajectory(trajectory);
+//        }
+//    }
 
     @Override
     public boolean isDoneWithTrajectory() {
@@ -459,62 +358,62 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         return motionPlanner.isDone() || mOverrideTrajectory;
     }
 
-    @Override
-    public void updatePathFollower(double timestamp) {
-        double rotationCorrection = headingController.updateRotationCorrection(
-            getHeadingDegrees(),
-            timestamp
-        );
-        updatePose(timestamp);
-        // alternatePoseUpdate(timestamp);
-
-        if (mDriveControlState == DriveControlState.TRAJECTORY_FOLLOWING) {
-            if (!motionPlanner.isDone()) {
-                Translation2d driveVector = motionPlanner.update(timestamp, pose);
-
-                if (!hasStartedFollowing && wantReset) {
-                    zeroSensors(startingPosition);
-                    System.out.println("Position reset for auto");
-                    hasStartedFollowing = true;
-                    wantReset = false;
-                }
-
-                //                                System.out.println("DRIVE VECTOR" + driveVector);
-
-                mPeriodicIO.forward = driveVector.x();
-                mPeriodicIO.strafe = driveVector.y();
-                mPeriodicIO.rotation = 0;
-
-                double rotationInput = Util.deadBand(
-                    Util.limit(
-                        rotationCorrection * rotationScalar * driveVector.norm(),
-                        motionPlanner.getMaxRotationSpeed()
-                    ),
-                    0.01
-                );
-
-                mPeriodicIO.error = motionPlanner.error();
-                mPeriodicIO.path_setpoint = motionPlanner.setpoint();
-                mPeriodicIO.drive_vector = driveVector;
-                if (!mOverrideTrajectory) {
-                    //                    System.out.println("ROTATIONINPUT==" + rotationInput);
-                    setVelocity(
-                        SwerveKinematics.updateDriveVectors(
-                            driveVector,
-                            rotationInput,
-                            pose,
-                            robotCentric
-                        )
-                    );
-                }
-            } else {
-                setVelocity(ZERO_DRIVE_VECTOR);
-                if (alwaysConfigureModules) requireModuleConfiguration();
-            }
-        } else {
-            DriverStation.reportError("drive is not in path following state", false);
-        }
-    }
+//    @Override
+//    public void updatePathFollower(double timestamp) {
+//        double rotationCorrection = headingController.updateRotationCorrection(
+//            getHeadingDegrees(),
+//            timestamp
+//        );
+//        updatePose(timestamp);
+//        // alternatePoseUpdate(timestamp);
+//
+//        if (mDriveControlState == DriveControlState.TRAJECTORY_FOLLOWING) {
+//            if (!motionPlanner.isDone()) {
+//                Translation2d driveVector = motionPlanner.update(timestamp, pose);
+//
+//                if (!hasStartedFollowing && wantReset) {
+//                    zeroSensors(startingPosition);
+//                    System.out.println("Position reset for auto");
+//                    hasStartedFollowing = true;
+//                    wantReset = false;
+//                }
+//
+//                //                                System.out.println("DRIVE VECTOR" + driveVector);
+//
+//                mPeriodicIO.forward = driveVector.x();
+//                mPeriodicIO.strafe = driveVector.y();
+//                mPeriodicIO.rotation = 0;
+//
+//                double rotationInput = Util.deadBand(
+//                    Util.limit(
+//                        rotationCorrection * rotationScalar * driveVector.norm(),
+//                        motionPlanner.getMaxRotationSpeed()
+//                    ),
+//                    0.01
+//                );
+//
+//                mPeriodicIO.error = motionPlanner.error();
+//                mPeriodicIO.path_setpoint = motionPlanner.setpoint();
+//                mPeriodicIO.drive_vector = driveVector;
+//                if (!mOverrideTrajectory) {
+//                    //                    System.out.println("ROTATIONINPUT==" + rotationInput);
+//                    setVelocity(
+//                        SwerveKinematics.updateDriveVectors(
+//                            driveVector,
+//                            rotationInput,
+//                            pose,
+//                            robotCentric
+//                        )
+//                    );
+//                }
+//            } else {
+//                setVelocity(ZERO_DRIVE_VECTOR);
+//                if (alwaysConfigureModules) requireModuleConfiguration();
+//            }
+//        } else {
+//            DriverStation.reportError("drive is not in path following state", false);
+//        }
+//    }
 
     @Override
     public SwerveModule[] getSwerveModules() {
@@ -545,12 +444,23 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         //        }
     }
 
+    public void resetPose(Pose2d pose) {
+        this.pose = pose;
+        mPeriodicIO.drive_distance_inches = 0;
+        mPeriodicIO.velocity_inches_per_second = 0;
+        for (SwerveModule module : swerveModules) {
+            module.resetPose(pose);
+        }
+    }
+
+
+
     /* Used by SwerveControllerCommand in Auto */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
-        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.kMaxSpeed);
+        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.kMaxSpeed); // TODO max speeeeed like above
 
         for(int i = 0; i < 4; i++){
-            swerveModules[i].setDesiredState(desiredStates[0], false);
+            swerveModules[i].setDesiredState(desiredStates[i], false);
         }
     }
 
@@ -573,7 +483,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     public Rotation2d getYaw() {
         double[] ypr = new double[3];
         mPigeon.getYawPitchRoll(ypr);
-        return (Constants.invertGyro) ? Rotation2d.fromDegrees(360 - ypr[0]) : Rotation2d.fromDegrees(ypr[0]);
+        return Rotation2d.fromDegrees(ypr[0]); // TODO keep in possibility of pigeon being reversed? (Constants.Swerve.invertGyro)
     }
 
     @Override
