@@ -1,8 +1,5 @@
 package com.team1816.season.paths;
 
-import com.team1816.season.paths.paths2020.*;
-import com.team1816.season.paths.paths2021.*;
-import com.team254.lib.trajectory.timing.TimedState;
 import edu.wpi.first.math.trajectory.Trajectory;
 
 import javax.inject.Singleton;

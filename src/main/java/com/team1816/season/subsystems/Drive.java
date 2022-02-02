@@ -16,6 +16,7 @@ import com.team254.lib.util.Units;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -28,7 +29,7 @@ public abstract class Drive
 
     public abstract void updateTrajectoryVelocities(Double aDouble, Double aDouble1);
 
-    public abstract edu.wpi.first.math.geometry.Pose2d getPose();
+    public abstract Pose2d getPose();
 
     public abstract void startTrajectory(Trajectory initialPose);
 
@@ -52,12 +53,13 @@ public abstract class Drive
 
     // Odometry variables
     protected double lastUpdateTimestamp = 0;
+    protected double mTrajectoryStart = 0;
+    protected Trajectory mTrajectory;
 
     // hardware states
     protected String pidSlot = "slot0";
     protected boolean mIsBrakeMode;
     protected Rotation2d mGyroOffset = new Rotation2d();
-    protected double openLoopRampRate;
 
     protected PeriodicIO mPeriodicIO;
     protected boolean mOverrideTrajectory = false;
@@ -82,7 +84,6 @@ public abstract class Drive
     protected Drive() {
         super(NAME);
         mPeriodicIO = new PeriodicIO();
-        openLoopRampRate = Constants.kOpenLoopRampRate;
         mPigeon = new PigeonIMU((int) factory.getConstant(NAME, "pigeonId", -1));
         mPigeon.configFactoryDefault();
     }
@@ -95,6 +96,12 @@ public abstract class Drive
     @Override
     public abstract double getDesiredHeading();
 
+    public Rotation2d getDesiredRotation2d() {
+        if (mDriveControlState == DriveControlState.TRAJECTORY_FOLLOWING) {
+            return mPeriodicIO.desired_pose.getRotation();
+        }
+        return mPeriodicIO.desired_heading;
+    }
     @Override
     public double getKP() {
         PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
@@ -143,6 +150,9 @@ public abstract class Drive
             : 0.0;
     }
 
+    public void setModuleStates(SwerveModuleState[] desiredStates){
+    }
+
     @Singleton
     public static class PeriodicIO {
 
@@ -163,6 +173,7 @@ public abstract class Drive
 
         // SWERVE
         public double forward;
+        public double strafe;
         public double rotation;
 
         // OUTPUTS
@@ -175,6 +186,10 @@ public abstract class Drive
 
         public Rotation2d desired_heading = new Rotation2d();
         public Pose2d desired_pose = new Pose2d();
+
+        //here to make swerveDrive happy for now - rip out later?
+        public boolean low_power;
+        public boolean use_heading_controller;
     }
 
     @Override
@@ -254,10 +269,6 @@ public abstract class Drive
      */
     public abstract void setOpenLoop(DriveSignal signal);
 
-    public void setOpenLoopRampRate(double openLoopRampRate) {
-        this.openLoopRampRate = openLoopRampRate;
-    }
-
     public abstract void setTeleopInputs(
         double forward,
         double strafe,
@@ -266,9 +277,6 @@ public abstract class Drive
         boolean use_heading_controller
     );
 
-    public double getOpenLoopRampRate() {
-        return this.openLoopRampRate;
-    }
 
     public boolean isBrakeMode() {
         return mIsBrakeMode;
@@ -308,6 +316,8 @@ public abstract class Drive
         mPigeon.setAccumZAngle(0);
     }
 
+    public abstract void zeroSensors(Pose2d pose);
+
     public DriveControlState getDriveControlState() {
         return mDriveControlState;
     }
@@ -346,13 +356,6 @@ public abstract class Drive
         );
         SmartDashboard.putNumber("Drive/Vector Direction", 0);
         SmartDashboard.putNumber("Drive/Robot Velocity", 0);
-        SmartDashboard.putNumber("Drive/OpenLoopRampRate", this.openLoopRampRate);
-        SmartDashboard
-            .getEntry("Drive/OpenLoopRampRate")
-            .addListener(
-                notification -> setOpenLoopRampRate(notification.value.getDouble()),
-                EntryListenerFlags.kNew | EntryListenerFlags.kUpdate
-            );
 
         SmartDashboard.putBoolean("Drive/Zero Sensors", false);
         SmartDashboard

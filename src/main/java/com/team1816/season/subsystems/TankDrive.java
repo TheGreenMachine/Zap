@@ -39,7 +39,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     private final double tickRatioPerLoop = Constants.kLooperDt / .1d;
 
     private DifferentialDriveOdometry odometry;
-    private Trajectory mTrajectory;
 
     @Override
     public void updateTrajectoryVelocities(Double leftVel, Double rightVel) {
@@ -116,8 +115,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             Constants.kLongCANTimeoutMs
         );
 
-        setOpenLoopRampRate(Constants.kOpenLoopRampRate);
-
         if (((int) factory.getConstant(NAME, "pigeonOnTalon")) == 1) {
             var pigeonId = ((int) factory.getConstant(NAME, "pigeonId"));
             System.out.println("Pigeon on Talon " + pigeonId);
@@ -154,13 +151,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     @Override
     public double getDesiredHeading() {
         return getDesiredRotation2d().getDegrees();
-    }
-
-    public Rotation2d getDesiredRotation2d() {
-        if (mDriveControlState == DriveControlState.TRAJECTORY_FOLLOWING) {
-            return mPeriodicIO.desired_pose.getRotation();
-        }
-        return mPeriodicIO.desired_heading;
     }
 
     @Override
@@ -267,12 +257,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         mPeriodicIO.right_feedforward = 0.0;
     }
 
-    @Override
-    public void setOpenLoopRampRate(double openLoopRampRate) {
-        super.setOpenLoopRampRate(openLoopRampRate);
-        mLeftMaster.configOpenloopRamp(openLoopRampRate, Constants.kCANTimeoutMs);
-        mRightMaster.configOpenloopRamp(openLoopRampRate, Constants.kCANTimeoutMs);
-    }
 
     @Override
     public void setTeleopInputs(
@@ -347,6 +331,11 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         System.out.println("gyro offset: " + mGyroOffset.getDegrees());
 
         mPeriodicIO.desired_heading = heading;
+    }
+
+    @Override
+    public void zeroSensors(Pose2d pose) {
+        aaa
     }
 
     public synchronized void resetEncoders() {

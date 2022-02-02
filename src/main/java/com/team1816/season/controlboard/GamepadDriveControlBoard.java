@@ -7,7 +7,7 @@ import com.team1816.lib.controlboard.Controller;
 import com.team1816.lib.controlboard.IDriveControlBoard;
 import com.team1816.lib.controlboard.LogitechController;
 import com.team1816.lib.controlboard.XboxController;
-import edu.wpi.first.math.geometry.Rotation2d;
+import com.team254.lib.geometry.Rotation2d;
 
 @Singleton
 public class GamepadDriveControlBoard implements IDriveControlBoard {
@@ -143,7 +143,7 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
             double yAxis,
             boolean isARocketCardinal
         ) {
-            return findClosest(new Rotation2d(yAxis, -xAxis), isARocketCardinal);
+            return findClosest(new Rotation2d(yAxis, true), isARocketCardinal);
         }
 
         public static SwerveCardinal findClosest(
