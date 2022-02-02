@@ -1,7 +1,7 @@
 package com.team1816.lib.auto.actions;
 
 import com.google.inject.Inject;
-import com.team1816.frcSeason.RobotState;
+import com.team1816.season.RobotState;
 import com.team254.lib.geometry.Translation2d;
 
 public class WaitUntilInsideRegion implements Action {

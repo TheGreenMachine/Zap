@@ -1,6 +1,6 @@
 package com.team1816.lib.controlboard;
 
-import com.team1816.frcSeason.Constants;
+import com.team1816.season.Constants;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import java.util.EnumMap;

@@ -16,6 +16,7 @@ public class Looper implements ILooper {
     private final Object mTaskRunningLock = new Object();
     private double mTimestamp = 0;
     private double mDT = 0;
+    private double mStart = 0;
 
     public Looper(TimedRobot robot) {
         Runnable runnable_ = new Runnable() {
@@ -23,7 +24,7 @@ public class Looper implements ILooper {
             public void run() {
                 synchronized (mTaskRunningLock) {
                     if (mRunning) {
-                        double now = Timer.getFPGATimestamp();
+                        double now = Timer.getFPGATimestamp() - mStart;
 
                         for (Loop loop : mLoops) {
                             loop.onLoop(now);
@@ -53,6 +54,7 @@ public class Looper implements ILooper {
             if (!mRunning) {
                 System.out.println("Starting loops");
                 mTimestamp = Timer.getFPGATimestamp();
+                mStart = mTimestamp;
                 for (Loop loop : mLoops) {
                     loop.onStart(mTimestamp);
                 }

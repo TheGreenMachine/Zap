@@ -1,8 +1,7 @@
 package com.team254.lib.vision;
 
-import com.team1816.frcSeason.Constants;
+import com.team1816.season.Constants;
 import com.team254.lib.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose2d;
 
 import java.util.ArrayList;
 import java.util.Comparator;

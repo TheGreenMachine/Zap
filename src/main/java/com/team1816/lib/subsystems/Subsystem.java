@@ -1,7 +1,7 @@
 package com.team1816.lib.subsystems;
 
 import badlog.lib.BadLog;
-import com.team1816.frcSeason.Robot;
+import com.team1816.season.Robot;
 import com.team1816.lib.hardware.RobotFactory;
 import com.team1816.lib.loops.ILooper;
 import edu.wpi.first.util.sendable.Sendable;

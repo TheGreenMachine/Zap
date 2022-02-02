@@ -1,7 +1,6 @@
 package com.team254.lib.util;
 
 import com.google.inject.Inject;
-import com.team1816.frcSeason.SwerveKinematics;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
 

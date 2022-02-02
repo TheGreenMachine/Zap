@@ -1,6 +1,6 @@
 package com.team254.lib.control;
 
-import com.team1816.frcSeason.Robot;
+import com.team1816.season.Robot;
 import com.team1816.lib.hardware.RobotFactory;
 import com.team254.lib.util.SynchronousPIDF;
 import edu.wpi.first.wpilibj.Timer;

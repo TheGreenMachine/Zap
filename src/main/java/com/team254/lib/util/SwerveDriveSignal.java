@@ -1,7 +1,8 @@
 package com.team254.lib.util;
 
-import com.team1816.frcSeason.Constants;
-import com.team1816.frcSeason.subsystems.Drive;
+import com.team1816.season.Constants;
+import com.team1816.season.subsystems.Drive;
+import edu.wpi.first.math.geometry.Rotation2d;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -11,7 +12,7 @@ import java.util.Arrays;
  */
 public class SwerveDriveSignal extends DriveSignal {
     public static final double[] ZERO_SPEED = new double[]{0, 0, 0, 0};
-    public static final Rotation2d[] ZERO_AZIMUTH = new Rotation2d[]{Rotation2d.identity(), Rotation2d.identity(), Rotation2d.identity(), Rotation2d.identity()};
+    public static final Rotation2d[] ZERO_AZIMUTH = new Rotation2d[]{new Rotation2d(), new Rotation2d(), new Rotation2d(), new Rotation2d()};
 
     public static final SwerveDriveSignal NEUTRAL = new SwerveDriveSignal(ZERO_SPEED, ZERO_AZIMUTH, false);
     public static final SwerveDriveSignal BRAKE = new SwerveDriveSignal(ZERO_SPEED, ZERO_AZIMUTH, true);
