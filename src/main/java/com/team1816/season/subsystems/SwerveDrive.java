@@ -8,6 +8,7 @@ import com.team1816.season.Constants;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.SwerveDrivetrain;
 import com.team254.lib.control.SwerveHeadingController;
+import com.team254.lib.util.DriveSignal;
 import com.team254.lib.util.SwerveDriveSignal;
 import com.team254.lib.util.Units;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -16,6 +17,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -27,6 +29,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     private static final String NAME = "drivetrain";
 
     private static SwerveDrive INSTANCE;
+    public SwerveModule[] swerveModules;
+
 
     @Inject
     private static SwerveHeadingController headingController;
@@ -75,8 +79,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 Constants.kBackRightModulePosition
             );
 
-        setOpenLoopRampRate(Constants.kOpenLoopRampRate);
-
         mPigeon = new PigeonIMU((int) factory.getConstant(NAME, "pigeonId", -1));
         mPigeon.configFactoryDefault();
 
@@ -119,21 +121,28 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         return 0;
     }
 
-//    @Override
-//    public double getDesiredHeading() {
-//        if (mDriveControlState == DriveControlState.TRAJECTORY_FOLLOWING) {
-//            return headingController.getTargetHeading();
-//        }
-//        return mPeriodicIO.desired_heading.getDegrees();
-//    }
-//
-//    public void requireModuleConfiguration() {
-//        modulesReady = false;
-//    }
-//
-//    public void alwaysConfigureModules() {
-//        alwaysConfigureModules = true;
-//    }
+    @Override
+    public double getFieldDesiredXDistance() {
+        return 0;
+    }
+
+    @Override
+    public double getFieldYDesiredYDistance() {
+        return 0;
+    }
+
+    @Override
+    public double getDesiredHeading() {
+        return getDesiredRotation2d().getDegrees();
+    }
+
+    public void requireModuleConfiguration() {
+        modulesReady = false;
+    }
+
+    public void alwaysConfigureModules() {
+        alwaysConfigureModules = true;
+    }
 
     @Override
     public synchronized void readPeriodicInputs() {
@@ -173,18 +182,19 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
         SwerveModuleState[] swerveModuleStates =
             Constants.Swerve.swerveKinematics.toSwerveModuleStates(
-                Constants.fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
+//                Constants.fieldRelative ?
+                    ChassisSpeeds.fromFieldRelativeSpeeds(
                     mPeriodicIO.forward,
                     mPeriodicIO.strafe,
                     mPeriodicIO.rotation,
                     getYaw()
                 )
-                    : new ChassisSpeeds(
-                    mPeriodicIO.forward,
-                    mPeriodicIO.strafe,
-                    mPeriodicIO.rotation)
+//                    : new ChassisSpeeds(
+//                    mPeriodicIO.forward,
+//                    mPeriodicIO.strafe,
+//                    mPeriodicIO.rotation)
             );
-        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed); // TODO get swerve max speed in meters/s
+        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Units.inches_to_meters(Constants.kPathFollowingMaxVel)); // TODO get swerve max speed in meters/s
 
         for(int i = 0; i < 4; i++) {
             // Gutted if (mDriveControlState == DriveControlState.TRAJECTORY_FOLLOWING) b/c else statement after does same thing
@@ -198,41 +208,30 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         this.startingPosition = pose;
     }
 
-//    @Override
-//    protected void updateOpenLoopPeriodic(double timestamp) {
-//        var driveHelper = driveHelperChooser.getSelected();
-//        setOpenLoop(
-//            driveHelper.calculateDriveSignal(
-//                mPeriodicIO.forward,
-//                mPeriodicIO.strafe,
-//                mPeriodicIO.rotation,
-//                mPeriodicIO.low_power,
-//                mPeriodicIO.field_relative,
-//                mPeriodicIO.use_heading_controller
-//            )
-//        );
-//    }
-//
-//    @Override
-//    public void setOpenLoop(DriveSignal signal) {
-//        if (mDriveControlState != DriveControlState.OPEN_LOOP) {
-//            setBrakeMode(false);
-//            System.out.println("switching to open loop");
-//            System.out.println(signal);
-//            mDriveControlState = DriveControlState.OPEN_LOOP;
-//        }
+    @Override
+    protected void updateOpenLoopPeriodic() {
+        // no openLoop update needed
+    }
+
+    @Override
+    protected void updateTrajectoryPeriodic(double timestamp) {
+        // update desired pose from trajectory
+        mPeriodicIO.desired_pose = mTrajectory.sample(timestamp).poseMeters;
+    }
+
+    @Override
+    public void setOpenLoop(DriveSignal signal) {
+        if (mDriveControlState != DriveControlState.OPEN_LOOP) {
+            setBrakeMode(false);
+            System.out.println("switching to open loop");
+            System.out.println(signal);
+            mDriveControlState = DriveControlState.OPEN_LOOP;
+        }
 //        SwerveDriveSignal swerveSignal = (SwerveDriveSignal) signal;
 //
 //        mPeriodicIO.wheel_speeds = swerveSignal.getWheelSpeeds();
 //        mPeriodicIO.wheel_azimuths = swerveSignal.getWheelAzimuths();
-//    }
-//    @Override
-//    public void setOpenLoopRampRate(double openLoopRampRate) {
-//        super.setOpenLoopRampRate(openLoopRampRate);
-//        for (SwerveModule module : swerveModules) {
-//            module.setOpenLoopRampRate(openLoopRampRate);
-//        }
-//    }
+    }
 
     @Override
     public void setTeleopInputs(
@@ -426,15 +425,37 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     /* Used by SwerveControllerCommand in Auto */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
-        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.kMaxSpeed); // TODO max speeeeed like above
+        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Units.inches_to_meters(Constants.kPathFollowingMaxVel)); // TODO max speeeeed like above
 
         for(int i = 0; i < 4; i++){
             swerveModules[i].setDesiredState(desiredStates[i], false);
         }
     }
 
+    @Override
+    public void updateTrajectoryVelocities(Double aDouble, Double aDouble1) {
+
+    }
+
     public Pose2d getPose() {
         return swerveOdometry.getPoseMeters();
+    }
+
+    @Override
+    public void startTrajectory(Trajectory trajectory) {
+        mTrajectory = trajectory;
+        swerveOdometry.resetPosition(
+            trajectory.getInitialPose(),
+            trajectory.getInitialPose().getRotation()
+        );
+        updateRobotPose();
+        mDriveControlState = DriveControlState.TRAJECTORY_FOLLOWING;
+        setBrakeMode(true);
+        mOverrideTrajectory = false;
+    }
+
+    private void updateRobotPose() {
+        mRobotState.field.setRobotPose(swerveOdometry.getPoseMeters());
     }
 
     public void resetOdometry(Pose2d pose) {
@@ -478,17 +499,18 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
-        SmartDashboard.putBoolean(
-            "Drive/TeleopFieldCentric",
-            this.mPeriodicIO.field_relative
-        );
-        SmartDashboard
-            .getEntry("Drive/TeleopFieldCentric")
-            .addListener(
-                notification -> {
-                    this.mPeriodicIO.field_relative = notification.value.getBoolean();
-                },
-                EntryListenerFlags.kNew | EntryListenerFlags.kUpdate
-            );
+//        SmartDashboard.putBoolean(
+//            "Drive/TeleopFieldCentric",
+//            this.mPeriodicIO.field_relative
+//        );
+//        SmartDashboard
+//            .getEntry("Drive/TeleopFieldCentric")
+//            .addListener(
+//                notification -> {
+//                    this.mPeriodicIO.field_relative = notification.value.getBoolean();
+//                },
+//                EntryListenerFlags.kNew | EntryListenerFlags.kUpdate
+//            );
     }
 }
+

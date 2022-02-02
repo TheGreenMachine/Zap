@@ -1,4 +1,4 @@
-package com.team1816.season.paths.paths2021;
+package com.team1816.season.paths;
 
 import com.team1816.lib.paths.PathContainer;
 import com.team254.lib.control.Path;
