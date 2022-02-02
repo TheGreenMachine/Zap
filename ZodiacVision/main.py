@@ -76,7 +76,7 @@ while True:
             mask = detector.preProcessFrame(frame)
             if mask.all() == -1:
                 continue
-            contour = detector.findTarget(mask, zed, point_cloud, frame)
+            contour = detector.findTargetZED(mask, zed, point_cloud, frame)
             stream_image = detector.postProcess(frame, contour)
             fpsCounter.update()
             fpsCounter.stop()

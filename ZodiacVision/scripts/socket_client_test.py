@@ -1,7 +1,7 @@
 import socket
 import sys
 
-address = ('localhost', 5802)
+address = ('10.18.16.16', 5802)
 data = ''.join(sys.argv[1:])
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect(address)

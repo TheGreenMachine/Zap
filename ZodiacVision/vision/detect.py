@@ -92,7 +92,7 @@ class Detector:
         self.nt.clearTable()
         return -1
     def postProcess(self, frame, target):
-        if target == -1:
+        if not isinstance(target, list):
             return frame
         drawnimage = cv2.drawContours(frame, [target], -1, (0, 255, 255), 2)
         return drawnimage
