@@ -1,5 +1,6 @@
 package com.team1816.season;
 
+import com.team1816.season.auto.modes.LivingRoomMode;
 import com.team1816.season.auto.modes.modes2020.*;
 import com.team1816.lib.auto.modes.AutoModeBase;
 import com.team1816.lib.auto.modes.DoNothingMode;
@@ -131,9 +132,9 @@ public class AutoModeSelector {
             case DO_NOTHING:
                 return Optional.of(new DoNothingMode());
             case TUNE_DRIVETRAIN:
-                return Optional.of(new TuneDrivetrainMode(false));
+                return Optional.of(new TuneDrivetrainMode());
             case TUNE_DRIVETRAIN_REVERSE:
-                return Optional.of(new TuneDrivetrainMode(true));
+                return Optional.of(new TuneDrivetrainMode());
             case TURRET_TEST:
                 return Optional.of(new TurretTestMode());
             case DRIVE_STRAIGHT:

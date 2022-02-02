@@ -9,12 +9,17 @@ import com.team254.lib.util.Units;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 
 public class Constants {
 
     private static final RobotFactory factory = Robot.getFactory();
+
+    public static Pose2d emptyPose = new Pose2d();
+    public static Twist2d emptyTwist = new Twist2d();
+    public static final Rotation2d emptyRotation = new Rotation2d();
 
     public static final double kLooperDt = factory.getConstant("kLooperDt", .020);
 
