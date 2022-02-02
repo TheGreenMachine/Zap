@@ -1,5 +1,6 @@
 import cv2
 import yaml
+import numpy as np
 path = 'vision.yml'
 with open(path, 'r') as file:
     data = yaml.safe_load(file)

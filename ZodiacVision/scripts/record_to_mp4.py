@@ -17,7 +17,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 ########################################################################
-
+import cv2
 import sys
 import pyzed.sl as sl
 from signal import signal, SIGINT
@@ -32,9 +32,14 @@ def handler(signal_received, frame):
 signal(SIGINT, handler)
 
 def main():
-    if not sys.argv or len(sys.argv) != 2:
-        print("Only the path of the output SVO file should be passed as argument.")
-        exit(1)
+    def crop_half(image):
+        height, width, channels = image.shape
+        # cropped_img = image[0:height, 0:int(width/2)]
+        cropped_img = image[0:height, int(width / 2):width]
+        return cropped_img
+    writer = cv2.VideoWriter('right.mp4',
+                             cv2.VideoWriter_fourcc(*'MP4V'),
+                             100, (672, 376))
 
     init_params = sl.InitParameters()
     init_params.depth_mode = sl.DEPTH_MODE.ULTRA  # Use PERFORMANCE depth mode
@@ -48,22 +53,24 @@ def main():
         print(repr(status))
         exit(1)
 
-    path_output = sys.argv[1]
-    recording_param = sl.RecordingParameters(path_output, sl.SVO_COMPRESSION_MODE.H264)
-    err = cam.enable_recording(recording_param)
-    if err != sl.ERROR_CODE.SUCCESS:
-        print(repr(status))
-        exit(1)
+    # path_output = sys.argv[1]
+    # recording_param = sl.RecordingParameters(path_output, sl.SVO_COMPRESSION_MODE.H264)
+    # err = cam.enable_recording(recording_param)
+    # if err != sl.ERROR_CODE.SUCCESS:
+    #     print(repr(status))
+    #     exit(1)
 
     runtime = sl.RuntimeParameters()
     cam.set_camera_settings(sl.VIDEO_SETTINGS.EXPOSURE, 10)
     print("SVO is Recording, use Ctrl-C to stop.")
     frames_recorded = 0
-
+    image_zed = sl.Mat()
     while True:
         if cam.grab(runtime) == sl.ERROR_CODE.SUCCESS :
+            cam.retrieve_image(image_zed, sl.VIEW.RIGHT)
             frames_recorded += 1
             print("Frame count: " + str(frames_recorded), end="\r")
+            writer.write(image_zed.get_data())
 
 if __name__ == "__main__":
     main()

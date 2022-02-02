@@ -51,7 +51,7 @@ if isZed:
         exit(-1)
     image = sl.Mat()
     runtime_parameters = sl.RuntimeParameters()
-    #zed.set_camera_settings(sl.VIDEO_SETTINGS.EXPOSURE, data['camera']['exposure'])
+    zed.set_camera_settings(sl.VIDEO_SETTINGS.EXPOSURE, data['camera']['exposure'])
 else:
     cap = cv2.VideoCapture(0)
 
@@ -62,7 +62,7 @@ while True:
     fpsCounter.reset()
     fpsCounter.start()
     if net.update_exposure:
-        #zed.set_camera_settings(sl.VIDEO_SETTINGS.EXPOSURE, net.yml_data['camera']['exposure'])
+        zed.set_camera_settings(sl.VIDEO_SETTINGS.EXPOSURE, net.yml_data['camera']['exposure'])
         net.update_exposure = False
     if isZed:
         if zed.grab(runtime_parameters) == sl.ERROR_CODE.SUCCESS:
