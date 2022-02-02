@@ -2,20 +2,18 @@ package com.team1816.frcSeason.subsystems;
 import edu.wpi.first.wpilibj.DriverStation;
 import java.net.*;
 import java.io.*;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
+@Singleton
 public class Camera {
-    private final String PROTOCOL_LINE = "\\|";
+
     private static Camera INSTANCE;
 
-    public static Camera getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new Camera();
-        }
-        return INSTANCE;
-    }
+    @Inject
+    private static LedManager led;
 
-    // Components
-    private final LedManager led = LedManager.getInstance();
+    private final String PROTOCOL_LINE = "\\|";
 
     // Constants
     // private static final double CAMERA_FOV = 87.0; // deg
