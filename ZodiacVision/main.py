@@ -27,7 +27,7 @@ else:
     streamer = stream.Streamer(data['stream']['port'])
 net.setupCalib()
 
-vs = visionserver.ThreadedVisionServer('', 5802)
+vs = visionserver.ThreadedVisionServer('', 5802, path, data)
 server_thread = threading.Thread(target=vs.listen)
 # Exit the server thread when the main thread terminates
 server_thread.daemon = True
