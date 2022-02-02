@@ -1,16 +1,20 @@
 package com.team1816.season;
 
 import com.google.inject.Singleton;
+import com.team254.lib.geometry.Pose2d;
+import com.team254.lib.geometry.Rotation2d;
+import com.team254.lib.geometry.Translation2d;
+import com.team254.lib.geometry.Twist2d;
 import com.team254.lib.util.InterpolatingDouble;
 import com.team254.lib.util.InterpolatingTreeMap;
 import com.team254.lib.util.MovingAverageTwist2d;
 import com.team254.lib.vision.AimingParameters;
 import com.team254.lib.vision.GoalTracker;
 import com.team254.lib.vision.GoalTracker.TrackReportComparator;
-import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -58,25 +62,26 @@ public class RobotState {
      */
 
     // FPGATimestamp -> Pose2d or Rotation2d
+    private InterpolatingTreeMap<InterpolatingDouble, Pose2d> field_to_vehicle_;
     private InterpolatingTreeMap<InterpolatingDouble, Rotation2d> vehicle_to_turret_;
     private Twist2d vehicle_velocity_predicted_;
     private Twist2d vehicle_velocity_measured_;
     private MovingAverageTwist2d vehicle_velocity_measured_filtered_;
     private double distance_driven_;
 
-    private GoalTracker vision_target_low_ = new GoalTracker();
-    private GoalTracker vision_target_high_ = new GoalTracker();
+    private final GoalTracker vision_target_low_ = new GoalTracker();
+    private final GoalTracker vision_target_high_ = new GoalTracker();
 
     List<Translation2d> mCameraToVisionTargetPosesLow = new ArrayList<>();
     List<Translation2d> mCameraToVisionTargetPosesHigh = new ArrayList<>();
 
-    private Rotation2d headingRelativeToInitial = new Rotation2d();
+    private Rotation2d headingRelativeToInitial = Rotation2d.identity();
 
     public final Field2d field = new Field2d();
 
     public RobotState() {
         SmartDashboard.putData("Field", field);
-        reset(0.0, new Pose2d(), new Rotation2d());
+        reset(0.0, Pose2d.identity(), Rotation2d.identity());
     }
 
     /**
@@ -93,26 +98,22 @@ public class RobotState {
             new InterpolatingDouble(start_time),
             initial_vehicle_to_turret
         );
-        field.setRobotPose(
-            new edu.wpi.first.math.geometry.Pose2d(
-                Constants.StartingPose.getTranslation().getX(),
-                Constants.StartingPose.getTranslation().getY(),
-                new edu.wpi.first.math.geometry.Rotation2d(
-                    Constants.StartingPose.getRotation().getRadians()
-                )
-            )
-        );
     }
 
     public synchronized void reset(double start_time, Pose2d initial_field_to_vehicle) {
-        vehicle_velocity_predicted_ = Constants.emptyTwist;
-        vehicle_velocity_measured_ = Constants.emptyTwist;
+        field_to_vehicle_ = new InterpolatingTreeMap<>(kObservationBufferSize);
+        field_to_vehicle_.put(
+            new InterpolatingDouble(start_time),
+            initial_field_to_vehicle
+        );
+        vehicle_velocity_predicted_ = Twist2d.identity();
+        vehicle_velocity_measured_ = Twist2d.identity();
         vehicle_velocity_measured_filtered_ = new MovingAverageTwist2d(25);
         distance_driven_ = 0.0;
     }
 
     public synchronized void reset() {
-        reset(Timer.getFPGATimestamp(), new Pose2d(), new Rotation2d());
+        reset(Timer.getFPGATimestamp(), Pose2d.identity(), Rotation2d.identity());
     }
 
     /**
@@ -120,23 +121,37 @@ public class RobotState {
      * to fill in the gaps.
      */
 
+    public synchronized double getEstimatedX() {
+        return field_to_vehicle_.lastEntry().getValue().getTranslation().x();
+    }
+
+    public synchronized double getEstimatedY() {
+        return field_to_vehicle_.lastEntry().getValue().getTranslation().y();
+    }
+
+    public synchronized Pose2d getFieldToVehicle(double timestamp) {
+        return field_to_vehicle_.getInterpolated(new InterpolatingDouble(timestamp));
+    }
+
     public synchronized Rotation2d getVehicleToTurret(double timestamp) {
         return vehicle_to_turret_.getInterpolated(new InterpolatingDouble(timestamp));
+    }
+
+    public synchronized Pose2d getFieldToTurret(double timestamp) {
+        return getFieldToVehicle(timestamp)
+            .transformBy(Pose2d.fromRotation(getVehicleToTurret(timestamp)));
+    }
+
+    public synchronized Map.Entry<InterpolatingDouble, Pose2d> getLatestFieldToVehicle() {
+        return field_to_vehicle_.lastEntry();
     }
 
     public synchronized Map.Entry<InterpolatingDouble, Rotation2d> getLatestVehicleToTurret() {
         return vehicle_to_turret_.lastEntry();
     }
 
-    public synchronized void addVehicleToTurretObservation(
-        double timestamp,
-        Rotation2d observation
-    ) {
-        vehicle_to_turret_.put(new InterpolatingDouble(timestamp), observation);
-    }
-
     /**
-     * Rotation of robot relative to initial position,
+     * Rotation of robot relative to initial position, i.e. raw sensor
      * unaffected by calls to {@link #reset()}
      */
     public Rotation2d getHeadingRelativeToInitial() {
@@ -148,13 +163,12 @@ public class RobotState {
     }
 
     public double getLatestFieldToTurret() {
-        Rotation2d fieldToTurret = getLatestFieldToVehicle()
-            .getValue()
-            .getRotation()
-            .unaryMinus()
+        Rotation2d fieldToTurret = getHeadingRelativeToInitial()
+            .inverse()
             .rotateBy(getLatestVehicleToTurret().getValue());
         return fieldToTurret.getDegrees();
     }
+
     public synchronized double getDistanceDriven() {
         return distance_driven_;
     }
@@ -172,7 +186,7 @@ public class RobotState {
     }
 
     public synchronized Twist2d getSmoothedVelocity() {
-        return new Twist2d(vehicle_velocity_measured_filtered_.getAverage().dx, vehicle_velocity_measured_filtered_.getAverage().dy, vehicle_velocity_measured_filtered_.getAverage().dtheta);
+        return vehicle_velocity_measured_filtered_.getAverage();
     }
 
     public synchronized void resetVision() {
@@ -200,14 +214,14 @@ public class RobotState {
             return null;
         }
 
-        Pose2d fieldToTarget = new Pose2d(new Translation2d(tracker.getTracks().get(0).field_to_target.getTranslation().x(), tracker.getTracks().get(0).field_to_target.getTranslation().y()), new Rotation2d(tracker.getTracks().get(0).field_to_target.getRotation().getRadians()));
+        Pose2d fieldToTarget = tracker.getTracks().get(0).field_to_target;
 
         double normalPositive = (fieldToTarget.getRotation().getDegrees() + 360) % 360;
         double normalClamped = kPossibleTargetNormals[0];
         for (double possible : kPossibleTargetNormals) {
             if (
                 Math.abs(normalPositive - possible) <
-                Math.abs(normalPositive - normalClamped)
+                    Math.abs(normalPositive - normalClamped)
             ) {
                 normalClamped = possible;
             }
@@ -228,63 +242,69 @@ public class RobotState {
         if (fieldToVisionTarget == null) {
             return null;
         }
-        Translation2d translation = getFieldToVehicle(timestamp).getTranslation();
-        Rotation2d rotation_inverse = getFieldToVehicle(timestamp).getRotation().unaryMinus();
-        return new Pose2d(translation.unaryMinus().rotateBy(rotation_inverse), rotation_inverse).transformBy(new Transform2d((fieldToVisionTarget).getTranslation(), fieldToVisionTarget.getRotation()));
+
+        return getFieldToVehicle(timestamp).inverse().transformBy(fieldToVisionTarget);
     }
 
-//    public synchronized Optional<AimingParameters> getAimingParameters(
-//        boolean highTarget,
-//        int prev_track_id,
-//        double max_track_age
-//    ) {
-//        GoalTracker tracker = highTarget ? vision_target_high_ : vision_target_low_;
-//        List<GoalTracker.TrackReport> reports = tracker.getTracks();
-//
-//        if (reports.isEmpty()) {
-//            return Optional.empty();
-//        }
-//
-//        double timestamp = Timer.getFPGATimestamp();
-//
-//        // Find the best track.
-//        TrackReportComparator comparator = new TrackReportComparator(
-//            Constants.kTrackStabilityWeight,
-//            Constants.kTrackAgeWeight,
-//            Constants.kTrackSwitchingWeight,
-//            prev_track_id,
-//            timestamp
-//        );
-//        reports.sort(comparator);
-//
-//        GoalTracker.TrackReport report = null;
-//        for (GoalTracker.TrackReport track : reports) {
-//            if (track.latest_timestamp > timestamp - max_track_age) {
-//                report = track;
-//                break;
-//            }
-//        }
-//        if (report == null) {
-//            return Optional.empty();
-//        }
-//        Pose2d vehicleToGoal = getFieldToVehicle(timestamp)
-//            .inverse()
-//            .transformBy(report.field_to_target)
-//            .transformBy(getVisionTargetToGoalOffset());
-//
-//        AimingParameters params = new AimingParameters(
-//            vehicleToGoal,
-//            report.field_to_target,
-//            report.field_to_target.getRotation(),
-//            report.latest_timestamp,
-//            report.stability,
-//            report.id
-//        );
-//        return Optional.of(params);
-//    }
+    public synchronized Optional<AimingParameters> getAimingParameters(
+        boolean highTarget,
+        int prev_track_id,
+        double max_track_age
+    ) {
+        GoalTracker tracker = highTarget ? vision_target_high_ : vision_target_low_;
+        List<GoalTracker.TrackReport> reports = tracker.getTracks();
 
-    public Pose2d getRobot() {
-        return new Pose2d();
+        if (reports.isEmpty()) {
+            return Optional.empty();
+        }
+
+        double timestamp = Timer.getFPGATimestamp();
+
+        // Find the best track.
+        TrackReportComparator comparator = new TrackReportComparator(
+            Constants.kTrackStabilityWeight,
+            Constants.kTrackAgeWeight,
+            Constants.kTrackSwitchingWeight,
+            prev_track_id,
+            timestamp
+        );
+        reports.sort(comparator);
+
+        GoalTracker.TrackReport report = null;
+        for (GoalTracker.TrackReport track : reports) {
+            if (track.latest_timestamp > timestamp - max_track_age) {
+                report = track;
+                break;
+            }
+        }
+        if (report == null) {
+            return Optional.empty();
+        }
+        edu.wpi.first.math.geometry.Pose2d vehicleToGoal =
+            new edu.wpi.first.math.geometry.Pose2d(
+                new edu.wpi.first.math.geometry.Translation2d(
+                    getFieldToVehicle(timestamp)
+                        .inverse()
+                        .transformBy(report.field_to_target)
+                        .transformBy(getVisionTargetToGoalOffset()).getTranslation().x(),
+                    getFieldToVehicle(timestamp)
+                        .inverse()
+                        .transformBy(report.field_to_target)
+                        .transformBy(getVisionTargetToGoalOffset()).getTranslation().y()),
+                new edu.wpi.first.math.geometry.Rotation2d(getFieldToVehicle(timestamp)
+                    .inverse()
+                    .transformBy(report.field_to_target)
+                    .transformBy(getVisionTargetToGoalOffset()).getRotation().getRadians()));
+
+        AimingParameters params = new AimingParameters(
+            vehicleToGoal,
+            new edu.wpi.first.math.geometry.Pose2d(new edu.wpi.first.math.geometry.Translation2d(report.field_to_target.getTranslation().x(), report.field_to_target.getTranslation().y()), new edu.wpi.first.math.geometry.Rotation2d(report.field_to_target.getRotation().getRadians())),
+            new edu.wpi.first.math.geometry.Rotation2d(report.field_to_target.getRotation().getRadians()),
+            report.latest_timestamp,
+            report.stability,
+            report.id
+        );
+        return Optional.of(params);
     }
 
     public synchronized Pose2d getVisionTargetToGoalOffset() {
@@ -292,7 +312,7 @@ public class RobotState {
         //     return Pose2d.fromTranslation(new Translation2d(-6.0, 0.0));
         // }
 
-        return new Pose2d();
+        return Pose2d.identity();
     }
 
     public synchronized void outputToSmartDashboard() {
