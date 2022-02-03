@@ -24,6 +24,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 
+import java.util.HashSet;
+
 public class SwerveModule extends Subsystem implements ISwerveModule {
 
     public static class PeriodicIO {
@@ -120,8 +122,6 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
 
         /* Angle Encoder Config */
         mCanCoder = canCoder;
-        mCanCoder.configFactoryDefault();
-
 
         /* Set initial Angle and Pose */
         this.startingPosition = startingPosition;
@@ -244,6 +244,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
 //            ((int) (demandedPosition + mConstants.kAzimuthEncoderHomeOffset));
 //
 //        mAzimuthMotor.set(ControlMode.Position, offsetDemand);
+        HashSet<Integer> e = new HashSet<>();
     }
 
     @Override
@@ -463,7 +464,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
 //        mAzimuthMotor.setSelectedSensorPosition(absolutePosition, 0, Constants.kCANTimeoutMs); // TODO see if kCANTimeoutMs or kLongCANTimeoutMs
 //    }
 
-    public Rotation2d getCanCoder(){ // do we need this?
+    public Rotation2d getCanCoderHeading(){ // do we need this?
         return Rotation2d.fromDegrees(mCanCoder.getAbsolutePosition());
     }
 

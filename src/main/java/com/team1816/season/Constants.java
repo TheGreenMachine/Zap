@@ -95,6 +95,11 @@ public class Constants {
             0
         );
 
+        public static double driveKS = 1; //TODO: PUT VALUES
+        public static double driveKV = 1; //TODO: PUT VALUES
+        public static double driveKA = 1; //TODO: PUT VALUES
+
+
         public static final int kFrontLeft = 0;
         public static final int kFrontRight = 1;
         public static final int kBackRight = 2;

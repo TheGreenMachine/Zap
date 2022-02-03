@@ -197,6 +197,7 @@ public class CtreMotorFactory {
 
     public static CANCoder createCanCoder(int canCoderID, boolean invertCanCoder) {
         CANCoder canCoder = new CANCoder(canCoderID);
+        canCoder.configFactoryDefault();
         canCoder.configAllSettings(configureCanCoder(invertCanCoder));
         return canCoder;
     }
