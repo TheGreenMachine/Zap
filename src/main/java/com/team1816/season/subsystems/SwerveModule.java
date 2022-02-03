@@ -244,7 +244,6 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
 //            ((int) (demandedPosition + mConstants.kAzimuthEncoderHomeOffset));
 //
 //        mAzimuthMotor.set(ControlMode.Position, offsetDemand);
-        HashSet<Integer> e = new HashSet<>();
     }
 
     @Override
