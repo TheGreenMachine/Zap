@@ -220,7 +220,7 @@ public class RobotFactory {
         var module = subsystem.swerveModules.modules.get(name);
         CANCoder canCoder = null;
         if (hasCanCoder(subsystemName, name) && module.cancoder >= 0) {
-            canCoder = CtreMotorFactory.createCanCoder(module.cancoder);
+            canCoder = CtreMotorFactory.createCanCoder(module.cancoder, true); //TODO: For now placeholder true is placed
         } else {
             // ghost. potentially implement this in the future
         }

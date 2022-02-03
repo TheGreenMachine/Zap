@@ -5,6 +5,13 @@
         "modules": {
             "existingJavaType": "java.util.Map<String, ModuleConfiguration>"
         },
+        "canCoder": {
+            "type": "object",
+            "properties": {
+                "canCoder": {"type": "number"},
+                "inverted": {"type": "number"}
+            }
+        },
         "azimuthPID": {
             "type": "object",
             "existingJavaType": "java.util.Map<String, PIDSlotConfiguration>",

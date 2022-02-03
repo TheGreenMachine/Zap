@@ -1,5 +1,6 @@
 package com.team1816.season;
 
+import com.team1816.season.auto.modes.LivingRoomMode;
 import com.team1816.season.auto.modes.modes2020.*;
 import com.team1816.lib.auto.modes.AutoModeBase;
 import com.team1816.lib.auto.modes.DoNothingMode;

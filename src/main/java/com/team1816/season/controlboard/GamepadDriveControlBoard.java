@@ -160,7 +160,7 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
                 }
                 var checkDirection = values[i];
                 var distance = Math.abs(
-                    stickDirection.distance(checkDirection.inputDirection)
+                    stickDirection.unaryMinus().rotateBy(checkDirection.inputDirection).getRadians()
                 );
                 if (distance < closestDistance) {
                     closestDistance = distance;

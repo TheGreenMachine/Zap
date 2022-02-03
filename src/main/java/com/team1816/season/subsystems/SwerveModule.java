@@ -120,6 +120,8 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
 
         /* Angle Encoder Config */
         mCanCoder = canCoder;
+        mCanCoder.configFactoryDefault();
+
 
         /* Set initial Angle and Pose */
         this.startingPosition = startingPosition;
