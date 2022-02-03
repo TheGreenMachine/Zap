@@ -18,6 +18,8 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
@@ -98,7 +100,6 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
                 constants.kAzimuthMotorName,
                 factory.getSubsystem(subsystemName).swerveModules.drivePID
             );
-
         mAzimuthMotor.configSupplyCurrentLimit(
             new SupplyCurrentLimitConfiguration(true, 25, 0, 0),
             Constants.kLongCANTimeoutMs
@@ -118,6 +119,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
 
         /* Angle Encoder Config */
         mCanCoder = canCoder;
+        mCanCoder.configFactoryDefault();
 
         /* Set initial Angle and Pose */
         this.startingPosition = startingPosition;
@@ -348,7 +350,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
 
     @Override
     public double getAzimuthPositionDemand() {
-        return mPeriodicIO.azimuth_position;
+        return mPeriodicIO.azimuth_position.getDegrees();
     }
 
     @Override
