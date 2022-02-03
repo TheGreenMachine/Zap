@@ -228,8 +228,8 @@ public class Robot extends TimedRobot {
             // Robot starts forwards.
             mRobotState.reset(
                 Timer.getFPGATimestamp(),
-                new Pose2d(),
-                new Rotation2d()
+                com.team254.lib.geometry.Pose2d.identity(),
+                com.team254.lib.geometry.Rotation2d.identity()
             );
             mDrive.setHeading(new Rotation2d());
 
@@ -307,8 +307,8 @@ public class Robot extends TimedRobot {
             // Robot starts forwards.
             mRobotState.reset(
                 Timer.getFPGATimestamp(),
-                new Pose2d(),
-                new Rotation2d()
+                com.team254.lib.geometry.Pose2d.identity(),
+                com.team254.lib.geometry.Rotation2d.identity()
             );
             mDrive.setHeading(new Rotation2d());
 
@@ -414,8 +414,8 @@ public class Robot extends TimedRobot {
                 mTurret.zeroSensors();
                 mRobotState.reset(
                     Timer.getFPGATimestamp(),
-                    new Pose2d(),
-                    new Rotation2d()
+                    com.team254.lib.geometry.Pose2d.identity(),
+                    com.team254.lib.geometry.Rotation2d.identity()
                 );
                 mDrive.setHeading(new Rotation2d());
                 ledManager.indicateStatus(LedManager.RobotStatus.SEEN_TARGET);

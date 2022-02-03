@@ -24,7 +24,7 @@ public class Looper implements ILooper {
             public void run() {
                 synchronized (mTaskRunningLock) {
                     if (mRunning) {
-                        double now = Timer.getFPGATimestamp() - mStart;
+                        double now = Timer.getFPGATimestamp();
 
                         for (Loop loop : mLoops) {
                             loop.onLoop(now);

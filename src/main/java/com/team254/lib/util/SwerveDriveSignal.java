@@ -28,10 +28,10 @@ public class SwerveDriveSignal extends DriveSignal {
     public SwerveDriveSignal(double left, double right) {
         super(left, right);
         mWheelSpeeds = new double[4];
-        mWheelSpeeds[Constants.Swerve.kFrontLeft] = left;
-        mWheelSpeeds[Constants.Swerve.kBackLeft] = left;
-        mWheelSpeeds[Constants.Swerve.kFrontRight] = right;
-        mWheelSpeeds[Constants.Swerve.kBackRight] = right;
+//        mWheelSpeeds[Constants.Swerve.kFrontLeft] = left;
+//        mWheelSpeeds[Constants.Swerve.kBackLeft] = left;
+//        mWheelSpeeds[Constants.Swerve.kFrontRight] = right;
+//        mWheelSpeeds[Constants.Swerve.kBackRight] = right;
 
         mWheelAzimuths = ZERO_AZIMUTH;
         mBrakeMode = false;

@@ -40,7 +40,7 @@ public interface PathContainer {
         List<Pose2d> waypoints
     ) {
         TrajectoryConfig config = new TrajectoryConfig(kMaxVelocity, kMaxAccel);
-        var baseTrajectory = TrajectoryGenerator.generateTrajectory(waypoints, config);
+        var baseTrajectory = TrajectoryGenerator.generateTrajectory(waypoints, config); // we want to use the config here not the base trajecory!
         return baseTrajectory.transformBy(
             new Transform2d(
                 Constants.StartingPose.getTranslation(),

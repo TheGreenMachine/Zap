@@ -1,6 +1,7 @@
 package com.team1816.season.subsystems;
 
 import static com.team1816.season.subsystems.Drive.maxVelTicksPer100ms;
+import static com.team1816.season.subsystems.Drive.metersPerSecondToTicksPer100ms;
 import static com.team1816.season.subsystems.SwerveModule.ControlState.OPEN_LOOP;
 import static com.team1816.season.subsystems.SwerveModule.ControlState.VELOCITY;
 
@@ -19,6 +20,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -162,7 +164,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
             driveEncoderSimPosition += adjDriveDemand * TICK_RATIO_PER_LOOP;
             mPeriodicIO.drive_encoder_ticks = driveEncoderSimPosition;
             mPeriodicIO.velocity_ticks_per_100ms = adjDriveDemand;
-            mPeriodicIO.azimuth_encoder_ticks = mPeriodicIO.azimuth_position.converstionstuff;
+//            mPeriodicIO.azimuth_encoder_ticks = tickmPeriodicIO.azimuth_position.;
         } else {
             mPeriodicIO.drive_encoder_ticks = mDriveMotor.getSelectedSensorPosition(0);
             mPeriodicIO.velocity_ticks_per_100ms =
@@ -187,14 +189,11 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
     public void writePeriodicOutputs() {
 
         if(mControlState == OPEN_LOOP) {
-            double percentOutput = mPeriodicIO.desired_state.speedMetersPerSecond / Constants.Swerve.maxSpeed;
+            double percentOutput = mPeriodicIO.desired_state.speedMetersPerSecond / Units.inchesToMeters(Constants.kPathFollowingMaxVel);
             mDriveMotor.set(ControlMode.PercentOutput, percentOutput);
         }
         else {
-            double velocity = Conversions.MPSToFalcon( // TODO change to one of our conversions that actually makes sense
-                mPeriodicIO.desired_state.speedMetersPerSecond,
-                Constants.Swerve.wheelCircumference, Constants.Swerve.driveGearRatio
-            );
+            double velocity = metersPerSecondToTicksPer100ms(mPeriodicIO.desired_state.speedMetersPerSecond);
             mDriveMotor.set(
                 ControlMode.Velocity,
                 velocity,
@@ -202,9 +201,10 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
                 feedforward.calculate(mPeriodicIO.desired_state.speedMetersPerSecond)
             );
         }
-        double angle = (Math.abs(mPeriodicIO.desired_state.speedMetersPerSecond) <= (Constants.maxSpeed * 0.01)) ?
+        double angle = (Math.abs(mPeriodicIO.desired_state.speedMetersPerSecond) <= (Units.inchesToMeters(Constants.kPathFollowingMaxVel) * 0.01)) ?
             lastAngle : mPeriodicIO.desired_state.angle.getDegrees(); //Prevent rotating module if speed is less then 1%. Prevents Jittering.
-        mAzimuthMotor.set(ControlMode.Position, Conversions.degreesToFalcon(angle, Constants.angleGearRatio));
+        mPeriodicIO.azimuth_encoder_ticks = radiansToEncoderUnits(Units.degreesToRadians(angle));
+        mAzimuthMotor.set(ControlMode.Position, mPeriodicIO.azimuth_encoder_ticks);
 
 //        if (mControlState == OPEN_LOOP) {
 //            if (
@@ -336,20 +336,20 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
         // return driveMotorPassed && azimuthMotorPassed;
     }
 
-    @Override
-    public double getAzimuthVelocity() {
-        return mAzimuthMotor.getSelectedSensorVelocity(0);
-    }
+//    @Override
+//    public double getAzimuthVelocity() {
+//        return mAzimuthMotor.getSelectedSensorVelocity(0);
+//    }
 
     @Override
     public double getAzimuthPosition() {
         return mPeriodicIO.azimuth_encoder_ticks;
     }
 
-    @Override
-    public double getAzimuthPositionDemand() {
-        return mPeriodicIO.azimuth_position;
-    }
+//    @Override
+//    public double getAzimuthPositionDemand() {
+//        return mPeriodicIO.azimuth_position;
+//    }
 
     @Override
     public double getAzimuthError() {
@@ -374,12 +374,12 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
         return mDriveMotor.getClosedLoopError(0);
     }
 
-    @Override
-    public double getDriveDistance() {
-        return Drive.rotationsToInches(
-            mPeriodicIO.drive_encoder_ticks / Drive.DRIVE_ENCODER_PPR
-        );
-    }
+//    @Override
+//    public double getDriveDistance() {
+//        return Drive.rotationsToInches(
+//            mPeriodicIO.drive_encoder_ticks / Drive.DRIVE_ENCODER_PPR
+//        );
+//    }
 
     /**
      * @param ticks azimuth ticks
@@ -394,13 +394,13 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
     public synchronized double radiansToEncoderUnits(double radians) {
         return radians * mConstants.kAzimuthTicksPerRadian;
     }
-
-    /**
-     * @param ticks drive ticks
-     */
-    public synchronized double encoderUnitsToDistance(double ticks) {
-        return ticks * mConstants.kDriveTicksPerUnitDistance;
-    }
+//
+//    /**
+//     * @param ticks drive ticks
+//     */
+//    public synchronized double encoderUnitsToDistance(double ticks) {
+//        return ticks * mConstants.kDriveTicksPerUnitDistance;
+//    }
 
     /**
      * @return drive ticks
@@ -434,9 +434,9 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
         return mPeriodicIO.velocity_ticks_per_100ms * 10;
     }
 
-    public synchronized double getLinearVelocity() {
-        return encoderUnitsToDistance(getRawLinearVelocity());
-    }
+//    public synchronized double getLinearVelocity() {
+//        return encoderUnitsToDistance(getRawLinearVelocity());
+//    }
 
     public synchronized void setDriveBrakeMode(boolean brake_mode) {
         mDriveMotor.setNeutralMode(brake_mode ? NeutralMode.Brake : NeutralMode.Coast);
@@ -456,12 +456,12 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
         mPeriodicIO.azimuth_position = mPeriodicIO.desired_state.angle.rotateBy(new Rotation2d(azimuthAdjustmentRadians));
     }
 
-    private void resetToAbsolute(){
-        double absolutePosition = Conversions.degreesToFalcon(getCanCoder().getDegrees() - mConstants.kAzimuthAdjustmentOffset , Constants.Swerve.angleGearRatio);
-        mAzimuthMotor.setSelectedSensorPosition(absolutePosition, 0, Constants.kCANTimeoutMs); // TODO see if kCANTimeoutMs or kLongCANTimeoutMs
-    }
+//    private void resetToAbsolute(){
+//        double absolutePosition = Conversions.degreesToFalcon(getCanCoder().getDegrees() - mConstants.kAzimuthAdjustmentOffset , Constants.Swerve.angleGearRatio);
+//        mAzimuthMotor.setSelectedSensorPosition(absolutePosition, 0, Constants.kCANTimeoutMs); // TODO see if kCANTimeoutMs or kLongCANTimeoutMs
+//    }
 
-    public Rotation2d getCanCoder(){
+    public Rotation2d getCanCoder(){ // do we need this?
         return Rotation2d.fromDegrees(mCanCoder.getAbsolutePosition());
     }
 

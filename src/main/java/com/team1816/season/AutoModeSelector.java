@@ -131,15 +131,15 @@ public class AutoModeSelector {
             case DO_NOTHING:
                 return Optional.of(new DoNothingMode());
             case TUNE_DRIVETRAIN:
-                return Optional.of(new TuneDrivetrainMode(false));
+                return Optional.of(new TuneDrivetrainMode());
             case TUNE_DRIVETRAIN_REVERSE:
-                return Optional.of(new TuneDrivetrainMode(true));
+                return Optional.of(new TuneDrivetrainMode());
             case TURRET_TEST:
                 return Optional.of(new TurretTestMode());
             case DRIVE_STRAIGHT:
                 return (Optional.of(new DriveStraightMode()));
-            case LIVING_ROOM:
-                return (Optional.of(new LivingRoomMode()));
+//            case LIVING_ROOM:
+//                return (Optional.of(new LivingRoomMode()));
             case BARREL:
                 return (Optional.of(new BarrelMode()));
             default:

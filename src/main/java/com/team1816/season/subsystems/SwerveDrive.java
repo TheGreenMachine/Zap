@@ -255,7 +255,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     /**
      * Configure talons for velocity control
    */
-//    @Override
+
 //    public synchronized void setVelocity(List<Translation2d> driveVectors) {
 //        if (mDriveControlState == DriveControlState.OPEN_LOOP) {
 //            setBrakeMode(false);
@@ -289,24 +289,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         for (SwerveModule module : swerveModules) {
             module.setDriveBrakeMode(on);
         }
-    }
-
-    public synchronized double[] getModuleVelocities() {
-        double[] ret_val = new double[swerveModules.length];
-        for (int i = 0; i < ret_val.length; i++) {
-            ret_val[i] = swerveModules[i].getLinearVelocity();
-        }
-
-        return ret_val;
-    }
-
-    public synchronized Rotation2d[] getModuleAzimuths() {
-        Rotation2d[] ret_val = new Rotation2d[swerveModules.length];
-        for (int i = 0; i < ret_val.length; i++) {
-            ret_val[i] = swerveModules[i].getAngle();
-        }
-
-        return ret_val;
     }
 //
 //    public void setWantReset(boolean wantReset) {

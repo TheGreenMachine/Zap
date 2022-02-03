@@ -10,8 +10,6 @@ public class LibModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(Controller.Factory.class).to(ControlUtils.class);
-        requestStaticInjection(DriveTrajectory.class);
-        requestStaticInjection(RobotStateEstimator.class);
         requestStaticInjection(WaitUntilInsideRegion.class);
     }
 }

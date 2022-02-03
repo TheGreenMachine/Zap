@@ -21,7 +21,6 @@ public class SeasonModule extends AbstractModule {
         bind(IControlBoard.class).to(ControlBoard.class);
         bind(IDriveControlBoard.class).to(GamepadDriveControlBoard.class);
         bind(IButtonControlBoard.class).to(GamepadButtonControlBoard.class);
-        requestStaticInjection(SwerveKinematics.class);
         requestStaticInjection(Drive.class);
         requestStaticInjection(TankDrive.class);
         requestStaticInjection(SwerveDrive.class);
@@ -32,7 +31,6 @@ public class SeasonModule extends AbstractModule {
         requestStaticInjection(AutoModeExecutor.class);
         requestStaticInjection(DistanceManager.class);
         requestStaticInjection(TrajectorySet.class);
-        requestStaticInjection(DriveTrajectory.class);
         requestStaticInjection(TurretAction.class);
     }
 }

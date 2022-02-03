@@ -12,7 +12,7 @@ import com.team1816.lib.subsystems.TrackableDrivetrain;
 import com.team1816.season.Constants;
 import com.team1816.season.RobotState;
 import com.team254.lib.util.DriveSignal;
-import com.team254.lib.util.Units;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -252,7 +252,7 @@ public abstract class Drive
     }
 
     public static double metersPerSecondToTicksPer100ms(double meters_per_second) {
-        return inchesPerSecondToTicksPer100ms(Units.meters_to_inches(meters_per_second));
+        return inchesPerSecondToTicksPer100ms(Units.metersToInches(meters_per_second));
     }
 
     public static double inchesPerSecondToTicksPer100ms(double inches_per_second) {
@@ -338,13 +338,11 @@ public abstract class Drive
     public abstract boolean checkSystem();
 
     @Override
-    public double getFieldXDistance() {
-        return mRobotState.getEstimatedX();
-    }
+    public double getFieldXDistance() { return Units.metersToInches(getPose().getX() - Constants.StartingPose.getX());    }
 
     @Override
     public double getFieldYDistance() {
-        return mRobotState.getEstimatedY();
+        return Units.metersToInches(getPose().getY() - Constants.StartingPose.getY());
     }
 
     @Override
