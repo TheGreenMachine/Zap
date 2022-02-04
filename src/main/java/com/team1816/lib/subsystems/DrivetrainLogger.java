@@ -107,7 +107,7 @@ public class DrivetrainLogger {
         subsystem.CreateBadLogTopic(
             "Drivetrain/Y Desired",
             "Inches",
-            drivetrain::getFieldYDesiredYDistance,
+            drivetrain::getFieldDesiredYDistance,
             "hide",
             "join:Drivetrain/Distance"
         );

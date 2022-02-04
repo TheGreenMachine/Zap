@@ -226,11 +226,7 @@ public class Robot extends TimedRobot {
             ledManager.registerEnabledLoops(mDisabledLooper);
 
             // Robot starts forwards.
-            mRobotState.reset(
-                Timer.getFPGATimestamp(),
-                com.team254.lib.geometry.Pose2d.identity(),
-                com.team254.lib.geometry.Rotation2d.identity()
-            );
+            mRobotState.reset();
             mDrive.setHeading(new Rotation2d());
 
             mAutoModeSelector.updateModeCreator();
@@ -305,11 +301,7 @@ public class Robot extends TimedRobot {
             ledManager.setDefaultStatus(LedManager.RobotStatus.AUTONOMOUS);
 
             // Robot starts forwards.
-            mRobotState.reset(
-                Timer.getFPGATimestamp(),
-                com.team254.lib.geometry.Pose2d.identity(),
-                com.team254.lib.geometry.Rotation2d.identity()
-            );
+            mRobotState.reset();
             mDrive.setHeading(new Rotation2d());
 
             mHasBeenEnabled = true;
@@ -412,11 +404,7 @@ public class Robot extends TimedRobot {
                 System.out.println("Zeroing Robot!");
                 mDrive.zeroSensors();
                 mTurret.zeroSensors();
-                mRobotState.reset(
-                    Timer.getFPGATimestamp(),
-                    com.team254.lib.geometry.Pose2d.identity(),
-                    com.team254.lib.geometry.Rotation2d.identity()
-                );
+                mRobotState.reset();
                 mDrive.setHeading(new Rotation2d());
                 ledManager.indicateStatus(LedManager.RobotStatus.SEEN_TARGET);
             } else {

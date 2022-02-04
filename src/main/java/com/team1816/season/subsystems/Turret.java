@@ -118,8 +118,8 @@ public class Turret extends Subsystem implements PidProvider {
             turret.overrideLimitSwitchesEnable(true);
             turret.overrideSoftLimitsEnable(true);
 
-            turretAngleRelativeToField =
-                robotState.getHeadingRelativeToInitial().getDegrees();
+//            turretAngleRelativeToField =
+//                robotState.getHeadingRelativeToInitial().getDegrees();
         }
     }
 
@@ -232,18 +232,18 @@ public class Turret extends Subsystem implements PidProvider {
 
     @Override
     public void readPeriodicInputs() {
-        turretAngleRelativeToField =
-            robotState.getHeadingRelativeToInitial().getDegrees();
-        if (RobotBase.isSimulation()) {
-            //show turret
-            var robotPose = robotState.field.getRobotPose();
-            var turret = robotState.field.getObject("turret");
-            turret.setPose(
-                robotPose.getX(),
-                robotPose.getY(),
-                Rotation2d.fromDegrees(getActualTurretPositionDegrees())
-            );
-        }
+//        turretAngleRelativeToField =
+//            robotState.getHeadingRelativeToInitial().getDegrees();
+//        if (RobotBase.isSimulation()) {
+//            //show turret
+//            var robotPose = robotState.field.getRobotPose();
+//            var turret = robotState.field.getObject("turret");
+//            turret.setPose(
+//                robotPose.getX(),
+//                robotPose.getY(),
+//                Rotation2d.fromDegrees(getActualTurretPositionDegrees())
+//            );
+//        }
     }
 
     @Override

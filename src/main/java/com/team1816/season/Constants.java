@@ -18,8 +18,7 @@ public class Constants {
 
     private static final RobotFactory factory = Robot.getFactory();
 
-    public static Pose2d emptyPose = new Pose2d();
-    public static Twist2d emptyTwist = new Twist2d();
+    public static final Pose2d emptyPose = new Pose2d();
     public static final Rotation2d emptyRotation = new Rotation2d();
 
     public static final double kLooperDt = factory.getConstant("kLooperDt", .020);

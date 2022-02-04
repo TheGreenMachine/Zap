@@ -2,7 +2,9 @@ package com.team1816.lib.auto.actions;
 
 import com.google.inject.Inject;
 import com.team1816.season.RobotState;
-import com.team254.lib.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 
 public class WaitUntilInsideRegion implements Action {
 
@@ -19,15 +21,14 @@ public class WaitUntilInsideRegion implements Action {
 
     @Override
     public boolean isFinished() {
-        Translation2d position = mRobotState
-            .getLatestFieldToVehicle()
-            .getValue()
-            .getTranslation();
+        Pose2d position = mRobotState.getLatestFieldToVehicle();
+        var x = Units.metersToInches(position.getX());
+        var y = Units.metersToInches(position.getY());
         return (
-            position.x() > mBottomLeft.x() &&
-            position.x() < mTopRight.x() &&
-            position.y() > mBottomLeft.y() &&
-            position.y() < mTopRight.y()
+            x > mBottomLeft.getX() &&
+                x < mTopRight.getX() &&
+                y > mBottomLeft.getY() &&
+                y < mTopRight.getY()
         );
     }
 

@@ -346,6 +346,22 @@ public abstract class Drive
     }
 
     @Override
+    public double getFieldDesiredXDistance() {
+        if (mPeriodicIO.desired_pose.getX() == 0) return 0;
+        return Units.metersToInches(
+            mPeriodicIO.desired_pose.getX() - Constants.StartingPose.getX()
+        );
+    }
+
+    @Override
+    public double getFieldDesiredYDistance() {
+        if (mPeriodicIO.desired_pose.getY() == 0) return 0;
+        return Units.metersToInches(
+            mPeriodicIO.desired_pose.getY() - Constants.StartingPose.getY()
+        );
+    }
+
+    @Override
     public void initSendable(SendableBuilder builder) {
         builder.addStringProperty(
             "Drive/ControlState",

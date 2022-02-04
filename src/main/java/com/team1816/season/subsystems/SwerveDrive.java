@@ -122,16 +122,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     @Override
-    public double getFieldDesiredXDistance() {
-        return 0;
-    }
-
-    @Override
-    public double getFieldYDesiredYDistance() {
-        return 0;
-    }
-
-    @Override
     public double getDesiredHeading() {
         return getDesiredRotation2d().getDegrees();
     }
@@ -155,16 +145,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 ) /
                 robotWidthTicks;
             //mPeriodicIO.gyro_heading_no_offset = getDesiredRotation2d().rotateBy(Rotation2d.fromDegrees(gyroDrift));
-            var rot2d = new edu.wpi.first.math.geometry.Rotation2d(
-                mPeriodicIO.rotation //still jank
-            );
-            var xPos =
-                Units.inches_to_meters(mRobotState.getEstimatedX()) +
-                Constants.StartingPose.getTranslation().getX();
-            var yPos =
-                Units.inches_to_meters(mRobotState.getEstimatedY()) +
-                Constants.StartingPose.getTranslation().getY();
-            mRobotState.field.setRobotPose(xPos, yPos, rot2d);
         } else {
             mPeriodicIO.gyro_heading_no_offset =
                 Rotation2d.fromDegrees(mPigeon.getFusedHeading());
@@ -175,6 +155,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         for (SwerveModule module : swerveModules) {
             module.readPeriodicInputs();
         }
+        swerveOdometry.update(mPeriodicIO.gyro_heading, getStates());
+
     }
 
     @Override

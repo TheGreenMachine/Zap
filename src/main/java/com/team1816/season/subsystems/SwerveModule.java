@@ -31,16 +31,12 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
     public static class PeriodicIO {
 
         // INPUTS
-        public double drive_encoder_ticks;
-        public double azimuth_encoder_ticks; // actual position of module in encoder units, adjusted for home offset
-        public double azimuth_encoder_ticks_unmasked;
-        public int position_ticks;
         public double velocity_ticks_per_100ms;
-        public SwerveModuleState desired_state;
+        public SwerveModuleState desired_state = new SwerveModuleState();
 
         // OUTPUTS
-        public double drive_demand;
-        public Rotation2d azimuth_position; // actual desired demand in encoder units, not adjusted for home offset
+        public double drive_demand = 0;
+        public Rotation2d azimuth_position = Constants.emptyRotation; // actual desired demand in encoder units, not adjusted for home offset
     }
 
     public enum ControlState {
@@ -55,14 +51,13 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
 
     // State
     private PeriodicIO mPeriodicIO = new PeriodicIO();
-    private ControlState mControlState = OPEN_LOOP;
+    private ControlState mControlState = VELOCITY;
     private boolean isBrakeMode = false;
     private double driveEncoderSimPosition = 0;
     private double previousEncDistance = 0;
     private Translation2d position = new Translation2d();
     private final Translation2d startingPosition;
     private Pose2d estimatedRobotPose = new Pose2d();
-    private double lastAngle;
 
     // Constants
     private final Constants.Swerve mConstants;
@@ -125,7 +120,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
 
         /* Set initial Angle and Pose */
         this.startingPosition = startingPosition;
-        lastAngle = getState().angle.getDegrees();
+//        mPeriodicIO.azimuth_position = getState().angle;
 
         System.out.println("  " + this);
 
@@ -159,27 +154,14 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
     @Override
     public void readPeriodicInputs() {
         if (RobotBase.isSimulation()) {
-            double adjDriveDemand = mPeriodicIO.drive_demand;
-            if (mControlState == OPEN_LOOP) {
-                adjDriveDemand = adjDriveDemand * maxVelTicksPer100ms;
-            }
-            driveEncoderSimPosition += adjDriveDemand * TICK_RATIO_PER_LOOP;
-            mPeriodicIO.drive_encoder_ticks = driveEncoderSimPosition;
-            mPeriodicIO.velocity_ticks_per_100ms = adjDriveDemand;
-//            mPeriodicIO.azimuth_encoder_ticks = tickmPeriodicIO.azimuth_position.;
+//            if (mControlState == OPEN_LOOP) {
+//                throw new UnsupportedOperationException("swerve in open loop not supported!");
+//            }
+            mPeriodicIO.velocity_ticks_per_100ms = mPeriodicIO.drive_demand;
         } else {
-            mPeriodicIO.drive_encoder_ticks = mDriveMotor.getSelectedSensorPosition(0);
             mPeriodicIO.velocity_ticks_per_100ms =
                 mDriveMotor.getSelectedSensorVelocity(0);
 
-            var normalizedEncoderTicks = (int) (
-                mAzimuthMotor.getSelectedSensorPosition(0) -
-                mConstants.kAzimuthEncoderHomeOffset
-            );
-
-            mPeriodicIO.azimuth_encoder_ticks_unmasked = normalizedEncoderTicks;
-            mPeriodicIO.azimuth_encoder_ticks =
-                normalizedEncoderTicks & Constants.Swerve.AZIMUTH_TICK_MASK;
         }
     }
 
@@ -190,24 +172,18 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
     @Override
     public void writePeriodicOutputs() {
 
-        if(mControlState == OPEN_LOOP) {
-            double percentOutput = mPeriodicIO.desired_state.speedMetersPerSecond / Units.inchesToMeters(Constants.kPathFollowingMaxVel);
-            mDriveMotor.set(ControlMode.PercentOutput, percentOutput);
-        }
-        else {
-            double velocity = metersPerSecondToTicksPer100ms(mPeriodicIO.desired_state.speedMetersPerSecond);
-            mDriveMotor.set(
-                ControlMode.Velocity,
-                velocity,
-                DemandType.ArbitraryFeedForward,
-                feedforward.calculate(mPeriodicIO.desired_state.speedMetersPerSecond)
-            );
-        }
-        double angle = (Math.abs(mPeriodicIO.desired_state.speedMetersPerSecond) <= (Units.inchesToMeters(Constants.kPathFollowingMaxVel) * 0.01)) ?
-            lastAngle : mPeriodicIO.desired_state.angle.getDegrees(); //Prevent rotating module if speed is less then 1%. Prevents Jittering.
-        mPeriodicIO.azimuth_encoder_ticks = radiansToEncoderUnits(Units.degreesToRadians(angle));
-        mAzimuthMotor.set(ControlMode.Position, mPeriodicIO.azimuth_encoder_ticks);
+        double velocity = metersPerSecondToTicksPer100ms(mPeriodicIO.desired_state.speedMetersPerSecond);
+        mDriveMotor.set(
+            ControlMode.Velocity,
+            velocity,
+            DemandType.ArbitraryFeedForward,
+            feedforward.calculate(mPeriodicIO.desired_state.speedMetersPerSecond)
+        );
 
+        double angle = (Math.abs(mPeriodicIO.desired_state.speedMetersPerSecond) <= (Units.inchesToMeters(Constants.kPathFollowingMaxVel) * 0.01)) ?
+            mPeriodicIO.azimuth_position.getDegrees() : mPeriodicIO.desired_state.angle.getDegrees(); //Prevent rotating module if speed is less then 1%. Prevents Jittering.
+        mAzimuthMotor.set(ControlMode.Position, radiansToEncoderUnits(Units.degreesToRadians(angle)));
+        mPeriodicIO.azimuth_position = new Rotation2d(Units.degreesToRadians(angle));
 //        if (mControlState == OPEN_LOOP) {
 //            if (
 //                Util.epsilonEquals(
@@ -345,7 +321,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
 
     @Override
     public double getAzimuthPosition() {
-        return mPeriodicIO.azimuth_encoder_ticks;
+        return mPeriodicIO.azimuth_position.getDegrees();
     }
 
 //    @Override
@@ -360,14 +336,11 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
 
     @Override
     public double getDriveVelocity() {
-        return mPeriodicIO.velocity_ticks_per_100ms;
+        return mPeriodicIO.desired_state.speedMetersPerSecond;
     }
 
     @Override
     public double getDriveVelocityDemand() {
-        if (mControlState == OPEN_LOOP) {
-            return mPeriodicIO.drive_demand * maxVelTicksPer100ms;
-        }
         return mPeriodicIO.drive_demand;
     }
 
@@ -448,6 +421,10 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
         mControlState = isOpenLoop ? OPEN_LOOP : VELOCITY;
         mPeriodicIO.desired_state = ModuleState.optimize(desiredState, getState().angle); //Custom optimize command, since default WPILib optimize assumes continuous controller which CTRE is not
 
+        if(isOpenLoop){
+            double percentOutput = desiredState.speedMetersPerSecond / Units.inchesToMeters(Constants.kPathFollowingMaxVel);
+            mDriveMotor.set(ControlMode.PercentOutput, percentOutput);
+        }
         // is this adjustment necessary?
         var isFront = mConstants.kName.startsWith("front");
         var sign = isFront ? 1 : -1;
