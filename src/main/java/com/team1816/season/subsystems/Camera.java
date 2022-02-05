@@ -2,6 +2,7 @@ package com.team1816.season.subsystems;
 import com.team1816.lib.subsystems.Subsystem;
 import java.net.*;
 import java.io.*;
+import java.nio.channels.AsynchronousSocketChannel;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -15,7 +16,7 @@ public class Camera extends Subsystem {
 
     // Components
     @Inject
-    private final LedManager led;
+    static LedManager led;
 
     // Constants
     // private static final double CAMERA_FOV = 87.0; // deg
@@ -46,9 +47,12 @@ public class Camera extends Subsystem {
 
     private boolean socketConnect() {
         try {
-            socket = new Socket("localhost", 5802);
-            socketOut = new PrintWriter(socket.getOutputStream(), true);
+            socket = new Socket();
+            socket.connect(
+                new InetSocketAddress(InetAddress.getLocalHost(), 5802), 10
+            );
             socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            socketOut = new PrintWriter(socket.getOutputStream(), true);
         } catch (IOException e) {
             needsReconnect = System.currentTimeMillis();
             return false;
@@ -116,7 +120,7 @@ public class Camera extends Subsystem {
     }
     public void readPeriodicInputs() {
         // if more than 500ms, reconnect
-        if (needsReconnect != 0 && (System.currentTimeMillis() - needsReconnect) > 500) {
+        if (needsReconnect != 0 && (System.currentTimeMillis() - needsReconnect) >= 200) {
             System.out.println("Reconnect attempt at " + System.currentTimeMillis());
             if (socketConnect()) {
                 needsReconnect = 0;
