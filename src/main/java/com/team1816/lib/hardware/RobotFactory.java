@@ -171,8 +171,7 @@ public class RobotFactory {
 
     public SwerveModule getSwerveModule(
         String subsystemName,
-        String name,
-        Translation2d startPos
+        String name
     ) {
         var subsystem = getSubsystem(subsystemName);
         ModuleConfiguration module = subsystem.swerveModules.modules.get(name);
@@ -200,8 +199,7 @@ public class RobotFactory {
         var swerveModule = new SwerveModule(
             subsystemName,
             swerveConstants,
-            canCoder,
-            startPos
+            canCoder
         );
         return swerveModule;
     }

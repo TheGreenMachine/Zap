@@ -59,24 +59,21 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         swerveModules[Constants.Swerve.kFrontLeft] =
             factory.getSwerveModule(
                 NAME,
-                "frontLeft",
-                Constants.kFrontLeftModulePosition
+                "frontLeft"
             );
         swerveModules[Constants.Swerve.kFrontRight] =
             factory.getSwerveModule(
                 NAME,
-                "frontRight",
-                Constants.kFrontRightModulePosition
+                "frontRight"
             );
         swerveModules[Constants.Swerve.kBackLeft] =
             factory.getSwerveModule(NAME,
-                "backLeft",
-                Constants.kBackLeftModulePosition);
+                "backLeft"
+            );
         swerveModules[Constants.Swerve.kBackRight] =
             factory.getSwerveModule(
                 NAME,
-                "backRight",
-                Constants.kBackRightModulePosition
+                "backRight"
             );
 
         mPigeon = new PigeonIMU((int) factory.getConstant(NAME, "pigeonId", -1));
@@ -138,13 +135,13 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     public synchronized void readPeriodicInputs() {
         if (RobotBase.isSimulation()) {
             // calculate rotation based on left/right vel differences
-            gyroDrift -=
-                (
-                    mPeriodicIO.left_velocity_ticks_per_100ms -
-                    mPeriodicIO.right_velocity_ticks_per_100ms
-                ) /
-                robotWidthTicks;
-            //mPeriodicIO.gyro_heading_no_offset = getDesiredRotation2d().rotateBy(Rotation2d.fromDegrees(gyroDrift));
+            gyroDrift -= 0;
+//                (
+//                    mPeriodicIO.left_velocity_ticks_per_100ms -
+//                    mPeriodicIO.right_velocity_ticks_per_100ms
+//                ) /
+//                robotWidthTicks;
+            mPeriodicIO.gyro_heading_no_offset = getDesiredRotation2d().rotateBy(Rotation2d.fromDegrees(gyroDrift));
         } else {
             mPeriodicIO.gyro_heading_no_offset =
                 Rotation2d.fromDegrees(mPigeon.getFusedHeading());
@@ -153,10 +150,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             mPeriodicIO.gyro_heading_no_offset.rotateBy(mGyroOffset);
         // System.out.println("control state: " + mDriveControlState + ", left: " + mPeriodicIO.left_demand + ", right: " + mPeriodicIO.right_demand);
         for (SwerveModule module : swerveModules) {
-            module.readPeriodicInputs();
+            module.readPeriodicInputs(); //currently does nothing! - getStates is basically the readPeriodic
         }
         swerveOdometry.update(mPeriodicIO.gyro_heading, getStates());
-
     }
 
     @Override

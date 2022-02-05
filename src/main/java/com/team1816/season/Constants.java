@@ -43,33 +43,6 @@ public class Constants {
     public static final double kDriveWheelRadiusMeters = Units.inches_to_meters(kDriveWheelRadiusInches);
     public static double kTrackScrubFactor = factory.getConstant("kTrackScrubFactor");
 
-    private static final double moduleDeltaX = kDriveWheelbaseLengthInches / 2.0;
-    private static final double moduleDeltaY = kDriveWheelTrackWidthInches / 2.0;
-
-    public static final Translation2d kFrontLeftModulePosition = new Translation2d(
-        moduleDeltaX,
-        moduleDeltaY
-    );
-    public static final Translation2d kFrontRightModulePosition = new Translation2d(
-        moduleDeltaX,
-        -moduleDeltaY
-    );
-    public static final Translation2d kBackLeftModulePosition = new Translation2d(
-        -moduleDeltaX,
-        moduleDeltaY
-    );
-    public static final Translation2d kBackRightModulePosition = new Translation2d(
-        -moduleDeltaX,
-        -moduleDeltaY
-    );
-
-    public static final Translation2d[] kModulePositions = {
-        kFrontLeftModulePosition,
-        kFrontRightModulePosition,
-        kBackRightModulePosition,
-        kBackLeftModulePosition,
-    };
-
     public static final Pose2d StartingPose = new Pose2d(.5, 3.5, new Rotation2d());
 
     // CAN Timeouts
@@ -119,28 +92,37 @@ public class Constants {
             "azimuthAllowableErrorTicks"
         );
 
-        // azimuth current/voltage
-        public VelocityMeasPeriod kAzimuthVelocityMeasurementPeriod =
-            VelocityMeasPeriod.Period_100Ms; // dt for velocity measurements, ms
-
         // general drive
         public PIDSlotConfiguration kDrivePid;
-        public double kWheelDiameter = Constants.kDriveWheelDiameterInches; // Probably should tune for each individual wheel maybe
-        public double kDriveTicksPerUnitDistance =
-            (1 / Drive.DRIVE_ENCODER_PPR) * (Math.PI * kWheelDiameter);
-        public double kDriveDeadband = 0.01;
-
-        // drive current/voltage
-
+        // drive current/voltage -ginget  - removed these
         // drive measurement
-        public VelocityMeasPeriod kDriveVelocityMeasurementPeriod =
-            VelocityMeasPeriod.Period_100Ms; // dt for velocity measurements, ms
+
+        private static final double moduleDeltaX = kDriveWheelbaseLengthMeters / 2.0;
+        private static final double moduleDeltaY = kDriveWheelTrackWidthMeters / 2.0;
+
+        public static final Translation2d kFrontLeftModulePosition = new Translation2d(
+            moduleDeltaX,
+            moduleDeltaY
+        );
+        public static final Translation2d kFrontRightModulePosition = new Translation2d(
+            moduleDeltaX,
+            -moduleDeltaY
+        );
+        public static final Translation2d kBackLeftModulePosition = new Translation2d(
+            -moduleDeltaX,
+            moduleDeltaY
+        );
+        public static final Translation2d kBackRightModulePosition = new Translation2d(
+            -moduleDeltaX,
+            -moduleDeltaY
+        );
 
         public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
-            new Translation2d(Constants.kDriveWheelbaseLengthMeters / 2.0, Constants.kDriveWheelTrackWidthMeters / 2.0),
-            new Translation2d(Constants.kDriveWheelbaseLengthMeters / 2.0, -Constants.kDriveWheelTrackWidthMeters / 2.0),
-            new Translation2d(-Constants.kDriveWheelbaseLengthMeters / 2.0, Constants.kDriveWheelTrackWidthMeters / 2.0),
-            new Translation2d(-Constants.kDriveWheelbaseLengthMeters / 2.0, -Constants.kDriveWheelTrackWidthMeters / 2.0));
+            kFrontLeftModulePosition,
+            kFrontRightModulePosition,
+            kBackLeftModulePosition,
+            kBackRightModulePosition
+        );
     }
 
     // Swerve Heading Controller -- CHEESY Constants
