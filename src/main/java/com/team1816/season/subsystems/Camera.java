@@ -1,79 +1,126 @@
 package com.team1816.season.subsystems;
+import com.team1816.lib.subsystems.Subsystem;
+import java.net.*;
+import java.io.*;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import edu.wpi.first.networktables.EntryListenerFlags;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 
 @Singleton
-public class Camera {
+public class Camera extends Subsystem {
 
     private static Camera INSTANCE;
 
+    private final String PROTOCOL_LINE = "\\|";
+
     // Components
-    private final NetworkTable networkTable;
-
     @Inject
-    private static LedManager led;
-
-    // State
-    private double deltaXAngle;
-    private double distance;
-    private final NetworkTableEntry usingVision;
-
-    private double rawCenterX;
+    private final LedManager led;
 
     // Constants
-    private static final double CAMERA_FOV = 87.0; // deg
+    // private static final double CAMERA_FOV = 87.0; // deg
     private static final double CAMERA_FOCAL_LENGTH = 350; // px
     private static final double VIDEO_WIDTH = 672.0; // px
     public static final double ALLOWABLE_AIM_ERROR = 1; // deg
 
-    public Camera() {
-        networkTable = NetworkTableInstance.getDefault().getTable("SmartDashboard");
-        usingVision = networkTable.getSubTable("Calibration").getEntry("VISION");
-        networkTable.addEntryListener(
-            "center_x",
-            (table, key, entry, value, flags) -> {
-                rawCenterX = value.getDouble();
-                if (value.getDouble() < 0) {
-                    // Reset deltaX to 0 if contour not detected
-                    deltaXAngle = 0;
-                    return;
-                }
-                var deltaXPixels = (value.getDouble() - (VIDEO_WIDTH / 2)); // Calculate deltaX from center of screen
-                this.deltaXAngle =
-                    Math.toDegrees(Math.atan2(deltaXPixels, CAMERA_FOCAL_LENGTH)) * 0.64;
-            },
-            EntryListenerFlags.kNew | EntryListenerFlags.kUpdate
-        );
+    // Sockets!
+    private Socket socket;
+    private BufferedReader socketIn;
+    private PrintWriter socketOut;
+    private Boolean usingVision = true;
+    private long needsReconnect = 0;
 
-        networkTable.addEntryListener(
-            "distance",
-            (table, key, entry, value, flags) -> {
-                // Use most recently available distance if distance not found
-                this.distance = value.getDouble();
-            },
-            EntryListenerFlags.kNew | EntryListenerFlags.kUpdate
-        );
+    public Camera() {
+        super("Camera");
+        socketConnect();
+    }
+
+    private String query(String message) throws IOException {
+        if (usingVision) {
+            socketOut.write(message + "\n");
+            socketOut.flush();
+            return socketIn.readLine();
+        }
+        return "";
+    }
+
+    private boolean socketConnect() {
+        try {
+            socket = new Socket("localhost", 5802);
+            socketOut = new PrintWriter(socket.getOutputStream(), true);
+            socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        } catch (IOException e) {
+            needsReconnect = System.currentTimeMillis();
+            return false;
+        }
+        return true;
     }
 
     public double getDeltaXAngle() {
-        return deltaXAngle;
+        if (!usingVision) return -1;
+        try {
+            String line = query("center_x");
+            String coord = line.split(PROTOCOL_LINE)[1];
+            double x = Double.parseDouble(coord);
+            if (x < 0) {
+                // Reset deltaX to 0 if contour not detected
+                return 0;
+            }
+            double deltaXPixels = (x - (VIDEO_WIDTH / 2)); // Calculate deltaX from center of screen
+            return Math.toDegrees(Math.atan2(deltaXPixels, CAMERA_FOCAL_LENGTH)) * 0.64;
+        } catch (IOException e) {
+            needsReconnect = System.currentTimeMillis();
+            return -1;
+        }
     }
 
     public double getDistance() {
-        return distance;
+        if (!usingVision) return -1;
+        try {
+            String line = query("distance");
+            String[] parts = line.split(PROTOCOL_LINE);
+            if (parts.length < 2) {
+                return -1;
+            }
+            return Double.parseDouble(parts[1]);
+        } catch (IOException e) {
+            needsReconnect = System.currentTimeMillis();
+            return -1;
+        }
     }
 
     public double getRawCenterX() {
-        return rawCenterX;
+        if (!usingVision) return -1;
+        try {
+            String line = query("center_x");
+            String coord = line.split(PROTOCOL_LINE)[1];
+            return Double.parseDouble(coord);
+        } catch (IOException e) {
+            needsReconnect = System.currentTimeMillis();
+            return -1;
+        }
     }
 
     public void setEnabled(boolean enabled) {
         led.setCameraLed(enabled);
-        usingVision.setBoolean(enabled);
+        usingVision = enabled;
+    }
+
+    public boolean checkSystem() {
+        return needsReconnect != 0;
+    }
+    public void stop() {
+        try {
+            socket.close();
+        } catch (IOException e) {}
+    }
+    public void readPeriodicInputs() {
+        // if more than 500ms, reconnect
+        if (needsReconnect != 0 && (System.currentTimeMillis() - needsReconnect) > 500) {
+            System.out.println("Reconnect attempt at " + System.currentTimeMillis());
+            if (socketConnect()) {
+                needsReconnect = 0;
+            }
+        }
     }
 }

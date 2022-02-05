@@ -213,7 +213,8 @@ public class Robot extends TimedRobot {
                 mSuperstructure,
                 mInfrastructure,
                 // spinner,
-                mTurret
+                mTurret,
+                camera
             );
 
             mDrive.zeroSensors(Constants.StartingPose);
