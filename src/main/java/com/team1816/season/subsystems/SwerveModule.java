@@ -175,7 +175,12 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
         double angle = (Math.abs(mPeriodicIO.drive_demand) <= (Units.inchesToMeters(Constants.kPathFollowingMaxVel) * 0.01)) ?
             mPeriodicIO.previous_azimuth_position.getDegrees() : mPeriodicIO.desired_state.angle.getDegrees(); //Prevent rotating module if speed is less then 1%. Prevents Jittering.
         mAzimuthMotor.set(ControlMode.Position, radiansToEncoderUnits(Units.degreesToRadians(angle)));
-        mPeriodicIO.azimuth_position = new Rotation2d(Units.degreesToRadians(angle));
+        System.out.println(
+            "drive demand = " + mDriveMotor.getSelectedSensorVelocity(0) +
+            ", azimuth demand = " + mAzimuthMotor.getSelectedSensorVelocity(0)
+        );
+
+//        mPeriodicIO.azimuth_position = new Rotation2d(Units.degreesToRadians(angle)); redundant?
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
@@ -347,16 +352,6 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
 //    public synchronized double encoderUnitsToDistance(double ticks) {
 //        return ticks * mConstants.kDriveTicksPerUnitDistance;
 //
-
-    private int getAzimuthPosAbsolute() {
-        if (mAzimuthMotor instanceof TalonSRX) {
-            int rawValue =
-                ((TalonSRX) mAzimuthMotor).getSensorCollection().getPulseWidthPosition() &
-                    Constants.Swerve.AZIMUTH_TICK_MASK;
-            return rawValue;
-        }
-        return 0;
-    }
 
     public synchronized Rotation2d getAngle() {
         return new Rotation2d(encoderUnitsToRadians(getAzimuthPosition()));

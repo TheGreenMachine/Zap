@@ -153,6 +153,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             module.readPeriodicInputs(); //currently does nothing! - getStates is basically the readPeriodic
         }
         swerveOdometry.update(mPeriodicIO.gyro_heading, getStates());
+        updateRobotPose();
     }
 
     @Override
@@ -180,6 +181,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             //below used to be in its own for loop @ bottom - necessary?
             swerveModules[i].writePeriodicOutputs();
         }
+
     }
 
     public void setStartingPose(Pose2d pose) {
@@ -189,12 +191,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     @Override
     protected void updateOpenLoopPeriodic() {
         // no openLoop update needed
-    }
-
-    @Override
-    protected void updateTrajectoryPeriodic(double timestamp) {
-        // update desired pose from trajectory
-        mPeriodicIO.desired_pose = mTrajectory.sample(timestamp).poseMeters;
     }
 
     @Override
@@ -363,12 +359,12 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         resetPigeon();
         setHeading(pose.getRotation());
         resetOdometry(pose);
-
         for (SwerveModule module : swerveModules) {
             if (module != null) {
                 module.zeroSensors();
             }
         }
+        mRobotState.field.setRobotPose(Constants.StartingPose);
         //        if (mPigeon.getLastError() != ErrorCode.OK) {
         //            // BadLog.createValue("PigeonErrorDetected", "true");
         //            System.out.println(
@@ -398,7 +394,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     public Pose2d getPose() {
-        return swerveOdometry.getPoseMeters();
+        return mRobotState.field_to_vehicle;  // swerveOdometry.getPoseMeters();
     }
 
     @Override
@@ -415,7 +411,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     private void updateRobotPose() {
-        mRobotState.field.setRobotPose(swerveOdometry.getPoseMeters());
+        mRobotState.field_to_vehicle = swerveOdometry.getPoseMeters();
     }
 
     public void resetOdometry(Pose2d pose) {

@@ -237,7 +237,12 @@ public abstract class Drive
 
     protected abstract void updateOpenLoopPeriodic();
 
-    protected abstract void updateTrajectoryPeriodic(double timestamp);
+    public void updateTrajectoryPeriodic(double timestamp) {
+        if (mTrajectoryStart == 0) mTrajectoryStart = timestamp;
+        // update desired pose from trajectory
+        mPeriodicIO.desired_pose =
+            mTrajectory.sample(timestamp - mTrajectoryStart).poseMeters;
+    }
 
     public static double rotationsToInches(double rotations) {
         return rotations * (Constants.kDriveWheelDiameterInches * Math.PI);

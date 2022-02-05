@@ -8,6 +8,8 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+
+import java.util.ArrayList;
 import java.util.List;
 import jdk.jshell.spi.ExecutionControl;
 
@@ -39,8 +41,12 @@ public interface PathContainer {
         boolean isReversed,
         List<Pose2d> waypoints
     ) {
+        List<Pose2d> waypointsMeters = new ArrayList<>();
+        for(Pose2d pose2d: waypoints){
+            waypointsMeters.add(new Pose2d(Units.inches_to_meters(pose2d.getX()), Units.inches_to_meters(pose2d.getY()), pose2d.getRotation()));
+        }
         TrajectoryConfig config = new TrajectoryConfig(kMaxVelocity, kMaxAccel);
-        var baseTrajectory = TrajectoryGenerator.generateTrajectory(waypoints, config); // we want to use the config here not the base trajecory!
+        var baseTrajectory = TrajectoryGenerator.generateTrajectory(waypointsMeters, config); // we want to use the config here not the base trajecory!
         return baseTrajectory.transformBy(
             new Transform2d(
                 Constants.StartingPose.getTranslation(),

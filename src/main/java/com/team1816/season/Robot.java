@@ -216,7 +216,7 @@ public class Robot extends TimedRobot {
                 mTurret
             );
 
-            mDrive.zeroSensors(Constants.emptyPose);
+            mDrive.zeroSensors(Constants.StartingPose);
             mTurret.zeroSensors();
 
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);

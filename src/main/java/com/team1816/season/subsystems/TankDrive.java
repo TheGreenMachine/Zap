@@ -240,14 +240,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         // no openLoop update needed
     }
 
-    @Override
-    protected void updateTrajectoryPeriodic(double timestamp) {
-        if (mTrajectoryStart == 0) mTrajectoryStart = timestamp;
-        // update desired pose from trajectory
-        mPeriodicIO.desired_pose =
-            mTrajectory.sample(timestamp - mTrajectoryStart).poseMeters;
-    }
-
     /**
      * Configure talons for open loop control
      */

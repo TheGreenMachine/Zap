@@ -13,20 +13,8 @@ public class LivingRoomPath implements PathContainer {
     public List<Pose2d> buildWaypoints() {
         List<Pose2d> waypoints = new ArrayList<>();
         waypoints.add(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0)));
-        waypoints.add(
-            new Pose2d(
-                Units.inchesToMeters(79.5),
-                Units.inchesToMeters(11.0),
-                Rotation2d.fromDegrees(45)
-            )
-        );
-        waypoints.add(
-            new Pose2d(
-                Units.inchesToMeters(172),
-                Units.inchesToMeters(30),
-                Rotation2d.fromDegrees(0)
-            )
-        );
+        waypoints.add(new Pose2d((79.5), (11.0), Rotation2d.fromDegrees(45)));
+        waypoints.add(new Pose2d((172), (30), Rotation2d.fromDegrees(0)));
         return waypoints;
     }
 
