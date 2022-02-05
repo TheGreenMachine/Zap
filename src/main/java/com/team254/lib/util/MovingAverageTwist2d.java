@@ -1,7 +1,5 @@
 package com.team254.lib.util;
-
 import com.team254.lib.geometry.Twist2d;
-
 import java.util.ArrayList;
 
 /**

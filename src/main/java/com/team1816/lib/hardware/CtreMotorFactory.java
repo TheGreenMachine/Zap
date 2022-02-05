@@ -4,6 +4,10 @@ import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
 import com.ctre.phoenix.sensors.CANCoder;
+import com.ctre.phoenix.sensors.CANCoderConfiguration;
+import com.ctre.phoenix.sensors.AbsoluteSensorRange;
+import com.ctre.phoenix.sensors.SensorInitializationStrategy;
+import com.ctre.phoenix.sensors.SensorTimeBase;
 import com.team1816.lib.hardware.components.motor.GhostMotorControllerEnhanced;
 import com.team1816.lib.hardware.components.motor.IConfigurableMotorController;
 import com.team1816.lib.hardware.components.motor.LazyTalonFX;
@@ -191,8 +195,10 @@ public class CtreMotorFactory {
         return slotConfig;
     }
 
-    public static CANCoder createCanCoder(int canCoderID) {
+    public static CANCoder createCanCoder(int canCoderID, boolean invertCanCoder) {
         CANCoder canCoder = new CANCoder(canCoderID);
+        canCoder.configFactoryDefault();
+        canCoder.configAllSettings(configureCanCoder(invertCanCoder));
         return canCoder;
     }
 
@@ -317,5 +323,14 @@ public class CtreMotorFactory {
         motor.configAllSettings(talonConfiguration, kTimeoutMs);
         motor.setInverted(subsystem.invertMotor.contains(name));
         motor.setSensorPhase(subsystem.invertSensorPhase.contains(name));
+    }
+
+    private static CANCoderConfiguration configureCanCoder(boolean invertCanCoder) {
+        CANCoderConfiguration canCoderConfig = new CANCoderConfiguration();
+        canCoderConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
+        canCoderConfig.sensorDirection = invertCanCoder;
+        canCoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
+        canCoderConfig.sensorTimeBase = SensorTimeBase.PerSecond;
+        return canCoderConfig;
     }
 }

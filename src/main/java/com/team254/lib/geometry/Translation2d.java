@@ -38,16 +38,6 @@ public class Translation2d implements ITranslation2d<Translation2d> {
     }
 
     /**
-     * fromPolar courtesy 1323
-     * @param direction
-     * @param magnitude
-     * @return
-     */
-    public static Translation2d fromPolar(Rotation2d direction, double magnitude){
-        return new Translation2d(direction.cos() * magnitude, direction.sin() * magnitude);
-    }
-
-    /**
      * The "norm" of a transform is the Euclidean distance in x and y.
      *
      * @return sqrt(x ^ 2 + y ^ 2)
