@@ -2,7 +2,6 @@ package com.team1816.season.subsystems;
 import com.team1816.lib.subsystems.Subsystem;
 import java.net.*;
 import java.io.*;
-import java.nio.channels.AsynchronousSocketChannel;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
