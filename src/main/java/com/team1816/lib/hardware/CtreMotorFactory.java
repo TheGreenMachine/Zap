@@ -4,13 +4,15 @@ import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
 import com.ctre.phoenix.sensors.CANCoder;
+import com.ctre.phoenix.sensors.CANCoderConfiguration;
+import com.ctre.phoenix.sensors.AbsoluteSensorRange;
+import com.ctre.phoenix.sensors.SensorInitializationStrategy;
+import com.ctre.phoenix.sensors.SensorTimeBase;
 import com.team1816.lib.hardware.components.motor.GhostMotorControllerEnhanced;
 import com.team1816.lib.hardware.components.motor.IConfigurableMotorController;
 import com.team1816.lib.hardware.components.motor.LazyTalonFX;
 import com.team1816.lib.hardware.components.motor.LazyTalonSRX;
 import edu.wpi.first.wpilibj.RobotBase;
-import org.checkerframework.checker.units.qual.C;
-
 import java.util.*;
 
 /**
@@ -175,27 +177,28 @@ public class CtreMotorFactory {
         return victor;
     }
 
-    private static SlotConfiguration toSlotConfiguration(PIDSlotConfiguration pidConfiguration){
+    private static SlotConfiguration toSlotConfiguration(
+        PIDSlotConfiguration pidConfiguration
+    ) {
         SlotConfiguration slotConfig = new SlotConfiguration();
-        if(pidConfiguration!=null) {
-            if(pidConfiguration.kP!=null)
-                slotConfig.kP = pidConfiguration.kP;
-            if(pidConfiguration.kI!=null)
-                slotConfig.kI = pidConfiguration.kI;
-            if(pidConfiguration.kD!=null)
-                slotConfig.kD = pidConfiguration.kD;
-            if(pidConfiguration.kP!=null)
-                slotConfig.kF = pidConfiguration.kF;
-            if(pidConfiguration.iZone!=null)
-                slotConfig.integralZone = pidConfiguration.iZone;
-            if(pidConfiguration.allowableError!=null)
-                slotConfig.allowableClosedloopError = pidConfiguration.allowableError;
+        if (pidConfiguration != null) {
+            if (pidConfiguration.kP != null) slotConfig.kP = pidConfiguration.kP;
+            if (pidConfiguration.kI != null) slotConfig.kI = pidConfiguration.kI;
+            if (pidConfiguration.kD != null) slotConfig.kD = pidConfiguration.kD;
+            if (pidConfiguration.kP != null) slotConfig.kF = pidConfiguration.kF;
+            if (pidConfiguration.iZone != null) slotConfig.integralZone =
+                pidConfiguration.iZone;
+            if (
+                pidConfiguration.allowableError != null
+            ) slotConfig.allowableClosedloopError = pidConfiguration.allowableError;
         }
         return slotConfig;
     }
 
-    public static CANCoder createCanCoder(int canCoderID) {
+    public static CANCoder createCanCoder(int canCoderID, boolean invertCanCoder) {
         CANCoder canCoder = new CANCoder(canCoderID);
+        canCoder.configFactoryDefault();
+        canCoder.configAllSettings(configureCanCoder(invertCanCoder));
         return canCoder;
     }
 
@@ -322,4 +325,12 @@ public class CtreMotorFactory {
         motor.setSensorPhase(subsystem.invertSensorPhase.contains(name));
     }
 
+    private static CANCoderConfiguration configureCanCoder(boolean invertCanCoder) {
+        CANCoderConfiguration canCoderConfig = new CANCoderConfiguration();
+        canCoderConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
+        canCoderConfig.sensorDirection = invertCanCoder;
+        canCoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
+        canCoderConfig.sensorTimeBase = SensorTimeBase.PerSecond;
+        return canCoderConfig;
+    }
 }

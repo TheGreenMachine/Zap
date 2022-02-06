@@ -2,9 +2,9 @@ package com.team1816.frc2020.subsystems;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.team1816.frcSeason.RobotState;
-import com.team1816.frcSeason.SeasonModule;
-import com.team1816.frcSeason.subsystems.Turret;
+import com.team1816.season.RobotState;
+import com.team1816.season.SeasonModule;
+import com.team1816.season.subsystems.Turret;
 import com.team1816.lib.LibModule;
 import com.team254.lib.geometry.Rotation2d;
 import junit.framework.TestCase;
@@ -58,6 +58,7 @@ public class TurretTest extends TestCase {
         );
         assertEquals(Turret.ControlMode.FIELD_FOLLOWING, turret.getControlMode());
     }
+
     public void testTurretAutoHome() {
         target.setControlMode(Turret.ControlMode.CAMERA_FOLLOWING);
     }

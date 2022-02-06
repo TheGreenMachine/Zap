@@ -1,0 +1,12 @@
+# Recorded video files
+*.avi
+*.mp4
+
+# Python virtual environment
+bin/
+lib/
+venv/
+pyvenv.cfg
+
+# Pycache
+__pycache__/

@@ -133,7 +133,7 @@ public class Rotation2d implements IRotation2d<Rotation2d> {
     public Rotation2d rotateBy(final Rotation2d other) {
         if (hasTrig() && other.hasTrig()) {
             return new Rotation2d(cos_angle_ * other.cos_angle_ - sin_angle_ * other.sin_angle_,
-                    cos_angle_ * other.sin_angle_ + sin_angle_ * other.cos_angle_, true);
+                cos_angle_ * other.sin_angle_ + sin_angle_ * other.cos_angle_, true);
         } else {
             return fromRadians(getRadians() + other.getRadians());
         }
@@ -181,13 +181,13 @@ public class Rotation2d implements IRotation2d<Rotation2d> {
     public boolean isParallel(final Rotation2d other) {
         if (hasRadians() && other.hasRadians()) {
             return Util.epsilonEquals(radians_, other.radians_)
-                    || Util.epsilonEquals(radians_, WrapRadians(other.radians_ + Math.PI));
+                || Util.epsilonEquals(radians_, WrapRadians(other.radians_ + Math.PI));
         } else if (hasTrig() && other.hasTrig()) {
             return Util.epsilonEquals(sin_angle_, other.sin_angle_) && Util.epsilonEquals(cos_angle_, other.cos_angle_);
         } else {
             // Use public, checked version.
             return Util.epsilonEquals(getRadians(), other.getRadians())
-                    || Util.epsilonEquals(radians_, WrapRadians(other.radians_ + Math.PI));
+                || Util.epsilonEquals(radians_, WrapRadians(other.radians_ + Math.PI));
         }
     }
 

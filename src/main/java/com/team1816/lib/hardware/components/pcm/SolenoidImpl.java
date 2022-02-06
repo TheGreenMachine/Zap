@@ -9,7 +9,11 @@ public class SolenoidImpl extends Solenoid implements ISolenoid {
         super(moduleType, channel);
     }
 
-    public SolenoidImpl(final int module, final PneumaticsModuleType moduleType, final int channel) {
+    public SolenoidImpl(
+        final int module,
+        final PneumaticsModuleType moduleType,
+        final int channel
+    ) {
         super(module, moduleType, channel);
     }
 }

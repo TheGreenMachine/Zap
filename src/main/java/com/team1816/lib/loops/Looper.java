@@ -2,7 +2,6 @@ package com.team1816.lib.loops;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +16,7 @@ public class Looper implements ILooper {
     private final Object mTaskRunningLock = new Object();
     private double mTimestamp = 0;
     private double mDT = 0;
+    private double mStart = 0;
 
     public Looper(TimedRobot robot) {
         Runnable runnable_ = new Runnable() {
@@ -37,7 +37,7 @@ public class Looper implements ILooper {
             }
         };
         // add callback relative to robot loop time
-        robot.addPeriodic(runnable_, robot.getPeriod() , robot.getPeriod() / 2);
+        robot.addPeriodic(runnable_, robot.getPeriod(), robot.getPeriod() / 2);
         mRunning = false;
         mLoops = new ArrayList<>();
     }
@@ -54,6 +54,7 @@ public class Looper implements ILooper {
             if (!mRunning) {
                 System.out.println("Starting loops");
                 mTimestamp = Timer.getFPGATimestamp();
+                mStart = mTimestamp;
                 for (Loop loop : mLoops) {
                     loop.onStart(mTimestamp);
                 }

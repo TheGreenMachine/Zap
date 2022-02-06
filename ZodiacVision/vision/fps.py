@@ -1,5 +1,5 @@
 # import the necessary packages
-import cv2
+import  cv2
 import datetime
 class FPS:
     def __init__(self):
