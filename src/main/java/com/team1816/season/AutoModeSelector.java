@@ -69,11 +69,11 @@ public class AutoModeSelector {
         SmartDashboard.putData("Auto mode", mModeChooser);
 
         // CheezeCurd
-        mModeChooser.addOption("Living Room", DesiredMode.LIVING_ROOM);
         //        mModeChooser.addOption("Shop", DesiredMode.SHOP);
         //        mModeChooser.addOption("PID", DesiredMode.PID);
         mModeChooser.setDefaultOption("Drive Straight", DesiredMode.DRIVE_STRAIGHT);
         mModeChooser.addOption("Turret Tuning", DesiredMode.TURRET_TEST);
+        mModeChooser.addOption("Living Room", DesiredMode.LIVING_ROOM);
 
         mModeChooser.addOption("Barrel", DesiredMode.BARREL);
 
@@ -139,8 +139,8 @@ public class AutoModeSelector {
                 return Optional.of(new TurretTestMode());
             case DRIVE_STRAIGHT:
                 return (Optional.of(new DriveStraightMode()));
-//            case LIVING_ROOM:
-//                return (Optional.of(new LivingRoomMode()));
+            case LIVING_ROOM:
+                return (Optional.of(new LivingRoomMode()));
             case BARREL:
                 return (Optional.of(new BarrelMode()));
             default:

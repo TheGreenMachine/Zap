@@ -127,21 +127,6 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
         return normalizedAngle.rotateBy(robotHeading);
     }
 
-//    public synchronized void setOpenLoop(double speed, Rotation2d azimuth) {
-//        if (mControlState != OPEN_LOOP) {
-//            mControlState = OPEN_LOOP;
-//        }
-//        mPeriodicIO.drive_demand = speed;
-//        mPeriodicIO.azimuth_position = azimuth;
-//    }
-//
-//    public synchronized void setVelocity(double speed, Rotation2d azimuth) {
-//        if (mControlState != ControlState.VELOCITY) {
-//            mControlState = ControlState.VELOCITY;
-//        }
-//
-//    }
-
     @Override
     public void readPeriodicInputs() {
         if (RobotBase.isSimulation()) {
@@ -184,7 +169,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
         mControlState = isOpenLoop ? OPEN_LOOP : VELOCITY;
-        mPeriodicIO.desired_state = SwerveModuleState.optimize(desiredState, getState().angle); //Custom optimize command, since default WPILib optimize assumes continuous controller which CTRE is not
+        mPeriodicIO.desired_state = SwerveModuleState.optimize(desiredState, getState().angle);
 
         mPeriodicIO.drive_demand = mPeriodicIO.desired_state.speedMetersPerSecond;
         mPeriodicIO.azimuth_position = mPeriodicIO.desired_state.angle;
@@ -246,6 +231,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
     @Override
     public void stop() {
         mDriveMotor.set(ControlMode.PercentOutput, 0.0);
+        mAzimuthMotor.set(ControlMode.Velocity, 0);
     }
 
     @Override
@@ -378,8 +364,6 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
 
         double velocity = (mPeriodicIO.velocity_ticks_per_100ms * 10 / DRIVE_ENCODER_PPR) * Constants.kWheelCircumferenceMeters; // proper conversion?
         Rotation2d angle = Rotation2d.fromDegrees(mPeriodicIO.azimuth_position_ticks * (360.0 / (2048.0)));
-        System.out.println(velocity + " = vel, " + angle.getDegrees() + " = angle");
-
         return new SwerveModuleState(velocity, angle);
     }
 

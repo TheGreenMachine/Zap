@@ -141,7 +141,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 //                    mPeriodicIO.right_velocity_ticks_per_100ms
 //                ) /
 //                robotWidthTicks;
-            mPeriodicIO.gyro_heading_no_offset = getDesiredRotation2d().rotateBy(Rotation2d.fromDegrees(gyroDrift));
+//            mPeriodicIO.gyro_heading_no_offset = getDesiredRotation2d().rotateBy(Rotation2d.fromDegrees(gyroDrift));
         } else {
             mPeriodicIO.gyro_heading_no_offset =
                 Rotation2d.fromDegrees(mPigeon.getFusedHeading());
@@ -227,37 +227,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         mPeriodicIO.use_heading_controller = use_heading_controller;
     }
 
-    /**
-     * Configure talons for velocity control
-   */
-
-//    public synchronized void setVelocity(List<Translation2d> driveVectors) {
-//        if (mDriveControlState == DriveControlState.OPEN_LOOP) {
-//            setBrakeMode(false);
-//            System.out.println("Switching to Velocity");
-//        }
-//        double[] speedsNorm = new double[4];
-//        for (int i = 0; i < swerveModules.length; i++) {
-//            mPeriodicIO.wheel_azimuths[i] = driveVectors.get(i).direction();
-//            speedsNorm[i] = driveVectors.get(i).norm();
-//            mPeriodicIO.wheel_speeds[i] =
-//                inchesPerSecondToTicksPer100ms(
-//                    driveVectors.get(i).norm() * Constants.kPathFollowingMaxVel
-//                );
-//        }
-//        if (RobotBase.isSimulation()) {
-//            mPeriodicIO.gyro_heading_no_offset.rotateBy(
-//                Rotation2d.fromDegrees(
-//                    SwerveKinematics.forwardKinematics(
-//                        speedsNorm,
-//                        mPeriodicIO.wheel_azimuths
-//                    )
-//                        .dtheta
-//                )
-//            );
-//        }
-//    }
-
     @Override
     public synchronized void setBrakeMode(boolean on) {
         super.setBrakeMode(on);
@@ -265,89 +234,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             module.setDriveBrakeMode(on);
         }
     }
-//
-//    public void setWantReset(boolean wantReset) {
-//        this.wantReset = wantReset;
-//    }
-//
-//    public boolean wantsReset() {
-//        return wantReset;
-//    }
-
-//    @Override
-//    public synchronized void setTrajectory(
-//        TrajectoryIterator<TimedState<Pose2dWithCurvature>> trajectory,
-//        Rotation2d targetHeading
-//    ) {
-//        if (motionPlanner != null) {
-//            hasStartedFollowing = false;
-//            moduleConfigRequested = false;
-//            System.out.println("Now setting trajectory");
-//            setBrakeMode(true);
-//            mOverrideTrajectory = false;
-//            headingController.setSnapTarget(targetHeading.getDegrees());
-//            motionPlanner.reset();
-//            mDriveControlState = DriveControlState.TRAJECTORY_FOLLOWING;
-//            motionPlanner.setTrajectory(trajectory);
-//        }
-//    }
-
-//    @Override
-//    public void updatePathFollower(double timestamp) {
-//        double rotationCorrection = headingController.updateRotationCorrection(
-//            getHeadingDegrees(),
-//            timestamp
-//        );
-//        updatePose(timestamp);
-//        // alternatePoseUpdate(timestamp);
-//
-//        if (mDriveControlState == DriveControlState.TRAJECTORY_FOLLOWING) {
-//            if (!motionPlanner.isDone()) {
-//                Translation2d driveVector = motionPlanner.update(timestamp, pose);
-//
-//                if (!hasStartedFollowing && wantReset) {
-//                    zeroSensors(startingPosition);
-//                    System.out.println("Position reset for auto");
-//                    hasStartedFollowing = true;
-//                    wantReset = false;
-//                }
-//
-//                //                                System.out.println("DRIVE VECTOR" + driveVector);
-//
-//                mPeriodicIO.forward = driveVector.x();
-//                mPeriodicIO.strafe = driveVector.y();
-//                mPeriodicIO.rotation = 0;
-//
-//                double rotationInput = Util.deadBand(
-//                    Util.limit(
-//                        rotationCorrection * rotationScalar * driveVector.norm(),
-//                        motionPlanner.getMaxRotationSpeed()
-//                    ),
-//                    0.01
-//                );
-//
-//                mPeriodicIO.error = motionPlanner.error();
-//                mPeriodicIO.path_setpoint = motionPlanner.setpoint();
-//                mPeriodicIO.drive_vector = driveVector;
-//                if (!mOverrideTrajectory) {
-//                    //                    System.out.println("ROTATIONINPUT==" + rotationInput);
-//                    setVelocity(
-//                        SwerveKinematics.updateDriveVectors(
-//                            driveVector,
-//                            rotationInput,
-//                            pose,
-//                            robotCentric
-//                        )
-//                    );
-//                }
-//            } else {
-//                setVelocity(ZERO_DRIVE_VECTOR);
-//                if (alwaysConfigureModules) requireModuleConfiguration();
-//            }
-//        } else {
-//            DriverStation.reportError("drive is not in path following state", false);
-//        }
-//    }
 
     @Override
     public SwerveModule[] getSwerveModules() {
@@ -389,9 +275,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     @Override
-    public void updateTrajectoryVelocities(Double aDouble, Double aDouble1) {
-
-    }
+    public void updateTrajectoryVelocities(Double aDouble, Double aDouble1) {}
 
     public Pose2d getPose() {
         return mRobotState.field_to_vehicle;  // swerveOdometry.getPoseMeters();
