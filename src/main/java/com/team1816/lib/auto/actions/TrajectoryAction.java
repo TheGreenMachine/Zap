@@ -53,7 +53,7 @@ public class TrajectoryAction implements Action {
                     new PIDController(Constants.kPXController, 0, 0),
                     new PIDController(Constants.kPYController, 0, 0),
                     thetaController,
-                    mDrive::getDesiredRotation2d,
+//                    mDrive::getDesiredRotation2d,
                     mDrive::setModuleStates
                 );
         } else {

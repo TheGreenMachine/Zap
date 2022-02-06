@@ -154,13 +154,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         return getDesiredRotation2d().getDegrees();
     }
 
-    public Rotation2d getDesiredRotation2d() {
-        if (mDriveControlState == DriveControlState.TRAJECTORY_FOLLOWING) {
-            return mPeriodicIO.desired_pose.getRotation();
-        }
-        return mPeriodicIO.desired_heading;
-    }
-
     @Override
     public synchronized void readPeriodicInputs() {
         if (RobotBase.isSimulation()) {
@@ -319,19 +312,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             mLeftSlaveA.setNeutralMode(mode);
             mLeftSlaveB.setNeutralMode(mode);
         }
-    }
-
-    @Override
-    public synchronized void setHeading(Rotation2d heading) {
-        System.out.println("set heading: " + heading.getDegrees());
-
-        mGyroOffset =
-            heading.rotateBy(
-                Rotation2d.fromDegrees(mPigeon.getFusedHeading()).unaryMinus()
-            );
-        System.out.println("gyro offset: " + mGyroOffset.getDegrees());
-
-        mPeriodicIO.desired_heading = heading;
     }
 
     public synchronized void resetEncoders() {

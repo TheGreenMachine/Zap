@@ -120,7 +120,7 @@ public class Camera extends Subsystem {
     public void readPeriodicInputs() {
         // if more than 500ms, reconnect
         if (needsReconnect != 0 && (System.currentTimeMillis() - needsReconnect) >= 200) {
-            System.out.println("Reconnect attempt at " + System.currentTimeMillis());
+//            System.out.println("Reconnect attempt at " + System.currentTimeMillis());
             if (socketConnect()) {
                 needsReconnect = 0;
             }
