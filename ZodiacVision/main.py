@@ -76,8 +76,8 @@ while True:
             mask = detector.preProcessFrame(frame)
             if mask.all() == -1:
                 continue
-            contour = detector.findTargetZED(mask, zed, point_cloud, frame)
-            stream_image = detector.postProcess(frame, contour)
+            largest, second_largest = detector.findTargetZED(mask, zed, point_cloud, frame)
+            stream_image = detector.postProcess(frame, largest, second_largest)
             fpsCounter.update()
             fpsCounter.stop()
             stream_image = fps.putIterationsPerSec(stream_image, fpsCounter.fps())
@@ -99,11 +99,13 @@ while True:
                 streamer.write(stream_image)
     else:
         _, frame = cap.read()
+        if frame is None:
+            continue
         mask = detector.preProcessFrame(frame)
         if mask.all() == -1:
             continue
-        contour = detector.findTarget(mask)
-        stream_image = detector.postProcess(frame, contour)
+        largest, second_largest = detector.findTarget(mask)
+        stream_image = detector.postProcess(frame, largest, second_largest)
         fpsCounter.update()
         fpsCounter.stop()
         stream_image = fps.putIterationsPerSec(stream_image, fpsCounter.fps())
