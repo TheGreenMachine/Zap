@@ -6,7 +6,7 @@ def crop_half(image):
     cropped_img = image[0:height,int(width/2):width]
     return cropped_img
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture('out1.avi')
 writer = cv2.VideoWriter('right.mp4',
                          cv2.VideoWriter_fourcc(*'MP4V'),
                          100, (672, 376))

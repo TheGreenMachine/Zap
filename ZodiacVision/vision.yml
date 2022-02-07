@@ -3,11 +3,11 @@ camera:
   fps: 100
 color:
   lower:
-    H: 49.976
-    S: 109.7
-    V: 133.368
+    H: 60
+    S: 80
+    V: 150
   upper:
-    H: 92.124
+    H: 180
     S: 255.0
     V: 255.0
 gstreamer: false
