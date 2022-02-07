@@ -18,8 +18,8 @@ class Detector:
         self.vs = vs
 
     def preProcessFrame(self, frame):
-        lower = self.nt.yml_data['color']['lower']
-        upper = self.nt.yml_data['color']['upper']
+        lower = self.vs.yml_data['color']['lower']
+        upper = self.vs.yml_data['color']['upper']
         # Preprocess
         lower_color = (lower['H'], lower['S'], lower['V'])
         upper_color = (upper['H'], upper['S'], upper['V'])
