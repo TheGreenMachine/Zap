@@ -56,13 +56,13 @@ else:
     cap = cv2.VideoCapture(0)
 
 detector = detect.Detector(net, vs)
-width = int(net.yml_data['stream']['line'])
+width = int(vs.yml_data['stream']['line'])
 fpsCounter = fps.FPS()
 while True:
     fpsCounter.reset()
     fpsCounter.start()
     if net.update_exposure:
-        zed.set_camera_settings(sl.VIDEO_SETTINGS.EXPOSURE, net.yml_data['camera']['exposure'])
+        zed.set_camera_settings(sl.VIDEO_SETTINGS.EXPOSURE, vs.yml_data['camera']['exposure'])
         net.update_exposure = False
     if isZed:
         if zed.grab(runtime_parameters) == sl.ERROR_CODE.SUCCESS:

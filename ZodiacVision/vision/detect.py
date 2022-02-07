@@ -17,8 +17,9 @@ class Detector:
         self.vs = vs
 
     def preProcessFrame(self, frame):
-        lower = self.nt.yml_data['color']['lower']
-        upper = self.nt.yml_data['color']['upper']
+        lower = self.vs.yml_data['color']['lower']
+        print(lower)
+        upper = self.vs.yml_data['color']['upper']
         # Preprocess
         lower_color = (lower['H'], lower['S'], lower['V'])
         upper_color = (upper['H'], upper['S'], upper['V'])
@@ -26,6 +27,8 @@ class Detector:
         image = frame[0:int(0.7 * h), 0:w]
         hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
         mask = cv2.inRange(hsv, lower_color, upper_color)
+        cv2.imshow('mask', mask)
+        cv2.waitKey(1)
         return mask
     def findTargetZED(self, mask, zed, point_cloud, frame):
         # Returns contour
