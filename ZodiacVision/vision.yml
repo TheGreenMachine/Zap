@@ -1,15 +1,15 @@
 camera:
-  exposure: 6.0
+  exposure: 10.0
   fps: 100
 color:
   lower:
-    H: 18.0
-    S: 16.0
-    V: 0.0
+    H: 60
+    S: 80
+    V: 150
   upper:
-    H: 140.0
-    S: 36.0
-    V: 222.0
+    H: 180
+    S: 255.0
+    V: 255.0
 gstreamer: false
 main:
   device-ip: 10.18.16.16

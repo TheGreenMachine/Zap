@@ -8,7 +8,8 @@ print(data)
 if data['zed']:
     import pyzed.sl as sl
 import math
-
+def midpoint(x1, y1, x2, y2):
+    return (x1 + x2)/2, (y1 + y2)/2
 
 class Detector:
     def __init__(self, nt, vs):
@@ -17,86 +18,67 @@ class Detector:
         self.vs = vs
 
     def preProcessFrame(self, frame):
-        lower = self.vs.yml_data['color']['lower']
-        print(lower)
-        upper = self.vs.yml_data['color']['upper']
+        lower = self.nt.yml_data['color']['lower']
+        upper = self.nt.yml_data['color']['upper']
         # Preprocess
         lower_color = (lower['H'], lower['S'], lower['V'])
         upper_color = (upper['H'], upper['S'], upper['V'])
         h, w, _ = frame.shape
-        image = frame[0:int(0.7 * h), 0:w]
-        hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+        # image = frame[0:int(0.7 * h), 0:w]
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         mask = cv2.inRange(hsv, lower_color, upper_color)
-        cv2.imshow('mask', mask)
-        cv2.waitKey(1)
         return mask
     def findTargetZED(self, mask, zed, point_cloud, frame):
         # Returns contour
         contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        if len(contours) != 0:
-            c = max(contours, key=cv2.contourArea)
-            perimeter = cv2.arcLength(c, True)
-            rect = cv2.boundingRect(c)
-            area = cv2.contourArea(c)
-            if area != 0:
-                ratio = perimeter / area
-            else:
-                ratio = 0
-        else:
-            h, w, _ = frame.shape
-            err, point3D = point_cloud.get_value(h / 2, w / 2)
+        if len(contours) > 1:
+            cnts = sorted(contours, key=cv2.contourArea)
+            largest = cnts[-1]
+            second = cnts[-2]
+            x, y, w, h = cv2.boundingRect(largest)
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 255), 2)
+            x1, y1, w1, h1 = cv2.boundingRect(second)
+            cv2.rectangle(frame, (x1, y1), (x1 + w1, y1 + h1), (255, 0, 255), 2)
+            cx1 = (int(x + (w / 2)))
+            cy1 = (int(y + (h / 2)))
+
+            cx2 = (int(x1 + (w1 / 2)))
+            cy2 = (int(y1 + (h1 / 2)))
+
+            cx_real, cy_real = midpoint(cx1, cy1, cx2, cy2)
+            cx_real, cy_real = int(cx_real), int(cy_real)
+            err, point3D = point_cloud.get_value(cx_real, cy_real)
             distance = math.sqrt(point3D[0] * point3D[0] + point3D[1] * point3D[1] + point3D[2] * point3D[2])
             if math.isnan(distance) or math.isinf(distance):
                 self.nt.putValue('distance', -1)
                 self.vs.updateSavedDistance(-1)
-                return -1
             self.nt.putValue('distance', round(distance))
             self.vs.updateSavedDistance(round(distance))
-            return -1
-        if ratio > .2:
-            cx = rect[0] + (rect[2] * .5)
-            cy = rect[1]
-            self.nt.putValue('center_x', cx)
-            self.nt.putValue('center_y', cy)
-            self.vs.updateSavedCenter(cx, cy)
-            err, point3D = point_cloud.get_value(cx, cy)
-            distance = math.sqrt(point3D[0] * point3D[0] + point3D[1] * point3D[1] + point3D[2] * point3D[2])
-            if math.isnan(distance) or math.isinf(distance):
-                distance = -1
-            self.nt.putValue('distance', round(distance))
-            self.vs.updateSavedDistance(round(distance))
-            return c
-        self.nt.clearTable()
-        return -1
+            self.vs.updateSavedCenter(cx_real, cy_real)
+            return largest, second
+        return -1, -1
     def findTarget(self, mask):
-        # Returns contour
         contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        if len(contours) != 0:
-            c = max(contours, key=cv2.contourArea)
-            perimeter = cv2.arcLength(c, True)
-            rect = cv2.boundingRect(c)
-            area = cv2.contourArea(c)
-            if area != 0:
-                ratio = perimeter / area
-            else:
-                ratio = 0
-        else:
-            self.nt.putValue('distance', -1)
-            self.vs.updateSavedDistance(-1)
-            return -1
-        if ratio > .2:
-            cx = rect[0] + (rect[2] * .5)
-            cy = rect[1]
-            self.nt.putValue('center_x', cx)
-            self.nt.putValue('center_y', cy)
-            self.nt.putValue('distance', -1)
-            self.vs.updateSavedCenter(cx, cy)
-            self.vs.updateSavedDistance(-1)
-            return c
-        self.nt.clearTable()
-        return -1
-    def postProcess(self, frame, target):
-        if not isinstance(target, list):
+        if len(contours) > 1:
+            cnts = sorted(contours, key=cv2.contourArea)
+            largest = cnts[-1]
+            second = cnts[-2]
+            return largest, second
+        return -1, -1
+    def postProcess(self, frame, largest, second_largest):
+        if second_largest is -1 or largest is -1:
             return frame
-        drawnimage = cv2.drawContours(frame, [target], -1, (0, 255, 255), 2)
-        return drawnimage
+        x, y, w, h = cv2.boundingRect(largest)
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 255), 2)
+        x1, y1, w1, h1 = cv2.boundingRect(second_largest)
+        cv2.rectangle(frame, (x1, y1), (x1 + w1, y1 + h1), (255, 0, 255), 2)
+        cx1 = (int(x + (w / 2)))
+        cy1 = (int(y + (h / 2)))
+
+        cx2 = (int(x1 + (w1 / 2)))
+        cy2 = (int(y1 + (h1 / 2)))
+
+        cx_real, cy_real = midpoint(cx1, cy1, cx2, cy2)
+
+        drawn_frame = cv2.circle(frame, (int(cx_real), int(cy_real)), radius=0, color=(255, 0, 255), thickness=5)
+        return drawn_frame

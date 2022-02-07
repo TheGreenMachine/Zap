@@ -3,12 +3,13 @@ package com.team1816.lib.hardware;
 import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.sensors.*;
-import com.team1816.frcSeason.subsystems.SwerveModule;
+import com.team1816.season.Constants;
+import com.team1816.season.subsystems.SwerveModule;
 import com.team1816.lib.hardware.components.CanifierImpl;
 import com.team1816.lib.hardware.components.GhostCanifier;
 import com.team1816.lib.hardware.components.ICanifier;
 import com.team1816.lib.hardware.components.pcm.*;
-import com.team254.lib.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -170,8 +171,7 @@ public class RobotFactory {
 
     public SwerveModule getSwerveModule(
         String subsystemName,
-        String name,
-        Translation2d startPos
+        String name
     ) {
         var subsystem = getSubsystem(subsystemName);
         ModuleConfiguration module = subsystem.swerveModules.modules.get(name);
@@ -183,7 +183,7 @@ public class RobotFactory {
             return null;
         }
 
-        var swerveConstants = new SwerveModule.SwerveModuleConstants();
+        var swerveConstants = new Constants.Swerve();
         swerveConstants.kName = name;
         swerveConstants.kAzimuthMotorName = module.azimuth; //getAzimuth and drive give ID i think - not the module name (ex: leftRear)
         swerveConstants.kAzimuthPid = subsystem.swerveModules.azimuthPID.get("slot0");
@@ -199,15 +199,15 @@ public class RobotFactory {
         var swerveModule = new SwerveModule(
             subsystemName,
             swerveConstants,
-            canCoder,
-            startPos
+            canCoder
         );
         return swerveModule;
     }
 
     public boolean hasCanCoder(String subsystemName, String name) {
         if (
-            getSubsystem(subsystemName).swerveModules.modules.get(name).cancoder != null
+            getSubsystem(subsystemName).swerveModules.modules.get(name).canCoder != null &&
+                getSubsystem(subsystemName).swerveModules.modules.get(name).canCoder.canCoderID!=null
         ) {
             return true;
         }
@@ -218,8 +218,8 @@ public class RobotFactory {
         var subsystem = getSubsystem(subsystemName);
         var module = subsystem.swerveModules.modules.get(name);
         CANCoder canCoder = null;
-        if (hasCanCoder(subsystemName, name) && module.cancoder >= 0) {
-            canCoder = CtreMotorFactory.createCanCoder(module.cancoder);
+        if (hasCanCoder(subsystemName, name) && module.canCoder.canCoderID >= 0) {
+            canCoder = CtreMotorFactory.createCanCoder(module.canCoder.canCoderID, module.canCoder.inverted==null?false:module.canCoder.inverted); //TODO: For now placeholder true is placed
         } else {
             // ghost. potentially implement this in the future
         }

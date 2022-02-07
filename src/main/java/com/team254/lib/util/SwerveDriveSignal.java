@@ -1,9 +1,8 @@
 package com.team254.lib.util;
 
-import com.team1816.frcSeason.Constants;
-import com.team1816.frcSeason.subsystems.Drive;
-import com.team1816.frcSeason.subsystems.SwerveModule;
-import com.team254.lib.geometry.Rotation2d;
+import com.team1816.season.Constants;
+import com.team1816.season.subsystems.Drive;
+import edu.wpi.first.math.geometry.Rotation2d;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -13,7 +12,7 @@ import java.util.Arrays;
  */
 public class SwerveDriveSignal extends DriveSignal {
     public static final double[] ZERO_SPEED = new double[]{0, 0, 0, 0};
-    public static final Rotation2d[] ZERO_AZIMUTH = new Rotation2d[]{Rotation2d.identity(), Rotation2d.identity(), Rotation2d.identity(), Rotation2d.identity()};
+    public static final Rotation2d[] ZERO_AZIMUTH = new Rotation2d[]{new Rotation2d(), new Rotation2d(), new Rotation2d(), new Rotation2d()};
 
     public static final SwerveDriveSignal NEUTRAL = new SwerveDriveSignal(ZERO_SPEED, ZERO_AZIMUTH, false);
     public static final SwerveDriveSignal BRAKE = new SwerveDriveSignal(ZERO_SPEED, ZERO_AZIMUTH, true);
@@ -29,10 +28,10 @@ public class SwerveDriveSignal extends DriveSignal {
     public SwerveDriveSignal(double left, double right) {
         super(left, right);
         mWheelSpeeds = new double[4];
-        mWheelSpeeds[SwerveModule.kFrontLeft] = left;
-        mWheelSpeeds[SwerveModule.kBackLeft] = left;
-        mWheelSpeeds[SwerveModule.kFrontRight] = right;
-        mWheelSpeeds[SwerveModule.kBackRight] = right;
+//        mWheelSpeeds[Constants.Swerve.kFrontLeft] = left;
+//        mWheelSpeeds[Constants.Swerve.kBackLeft] = left;
+//        mWheelSpeeds[Constants.Swerve.kFrontRight] = right;
+//        mWheelSpeeds[Constants.Swerve.kBackRight] = right;
 
         mWheelAzimuths = ZERO_AZIMUTH;
         mBrakeMode = false;
@@ -40,8 +39,8 @@ public class SwerveDriveSignal extends DriveSignal {
 
     public SwerveDriveSignal(double[] wheelSpeeds, Rotation2d[] wheelAzimuths, boolean brakeMode) {
         super(
-            wheelSpeeds[SwerveModule.kFrontLeft],
-            wheelSpeeds[SwerveModule.kFrontRight]
+            wheelSpeeds[Constants.Swerve.kFrontLeft],
+            wheelSpeeds[Constants.Swerve.kFrontRight]
         );
         mWheelSpeeds = wheelSpeeds;
         mWheelAzimuths = wheelAzimuths;

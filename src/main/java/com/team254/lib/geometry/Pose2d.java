@@ -29,11 +29,6 @@ public class Pose2d implements IPose2d<Pose2d> {
         rotation_ = rotation;
     }
 
-    public Pose2d(double x, double y, double rotation) {
-        translation_ = new Translation2d(x, y);
-        rotation_ = Rotation2d.fromDegrees(rotation);
-    }
-
     public Pose2d(final Translation2d translation, final Rotation2d rotation) {
         translation_ = translation;
         rotation_ = rotation;

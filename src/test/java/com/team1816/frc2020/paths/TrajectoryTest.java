@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.google.inject.Inject;
-import com.team1816.frcSeason.paths.TrajectorySet;
+import com.team1816.season.paths.TrajectorySet;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Pose2dWithCurvature;
 import com.team254.lib.geometry.Twist2d;
@@ -136,18 +136,6 @@ public class TrajectoryTest {
             prev_right = right_state;
         }
         assertTrue(left_iterator.isDone() && right_iterator.isDone());
-    }
-
-    @Test
-    public void test() {
-        System.out.println(set.DRIVE_STRAIGHT);
-        verifyTrajectory(set.DRIVE_STRAIGHT, false);
-    }
-
-    @Test
-    public void reversedTrajectory() {
-        System.out.println(set.TRENCH_TO_FEEDER);
-        verifyTrajectory(set.TRENCH_TO_FEEDER, false);
     }
 
     private void verifyTrajectory(

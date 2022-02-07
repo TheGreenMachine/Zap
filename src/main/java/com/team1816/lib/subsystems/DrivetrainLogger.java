@@ -23,13 +23,6 @@ public class DrivetrainLogger {
                     "join:Drivetrain/AzimuthPosition"
                 );
                 BadLog.createTopic(
-                    prefix + "AzimuthPositionDemand",
-                    "ticks",
-                    module::getAzimuthPositionDemand,
-                    "hide",
-                    "join:Drivetrain/AzimuthPosition"
-                );
-                BadLog.createTopic(
                     prefix + "AzimuthError",
                     "ticks",
                     module::getAzimuthError,
@@ -51,13 +44,6 @@ public class DrivetrainLogger {
                     module::getDriveVelocityDemand,
                     "hide",
                     "join:Drivetrain/DriveVelocity"
-                );
-                BadLog.createTopic(
-                    prefix + "DriveDistance",
-                    "ticks",
-                    module::getDriveDistance,
-                    "hide",
-                    "join:Drivetrain/DriveDistance"
                 );
                 BadLog.createTopic(
                     prefix + "DriveError",
@@ -121,7 +107,7 @@ public class DrivetrainLogger {
         subsystem.CreateBadLogTopic(
             "Drivetrain/Y Desired",
             "Inches",
-            drivetrain::getFieldYDesiredYDistance,
+            drivetrain::getFieldDesiredYDistance,
             "hide",
             "join:Drivetrain/Distance"
         );

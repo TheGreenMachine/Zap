@@ -2,12 +2,25 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
-      "/LiveWindow/Ungrouped/DigitalInput[0]": "Digital Input",
       "/LiveWindow/Ungrouped/DigitalOutput[1]": "Digital Output",
+      "/LiveWindow/Ungrouped/PIDController[10]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[11]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[12]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[13]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[14]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[15]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[3]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[4]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[5]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[6]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[7]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[8]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[9]": "PIDController",
+      "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/SmartDashboard/Auto mode": "String Chooser",
-      "/SmartDashboard/Drive Algorithm": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
-      "/SmartDashboard/SendableChooser[2]": "String Chooser",
       "/SmartDashboard/Starting Position": "String Chooser",
       "/SmartDashboard/Turret Sim": "Mechanism2d"
     },
@@ -19,16 +32,25 @@
       },
       "/SmartDashboard/Field": {
         "Robot": {
-          "arrows": false
+          "arrowColor": [
+            0.5980392098426819,
+            0.5247501134872437,
+            0.5247501134872437,
+            255.0
+          ],
+          "arrowWeight": 2.0,
+          "weight": 2.0
         },
-        "Turret": {
-          "arrowSize": 52,
+        "Trajectory": {
+          "arrows": false,
+          "selectable": false,
           "style": "Line",
-          "visible": true
+          "weight": 1.0
         },
         "height": 8.229599952697754,
         "image": "season.png",
         "turret": {
+          "arrowWeight": 3.0,
           "style": "Line"
         },
         "width": 16.459199905395508,
@@ -42,7 +64,8 @@
     "SmartDashboard": {
       "Field": {
         "open": true
-      }
+      },
+      "open": true
     }
   }
 }
