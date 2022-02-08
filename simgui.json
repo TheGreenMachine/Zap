@@ -1,5 +1,10 @@
 {
   "NTProvider": {
+    "/SmartDashboard/Starting Position": {
+      "window": {
+        "visible": true
+      }
+    },
     "types": {
       "/FMSInfo": "FMSInfo",
       "/LiveWindow/Ungrouped/DigitalOutput[1]": "Digital Output",
