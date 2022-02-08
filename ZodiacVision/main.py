@@ -56,13 +56,13 @@ else:
     cap = cv2.VideoCapture(0)
 
 detector = detect.Detector(net, vs)
-width = int(net.yml_data['stream']['line'])
+width = int(vs.yml_data['stream']['line'])
 fpsCounter = fps.FPS()
 while True:
     fpsCounter.reset()
     fpsCounter.start()
     if net.update_exposure:
-        zed.set_camera_settings(sl.VIDEO_SETTINGS.EXPOSURE, net.yml_data['camera']['exposure'])
+        zed.set_camera_settings(sl.VIDEO_SETTINGS.EXPOSURE, vs.yml_data['camera']['exposure'])
         net.update_exposure = False
     if isZed:
         if zed.grab(runtime_parameters) == sl.ERROR_CODE.SUCCESS:
@@ -76,14 +76,14 @@ while True:
             mask = detector.preProcessFrame(frame)
             if mask.all() == -1:
                 continue
-            contour = detector.findTargetZED(mask, zed, point_cloud, frame)
-            stream_image = detector.postProcess(frame, contour)
+            largest, second_largest = detector.findTargetZED(mask, zed, point_cloud, frame)
+            stream_image = detector.postProcess(frame, largest, second_largest)
             fpsCounter.update()
             fpsCounter.stop()
             stream_image = fps.putIterationsPerSec(stream_image, fpsCounter.fps())
 
             if net.line:
-                width = int(net.yml_data['stream']['line'])
+                width = int(vs.yml_data['stream']['line'])
                 net.line = False
             stream_image = cv2.line(stream_image, (width, 0), (width, int(stream_image.shape[0])), (0, 255, 0), 3)
             if isGstreamer:
@@ -99,17 +99,19 @@ while True:
                 streamer.write(stream_image)
     else:
         _, frame = cap.read()
+        if frame is None:
+            continue
         mask = detector.preProcessFrame(frame)
         if mask.all() == -1:
             continue
-        contour = detector.findTarget(mask)
-        stream_image = detector.postProcess(frame, contour)
+        largest, second_largest = detector.findTarget(mask)
+        stream_image = detector.postProcess(frame, largest, second_largest)
         fpsCounter.update()
         fpsCounter.stop()
         stream_image = fps.putIterationsPerSec(stream_image, fpsCounter.fps())
 
         if net.line:
-            width = int(net.yml_data['stream']['line'])
+            width = int(vs.yml_data['stream']['line'])
             net.line = False
         stream_image = cv2.line(stream_image, (width, 0), (width, int(stream_image.shape[0])), (0, 255, 0), 3)
         if isGstreamer:
