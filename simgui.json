@@ -57,6 +57,11 @@
         "window": {
           "visible": true
         }
+      },
+      "/SmartDashboard/Starting Position": {
+        "window": {
+          "visible": true
+        }
       }
     }
   },

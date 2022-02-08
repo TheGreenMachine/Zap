@@ -30,7 +30,6 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
 //        public double velocity_ticks_per_100ms; // -ginget
         public SwerveModuleState desired_state = new SwerveModuleState();
         public double velocity_ticks_per_100ms = 0;
-        public double azimuth_position_ticks = 0;
 
         // OUTPUTS
         public double drive_demand = 0;
@@ -45,7 +44,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
     // Components
     private final IMotorControllerEnhanced mDriveMotor;
     private final IMotorControllerEnhanced mAzimuthMotor;
-    private static CANCoder mCanCoder;
+    public static CANCoder mCanCoder;
 
     // simulation
     private double driveSimTicksPer100ms = 0, azimuthEncoderSimPosition = 0;
@@ -138,12 +137,12 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
             var driveTrainErrorPercent = .05;
             double azimuth_error = 0; // azimuthAdjPosition * driveTrainErrorPercent;
             driveSimTicksPer100ms = metersPerSecondToTicksPer100ms(driveAdjDemand);
-            azimuthEncoderSimPosition = ((azimuthAdjPosition - azimuth_error) / 360 * 4096);
+            azimuthEncoderSimPosition = ((azimuthAdjPosition - azimuth_error));
             mPeriodicIO.velocity_ticks_per_100ms = driveSimTicksPer100ms;
-            mPeriodicIO.azimuth_position_ticks = azimuthEncoderSimPosition;
+            mPeriodicIO.azimuth_position = Rotation2d.fromDegrees(azimuthEncoderSimPosition);
         } else {
             mPeriodicIO.velocity_ticks_per_100ms = mDriveMotor.getSelectedSensorVelocity(0);
-            mPeriodicIO.azimuth_position_ticks = mAzimuthMotor.getSelectedSensorPosition(0);
+            mPeriodicIO.azimuth_position = Rotation2d.fromDegrees(mCanCoder.getAbsolutePosition());
         }
     }
 
@@ -160,7 +159,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
             mDriveMotor.set(ControlMode.PercentOutput, percentOutput);
         }
 
-        double angle = mPeriodicIO.azimuth_position_ticks;
+        double angle = mPeriodicIO.azimuth_position.getDegrees();
         mAzimuthMotor.set(ControlMode.Position, angle);
 //
 
@@ -361,9 +360,8 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
 
 
     public SwerveModuleState getState() {
-
         double velocity = (mPeriodicIO.velocity_ticks_per_100ms * 10 / DRIVE_ENCODER_PPR) * Constants.kWheelCircumferenceMeters; // proper conversion?
-        Rotation2d angle = Rotation2d.fromDegrees(mPeriodicIO.azimuth_position_ticks * (360.0 / (2048.0)));
+        Rotation2d angle = mPeriodicIO.azimuth_position;
         return new SwerveModuleState(velocity, angle);
     }
 

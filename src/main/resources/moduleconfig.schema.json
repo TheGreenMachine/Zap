@@ -5,12 +5,6 @@
         "drive": {"type": "string"},
         "azimuth": {"type": "string"},
         "constants": { "$ref": "double.map.schema.json"},
-        "canCoder": {
-            "type": "object",
-            "properties": {
-                "canCoderID": {"type": "integer"},
-                "inverted": {"type": "boolean"}
-            }
-        }
+        "canCoder": {"type": "string"}
     }
 }

@@ -22,6 +22,9 @@
         "victors": {
             "$ref": "int.map.schema.json"
         },
+        "canCoders": {
+            "$ref": "int.map.schema.json"
+        },
         "swerveModules": {
             "$ref": "swervemoduleconfig.schema.json"
         },
@@ -39,6 +42,13 @@
             }
         },
         "invertSensorPhase": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+                "type": "string"
+            }
+        },
+        "invertCanCoder": {
             "type": "array",
             "uniqueItems": true,
             "items": {

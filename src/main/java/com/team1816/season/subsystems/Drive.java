@@ -260,8 +260,16 @@ public abstract class Drive
         return inchesPerSecondToTicksPer100ms(Units.metersToInches(meters_per_second));
     }
 
+    public static double ticksPerSecondToMetersPer100ms(double ticks_per_second) {
+        return (Units.metersToInches(ticksPerSecondToInchesPer100ms(ticks_per_second)));
+    }
+
     public static double inchesPerSecondToTicksPer100ms(double inches_per_second) {
         return inchesToRotations(inches_per_second) * DRIVE_ENCODER_PPR / 10.0;
+    }
+
+    public static double ticksPerSecondToInchesPer100ms(double ticks_per_second) {
+        return rotationsToInches(ticks_per_second/DRIVE_ENCODER_PPR*10.0);
     }
 
     protected static double radiansPerSecondToTicksPer100ms(double rad_s) {

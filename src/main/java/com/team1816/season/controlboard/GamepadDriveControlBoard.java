@@ -21,7 +21,7 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
 
     @Override
     public double getStrafe() {
-        return -mController.getJoystick(Controller.Axis.LEFT_X);
+        return mController.getJoystick(Controller.Axis.LEFT_X);
     }
 
     @Override
