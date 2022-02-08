@@ -261,7 +261,7 @@ public abstract class Drive
     }
 
     public static double ticksPerSecondToMetersPer100ms(double ticks_per_second) {
-        return (Units.metersToInches(ticksPerSecondToInchesPer100ms(ticks_per_second)));
+        return (Units.metersToInches(ticksPerSecondToInchesPer100ms(ticks_per_second)))/4096;
     }
 
     public static double inchesPerSecondToTicksPer100ms(double inches_per_second) {

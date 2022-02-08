@@ -162,13 +162,12 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     @Override
     public synchronized void writePeriodicOutputs() {
         if (mDriveControlState == DriveControlState.OPEN_LOOP) {
-            System.out.println("STRAFE " + mPeriodicIO.strafe * ticksPerSecondToMetersPer100ms(maxVelTicksPer100ms)*Math.pow(10, 9));
             SwerveModuleState[] swerveModuleStates =
                 Constants.Swerve.swerveKinematics.toSwerveModuleStates(
 //                Constants.fieldRelative ?
                     ChassisSpeeds.fromFieldRelativeSpeeds(
-                        mPeriodicIO.forward * ticksPerSecondToMetersPer100ms(maxVelTicksPer100ms),
-                        mPeriodicIO.strafe * ticksPerSecondToMetersPer100ms(maxVelTicksPer100ms),
+                        mPeriodicIO.forward * 14*12*0.0254/4096, //manual conversions probably want to use a method later
+                        mPeriodicIO.strafe * 14*12*0.0254/4096,
                         mPeriodicIO.rotation * (Constants.kMaxAngularSpeedRadiansPerSecond),
                         getHeading()
                     )
