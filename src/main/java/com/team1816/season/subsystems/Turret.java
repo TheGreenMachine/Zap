@@ -236,7 +236,7 @@ public class Turret extends Subsystem implements PidProvider {
             robotState.getLatestFieldToTurret();
         if (RobotBase.isSimulation()) {
             //show turret
-            var robotPose = robotState.field.getRobotPose();
+            var robotPose = robotState.field_to_vehicle;
             var turret = robotState.field.getObject("turret");
             turret.setPose(
                 robotPose.getX(),

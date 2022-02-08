@@ -19,6 +19,8 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 
+import java.util.List;
+
 @Singleton
 public class TankDrive extends Drive implements DifferentialDrivetrain {
 
@@ -51,6 +53,11 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     }
 
     @Override
+    public Rotation2d getTrajectoryHeadings(){
+        return Constants.emptyRotation;
+    }
+
+    @Override
     public Pose2d getPose() {
         return mRobotState.field_to_vehicle;
     }
@@ -60,7 +67,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     }
 
     @Override
-    public void startTrajectory(Trajectory trajectory) {
+    public void startTrajectory(Trajectory trajectory, List<Rotation2d> headings) {
         mTrajectory = trajectory;
         mTrajectoryStart = 0;
         odometry.resetPosition(

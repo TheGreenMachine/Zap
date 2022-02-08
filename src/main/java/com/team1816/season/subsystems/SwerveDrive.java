@@ -23,6 +23,8 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import java.util.List;
+
 @Singleton
 public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider {
 
@@ -280,14 +282,27 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     public void updateTrajectoryVelocities(Double aDouble, Double aDouble1) {
     }
 
+    @Override
+    public Rotation2d getTrajectoryHeadings(){
+        if(mHeadings == null || mTrajectoryIndex >= mHeadings.size()){
+            System.out.println("reaching past mHeading's max size");
+            return Constants.emptyRotation;
+        }
+        Rotation2d heading = mHeadings.get(mTrajectoryIndex);
+        System.out.println(heading.getDegrees());
+        mTrajectoryIndex++;
+        return heading;
+    }
+
     public Pose2d getPose() {
         return mRobotState.field_to_vehicle;  // swerveOdometry.getPoseMeters();
     }
 
-    @Override
-    public void startTrajectory(Trajectory trajectory) {
+    public void startTrajectory(Trajectory trajectory, List<Rotation2d> headings) {
         mPeriodicIO.totalRotation = 0;
         mTrajectory = trajectory;
+        mHeadings = headings;
+        mTrajectoryIndex = 0;
         swerveOdometry.resetPosition(
             trajectory.getInitialPose(),
             trajectory.getInitialPose().getRotation()

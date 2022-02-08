@@ -43,6 +43,11 @@ public class BarrelPath implements PathContainer {
     }
 
     @Override
+    public List<Rotation2d> buildHeadings() {
+        return null;
+    }
+
+    @Override
     public boolean isReversed() {
         return false;
     }
