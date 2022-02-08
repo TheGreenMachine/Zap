@@ -10,7 +10,7 @@ import com.team254.lib.trajectory.Trajectory;
 public class LivingRoomMode extends AutoModeBase {
 
     public LivingRoomMode() {
-        trajectory = new TrajectoryAction(TrajectorySet.LIVING_ROOM);
+        trajectory = new TrajectoryAction(TrajectorySet.LIVING_ROOM, TrajectorySet.LIVING_ROOM_HEADINGS);
     }
 
     @Override

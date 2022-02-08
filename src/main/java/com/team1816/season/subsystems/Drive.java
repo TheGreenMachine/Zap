@@ -29,9 +29,11 @@ public abstract class Drive
 
     public abstract void updateTrajectoryVelocities(Double aDouble, Double aDouble1);
 
+    public abstract Rotation2d getTrajectoryHeadings();
+
     public abstract Pose2d getPose();
 
-    public abstract void startTrajectory(Trajectory initialPose);
+    public abstract void startTrajectory(Trajectory initialPose, List<Rotation2d> headings);
 
     public interface Factory {
         Drive getInstance();
@@ -55,6 +57,8 @@ public abstract class Drive
     protected double lastUpdateTimestamp = 0;
     protected double mTrajectoryStart = 0;
     protected Trajectory mTrajectory;
+    protected List<Rotation2d> mHeadings;
+    protected int mTrajectoryIndex = 0;
 
     // hardware states
     protected String pidSlot = "slot0";

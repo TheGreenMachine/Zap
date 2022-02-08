@@ -4,17 +4,19 @@ import com.google.inject.Inject;
 import com.team1816.season.Constants;
 import com.team1816.season.subsystems.Drive;
 import com.team1816.season.subsystems.SwerveDrive;
-import com.team1816.season.subsystems.SwerveModule;
 import com.team1816.season.subsystems.TankDrive;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+
+import java.util.List;
 
 public class TrajectoryAction implements Action {
 
@@ -23,11 +25,16 @@ public class TrajectoryAction implements Action {
 
     private final Command mCommand;
     private final Trajectory mTrajectory;
+    private final List<Rotation2d> mHeadings;
     private final Drive mDrive;
 
-    public TrajectoryAction(Trajectory trajectory) {
+    public TrajectoryAction(Trajectory trajectory){
+        this(trajectory, null);
+    }
+    public TrajectoryAction(Trajectory trajectory, List<Rotation2d> headings) {
         mDrive = mDriveFactory.getInstance();
         mTrajectory = trajectory;
+        mHeadings = headings;
         if(mDrive instanceof TankDrive){
             mCommand =
                 new RamseteCommand(
@@ -53,7 +60,7 @@ public class TrajectoryAction implements Action {
                     new PIDController(Constants.kPXController, 0, 0),
                     new PIDController(Constants.kPYController, 0, 0),
                     thetaController,
-//                    mDrive::getDesiredRotation2d,
+                    mDrive::getTrajectoryHeadings,
                     mDrive::setModuleStates
                 );
         } else {
@@ -84,7 +91,7 @@ public class TrajectoryAction implements Action {
         System.out.println(
             "Starting trajectory! (seconds=" + mTrajectory.getTotalTimeSeconds() + ")"
         );
-        mDrive.startTrajectory(mTrajectory);
+        mDrive.startTrajectory(mTrajectory, mHeadings);
         mCommand.initialize();
     }
 

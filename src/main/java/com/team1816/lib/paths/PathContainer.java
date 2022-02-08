@@ -1,9 +1,12 @@
 package com.team1816.lib.paths;
 
+import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.hardware.RobotFactory;
+import com.team1816.lib.math.Conversions;
 import com.team1816.season.Constants;
 import com.team254.lib.util.Units;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
@@ -27,6 +30,7 @@ public interface PathContainer {
     );
 
     List<Pose2d> buildWaypoints();
+    List<Rotation2d> buildHeadings();
 
     default Trajectory generateTrajectory() {
         return generateBaseTrajectory(isReversed(), buildWaypoints());
@@ -46,7 +50,7 @@ public interface PathContainer {
             waypointsMeters.add(new Pose2d(Units.inches_to_meters(pose2d.getX()), Units.inches_to_meters(pose2d.getY()), pose2d.getRotation()));
         }
         TrajectoryConfig config = new TrajectoryConfig(kMaxVelocity, kMaxAccel);
-        var baseTrajectory = TrajectoryGenerator.generateTrajectory(waypointsMeters, config); // we want to use the config here not the base trajecory!
+        var baseTrajectory = TrajectoryGenerator.generateTrajectory(waypointsMeters, config);
         return baseTrajectory.transformBy(
             new Transform2d(
                 Constants.StartingPose.getTranslation(),
@@ -56,4 +60,47 @@ public interface PathContainer {
     }
 
     boolean isReversed();
+
+    default List<Rotation2d> generateHeadings(){
+        List<Rotation2d> generatedHeadings = new ArrayList<>();
+        Trajectory trajectory = generateTrajectory();
+        List<Pose2d> waypointsMeters = new ArrayList<>();
+        for(Pose2d pose2d: buildWaypoints()){
+            waypointsMeters.add(new Pose2d(Units.inches_to_meters(pose2d.getX()) + .5, Units.inches_to_meters(pose2d.getY()) + 3.5, pose2d.getRotation()));
+        }
+        List<Rotation2d> waypointHeadings = buildHeadings();
+        List<Double> waypointTimes = new ArrayList<>();
+        List<Integer> waypointIndexes = new ArrayList<>();
+        for(Pose2d pose2d : waypointsMeters){
+            for(int i = 0; i < trajectory.getStates().size(); ++i){
+                var point = trajectory.getStates().get(i).poseMeters;
+                if(Conversions.epsilonEquals(point, pose2d, .75)){
+                    waypointTimes.add(trajectory.getStates().get(i).timeSeconds);
+                    waypointIndexes.add(i);
+                    break;
+                }
+            }
+        }
+
+        for(int checkpoint = 1; checkpoint < waypointsMeters.size(); checkpoint++){
+            int iStart = waypointIndexes.get(checkpoint - 1);
+            int iEnd = waypointIndexes.get(checkpoint);
+            double dHeading = ( // change in heading between two points in degrees
+                waypointHeadings.get(checkpoint).getDegrees() - waypointHeadings.get(checkpoint - 1).getDegrees()
+            );
+            double timeBetweenWaypoints = waypointTimes.get(checkpoint) - waypointTimes.get(checkpoint - 1);
+            for(int i = iStart; i < iEnd; i++){
+                generatedHeadings.add(
+                    Rotation2d.fromDegrees(
+                        waypointHeadings.get(checkpoint - 1).getDegrees() +
+                            dHeading * (trajectory.getStates().get(i).timeSeconds - waypointTimes.get(checkpoint - 1))
+                    )
+                );
+                System.out.println(generatedHeadings.get(i).getDegrees());
+            }
+        }
+
+        return  generatedHeadings;
+    }
+
 }

@@ -1,8 +1,10 @@
 package com.team1816.season.paths;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 
 import javax.inject.Singleton;
+import java.util.List;
 
 @Singleton
 public class TrajectorySet {
@@ -15,11 +17,16 @@ public class TrajectorySet {
     public static Trajectory LIVING_ROOM;
     public static Trajectory BARREL;
 
+    public static List<Rotation2d> LIVING_ROOM_HEADINGS;
+
     public TrajectorySet() {
-        // 2020
+        // Trajectories
         DRIVE_STRAIGHT = new DriveStraight(36).generateTrajectory();
         TUNE_DRIVETRAIN = new DriveStraight(180, 40).generateTrajectory();
         LIVING_ROOM = new LivingRoomPath().generateTrajectory();
         BARREL = new BarrelPath().generateTrajectory();
+
+        // Heading lists
+        LIVING_ROOM_HEADINGS = new LivingRoomPath().generateHeadings();
     }
 }

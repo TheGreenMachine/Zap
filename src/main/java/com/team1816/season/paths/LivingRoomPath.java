@@ -18,6 +18,15 @@ public class LivingRoomPath implements PathContainer {
     }
 
     @Override
+    public List<Rotation2d> buildHeadings() {
+        return List.of(
+            Rotation2d.fromDegrees(0),
+            Rotation2d.fromDegrees(90),
+            Rotation2d.fromDegrees(0)
+        );
+    }
+
+    @Override
     public boolean isReversed() {
         return false;
     }
