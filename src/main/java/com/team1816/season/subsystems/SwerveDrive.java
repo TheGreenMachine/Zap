@@ -161,8 +161,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     @Override
     public synchronized void writePeriodicOutputs() {
+//        System.out.println(swerveModules[1].getDriveError()); OOO
         if (mDriveControlState == DriveControlState.OPEN_LOOP) {
-            System.out.println("STRAFE " + mPeriodicIO.strafe * ticksPerSecondToMetersPer100ms(maxVelTicksPer100ms)*Math.pow(10, 9));
+//            System.out.println("STRAFE " + mPeriodicIO.strafe * ticksPerSecondToMetersPer100ms(maxVelTicksPer100ms)*Math.pow(10, 9));
             SwerveModuleState[] swerveModuleStates =
                 Constants.Swerve.swerveKinematics.toSwerveModuleStates(
 //                Constants.fieldRelative ?
@@ -270,6 +271,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     /* Used by SwerveControllerCommand in Auto */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
+        System.out.println(desiredStates[1].speedMetersPerSecond);
         mDriveControlState = DriveControlState.TRAJECTORY_FOLLOWING;
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Units.inchesToMeters(Constants.kPathFollowingMaxVel)); // TODO max speeeeed like above
 

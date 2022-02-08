@@ -15,7 +15,7 @@ public class TuneDrivetrainMode extends AutoModeBase {
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        System.out.println("Running Drive Straight Mode");
+        System.out.println("Running Tune Drivetrain Mode");
         runAction(new WaitAction(.5));
         runAction(trajectory);
     }
