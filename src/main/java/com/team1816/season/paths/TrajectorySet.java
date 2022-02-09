@@ -18,6 +18,7 @@ public class TrajectorySet {
     public static Trajectory BARREL;
 
     public static List<Rotation2d> LIVING_ROOM_HEADINGS;
+    public static List<Rotation2d> BARREL_HEADINGS;
 
     public TrajectorySet() {
         // Trajectories
@@ -28,5 +29,6 @@ public class TrajectorySet {
 
         // Heading lists
         LIVING_ROOM_HEADINGS = new LivingRoomPath().generateHeadings();
+        BARREL_HEADINGS = new BarrelPath().generateHeadings();
     }
 }

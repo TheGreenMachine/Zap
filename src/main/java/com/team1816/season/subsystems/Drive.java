@@ -242,10 +242,14 @@ public abstract class Drive
     protected abstract void updateOpenLoopPeriodic();
 
     public void updateTrajectoryPeriodic(double timestamp) {
+        if(mDriveControlState != DriveControlState.TRAJECTORY_FOLLOWING){
+//            zeroSensors();
+        }
         if (mTrajectoryStart == 0) mTrajectoryStart = timestamp;
         // update desired pose from trajectory
         mPeriodicIO.desired_pose =
             mTrajectory.sample(timestamp - mTrajectoryStart).poseMeters;
+        System.out.println(mTrajectory.sample(timestamp - mTrajectoryStart).poseMeters.getRotation().getDegrees() + "ooooooo");
     }
 
     public static double rotationsToInches(double rotations) {

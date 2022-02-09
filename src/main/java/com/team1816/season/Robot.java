@@ -289,6 +289,7 @@ public class Robot extends TimedRobot {
 
             mDisabledLooper.start();
 
+            mDrive.stop();
             mDrive.setBrakeMode(false);
         } catch (Throwable t) {
             throw t;

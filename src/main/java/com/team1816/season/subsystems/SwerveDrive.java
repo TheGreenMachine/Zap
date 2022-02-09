@@ -207,7 +207,16 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             System.out.println(signal);
             mDriveControlState = DriveControlState.OPEN_LOOP;
         }
-//        SwerveDriveSignal swerveSignal = (SwerveDriveSignal) signal;
+
+        SwerveDriveSignal swerveSignal = (SwerveDriveSignal) signal;
+        setBrakeMode(swerveSignal.getBrakeMode());
+        if (swerveSignal.getBrakeMode()){
+            for (int i = 0; i < 4; i++) {
+                swerveModules[i].setDesiredState(new SwerveModuleState(), false);
+            }
+        }
+
+
 //
 //        mPeriodicIO.wheel_speeds = swerveSignal.getWheelSpeeds();
 //        mPeriodicIO.wheel_azimuths = swerveSignal.getWheelAzimuths();
@@ -286,11 +295,11 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     @Override
     public Rotation2d getTrajectoryHeadings(){
         if(mHeadings == null || mTrajectoryIndex >= mHeadings.size()){
-            System.out.println("reaching past mHeading's max size");
+//            System.out.println("reaching past mHeading's max size");
             return Constants.emptyRotation;
         }
         Rotation2d heading = mHeadings.get(mTrajectoryIndex);
-        System.out.println(heading.getDegrees());
+        System.out.println(heading.getDegrees() + "aaaaa");
         mTrajectoryIndex++;
         return heading;
     }

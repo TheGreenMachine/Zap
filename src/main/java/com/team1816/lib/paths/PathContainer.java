@@ -96,7 +96,7 @@ public interface PathContainer {
                             dHeading * (trajectory.getStates().get(i).timeSeconds - waypointTimes.get(checkpoint - 1))
                     )
                 );
-                System.out.println(generatedHeadings.get(i).getDegrees());
+                System.out.println(generatedHeadings.get(i).getDegrees() + " = generated headings");
             }
         }
 
