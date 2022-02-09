@@ -205,20 +205,10 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             System.out.println("switching to open loop");
             System.out.println(signal);
             mDriveControlState = DriveControlState.OPEN_LOOP;
-        }
-
-        SwerveDriveSignal swerveSignal = (SwerveDriveSignal) signal;
-        setBrakeMode(swerveSignal.getBrakeMode());
-        if (swerveSignal.getBrakeMode()){
             for (int i = 0; i < 4; i++) {
-                swerveModules[i].setDesiredState(new SwerveModuleState(), false);
+                swerveModules[i].setDesiredState(new SwerveModuleState(), true);
             }
         }
-
-
-//
-//        mPeriodicIO.wheel_speeds = swerveSignal.getWheelSpeeds();
-//        mPeriodicIO.wheel_azimuths = swerveSignal.getWheelAzimuths();
     }
 
     @Override
