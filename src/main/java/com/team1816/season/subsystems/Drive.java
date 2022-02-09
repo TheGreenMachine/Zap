@@ -162,9 +162,9 @@ public abstract class Drive
 
         // INPUTS
         public double timestamp;
-        public Rotation2d gyro_heading = new Rotation2d();
+        public Rotation2d gyro_heading = Constants.emptyRotation;
         // no_offset = Relative to initial position, unaffected by reset
-        public Rotation2d gyro_heading_no_offset = new Rotation2d();
+        public Rotation2d gyro_heading_no_offset = Constants.emptyRotation;
         public double drive_distance_inches;
         public double velocity_inches_per_second = 0;
         public double left_position_ticks;
@@ -179,6 +179,7 @@ public abstract class Drive
         public double forward;
         public double strafe;
         public double rotation;
+        public double totalRotation;
 
         // OUTPUTS
         public double left_demand;

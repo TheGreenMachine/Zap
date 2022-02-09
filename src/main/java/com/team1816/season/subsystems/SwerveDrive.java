@@ -144,16 +144,15 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 //                ) /
 //                robotWidthTicks;
 //            mPeriodicIO.gyro_heading_no_offset = getDesiredRotation2d().rotateBy(Rotation2d.fromDegrees(gyroDrift));
-            var xPos = getPose().getX();
-            var yPos = getPose().getY();
-            mRobotState.field.setRobotPose(xPos, yPos, getHeading());
         } else {
             mPeriodicIO.gyro_heading_no_offset =
                 Rotation2d.fromDegrees(mPigeon.getFusedHeading());
         }
         mPeriodicIO.gyro_heading =
             mPeriodicIO.gyro_heading_no_offset.rotateBy(mGyroOffset);
-        // System.out.println("control state: " + mDriveControlState + ", left: " + mPeriodicIO.left_demand + ", right: " + mPeriodicIO.right_demand);
+        mPeriodicIO.totalRotation = (mPeriodicIO.totalRotation + mPeriodicIO.rotation*Constants.kMaxAngularSpeedRadiansPerSecond/10)%(2*Math.PI);;
+        mPeriodicIO.gyro_heading =
+            mPeriodicIO.gyro_heading.rotateBy(new Rotation2d(mPeriodicIO.totalRotation));
         for (SwerveModule module : swerveModules) {
             module.readPeriodicInputs();
         }
@@ -308,8 +307,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         return mRobotState.field_to_vehicle;  // swerveOdometry.getPoseMeters();
     }
 
-    @Override
     public void startTrajectory(Trajectory trajectory, List<Rotation2d> headings) {
+        mPeriodicIO.totalRotation = 0;
         mTrajectory = trajectory;
         mHeadings = headings;
         mTrajectoryIndex = 0;

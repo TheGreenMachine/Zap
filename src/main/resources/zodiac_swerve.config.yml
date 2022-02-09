@@ -11,35 +11,47 @@ subsystems:
             frAzimuth: 11
             blAzimuth: 3
             brAzimuth: 12
+        canCoders:
+            fl: 5 #TODO check values
+            fr: 6
+            bl: 7
+            br: 8
         invertMotor:
             - frAzimuth
             - blAzimuth
             - brAzimuth
             - frDrive
             - brDrive
+        invertCanCoder:
+            - fr
+            - br
         swerveModules:
             modules:
                 frontLeft:
                     drive: flDrive
                     azimuth: flAzimuth
+                    canCoder: fl
                     constants:
                         encoderOffset: 1443
                         invertSensorPhase: 0
                 frontRight:
                     drive: frDrive
                     azimuth: frAzimuth
+                    canCoder: fr
                     constants:
                         encoderOffset: 3356
                         invertSensorPhase: 1
                 backLeft:
                     drive: blDrive
                     azimuth: blAzimuth
+                    canCoder: bl
                     constants:
                         encoderOffset: 3450
                         invertSensorPhase: 1
                 backRight:
                     drive: brDrive
                     azimuth: brAzimuth
+                    canCoder: br
                     constants:
                         encoderOffset: 2551
                         invertSensorPhase: 1
