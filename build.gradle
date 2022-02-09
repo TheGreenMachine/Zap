@@ -158,6 +158,7 @@ task runSwerve(type: JavaExec) {
         environment "LD_LIBRARY_PATH", jniDir
         environment "DYLD_FALLBACK_LIBRARY_PATH", jniDir
         environment "DYLD_LIBRARY_PATH", jniDir
+        jvmArgs "-XstartOnFirstThread"
     }
     environment "HALSIM_EXTENSIONS", hal
     environment "ROBOT_NAME", "zodiac_swerve"
@@ -174,6 +175,7 @@ task runTank(type: JavaExec) {
         environment "LD_LIBRARY_PATH", jniDir
         environment "DYLD_FALLBACK_LIBRARY_PATH", jniDir
         environment "DYLD_LIBRARY_PATH", jniDir
+        jvmArgs "-XstartOnFirstThread"
     }
     environment "HALSIM_EXTENSIONS", hal
     environment "ROBOT_NAME", "zodiac_pro"
