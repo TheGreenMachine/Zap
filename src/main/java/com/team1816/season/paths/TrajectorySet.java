@@ -3,7 +3,7 @@ package com.team1816.season.paths;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 
-import javax.inject.Singleton;
+import com.google.inject.Singleton;
 import java.util.List;
 
 @Singleton

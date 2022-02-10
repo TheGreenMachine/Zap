@@ -290,6 +290,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         Rotation2d heading = mHeadings.get(mTrajectoryIndex);
         System.out.println(heading.getDegrees() + "aaaaa");
         mTrajectoryIndex++;
+        mPeriodicIO.totalRotation = heading.getRadians();
         return heading;
     }
 
@@ -306,6 +307,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             trajectory.getInitialPose(),
             trajectory.getInitialPose().getRotation()
         );
+        mPeriodicIO.totalRotation = swerveOdometry.getPoseMeters().getRotation().getRadians(); //this needs ot get updated to whatever the current heading of swerve is in autonomous
         updateRobotPose();
         mDriveControlState = DriveControlState.TRAJECTORY_FOLLOWING;
         setBrakeMode(true);

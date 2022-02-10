@@ -2,6 +2,8 @@ package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifierStatusFrame;
+import com.ctre.phoenix.led.CANdle;
+import com.ctre.phoenix.led.RainbowAnimation;
 import com.team1816.lib.hardware.components.ICanifier;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.lib.loops.Loop;
@@ -9,6 +11,7 @@ import com.team1816.lib.subsystems.Subsystem;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.Timer;
+
 import java.awt.*;
 import javax.inject.Singleton;
 
@@ -28,7 +31,8 @@ public class LedManager extends Subsystem {
     // Components
     private final ICanifier canifier;
     private final ICanifier cameraCanifier;
-    private final DigitalOutput cameraLed;
+    // private final DigitalOutput cameraLed;
+    private final CANdle candle;
 
     // State
     private LedControlState controlState = LedControlState.STANDARD;
@@ -56,17 +60,25 @@ public class LedManager extends Subsystem {
         super(NAME);
         this.canifier = factory.getCanifier(NAME);
         this.cameraCanifier = factory.getCanifier("camera");
-        this.cameraLed =
-            new DigitalOutput((int) factory.getConstant(NAME, "cameraLed", 1));
+//        this.cameraLed =
+//            new DigitalOutput((int) factory.getConstant(NAME, "cameraLed", 1));
+        this.candle = new CANdle((int) factory.getConstant(NAME, "cameraLed", 10));
+        this.candle.animate(new RainbowAnimation(1,.5,8));
 
         configureCanifier(canifier);
         configureCanifier(cameraCanifier);
+        configureCandle();
 
         this.ledR = 0;
         this.ledG = 0;
         this.ledB = 0;
 
         this.cameraLedOn = false;
+    }
+
+    private void configureCandle(){
+        this.candle.configStatusLedState(true);
+        this.candle.configBrightnessScalar(.04);
     }
 
     private void configureCanifier(ICanifier canifier) {
@@ -162,13 +174,12 @@ public class LedManager extends Subsystem {
 
     @Override
     public void writePeriodicOutputs() {
-        if (cameraLed != null) {
+        if (cameraCanifier != null) {
             if (outputsChanged) {
-                cameraLed.set(cameraLedOn);
-                //                cameraCanifier.setLEDOutput(
-                //                    cameraLedOn ? 1 : 0,
-                //                    CANifier.LEDChannel.LEDChannelB
-                //                );
+                cameraCanifier.setLEDOutput(
+                    cameraLedOn ? 1 : 0,
+                    CANifier.LEDChannel.LEDChannelB
+                );
             }
         }
         if (canifier != null) {
