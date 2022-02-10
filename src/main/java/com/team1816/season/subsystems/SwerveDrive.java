@@ -283,16 +283,14 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     @Override
     public Rotation2d getTrajectoryHeadings(){
-        if(mHeadings == null){
-            System.out.println("headings are empty!!!!!");
+        if(mHeadings == null || mTrajectoryIndex >= mHeadings.size()){
+//            System.out.println("reaching past mHeading's max size");
             return Constants.emptyRotation;
         }
-//        if(mTrajectoryIndex >= mHeadings.size()){ // use time instead?
-//            System.out.println("reaching past mHeading's max size");
-//            return mHeadings.get(mHeadings.size() - 1); // set heading to last heading in list
-//        }
-        Rotation2d heading = mHeadings.get(0); // FIX ME
-//        System.out.println(heading.getDegrees() + " = current desired heading degrees");
+        Rotation2d heading = mHeadings.get(mTrajectoryIndex);
+        System.out.println(heading.getDegrees() + "aaaaa");
+        mTrajectoryIndex++;
+        mPeriodicIO.totalRotation = heading.getRadians();
         return heading;
     }
 
@@ -304,10 +302,12 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         mPeriodicIO.totalRotation = 0;
         mTrajectory = trajectory;
         mHeadings = headings;
+        mTrajectoryIndex = 0;
         swerveOdometry.resetPosition(
             trajectory.getInitialPose(),
             trajectory.getInitialPose().getRotation()
         );
+        mPeriodicIO.totalRotation = swerveOdometry.getPoseMeters().getRotation().getRadians(); //this needs ot get updated to whatever the current heading of swerve is in autonomous
         updateRobotPose();
         mDriveControlState = DriveControlState.TRAJECTORY_FOLLOWING;
         setBrakeMode(true);

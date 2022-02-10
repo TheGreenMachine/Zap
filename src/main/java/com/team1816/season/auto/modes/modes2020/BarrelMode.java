@@ -11,7 +11,7 @@ import com.team254.lib.trajectory.Trajectory;
 public class BarrelMode extends AutoModeBase {
 
     public BarrelMode() {
-        trajectory = new TrajectoryAction(TrajectorySet.BARREL);
+        trajectory = new TrajectoryAction(TrajectorySet.BARREL, TrajectorySet.BARREL_HEADINGS);
     }
 
     @Override
