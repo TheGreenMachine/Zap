@@ -10,6 +10,9 @@
         "canifier": {
             "type": "integer"
         },
+        "candle": {
+            "type": "integer"
+        },
         "constants": {
             "$ref": "double.map.schema.json"
         },
