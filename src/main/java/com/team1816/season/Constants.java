@@ -180,6 +180,8 @@ public class Constants {
     public static double kCameraFrameRate = 30;
     public static final double kPathFollowingMaxAccel = factory.getConstant("maxAccel");
     public static final double kPathFollowingMaxVel = factory.getConstant("maxVel");
+    public static final double kMaxVel = 300; // inches per second
+    public static final double kTicksPerRevolution = 4096;
 
     // Trajectory Generator constants
 

@@ -3,6 +3,7 @@ package com.team1816.season.subsystems;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.team1816.lib.math.Conversions;
 import com.team1816.season.AutoModeSelector;
 import com.team1816.season.Constants;
 import com.team1816.lib.subsystems.PidProvider;
@@ -150,7 +151,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
         mPeriodicIO.gyro_heading =
             mPeriodicIO.gyro_heading_no_offset.rotateBy(mGyroOffset);
-        mPeriodicIO.totalRotation = (mPeriodicIO.totalRotation + mPeriodicIO.rotation *Constants.kMaxAngularSpeedRadiansPerSecond/10)%(2*Math.PI);;
+        mPeriodicIO.totalRotation += mPeriodicIO.rotation*Constants.kMaxAngularSpeedRadiansPerSecond/10;
+        mPeriodicIO.totalRotation %= 2*Math.PI;
         mPeriodicIO.gyro_heading =
             mPeriodicIO.gyro_heading.rotateBy(new Rotation2d(mPeriodicIO.totalRotation));
         for (SwerveModule module : swerveModules) {
@@ -167,8 +169,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 Constants.Swerve.swerveKinematics.toSwerveModuleStates(
 //                Constants.fieldRelative ?
                     ChassisSpeeds.fromFieldRelativeSpeeds(
-                        mPeriodicIO.forward * 14*12*0.0254/4096, //manual conversions probably want to use a method later
-                        mPeriodicIO.strafe * 14*12*0.0254/4096,
+                        mPeriodicIO.forward * Conversions.convertInchesToMeters(Constants.kMaxVel)/Constants.kTicksPerRevolution, //manual conversions probably want to use a method later
+                        mPeriodicIO.strafe * Conversions.convertInchesToMeters(Constants.kMaxVel)/Constants.kTicksPerRevolution,
                         mPeriodicIO.rotation * (Constants.kMaxAngularSpeedRadiansPerSecond),
                         getHeading()
                     )

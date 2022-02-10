@@ -6,6 +6,13 @@ import edu.wpi.first.math.geometry.Pose2d;
 public class Conversions {
 
     // make the degree stuff to ticks/radians/ whatnot come into here instead of being spread out everywhere
+    public static double convertInchesToMeters(double inches) {
+        return inches*0.0254;
+    }
+
+    public static double convertMetersToInches(double meters) {
+        return meters/0.0254;
+    }
 
     public static boolean epsilonEquals(final Pose2d reference, final Pose2d other, double epsilon) {
         return Util.epsilonEquals(reference.getX(), other.getX(), epsilon)
