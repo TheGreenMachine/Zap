@@ -58,7 +58,6 @@ public abstract class Drive
     protected double mTrajectoryStart = 0;
     protected Trajectory mTrajectory;
     protected List<Rotation2d> mHeadings;
-    protected int mTrajectoryIndex = 0;
 
     // hardware states
     protected String pidSlot = "slot0";
@@ -250,7 +249,6 @@ public abstract class Drive
         // update desired pose from trajectory
         mPeriodicIO.desired_pose =
             mTrajectory.sample(timestamp - mTrajectoryStart).poseMeters;
-        System.out.println(mTrajectory.sample(timestamp - mTrajectoryStart).poseMeters.getRotation().getDegrees() + "ooooooo");
     }
 
     public static double rotationsToInches(double rotations) {
@@ -407,7 +405,7 @@ public abstract class Drive
             );
     }
 
-    public synchronized double getTimestamp() {
-        return mPeriodicIO.timestamp;
+    public synchronized double getTrajectoryTimestamp() {
+        return mPeriodicIO.timestamp - mTrajectoryStart;
     }
 }

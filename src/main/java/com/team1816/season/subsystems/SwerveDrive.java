@@ -283,13 +283,16 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     @Override
     public Rotation2d getTrajectoryHeadings(){
-        if(mHeadings == null || mTrajectoryIndex >= mHeadings.size()){
-//            System.out.println("reaching past mHeading's max size");
+        if(mHeadings == null){
+            System.out.println("headings are empty!!!!!");
             return Constants.emptyRotation;
         }
-        Rotation2d heading = mHeadings.get(mTrajectoryIndex);
-        System.out.println(heading.getDegrees() + "aaaaa");
-        mTrajectoryIndex++;
+//        if(mTrajectoryIndex >= mHeadings.size()){ // use time instead?
+//            System.out.println("reaching past mHeading's max size");
+//            return mHeadings.get(mHeadings.size() - 1); // set heading to last heading in list
+//        }
+        Rotation2d heading = mHeadings.get(0); // FIX ME
+//        System.out.println(heading.getDegrees() + " = current desired heading degrees");
         return heading;
     }
 
@@ -301,7 +304,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         mPeriodicIO.totalRotation = 0;
         mTrajectory = trajectory;
         mHeadings = headings;
-        mTrajectoryIndex = 0;
         swerveOdometry.resetPosition(
             trajectory.getInitialPose(),
             trajectory.getInitialPose().getRotation()

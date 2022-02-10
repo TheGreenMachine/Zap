@@ -15,8 +15,8 @@ public class BarrelPath implements PathContainer {
             new Pose2d(46, 98, Rotation2d.fromDegrees(0)), //patch fix to resolve negative array size exception
             new Pose2d(168, 115, Rotation2d.fromDegrees(0)),
             new Pose2d(158, 8, Rotation2d.fromDegrees(180)),
-            new Pose2d(130, 110, Rotation2d.fromDegrees(10))
-//            new Pose2d(278, 87, Rotation2d.fromDegrees(30)),
+            new Pose2d(130, 110, Rotation2d.fromDegrees(10)),
+            new Pose2d(278, 87, Rotation2d.fromDegrees(30))
 //            new Pose2d(253, 170, Rotation2d.fromDegrees(176)),
 //            new Pose2d(190, 86, Rotation2d.fromDegrees(-60)),
 //            new Pose2d(271, 27, Rotation2d.fromDegrees(-25)),
@@ -48,7 +48,8 @@ public class BarrelPath implements PathContainer {
             Rotation2d.fromDegrees(0),
             Rotation2d.fromDegrees(40),
             Rotation2d.fromDegrees(180),
-            Rotation2d.fromDegrees(0)
+            Rotation2d.fromDegrees(0),
+            Rotation2d.fromDegrees(120)
         );
     }
 

@@ -1,6 +1,5 @@
 package com.team1816.lib.paths;
 
-import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.hardware.RobotFactory;
 import com.team1816.lib.math.Conversions;
 import com.team1816.season.Constants;
@@ -62,43 +61,53 @@ public interface PathContainer {
     boolean isReversed();
 
     default List<Rotation2d> generateHeadings(){
-        List<Rotation2d> generatedHeadings = new ArrayList<>();
         Trajectory trajectory = generateTrajectory();
         List<Pose2d> waypointsMeters = new ArrayList<>();
         for(Pose2d pose2d: buildWaypoints()){
             waypointsMeters.add(new Pose2d(Units.inches_to_meters(pose2d.getX()) + .5, Units.inches_to_meters(pose2d.getY()) + 3.5, pose2d.getRotation()));
         }
         List<Rotation2d> waypointHeadings = buildHeadings();
+
+        //get times and indices
         List<Double> waypointTimes = new ArrayList<>();
         List<Integer> waypointIndexes = new ArrayList<>();
+        int iWaypointCheckpoint = 0;
         for(Pose2d pose2d : waypointsMeters){
-            for(int i = 0; i < trajectory.getStates().size(); ++i){
+            for(int i = iWaypointCheckpoint; i < trajectory.getStates().size(); i++){
                 var point = trajectory.getStates().get(i).poseMeters;
-                if(Conversions.epsilonEquals(point, pose2d, .75)){
+                if(Conversions.epsilonEquals(point, pose2d, .1)){
                     waypointTimes.add(trajectory.getStates().get(i).timeSeconds);
                     waypointIndexes.add(i);
                     break;
                 }
+                iWaypointCheckpoint++;
             }
         }
 
-        for(int checkpoint = 1; checkpoint < waypointsMeters.size(); checkpoint++){
-            int iStart = waypointIndexes.get(checkpoint - 1);
-            int iEnd = waypointIndexes.get(checkpoint);
-            double dHeading = ( // change in heading between two points in degrees
-                waypointHeadings.get(checkpoint).getDegrees() - waypointHeadings.get(checkpoint - 1).getDegrees()
+        // generate list of rotation2Ds equivalent to trajectory length - for each state a heading
+        List<Rotation2d> generatedHeadings = new ArrayList<>();
+        for(int nextCheckpoint = 1; nextCheckpoint < waypointsMeters.size(); nextCheckpoint++){
+            int iStart = waypointIndexes.get(nextCheckpoint - 1);
+            int iEnd = waypointIndexes.get(nextCheckpoint);
+            double totalDHeading = ( // total change in heading between two points in degrees
+                waypointHeadings.get(nextCheckpoint).getDegrees() - waypointHeadings.get(nextCheckpoint - 1).getDegrees()
             );
-            double timeBetweenWaypoints = waypointTimes.get(checkpoint) - waypointTimes.get(checkpoint - 1);
+            double timeBetweenWaypoints = waypointTimes.get(nextCheckpoint) - waypointTimes.get(nextCheckpoint - 1);
+            double dHeading = totalDHeading / timeBetweenWaypoints; // change in heading per state
+
             for(int i = iStart; i < iEnd; i++){
                 generatedHeadings.add(
                     Rotation2d.fromDegrees(
-                        waypointHeadings.get(checkpoint - 1).getDegrees() +
-                            dHeading * (trajectory.getStates().get(i).timeSeconds - waypointTimes.get(checkpoint - 1))
+                        waypointHeadings.get(nextCheckpoint - 1).getDegrees() + // last waypoint's heading in degrees
+                            dHeading * (trajectory.getStates().get(i).timeSeconds - waypointTimes.get(nextCheckpoint - 1)) // change in heading * current time between waypoints
                     )
                 );
                 System.out.println(generatedHeadings.get(i).getDegrees() + " = generated headings");
             }
+
         }
+        // add the end rotation to make sure that last rotation imput is the last heading - kind of a band-aid fix.
+        generatedHeadings.add(waypointHeadings.get(waypointHeadings.size() - 1));
 
         return  generatedHeadings;
     }
