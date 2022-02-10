@@ -150,7 +150,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
         mPeriodicIO.gyro_heading =
             mPeriodicIO.gyro_heading_no_offset.rotateBy(mGyroOffset);
-        mPeriodicIO.totalRotation = (mPeriodicIO.totalRotation + mPeriodicIO.rotation*Constants.kMaxAngularSpeedRadiansPerSecond/10)%(2*Math.PI);;
+        mPeriodicIO.totalRotation = (mPeriodicIO.totalRotation + mPeriodicIO.rotation *Constants.kMaxAngularSpeedRadiansPerSecond/10)%(2*Math.PI);;
         mPeriodicIO.gyro_heading =
             mPeriodicIO.gyro_heading.rotateBy(new Rotation2d(mPeriodicIO.totalRotation));
         for (SwerveModule module : swerveModules) {
@@ -282,14 +282,21 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     @Override
-    public Rotation2d getTrajectoryHeadings(){
-        if(mHeadings == null || mTrajectoryIndex >= mHeadings.size()){
-//            System.out.println("reaching past mHeading's max size");
+    public Rotation2d getTrajectoryHeadings() {
+        if (mHeadings == null) {
+            System.out.println("headings are empty!");
+            return Constants.emptyRotation;
+        } else if (mTrajectoryIndex == mHeadings.size() - 1) {
+            System.out.println(mHeadings.get(mHeadings.size() - 1) + " = max");
+            return mHeadings.get(mHeadings.size() - 1);
+        } else if(mTrajectoryIndex > mHeadings.size() - 1){
+            System.out.println("heck the headings aren't long enough");
             return Constants.emptyRotation;
         }
+        if(getTrajectoryTimestamp() > mTrajectory.getStates().get(mTrajectoryIndex).timeSeconds)
+            mTrajectoryIndex++;
         Rotation2d heading = mHeadings.get(mTrajectoryIndex);
         System.out.println(heading.getDegrees() + "aaaaa");
-        mTrajectoryIndex++;
         mPeriodicIO.totalRotation = heading.getRadians();
         return heading;
     }
@@ -299,6 +306,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     public void startTrajectory(Trajectory trajectory, List<Rotation2d> headings) {
+        mPeriodicIO.timestamp = 0;
+        mTrajectoryStart = 0;
         mPeriodicIO.totalRotation = 0;
         mTrajectory = trajectory;
         mHeadings = headings;
@@ -333,6 +342,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     @Override
     public synchronized void stop() {
         setOpenLoop(SwerveDriveSignal.NEUTRAL);
+        mTrajectoryIndex = 0;
     }
 
     @Override

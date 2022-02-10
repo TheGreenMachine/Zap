@@ -75,7 +75,7 @@ public interface PathContainer {
         for(Pose2d pose2d : waypointsMeters){
             for(int i = iWaypointCheckpoint; i < trajectory.getStates().size(); i++){
                 var point = trajectory.getStates().get(i).poseMeters;
-                if(Conversions.epsilonEquals(point, pose2d, .1)){
+                if(point.equals(pose2d)){ // Conversions.epsilonEquals(point, pose2d, .0001
                     waypointTimes.add(trajectory.getStates().get(i).timeSeconds);
                     waypointIndexes.add(i);
                     break;
