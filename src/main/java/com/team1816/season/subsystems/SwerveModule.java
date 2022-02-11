@@ -7,6 +7,7 @@ import static com.team1816.season.subsystems.SwerveModule.ControlState.VELOCITY;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.CANCoder;
+import com.ctre.phoenix.sensors.CANCoderStatusFrame;
 import com.team1816.season.Constants;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.lib.loops.Loop;
@@ -111,7 +112,6 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
 
         /* Angle Encoder Config */
         mCanCoder = canCoder;
-
         /* Set initial Angle and Pose */
 //        this.startingPosition = startingPosition; -ginget
 //        mPeriodicIO.azimuth_position = getState().angle;

@@ -12,6 +12,7 @@ public class RobotState {
     public final Field2d field = new Field2d();
     public Pose2d field_to_vehicle = Constants.emptyPose;
     public Rotation2d vehicle_to_turret = Constants.emptyRotation;
+    public Rotation2d field_to_turret = Constants.emptyRotation;
 
     public RobotState() {
         SmartDashboard.putData("Field", field);

@@ -3,11 +3,7 @@ package com.team1816.lib.hardware;
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
-import com.ctre.phoenix.sensors.CANCoder;
-import com.ctre.phoenix.sensors.CANCoderConfiguration;
-import com.ctre.phoenix.sensors.AbsoluteSensorRange;
-import com.ctre.phoenix.sensors.SensorInitializationStrategy;
-import com.ctre.phoenix.sensors.SensorTimeBase;
+import com.ctre.phoenix.sensors.*;
 import com.revrobotics.MotorFeedbackSensor;
 import com.team1816.lib.hardware.components.motor.GhostMotorControllerEnhanced;
 import com.team1816.lib.hardware.components.motor.IConfigurableMotorController;
@@ -200,6 +196,7 @@ public class CtreMotorFactory {
         CANCoder canCoder = new CANCoder(canCoderID);
         canCoder.configFactoryDefault();
         canCoder.configAllSettings(configureCanCoder(invertCanCoder));
+        canCoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 5);
         return canCoder;
     }
 

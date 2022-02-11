@@ -97,7 +97,7 @@ public interface PathContainer {
                             dHeading * (trajectory.getStates().get(i).timeSeconds - waypointTimes.get(nextCheckpoint - 1)) // change in heading * current time between waypoints
                     )
                 );
-                System.out.println(generatedHeadings.get(i).getDegrees() + " = generated headings");
+                //System.out.println(generatedHeadings.get(i).getDegrees() + " = generated headings");
             }
 
         }
