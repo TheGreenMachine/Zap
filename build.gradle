@@ -161,7 +161,7 @@ task runSwerve(type: JavaExec) {
         jvmArgs "-XstartOnFirstThread"
     }
     environment "HALSIM_EXTENSIONS", hal
-    environment "ROBOT_NAME", "zodiac_swerve"
+    environment "ROBOT_NAME", "zap"
     dependsOn(jar, simulateExternalJavaRelease)
     classpath = files(jar)
     jvmArgs "-Djava.library.path=${jniDir}"

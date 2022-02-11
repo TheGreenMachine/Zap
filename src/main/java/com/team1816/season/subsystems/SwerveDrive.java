@@ -286,16 +286,22 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         if (mHeadings == null) {
             System.out.println("headings are empty!");
             return Constants.emptyRotation;
-        } else if (mTrajectoryIndex == mHeadings.size() - 1) {
-            System.out.println(mHeadings.get(mHeadings.size() - 1) + " = max");
-            return mHeadings.get(mHeadings.size() - 1);
         } else if(mTrajectoryIndex > mHeadings.size() - 1){
             System.out.println("heck the headings aren't long enough");
             return Constants.emptyRotation;
         }
-        if(getTrajectoryTimestamp() > mTrajectory.getStates().get(mTrajectoryIndex).timeSeconds)
+        if(getTrajectoryTimestamp() > mTrajectory.getStates().get(mTrajectoryIndex).timeSeconds || mTrajectoryIndex == 0)
             mTrajectoryIndex++;
-        Rotation2d heading = mHeadings.get(mTrajectoryIndex);
+        if (mTrajectoryIndex >= mHeadings.size()) {
+            System.out.println(mHeadings.get(mHeadings.size() - 1) + " = max");
+            return mHeadings.get(mHeadings.size() - 1);
+        }
+        double timeBetweenPoints = (mTrajectory.getStates().get(mTrajectoryIndex).timeSeconds - mTrajectory.getStates().get(mTrajectoryIndex - 1).timeSeconds);
+        Rotation2d heading;
+        heading = mHeadings.get(mTrajectoryIndex - 1).interpolate(
+            mHeadings.get(mTrajectoryIndex),
+            getTrajectoryTimestamp() / timeBetweenPoints
+        );
         System.out.println(heading.getDegrees() + "aaaaa");
         mPeriodicIO.totalRotation = heading.getRadians();
         return heading;
@@ -316,7 +322,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             trajectory.getInitialPose(),
             trajectory.getInitialPose().getRotation()
         );
-        mPeriodicIO.totalRotation = swerveOdometry.getPoseMeters().getRotation().getRadians(); //this needs ot get updated to whatever the current heading of swerve is in autonomous
+        mPeriodicIO.totalRotation = getPose().getRotation().getRadians(); //this needs ot get updated to whatever the current heading of swerve is in autonomous
         updateRobotPose();
         mDriveControlState = DriveControlState.TRAJECTORY_FOLLOWING;
         setBrakeMode(true);

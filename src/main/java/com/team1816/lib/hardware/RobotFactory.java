@@ -219,7 +219,7 @@ public class RobotFactory {
         var module = subsystem.swerveModules.modules.get(name);
         CANCoder canCoder = null;
         if (hasCanCoder(subsystemName, name) && subsystem.canCoders.get(module.canCoder) >= 0) {
-            canCoder = CtreMotorFactory.createCanCoder(subsystem.canCoders.get(module.canCoder), subsystem.canCoders.get(subsystem.invertCanCoder)==null?false:subsystem.invertCanCoder.contains(module.canCoder)); //TODO: For now placeholder true is placed
+            canCoder = CtreMotorFactory.createCanCoder(subsystem.canCoders.get(module.canCoder), subsystem.canCoders.get(subsystem.invertCanCoder) != null && subsystem.invertCanCoder.contains(module.canCoder)); //TODO: For now placeholder true is placed
         } else {
             // ghost. potentially implement this in the future
         }

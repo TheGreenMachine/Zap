@@ -2,58 +2,57 @@ subsystems:
     drivetrain:
         implemented: true
         falcons:
-            flDrive: 13
-            blDrive: 1 #1
-            frDrive: 2 #13
-            brDrive: 14
-        talons:
-            flAzimuth: 4
-            frAzimuth: 11
-            blAzimuth: 3
-            brAzimuth: 12
+            FLDr: 7
+            FRDr: 10 #1
+            RLDr: 18 #13
+            RRDr: 15
+            FLAz: -1 #8
+            FRAz: -1 #11
+            RLAz: -1 #19
+            RRAz: -1 #14
         canCoders:
-            fl: 5 #TODO check values
-            fr: 6
-            bl: 7
-            br: 8
+            FLEnc: 9 #TODO check values
+            FREnc: 12
+            RLEnc: 17
+            RREnc: 16
         invertMotor:
-            - frAzimuth
-            - blAzimuth
-            - brAzimuth
-            - frDrive
-            - brDrive
+            - FRAz
+            - RLAz
+            - RRAz
+            - FRDr
+            - RRDr
         invertCanCoder:
-            - fr
-            - br
+            - FREnc
+            - BREnc
         swerveModules:
             modules:
                 frontLeft:
-                    drive: flDrive
-                    azimuth: flAzimuth
-                    canCoder: fl
+                    drive: FLDr
+                    azimuth: FLAz
+                    canCoder: FLEnc
                     constants:
-                        encoderOffset: 1443
+                        encoderOffset: 183.252
                         invertSensorPhase: 0
                 frontRight:
-                    drive: frDrive
-                    azimuth: frAzimuth
-                    canCoder: fr
+                    drive: FRDr
+                    azimuth: FRAz
+                    canCoder: FREnc
                     constants:
-                        encoderOffset: 3356
+                        encoderOffset: 149.59
                         invertSensorPhase: 1
                 backLeft:
-                    drive: blDrive
-                    azimuth: blAzimuth
-                    canCoder: bl
+                    drive: RLDr
+                    azimuth: RLAz
+                    canCoder: RLEnc
                     constants:
-                        encoderOffset: 3450
+                        encoderOffset: 273.516
                         invertSensorPhase: 1
                 backRight:
-                    drive: brDrive
-                    azimuth: brAzimuth
-                    canCoder: br
+                    drive: RRDr
+                    azimuth: RRAz
+                    canCoder: RREnc
                     constants:
-                        encoderOffset: 2551
+                        encoderOffset: 250.488
                         invertSensorPhase: 1
             drivePID:
                 slot0:
@@ -68,7 +67,7 @@ subsystems:
                     kD: 30
                     kF: 0
         constants:
-            pigeonId: 32
+            pigeonId: -1
             pigeonOnTalon: -1
             kP: 0.1 # 0.18 # TODO: tune PID, these are temporary PID values from Zeta
             kI: 0.0001 # 0.018
@@ -86,14 +85,14 @@ subsystems:
             azimuthAllowableErrorTicks: 20
             azimuthHomeAdjustmentDegrees: 1
     ledmanager:
-        implemented: true
+        implemented: false
         canifier: 18
         constants:
             raveEnabled: 0
             raveSpeed: 0.05
             cameraLed: 1
     turret:
-        implemented: true
+        implemented: false
         pid:
             -   kP: 4 # 1.981 # 1.645
                 kI: 0
@@ -109,7 +108,7 @@ subsystems:
             fwdLimit: -1147
             encPPR: 4096
     shooter:
-        implemented: true
+        implemented: false
         invertMotor:
             - shooterMain
         falcons:
@@ -129,13 +128,13 @@ subsystems:
             rpmEpsilonCheck: 60
             velocityThreshold: 500
     climber:
-        implemented: true
+        implemented: false
         talons:
             elevator: 6
         solenoids:
             deployer: 2
     hopper:
-        implemented: true
+        implemented: false
         talons:
             spindexer: 10
             elevator: 5
@@ -151,7 +150,7 @@ subsystems:
             - intake
         solenoids:
             arm: 0
-pcm: 8
+pcm: -1
 constants:
     sensorPhase: 0
     kTrackScrubFactor: 1.0
@@ -164,7 +163,7 @@ constants:
     wheelDiameter: 3.8989736842 #inches
     ## Path following ##
     maxVel: 120 # 160 # 240 # inches/s # 22560 native units ---30
-    maxTicks: 14000 # ticks per 100ms TODO test actual maxTicks value
+    maxTicks: 22313 # ticks per 100ms TODO test actual maxTicks value
     maxAccel: 100 # inches/s^2
     maxDecel: 170 # inches/s^2 # Start with this matching maxAccel and then adjust as needed
     maxCentripetalAccel: 120 # 160 #inches/s^2

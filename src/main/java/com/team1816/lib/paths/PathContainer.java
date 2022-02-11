@@ -35,11 +35,6 @@ public interface PathContainer {
         return generateBaseTrajectory(isReversed(), buildWaypoints());
     }
 
-    default Trajectory generateReversedTrajectory()
-        throws ExecutionControl.NotImplementedException {
-        throw new ExecutionControl.NotImplementedException("TODO");
-    }
-
     private Trajectory generateBaseTrajectory(
         boolean isReversed,
         List<Pose2d> waypoints

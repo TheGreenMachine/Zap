@@ -8,6 +8,7 @@ import com.ctre.phoenix.sensors.CANCoderConfiguration;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.SensorTimeBase;
+import com.revrobotics.MotorFeedbackSensor;
 import com.team1816.lib.hardware.components.motor.GhostMotorControllerEnhanced;
 import com.team1816.lib.hardware.components.motor.IConfigurableMotorController;
 import com.team1816.lib.hardware.components.motor.LazyTalonFX;
@@ -211,6 +212,7 @@ public class CtreMotorFactory {
         Map<String, PIDSlotConfiguration> pidConfigList
     ) {
         BaseTalonConfiguration talonConfiguration;
+        FeedbackDevice feedbackDevice = FeedbackDevice.RemoteSensor0;
 
         if (motor instanceof TalonFX) {
             talonConfiguration = new TalonFXConfiguration();
@@ -246,7 +248,6 @@ public class CtreMotorFactory {
                 }
             );
         }
-
         talonConfiguration.nominalOutputForward = 0;
         talonConfiguration.nominalOutputReverse = 0;
         talonConfiguration.neutralDeadband = config.NEUTRAL_DEADBAND;
