@@ -5,7 +5,7 @@ import com.team254.lib.util.Util;
 import edu.wpi.first.math.geometry.Pose2d;
 
 public class Conversions {
-    private static final double ticksPerRevolution = 4096;
+    private static final double ticksPerRevolution = Constants.kTicksPerRevolution;
     private static final double metersPerInch = 0.0254;
     private static final double wheelCircumferenceInches = Constants.kWheelCircumferenceInches;
 
