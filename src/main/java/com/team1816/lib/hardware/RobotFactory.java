@@ -1,5 +1,6 @@
 package com.team1816.lib.hardware;
 
+import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.sensors.*;
@@ -13,6 +14,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotBase;
+import org.checkerframework.checker.units.qual.C;
+
 import java.util.Map;
 import javax.annotation.Nonnull;
 
@@ -279,6 +282,18 @@ public class RobotFactory {
         }
         reportGhostWarning("CANifier", subsystemName, "canifier");
         return new GhostCanifier();
+    }
+
+    public CANdle getCandle(String subsystemName, int defaultVal) {
+        var subsystem = getSubsystem(subsystemName);
+        if (subsystem.implemented && isHardwareValid((subsystem.candle))) {
+            return new CANdle(subsystem.candle);
+        } else if (defaultVal>-1){
+            return new CANdle(defaultVal);
+        } else {
+            //ghost
+        }
+        return null;
     }
 
     public ICompressor getCompressor() {

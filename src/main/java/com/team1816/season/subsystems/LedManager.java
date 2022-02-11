@@ -51,7 +51,7 @@ public class LedManager extends Subsystem {
         super(NAME);
         this.canifier = factory.getCanifier(NAME);
         this.cameraCanifier = factory.getCanifier("camera");
-        this.candle = new CANdle(10);
+        this.candle = factory.getCandle("camera", 10);
         this.candle.animate(new RainbowAnimation(1,.5,8));
 
         configureCanifier(canifier);
