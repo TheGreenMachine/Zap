@@ -3,21 +3,13 @@ package com.team1816.lib.math;
 import com.team1816.season.Constants;
 import com.team254.lib.util.Util;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.util.Units;
 
 public class Conversions {
     private static final double ticksPerRevolution = Constants.kTicksPerRevolution;
-    private static final double metersPerInch = 0.0254;
     private static final double wheelCircumferenceInches = Constants.kWheelCircumferenceInches;
 
     // make the degree stuff to ticks/radians/ whatnot come into here instead of being spread out everywhere
-    public static double convertInchesToMeters(double inches) {
-        return inches*metersPerInch;
-    }
-
-    public static double convertMetersToInches(double meters) {
-        return meters/metersPerInch;
-    }
-
     public static double convertTicksToInches(double ticks) {
         return ticks/ticksPerRevolution*wheelCircumferenceInches*Math.PI;
     }
@@ -27,11 +19,11 @@ public class Conversions {
     }
 
     public static double convertTicksToMeters(double ticks) {
-        return convertInchesToMeters(convertTicksToInches(ticks));
+        return Units.inchesToMeters(convertTicksToInches(ticks));
     }
 
     public static double convertMetersToTicks(double meters) {
-        return convertInchesToTicks(convertMetersToInches(meters));
+        return convertInchesToTicks(Units.metersToInches(meters));
     }
 
     public static double convertDegreesToRadians(double degrees) {

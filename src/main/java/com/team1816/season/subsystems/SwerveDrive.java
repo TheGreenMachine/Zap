@@ -169,8 +169,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 Constants.Swerve.swerveKinematics.toSwerveModuleStates(
 //                Constants.fieldRelative ?
                     ChassisSpeeds.fromFieldRelativeSpeeds(
-                        mPeriodicIO.forward * Conversions.convertInchesToMeters(Constants.kMaxVel)/Constants.kTicksPerRevolution, //manual conversions probably want to use a method later
-                        mPeriodicIO.strafe * Conversions.convertInchesToMeters(Constants.kMaxVel)/Constants.kTicksPerRevolution,
+                        mPeriodicIO.forward * Units.inchesToMeters(Constants.kMaxVel)/Constants.kTicksPerRevolution, //MAX VEL IS just some random number?? 300 and not using factory
+                        mPeriodicIO.strafe * Units.inchesToMeters(Constants.kMaxVel)/Constants.kTicksPerRevolution,
                         mPeriodicIO.rotation * (Constants.kMaxAngularSpeedRadiansPerSecond),
                         getHeading()
                     )
@@ -272,7 +272,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     /* Used by SwerveControllerCommand in Auto */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         mDriveControlState = DriveControlState.TRAJECTORY_FOLLOWING;
-        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Units.inchesToMeters(Constants.kPathFollowingMaxVel)); // TODO max speeeeed like above
+        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Units.inchesToMeters(Constants.kPathFollowingMaxVel));
 
         for (int i = 0; i < 4; i++) {
             swerveModules[i].setDesiredState(desiredStates[i], false);

@@ -21,12 +21,8 @@ import jdk.jshell.spi.ExecutionControl;
  */
 public interface PathContainer {
     // velocities are in/sec
-    double kMaxVelocity = Units.inches_to_meters(
-        RobotFactory.getInstance().getConstant("maxVel")
-    );
-    double kMaxAccel = Units.inches_to_meters(
-        RobotFactory.getInstance().getConstant("maxAccel")
-    );
+    double kMaxVelocity = Units.inches_to_meters(Constants.kPathFollowingMaxVel);
+    double kMaxAccel = Units.inches_to_meters(Constants.kPathFollowingMaxAccel);
 
     List<Pose2d> buildWaypoints();
     List<Rotation2d> buildHeadings();

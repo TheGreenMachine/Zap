@@ -223,12 +223,6 @@ public class Constants {
         new TrapezoidProfile.Constraints(
             kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
 
-    TrajectoryConfig config = // to be called alongside every path we make b/c wpilib generateTrajectory requires a config
-        new TrajectoryConfig(
-            Units.inches_to_meters(Constants.kPathFollowingMaxVel),
-            Units.inches_to_meters(Constants.kPathFollowingMaxAccel))
-            .setKinematics(Constants.Swerve.swerveKinematics); // TODO make the kinematics constant choose tank or swerve for yml?
-
     // Do not change anything after this line unless you rewire the robot and
     // update the spreadsheet!
     // Port assignments should match up with the spreadsheet here:
