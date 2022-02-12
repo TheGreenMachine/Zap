@@ -1,12 +1,23 @@
 import cv2
 import socket
 import sys
+import argparse
+
+# Initialize parser
+parser = argparse.ArgumentParser()
+
+# Adding optional argument
+parser.add_argument("-i", "--ip", help="Socket server ip to connect to (If not passed, IP is set to 10.18.16.16).")
+
+# Read arguments from command line
+args = parser.parse_args()
+
 
 if __name__ == '__main__':
-    print("Enter socket IP")
-    ip = input()
-    if ip == "":
-        ip = "localhost"
+    ip = "10.18.16.16"
+    if args.ip:
+        print("IP set to: % s" % args.ip)
+        ip = args.ip
     address = (ip, 5802)
     data = ''.join(sys.argv[1:])
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
