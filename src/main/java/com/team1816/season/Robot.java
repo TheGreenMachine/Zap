@@ -48,7 +48,7 @@ public class Robot extends TimedRobot {
     private final Infrastructure mInfrastructure;
     private final RobotState mRobotState;
     private final Drive mDrive;
-    private final PowerDistribution pdp = new PowerDistribution();
+    private final PowerDistribution pdh = new PowerDistribution(22, PowerDistribution.ModuleType.kRev);
     private final LedManager ledManager;
     private final Turret mTurret;
     private final Camera camera;
@@ -151,7 +151,7 @@ public class Robot extends TimedRobot {
 
                 DrivetrainLogger.init(mDrive);
                 if (RobotBase.isReal()) {
-                    BadLog.createTopic("PDP/Current", "Amps", pdp::getTotalCurrent);
+                    BadLog.createTopic("PDP/Current", "Amps", pdh::getTotalCurrent);
 
                     mDrive.CreateBadLogValue("Drivetrain PID", mDrive.pidToString());
                     mTurret.CreateBadLogValue("Turret PID", mTurret.pidToString());

@@ -4,6 +4,7 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
+import com.team1816.lib.hardware.components.IPigeonIMU;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.lib.loops.Loop;
 import com.team1816.lib.subsystems.PidProvider;
@@ -45,7 +46,7 @@ public abstract class Drive
     @Inject
     protected static LedManager ledManager;
 
-    protected PigeonIMU mPigeon;
+    protected IPigeonIMU mPigeon; // need to make a ghost of this!
 
     // control states
     protected DriveControlState mDriveControlState = DriveControlState.OPEN_LOOP;
@@ -88,7 +89,7 @@ public abstract class Drive
     protected Drive() {
         super(NAME);
         mPeriodicIO = new PeriodicIO();
-        mPigeon = new PigeonIMU((int) factory.getConstant(NAME, "pigeonId", -1));
+        mPigeon = factory.getPigeon((int) factory.getConstant(NAME, "pigeonId", -1));// factory.getPigeon((int) factory.getConstant(NAME, "pigeonId", -1));
         mPigeon.configFactoryDefault();
     }
 

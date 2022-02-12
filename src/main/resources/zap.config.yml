@@ -57,7 +57,7 @@ subsystems:
             drivePID:
                 slot0:
                     kP: 0.1
-                    kI: 0.0001
+                    kI: 0
                     kD: 4.0
                     kF: 0.0499
             azimuthPID:
@@ -155,7 +155,7 @@ pcm: -1
 constants:
     maxTicks: 12275.7 # ticks per 100ms TODO make into constant unique to each subsystem
     maxVel: 192 # 160 # 240 # inches/s # 22560 native units ---30
-    maxAccel: 20 # inches/s^2
+    maxAccel: 100 # inches/s^2
     sensorPhase: 0
     kTrackScrubFactor: 1.0
     pathKs: 2

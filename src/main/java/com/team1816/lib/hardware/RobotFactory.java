@@ -4,11 +4,10 @@ import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.sensors.*;
+import com.team1816.lib.hardware.components.*;
 import com.team1816.season.Constants;
+import com.team1816.season.subsystems.Drive;
 import com.team1816.season.subsystems.SwerveModule;
-import com.team1816.lib.hardware.components.CanifierImpl;
-import com.team1816.lib.hardware.components.GhostCanifier;
-import com.team1816.lib.hardware.components.ICanifier;
 import com.team1816.lib.hardware.components.pcm.*;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -370,6 +369,22 @@ public class RobotFactory {
             pidSlotConfiguration.iZone = 0;
             pidSlotConfiguration.allowableError = 0.0;
             return pidSlotConfiguration;
+        }
+    }
+
+    public IPigeonIMU getPigeon(int id){
+        if(id < 0){
+            return new GhostPigeonIMU(id);
+        } else {
+            return new PigeonIMUImpl(id);
+        }
+    }
+
+    public IPigeonIMU getPigeon(IMotorControllerEnhanced motor){
+        if((int) factory.getConstant(Drive.NAME, "pigeonId", -1) < 0){
+            return new GhostPigeonIMU(motor);
+        } else {
+            return new PigeonIMUImpl(motor);
         }
     }
 

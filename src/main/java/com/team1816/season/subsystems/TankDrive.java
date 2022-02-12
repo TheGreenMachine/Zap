@@ -137,15 +137,15 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
                 master = mRightSlaveB;
             }
             if (master != null) {
-                mPigeon = new PigeonIMU((TalonSRX) master);
+                mPigeon = factory.getPigeon((TalonSRX) master);
             } else {
                 mPigeon =
-                    new PigeonIMU(
+                    factory.getPigeon(
                         new TalonSRX((int) factory.getConstant(NAME, "pigeonId"))
                     );
             }
         } else {
-            mPigeon = new PigeonIMU((int) factory.getConstant(NAME, "pigeonId"));
+            mPigeon = factory.getPigeon((int) factory.getConstant(NAME, "pigeonId"));
         }
         mPigeon.configFactoryDefault();
 
@@ -369,16 +369,16 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         resetPigeon();
         setHeading(Constants.emptyRotation);
         resetEncoders();
-        if (mPigeon.getLastError() != ErrorCode.OK) {
-            // BadLog.createValue("PigeonErrorDetected", "true");
-            System.out.println(
-                "Error detected with Pigeon IMU - check if the sensor is present and plugged in!"
-            );
-            System.out.println("Defaulting to drive straight mode");
-            autoModeSelector.setHardwareFailure(true);
-        } else {
+//        if (mPigeon.getLastError() != ErrorCode.OK) {
+//            // BadLog.createValue("PigeonErrorDetected", "true");
+//            System.out.println(
+//                "Error detected with Pigeon IMU - check if the sensor is present and plugged in!"
+//            );
+//            System.out.println("Defaulting to drive straight mode");
+//            autoModeSelector.setHardwareFailure(true);
+//        } else {
             autoModeSelector.setHardwareFailure(false);
-        }
+//        }
     }
 
     @Override

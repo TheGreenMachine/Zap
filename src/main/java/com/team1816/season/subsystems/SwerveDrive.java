@@ -79,8 +79,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 "backRight"
             );
 
-        mPigeon = new PigeonIMU((int) factory.getConstant(NAME, "pigeonId", -1));
-        mPigeon.configFactoryDefault();
+//        mPigeon = new PigeonIMU((int) factory.getConstant(NAME, "pigeonId", -1));
+//        mPigeon.configFactoryDefault();
 
         setOpenLoop(SwerveDriveSignal.NEUTRAL);
 
@@ -151,8 +151,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
         mPeriodicIO.gyro_heading =
             mPeriodicIO.gyro_heading_no_offset.rotateBy(mGyroOffset);
-        mPeriodicIO.totalRotation += mPeriodicIO.rotation*Constants.kMaxAngularSpeed/10;
-        mPeriodicIO.totalRotation %= 2*Math.PI;
+        mPeriodicIO.totalRotation += mPeriodicIO.rotation* Constants.kMaxAngularSpeed/10;
         mPeriodicIO.gyro_heading =
             mPeriodicIO.gyro_heading.rotateBy(new Rotation2d(mPeriodicIO.totalRotation));
         for (SwerveModule module : swerveModules) {
