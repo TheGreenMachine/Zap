@@ -52,6 +52,8 @@ class Detector:
             if math.isnan(distance) or math.isinf(distance):
                 self.nt.putValue('distance', -1)
                 self.vs.updateSavedDistance(-1)
+                self.vs.updateSavedCenter(cx_real, cy_real)
+                return largest, second
             self.nt.putValue('distance', round(distance))
             self.vs.updateSavedDistance(round(distance))
             self.vs.updateSavedCenter(cx_real, cy_real)

@@ -27,7 +27,7 @@ class ThreadedVisionServer(object):
             threading.Thread(target=self.listenToClient, args=(client, address)).start()
 
     def listenToClient(self, client, address):
-        size = 1024
+        size = 14
         while True:
             try:
                 data = client.recv(size)
@@ -92,7 +92,7 @@ class ThreadedVisionServer(object):
             value = float(value)
             self.yml_data['color']['upper']['V'] = value
             dumpYML()
-        elif key == "EXPOSURE":
+        elif key == "EXPS":
             value = float(value)
             self.yml_data['camera']['exposure'] = value
             dumpYML()

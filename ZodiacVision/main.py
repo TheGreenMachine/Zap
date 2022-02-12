@@ -61,9 +61,9 @@ fpsCounter = fps.FPS()
 while True:
     fpsCounter.reset()
     fpsCounter.start()
-    if net.update_exposure:
+    if vs.update_exposure:
         zed.set_camera_settings(sl.VIDEO_SETTINGS.EXPOSURE, vs.yml_data['camera']['exposure'])
-        net.update_exposure = False
+        vs.update_exposure = False
     if isZed:
         if zed.grab(runtime_parameters) == sl.ERROR_CODE.SUCCESS:
             zed.retrieve_measure(point_cloud, sl.MEASURE.XYZRGBA)
