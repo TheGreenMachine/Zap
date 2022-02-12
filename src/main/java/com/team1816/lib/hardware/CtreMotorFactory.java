@@ -74,7 +74,8 @@ public class CtreMotorFactory {
         String name,
         boolean isFalcon,
         SubsystemConfig subsystems,
-        Map<String, PIDSlotConfiguration> pidConfigList
+        Map<String, PIDSlotConfiguration> pidConfigList,
+        int remoteSensorId
     ) {
         return createTalon(
             id,
@@ -82,7 +83,8 @@ public class CtreMotorFactory {
             kDefaultConfiguration,
             isFalcon,
             subsystems,
-            pidConfigList
+            pidConfigList,
+            remoteSensorId
         );
     }
 
@@ -100,7 +102,8 @@ public class CtreMotorFactory {
             kSlaveConfiguration,
             isFalcon,
             subsystem,
-            pidConfigList
+            pidConfigList,
+            -1 // never can have a remote sensor on slave
         );
         System.out.println(
             "Slaving talon on " + id + " to talon on " + master.getDeviceID()
@@ -115,12 +118,13 @@ public class CtreMotorFactory {
         Configuration config,
         boolean isFalcon,
         SubsystemConfig subsystem,
-        Map<String, PIDSlotConfiguration> pidConfigList
+        Map<String, PIDSlotConfiguration> pidConfigList,
+        int remoteSensorId
     ) {
         IConfigurableMotorController talon = isFalcon
             ? new LazyTalonFX(id)
             : new LazyTalonSRX(id);
-        configureMotorController(talon, name, config, isFalcon, subsystem, pidConfigList);
+        configureMotorController(talon, name, config, isFalcon, subsystem, pidConfigList, remoteSensorId);
 
         return talon;
     }
@@ -206,10 +210,10 @@ public class CtreMotorFactory {
         Configuration config,
         boolean isFalcon,
         SubsystemConfig subsystem,
-        Map<String, PIDSlotConfiguration> pidConfigList
+        Map<String, PIDSlotConfiguration> pidConfigList,
+        int remoteSensorId
     ) {
         BaseTalonConfiguration talonConfiguration;
-        FeedbackDevice feedbackDevice = FeedbackDevice.RemoteSensor0;
 
         if (motor instanceof TalonFX) {
             talonConfiguration = new TalonFXConfiguration();
@@ -259,11 +263,16 @@ public class CtreMotorFactory {
         talonConfiguration.openloopRamp = config.OPEN_LOOP_RAMP_RATE;
         talonConfiguration.closedloopRamp = config.CLOSED_LOOP_RAMP_RATE;
 
-        talonConfiguration.primaryPID.selectedFeedbackSensor =
-            isFalcon
-                ? FeedbackDevice.IntegratedSensor
-                : FeedbackDevice.CTRE_MagEncoder_Relative;
-
+        if(remoteSensorId >= 0) {
+            talonConfiguration.primaryPID.selectedFeedbackSensor = FeedbackDevice.RemoteSensor0;
+            talonConfiguration.remoteFilter0.remoteSensorDeviceID = remoteSensorId;
+            talonConfiguration.remoteFilter0.remoteSensorSource = RemoteSensorSource.CANCoder;
+        } else {
+            talonConfiguration.primaryPID.selectedFeedbackSensor =
+                isFalcon
+                    ? FeedbackDevice.IntegratedSensor
+                    : FeedbackDevice.CTRE_MagEncoder_Relative;
+        }
         if (talonConfiguration instanceof TalonFXConfiguration) {
             ((TalonFXConfiguration) talonConfiguration).supplyCurrLimit =
                 new SupplyCurrentLimitConfiguration(config.ENABLE_CURRENT_LIMIT, 0, 0, 0);

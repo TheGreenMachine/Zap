@@ -58,7 +58,8 @@ public class RobotFactory {
     public IMotorControllerEnhanced getMotor(
         String subsystemName,
         String name,
-        Map<String, PIDSlotConfiguration> pidConfigs
+        Map<String, PIDSlotConfiguration> pidConfigs,
+        int remoteSensorId
     ) {
         IMotorControllerEnhanced motor = null;
         var subsystem = getSubsystem(subsystemName);
@@ -72,7 +73,8 @@ public class RobotFactory {
                         name,
                         false,
                         subsystem,
-                        pidConfigs
+                        pidConfigs,
+                        remoteSensorId
                     );
             } else if (
                 subsystem.falcons != null && isHardwareValid(subsystem.falcons.get(name))
@@ -83,7 +85,8 @@ public class RobotFactory {
                         name,
                         true,
                         subsystem,
-                        pidConfigs
+                        pidConfigs,
+                        remoteSensorId
                     );
             } // Never make the victor a master
         }
@@ -113,7 +116,7 @@ public class RobotFactory {
     }
 
     public IMotorControllerEnhanced getMotor(String subsystemName, String name) {
-        return getMotor(subsystemName, name, getSubsystem(subsystemName).pidConfig);
+        return getMotor(subsystemName, name, getSubsystem(subsystemName).pidConfig, -1); // not implemented for tank need to fix this
     }
 
     public IMotorController getMotor(

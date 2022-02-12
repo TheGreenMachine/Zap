@@ -82,7 +82,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
             factory.getMotor(
                 subsystemName,
                 constants.kDriveMotorName,
-                factory.getSubsystem(subsystemName).swerveModules.drivePID
+                factory.getSubsystem(subsystemName).swerveModules.drivePID,-1
             );
 
         /* Azimuth (Angle) Motor Config */
@@ -90,7 +90,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
             factory.getMotor(
                 subsystemName,
                 constants.kAzimuthMotorName,
-                factory.getSubsystem(subsystemName).swerveModules.azimuthPID
+                factory.getSubsystem(subsystemName).swerveModules.azimuthPID,canCoder.getDeviceID()
             );
 
         mAzimuthMotor.configSupplyCurrentLimit(
