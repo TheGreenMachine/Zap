@@ -11,15 +11,17 @@ import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 
 public class GhostMotorControllerEnhanced implements IMotorControllerEnhanced {
 
-    private double encoderTicks;
+    private ControlMode mControlMode;
+    private final int mMaxTicks;
+    private final double[] mDemand = new double[] { 0, 0 };
 
-    private final SensorCollection sensorCollection = new SensorCollection(
-        new BaseTalon(0, "Talon SRX") {}
-    );
+    public GhostMotorControllerEnhanced(int maxTicks) {
+        mMaxTicks = maxTicks;
+    }
 
     @Override
     public void set(ControlMode Mode, double demand) {
-        encoderTicks = demand; //TODO: implement other controlmodes
+        processSet(Mode, demand);
     }
 
     @Override
@@ -28,7 +30,20 @@ public class GhostMotorControllerEnhanced implements IMotorControllerEnhanced {
         double demand0,
         DemandType demand1Type,
         double demand1
-    ) {}
+    ) {
+        processSet(Mode, demand0);
+    }
+
+    private void processSet(ControlMode Mode, double demand) {
+        if (
+            Mode == ControlMode.Position ||
+            Mode == ControlMode.Velocity ||
+            Mode == ControlMode.PercentOutput
+        ) {
+            mDemand[0] = demand;
+            mControlMode = Mode;
+        }
+    }
 
     @Override
     public void neutralOutput() {}
@@ -42,6 +57,7 @@ public class GhostMotorControllerEnhanced implements IMotorControllerEnhanced {
     @Override
     public void setInverted(boolean invert) {}
 
+    @Override
     public void setInverted(InvertType invertType) {}
 
     @Override
@@ -119,10 +135,12 @@ public class GhostMotorControllerEnhanced implements IMotorControllerEnhanced {
     }
 
     @Override
+    @Deprecated
     public double getOutputCurrent() {
         return 0;
     }
 
+    @Override
     public ErrorCode configVelocityMeasurementPeriod(
         SensorVelocityMeasPeriod period,
         int timeoutMs
@@ -172,6 +190,7 @@ public class GhostMotorControllerEnhanced implements IMotorControllerEnhanced {
         return null;
     }
 
+    @Override
     public ErrorCode configRemoteFeedbackFilter(
         BaseTalon talonRef,
         int remoteOrdinal,
@@ -191,12 +210,19 @@ public class GhostMotorControllerEnhanced implements IMotorControllerEnhanced {
 
     @Override
     public double getSelectedSensorPosition(int pidIdx) {
-        return encoderTicks;
+        return mDemand[pidIdx];
     }
 
     @Override
     public double getSelectedSensorVelocity(int pidIdx) {
-        return 0;
+        var output = mDemand[pidIdx];
+        if (mControlMode == ControlMode.PercentOutput) {
+            if (Math.abs(output) > 1.1) System.out.println(
+                "Motor % output should be between -1.0 to 1.0 value:" + output
+            );
+            return output * mMaxTicks;
+        }
+        return output;
     }
 
     @Override
@@ -205,7 +231,8 @@ public class GhostMotorControllerEnhanced implements IMotorControllerEnhanced {
         int pidIdx,
         int timeoutMs
     ) {
-        return null;
+        mDemand[pidIdx] = sensorPos;
+        return ErrorCode.OK;
     }
 
     @Override
@@ -599,9 +626,5 @@ public class GhostMotorControllerEnhanced implements IMotorControllerEnhanced {
         int timeoutMs
     ) {
         return ErrorCode.OK;
-    }
-
-    public SensorCollection getSensorCollection() {
-        return sensorCollection;
     }
 }

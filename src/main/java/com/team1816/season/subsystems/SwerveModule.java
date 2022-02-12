@@ -22,13 +22,11 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 
-
 public class SwerveModule extends Subsystem implements ISwerveModule {
 
     public static class PeriodicIO {
 
         // INPUTS
-//        public double velocity_ticks_per_100ms; // -ginget
         public SwerveModuleState desired_state = new SwerveModuleState();
         public double velocity_ticks_per_100ms = 0;
 
@@ -128,35 +126,17 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
 
     @Override
     public void readPeriodicInputs() {
-        if (RobotBase.isSimulation()) {
-            double driveAdjDemand = mPeriodicIO.drive_demand;
-            double azimuthAdjPosition = mPeriodicIO.azimuth_position.getDegrees();
-            if (mControlState == OPEN_LOOP) {
-                driveAdjDemand = mPeriodicIO.drive_demand * maxVelTicksPer100ms;
-            }
-            var driveTrainErrorPercent = .05;
-            double azimuth_error = 0; // azimuthAdjPosition * driveTrainErrorPercent;
-            driveSimTicksPer100ms = metersPerSecondToTicksPer100ms(driveAdjDemand);
-            azimuthEncoderSimPosition = ((azimuthAdjPosition - azimuth_error));
-            mPeriodicIO.velocity_ticks_per_100ms = driveSimTicksPer100ms;
-            mPeriodicIO.azimuth_position = Rotation2d.fromDegrees(azimuthEncoderSimPosition);
-        } else {
-            mPeriodicIO.velocity_ticks_per_100ms = mDriveMotor.getSelectedSensorVelocity(0);
-            mPeriodicIO.azimuth_position = Rotation2d.fromDegrees(mCanCoder.getAbsolutePosition());
-        }
+        mPeriodicIO.velocity_ticks_per_100ms = mDriveMotor.getSelectedSensorVelocity(0);
+        mPeriodicIO.azimuth_position = Rotation2d.fromDegrees(mAzimuthMotor.getSelectedSensorPosition(0));
     }
 
     @Override
     public void writePeriodicOutputs() {
-        if (mControlState != OPEN_LOOP) { // negation is safer - if an exception occurs drive with be the joystick and won't go out of control
-            double velocity = mPeriodicIO.velocity_ticks_per_100ms;
-            mDriveMotor.set(
-                ControlMode.Velocity,
-                velocity
-            );
+        // do not do conversions here drive_demand should already be at the value needed for the controller
+        if (mControlState != OPEN_LOOP) {
+            mDriveMotor.set(ControlMode.Velocity, mPeriodicIO.drive_demand);
         } else {
-            double percentOutput = mPeriodicIO.drive_demand / Units.inchesToMeters(Constants.kPathFollowingMaxVel); // not sure if BOOFED
-            mDriveMotor.set(ControlMode.PercentOutput, percentOutput);
+            mDriveMotor.set(ControlMode.PercentOutput, mPeriodicIO.drive_demand);
         }
 
         double angle = mPeriodicIO.azimuth_position.getDegrees();
@@ -169,13 +149,8 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
         mControlState = isOpenLoop ? OPEN_LOOP : VELOCITY;
         mPeriodicIO.desired_state = SwerveModuleState.optimize(desiredState, getState().angle);
-
-        mPeriodicIO.drive_demand = mPeriodicIO.desired_state.speedMetersPerSecond;
+        mPeriodicIO.drive_demand = mPeriodicIO.desired_state.speedMetersPerSecond fix me!
         mPeriodicIO.azimuth_position = mPeriodicIO.desired_state.angle;
-//        System.out.println( // OOO
-//            "drive demand = " + mPeriodicIO.drive_demand +
-//                ", azimuth demand = " + mPeriodicIO.azimuth_position.getDegrees()
-//        );
     }
 
     @Override

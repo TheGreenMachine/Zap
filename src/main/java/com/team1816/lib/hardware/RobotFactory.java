@@ -92,7 +92,7 @@ public class RobotFactory {
         }
         if (motor == null) {
             reportGhostWarning("Motor", subsystemName, name);
-            motor = CtreMotorFactory.createGhostTalon();
+            motor = CtreMotorFactory.createGhostTalon(config.constants.get("maxTicks").intValue());
         }
 
         var motorId = motor.getDeviceID();
@@ -163,7 +163,7 @@ public class RobotFactory {
         }
         if (followerMotor == null) {
             if (subsystem.implemented) reportGhostWarning("Motor", subsystemName, name);
-            followerMotor = CtreMotorFactory.createGhostTalon();
+            followerMotor = CtreMotorFactory.createGhostTalon(config.constants.get("maxTicks").intValue());
         }
         if (master != null) {
             followerMotor.setInverted(master.getInverted());
