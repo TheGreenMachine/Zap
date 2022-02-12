@@ -80,7 +80,7 @@ subsystems:
             rpmEpsilonCheck: 60
             openLoopRampRate: 0.8
             isSwerve: 1
-            encPPR: 12275.7
+            encPPR: 21504
             azimuthEncPPR: 4096
             azimuthAllowableErrorTicks: 20
             azimuthHomeAdjustmentDegrees: 1
@@ -153,7 +153,7 @@ subsystems:
             arm: 0
 pcm: -1
 constants:
-    maxTicks: 14000 # ticks per 100ms TODO test actual maxTicks value
+    maxTicks: 12275.7 # ticks per 100ms TODO make into constant unique to each subsystem
     maxVel: 40 # 160 # 240 # inches/s # 22560 native units ---30
     maxAccel: 20 # inches/s^2
     sensorPhase: 0
@@ -170,4 +170,5 @@ constants:
     ## General ##
     teleopFieldCentric: 1 # 0 or 1
     compressorEnabled: 0 # 0 or 1
+    wheelDiameter: 4
     kLooperDt: .020 # seconds

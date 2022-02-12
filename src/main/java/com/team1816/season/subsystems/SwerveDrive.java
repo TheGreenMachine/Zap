@@ -151,7 +151,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
         mPeriodicIO.gyro_heading =
             mPeriodicIO.gyro_heading_no_offset.rotateBy(mGyroOffset);
-        mPeriodicIO.totalRotation += mPeriodicIO.rotation*Constants.kMaxAngularSpeedRadiansPerSecond/10;
+        mPeriodicIO.totalRotation += mPeriodicIO.rotation*Constants.kMaxAngularSpeed/10;
         mPeriodicIO.totalRotation %= 2*Math.PI;
         mPeriodicIO.gyro_heading =
             mPeriodicIO.gyro_heading.rotateBy(new Rotation2d(mPeriodicIO.totalRotation));
@@ -169,15 +169,11 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 Constants.Swerve.swerveKinematics.toSwerveModuleStates(
 //                Constants.fieldRelative ?
                     ChassisSpeeds.fromFieldRelativeSpeeds(
-                        mPeriodicIO.forward * Units.inchesToMeters(Constants.kMaxVel)/Constants.kTicksPerRevolution, //MAX VEL IS just some random number?? 300 and not using factory
-                        mPeriodicIO.strafe * Units.inchesToMeters(Constants.kMaxVel)/Constants.kTicksPerRevolution,
-                        mPeriodicIO.rotation * (Constants.kMaxAngularSpeedRadiansPerSecond),
+                        mPeriodicIO.forward * Constants.kWheelCircumferenceMeters,
+                        mPeriodicIO.strafe * Constants.kWheelCircumferenceMeters,
+                        mPeriodicIO.rotation * (Constants.kMaxAngularSpeed),
                         getHeading()
                     )
-//                    : new ChassisSpeeds(
-//                    mPeriodicIO.forward,
-//                    mPeriodicIO.strafe,
-//                    mPeriodicIO.rotation)
                 );
             SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Units.inchesToMeters(Constants.kPathFollowingMaxVel)); // TODO get swerve max speed in meters/s
             for (int i = 0; i < 4; i++) {

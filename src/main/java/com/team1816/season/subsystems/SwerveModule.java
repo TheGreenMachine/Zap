@@ -146,7 +146,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
         mControlState = isOpenLoop ? OPEN_LOOP : VELOCITY;
-        mPeriodicIO.desired_state = SwerveModuleState.optimize(desiredState, getState().angle);
+        mPeriodicIO.desired_state = ModuleState.optimize(desiredState, getState().angle);
         if(mControlState == VELOCITY){
             mPeriodicIO.drive_demand = metersPerSecondToTicksPer100ms(mPeriodicIO.desired_state.speedMetersPerSecond); // driveDemand now in ticks
         } else {

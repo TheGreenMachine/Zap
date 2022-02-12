@@ -1,17 +1,13 @@
 package com.team1816.season;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
-import com.team1816.season.subsystems.Drive;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.RobotFactory;
 import com.team254.lib.util.Units;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 public class Constants {
@@ -214,14 +210,14 @@ public class Constants {
     public static final double kPXController = 1;
     public static final double kPYController = 1;
     public static final double kPThetaController = 1.0;
-    public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
+    public static final double kMaxAngularSpeed = 11.5;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
 
     // Constraint for the motion profilied robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
         new TrapezoidProfile.Constraints(
-            kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
+            kMaxAngularSpeed, kMaxAngularSpeedRadiansPerSecondSquared);
 
     // Do not change anything after this line unless you rewire the robot and
     // update the spreadsheet!

@@ -217,9 +217,9 @@ public class GhostMotorControllerEnhanced implements IMotorControllerEnhanced {
     public double getSelectedSensorVelocity(int pidIdx) {
         var output = mDemand[pidIdx];
         if (mControlMode == ControlMode.PercentOutput) {
-            if (Math.abs(output) > 1.1) System.out.println(
-                "Motor % output should be between -1.0 to 1.0 value:" + output
-            );
+            if (Math.abs(output) > 1.1) {
+                System.out.println("Motor % output should be between -1.0 to 1.0 value:" + output);
+            }
             return output * mMaxTicks;
         }
         return output;
