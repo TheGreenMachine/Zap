@@ -150,7 +150,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
         if(mControlState == VELOCITY){
             mPeriodicIO.drive_demand = metersPerSecondToTicksPer100ms(mPeriodicIO.desired_state.speedMetersPerSecond); // driveDemand now in ticks
         } else {
-            mPeriodicIO.drive_demand = metersPerSecondToTicksPer100ms(mPeriodicIO.desired_state.speedMetersPerSecond) / maxVelTicksPer100ms; // driveDemand now percent output
+            mPeriodicIO.drive_demand = mPeriodicIO.desired_state.speedMetersPerSecond / Units.inchesToMeters(Constants.kPathFollowingMaxVel); // driveDemand now percent output
         }
         mPeriodicIO.azimuth_position = mPeriodicIO.desired_state.angle;
     }
@@ -237,7 +237,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
 
     @Override
     public double getDriveVelocity() {
-        return mPeriodicIO.desired_state.speedMetersPerSecond;
+        return metersPerSecondToTicksPer100ms(mPeriodicIO.desired_state.speedMetersPerSecond);
     }
 
     @Override
@@ -285,10 +285,6 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
     public synchronized void setDriveBrakeMode(boolean brake_mode) {
         mDriveMotor.setNeutralMode(brake_mode ? NeutralMode.Brake : NeutralMode.Coast);
         isBrakeMode = brake_mode;
-    }
-
-    public Rotation2d getCanCoderHeading() { // do we need this?
-        return Rotation2d.fromDegrees(mCanCoder.getAbsolutePosition());
     }
 
     @Override

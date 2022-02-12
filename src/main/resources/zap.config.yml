@@ -80,7 +80,7 @@ subsystems:
             rpmEpsilonCheck: 60
             openLoopRampRate: 0.8
             isSwerve: 1
-            encPPR: 21504
+            encPPR: 21770
             azimuthEncPPR: 4096
             azimuthAllowableErrorTicks: 20
             azimuthHomeAdjustmentDegrees: 1
@@ -154,7 +154,7 @@ subsystems:
 pcm: -1
 constants:
     maxTicks: 12275.7 # ticks per 100ms TODO make into constant unique to each subsystem
-    maxVel: 40 # 160 # 240 # inches/s # 22560 native units ---30
+    maxVel: 192 # 160 # 240 # inches/s # 22560 native units ---30
     maxAccel: 20 # inches/s^2
     sensorPhase: 0
     kTrackScrubFactor: 1.0

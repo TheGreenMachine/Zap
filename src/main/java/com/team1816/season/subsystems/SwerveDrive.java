@@ -169,8 +169,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 Constants.Swerve.swerveKinematics.toSwerveModuleStates(
 //                Constants.fieldRelative ?
                     ChassisSpeeds.fromFieldRelativeSpeeds(
-                        mPeriodicIO.forward * Constants.kWheelCircumferenceMeters,
-                        mPeriodicIO.strafe * Constants.kWheelCircumferenceMeters,
+                        mPeriodicIO.forward * Constants.kPathFollowingMaxVel,
+                        mPeriodicIO.strafe * Constants.kPathFollowingMaxVel,
                         mPeriodicIO.rotation * (Constants.kMaxAngularSpeed),
                         getHeading()
                     )
