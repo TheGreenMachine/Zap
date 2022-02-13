@@ -92,8 +92,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             System.out.println(mPeriodicIO.rotation + " = swerve rotation");
             SwerveModuleState[] swerveModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
                 ChassisSpeeds.fromFieldRelativeSpeeds(
-                    mPeriodicIO.forward * Constants.kPathFollowingMaxVel,
-                    mPeriodicIO.strafe * Constants.kPathFollowingMaxVel,
+                    mPeriodicIO.forward * Units.inchesToMeters(Constants.kPathFollowingMaxVel),
+                    mPeriodicIO.strafe * Units.inchesToMeters(Constants.kPathFollowingMaxVel),
                     mPeriodicIO.rotation * (Constants.kMaxAngularSpeed),
                     getHeading()
                 )

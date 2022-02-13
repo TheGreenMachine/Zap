@@ -165,7 +165,7 @@ constants:
     heading_kD: 0
     heading_kF: 0
     ## Logging ##
-    logTeleOp: 1 # 0 or 1
+    logTeleOp: 0 # 0 or 1
     logAuto: 1 # 0 or 1
     badLogEnabled: 1 # 0 or 1
     ## General ##
