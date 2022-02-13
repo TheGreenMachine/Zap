@@ -29,14 +29,25 @@ public class Constants {
     public static final double kDriveWheelDiameterInches = factory.getConstant(
         "wheelDiameter"
     );
-    public static final double kWheelCircumferenceInches = kDriveWheelDiameterInches * Math.PI;
+    public static final double kWheelCircumferenceInches =
+        kDriveWheelDiameterInches * Math.PI;
     public static final double kDriveWheelRadiusInches = kDriveWheelDiameterInches / 2.0;
 
-    public static final double kDriveWheelTrackWidthMeters = Units.inches_to_meters(kDriveWheelTrackWidthInches);
-    public static final double kDriveWheelbaseLengthMeters = Units.inches_to_meters(kDriveWheelbaseLengthInches);
-    public static final double kDriveWheelDiameterMeters = Units.inches_to_meters(kDriveWheelDiameterInches);
-    public static final double kWheelCircumferenceMeters = Units.inches_to_meters(kWheelCircumferenceInches);
-    public static final double kDriveWheelRadiusMeters = Units.inches_to_meters(kDriveWheelRadiusInches);
+    public static final double kDriveWheelTrackWidthMeters = Units.inches_to_meters(
+        kDriveWheelTrackWidthInches
+    );
+    public static final double kDriveWheelbaseLengthMeters = Units.inches_to_meters(
+        kDriveWheelbaseLengthInches
+    );
+    public static final double kDriveWheelDiameterMeters = Units.inches_to_meters(
+        kDriveWheelDiameterInches
+    );
+    public static final double kWheelCircumferenceMeters = Units.inches_to_meters(
+        kWheelCircumferenceInches
+    );
+    public static final double kDriveWheelRadiusMeters = Units.inches_to_meters(
+        kDriveWheelRadiusInches
+    );
     public static double kTrackScrubFactor = factory.getConstant("kTrackScrubFactor");
 
     public static final Pose2d StartingPose = new Pose2d(.5, 3.5, new Rotation2d());
@@ -66,7 +77,6 @@ public class Constants {
         public static double driveKS = 1; //TODO: PUT VALUES
         public static double driveKV = 1; //TODO: PUT VALUES
         public static double driveKA = 1; //TODO: PUT VALUES
-
 
         public static final int kFrontLeft = 0;
         public static final int kFrontRight = 1;
@@ -213,12 +223,11 @@ public class Constants {
     public static final double kMaxAngularSpeed = 11.5;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
-
     // Constraint for the motion profilied robot angle controller
-    public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
-        new TrapezoidProfile.Constraints(
-            kMaxAngularSpeed, kMaxAngularSpeedRadiansPerSecondSquared);
-
+    public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
+        kMaxAngularSpeed,
+        kMaxAngularSpeedRadiansPerSecondSquared
+    );
     // Do not change anything after this line unless you rewire the robot and
     // update the spreadsheet!
     // Port assignments should match up with the spreadsheet here:

@@ -2,11 +2,10 @@ package com.team1816.frc2020.subsystems;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.team1816.lib.LibModule;
 import com.team1816.season.RobotState;
 import com.team1816.season.SeasonModule;
 import com.team1816.season.subsystems.Turret;
-import com.team1816.lib.LibModule;
-import com.team254.lib.geometry.Rotation2d;
 import junit.framework.TestCase;
 
 public class TurretTest extends TestCase {
@@ -47,7 +46,7 @@ public class TurretTest extends TestCase {
 
     public void testSetTurretFieldFollowingRobotTwist() {
         RobotState state = new RobotState();
-        state.setHeadingRelativeToInitial(new Rotation2d(20));
+        //        state.setHeadingRelativeToInitial(new Rotation2d(20));
         Turret turret = new Turret();
         turret.setTurretAngle(Turret.CARDINAL_SOUTH);
         turret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);

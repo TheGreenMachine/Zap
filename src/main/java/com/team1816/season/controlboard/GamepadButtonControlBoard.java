@@ -2,9 +2,9 @@ package com.team1816.season.controlboard;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.team1816.season.Constants;
 import com.team1816.lib.controlboard.Controller;
 import com.team1816.lib.controlboard.IButtonControlBoard;
+import com.team1816.season.Constants;
 import com.team254.lib.util.DelayedBoolean;
 import edu.wpi.first.wpilibj.Timer;
 

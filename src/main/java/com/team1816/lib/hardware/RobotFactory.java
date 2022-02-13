@@ -5,16 +5,13 @@ import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.sensors.*;
 import com.team1816.lib.hardware.components.*;
+import com.team1816.lib.hardware.components.pcm.*;
 import com.team1816.season.Constants;
 import com.team1816.season.subsystems.Drive;
 import com.team1816.season.subsystems.SwerveModule;
-import com.team1816.lib.hardware.components.pcm.*;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotBase;
-import org.checkerframework.checker.units.qual.C;
-
 import java.util.Map;
 import javax.annotation.Nonnull;
 
@@ -91,7 +88,10 @@ public class RobotFactory {
         }
         if (motor == null) {
             reportGhostWarning("Motor", subsystemName, name);
-            motor = CtreMotorFactory.createGhostTalon(config.constants.get("maxTicks").intValue());
+            motor =
+                CtreMotorFactory.createGhostTalon(
+                    config.constants.get("maxTicks").intValue()
+                );
         }
 
         var motorId = motor.getDeviceID();
@@ -162,7 +162,10 @@ public class RobotFactory {
         }
         if (followerMotor == null) {
             if (subsystem.implemented) reportGhostWarning("Motor", subsystemName, name);
-            followerMotor = CtreMotorFactory.createGhostTalon(config.constants.get("maxTicks").intValue());
+            followerMotor =
+                CtreMotorFactory.createGhostTalon(
+                    config.constants.get("maxTicks").intValue()
+                );
         }
         if (master != null) {
             followerMotor.setInverted(master.getInverted());
@@ -174,10 +177,7 @@ public class RobotFactory {
         return hardwareId != null && hardwareId > -1 && RobotBase.isReal();
     }
 
-    public SwerveModule getSwerveModule(
-        String subsystemName,
-        String name
-    ) {
+    public SwerveModule getSwerveModule(String subsystemName, String name) {
         var subsystem = getSubsystem(subsystemName);
         ModuleConfiguration module = subsystem.swerveModules.modules.get(name);
         if (module == null) {
@@ -201,18 +201,15 @@ public class RobotFactory {
 
         var canCoder = getCanCoder(subsystemName, name);
 
-        var swerveModule = new SwerveModule(
-            subsystemName,
-            swerveConstants,
-            canCoder
-        );
+        var swerveModule = new SwerveModule(subsystemName, swerveConstants, canCoder);
         return swerveModule;
     }
 
     public boolean hasCanCoder(String subsystemName, String name) {
         if (
-            getSubsystem(subsystemName).swerveModules.modules.get(name).canCoder != null &&
-                getSubsystem(subsystemName).swerveModules.modules.get(name).canCoder!=null
+            getSubsystem(subsystemName).swerveModules.modules.get(name).canCoder !=
+            null &&
+            getSubsystem(subsystemName).swerveModules.modules.get(name).canCoder != null
         ) {
             return true;
         }
@@ -223,8 +220,16 @@ public class RobotFactory {
         var subsystem = getSubsystem(subsystemName);
         var module = subsystem.swerveModules.modules.get(name);
         CANCoder canCoder = null;
-        if (hasCanCoder(subsystemName, name) && subsystem.canCoders.get(module.canCoder) >= 0) {
-            canCoder = CtreMotorFactory.createCanCoder(subsystem.canCoders.get(module.canCoder), subsystem.canCoders.get(subsystem.invertCanCoder) != null && subsystem.invertCanCoder.contains(module.canCoder)); //TODO: For now placeholder true is placed
+        if (
+            hasCanCoder(subsystemName, name) &&
+            subsystem.canCoders.get(module.canCoder) >= 0
+        ) {
+            canCoder =
+                CtreMotorFactory.createCanCoder(
+                    subsystem.canCoders.get(module.canCoder),
+                    subsystem.canCoders.get(subsystem.invertCanCoder) != null &&
+                    subsystem.invertCanCoder.contains(module.canCoder)
+                ); //TODO: For now placeholder true is placed
         } else {
             // ghost. potentially implement this in the future
         }
@@ -290,7 +295,7 @@ public class RobotFactory {
         var subsystem = getSubsystem(subsystemName);
         if (subsystem.implemented && isHardwareValid((subsystem.candle))) {
             return new CANdle(subsystem.candle);
-        } else if (defaultVal>-1){
+        } else if (defaultVal > -1) {
             return new CANdle(defaultVal);
         } else {
             //ghost
@@ -372,16 +377,16 @@ public class RobotFactory {
         }
     }
 
-    public IPigeonIMU getPigeon(int id){
-        if(id < 0){
+    public IPigeonIMU getPigeon(int id) {
+        if (id < 0) {
             return new GhostPigeonIMU(id);
         } else {
             return new PigeonIMUImpl(id);
         }
     }
 
-    public IPigeonIMU getPigeon(IMotorControllerEnhanced motor){
-        if((int) factory.getConstant(Drive.NAME, "pigeonId", -1) < 0){
+    public IPigeonIMU getPigeon(IMotorControllerEnhanced motor) {
+        if ((int) factory.getConstant(Drive.NAME, "pigeonId", -1) < 0) {
             return new GhostPigeonIMU(motor);
         } else {
             return new PigeonIMUImpl(motor);

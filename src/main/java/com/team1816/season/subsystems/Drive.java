@@ -1,6 +1,5 @@
 package com.team1816.season.subsystems;
 
-import com.ctre.phoenix.sensors.PigeonIMU;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
@@ -13,12 +12,11 @@ import com.team1816.lib.subsystems.TrackableDrivetrain;
 import com.team1816.season.Constants;
 import com.team1816.season.RobotState;
 import com.team254.lib.util.DriveSignal;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -34,7 +32,10 @@ public abstract class Drive
 
     public abstract Pose2d getPose();
 
-    public abstract void startTrajectory(Trajectory initialPose, List<Rotation2d> headings);
+    public abstract void startTrajectory(
+        Trajectory initialPose,
+        List<Rotation2d> headings
+    );
 
     public interface Factory {
         Drive getInstance();
@@ -79,17 +80,18 @@ public abstract class Drive
     // Constants
     public static final double maxVelTicksPer100ms = factory.getConstant("maxTicks");
     public static final double DRIVE_ENCODER_PPR = factory.getConstant(NAME, "encPPR");
-//    public static final List<Translation2d> ZERO_DRIVE_VECTOR = List.of(
-//        new Translation2d(),
-//        new Translation2d(),
-//        new Translation2d(),
-//        new Translation2d()
-//    );
+
+    //    public static final List<Translation2d> ZERO_DRIVE_VECTOR = List.of(
+    //        new Translation2d(),
+    //        new Translation2d(),
+    //        new Translation2d(),
+    //        new Translation2d()
+    //    );
 
     protected Drive() {
         super(NAME);
         mPeriodicIO = new PeriodicIO();
-        mPigeon = factory.getPigeon((int) factory.getConstant(NAME, "pigeonId", -1));// factory.getPigeon((int) factory.getConstant(NAME, "pigeonId", -1));
+        mPigeon = factory.getPigeon((int) factory.getConstant(NAME, "pigeonId", -1)); // factory.getPigeon((int) factory.getConstant(NAME, "pigeonId", -1));
         mPigeon.configFactoryDefault();
     }
 
@@ -107,15 +109,16 @@ public abstract class Drive
         }
         return mPeriodicIO.desired_heading;
     }
+
     @Override
     public double getKP() {
         PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
         defaultPIDConfig.kP = 0.0;
         return (!factory.getSubsystem(NAME).implemented)
             ? factory
-            .getSubsystem(NAME)
-            .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
-            .kP
+                .getSubsystem(NAME)
+                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+                .kP
             : 0.0;
     }
 
@@ -125,9 +128,9 @@ public abstract class Drive
         defaultPIDConfig.kI = 0.0;
         return (!factory.getSubsystem(NAME).implemented)
             ? factory
-            .getSubsystem(NAME)
-            .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
-            .kI
+                .getSubsystem(NAME)
+                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+                .kI
             : 0.0;
     }
 
@@ -137,9 +140,9 @@ public abstract class Drive
         defaultPIDConfig.kD = 0.0;
         return (!factory.getSubsystem(NAME).implemented)
             ? factory
-            .getSubsystem(NAME)
-            .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
-            .kD
+                .getSubsystem(NAME)
+                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+                .kD
             : 0.0;
     }
 
@@ -149,14 +152,13 @@ public abstract class Drive
         defaultPIDConfig.kF = 0.0;
         return (!factory.getSubsystem(NAME).implemented)
             ? factory
-            .getSubsystem(NAME)
-            .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
-            .kF
+                .getSubsystem(NAME)
+                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+                .kF
             : 0.0;
     }
 
-    public void setModuleStates(SwerveModuleState[] desiredStates){
-    }
+    public void setModuleStates(SwerveModuleState[] desiredStates) {}
 
     @Singleton
     public static class PeriodicIO {
@@ -225,7 +227,7 @@ public abstract class Drive
                             default:
                                 System.out.println(
                                     "unexpected drive control state: " +
-                                        mDriveControlState
+                                    mDriveControlState
                                 );
                                 break;
                         }
@@ -244,8 +246,8 @@ public abstract class Drive
     protected abstract void updateOpenLoopPeriodic();
 
     public void updateTrajectoryPeriodic(double timestamp) {
-        if(mDriveControlState != DriveControlState.TRAJECTORY_FOLLOWING){
-//            zeroSensors();
+        if (mDriveControlState != DriveControlState.TRAJECTORY_FOLLOWING) {
+            //            zeroSensors();
         }
         if (mTrajectoryStart == 0) mTrajectoryStart = timestamp;
         // update desired pose from trajectory
@@ -270,7 +272,10 @@ public abstract class Drive
     }
 
     public static double ticksPerSecondToMetersPer100ms(double ticks_per_second) {
-        return (Units.metersToInches(ticksPerSecondToInchesPer100ms(ticks_per_second)))/4096;
+        return (
+            (Units.metersToInches(ticksPerSecondToInchesPer100ms(ticks_per_second))) /
+            4096
+        );
     }
 
     public static double inchesPerSecondToTicksPer100ms(double inches_per_second) {
@@ -278,7 +283,7 @@ public abstract class Drive
     }
 
     public static double ticksPerSecondToInchesPer100ms(double ticks_per_second) {
-        return rotationsToInches(ticks_per_second/DRIVE_ENCODER_PPR*10.0);
+        return rotationsToInches(ticks_per_second / DRIVE_ENCODER_PPR * 10.0);
     }
 
     protected static double radiansPerSecondToTicksPer100ms(double rad_s) {
@@ -298,7 +303,6 @@ public abstract class Drive
         boolean low_power,
         boolean use_heading_controller
     );
-
 
     public boolean isBrakeMode() {
         return mIsBrakeMode;
@@ -360,7 +364,9 @@ public abstract class Drive
     public abstract boolean checkSystem();
 
     @Override
-    public double getFieldXDistance() { return Units.metersToInches(getPose().getX() - Constants.StartingPose.getX());    }
+    public double getFieldXDistance() {
+        return Units.metersToInches(getPose().getX() - Constants.StartingPose.getX());
+    }
 
     @Override
     public double getFieldYDistance() {

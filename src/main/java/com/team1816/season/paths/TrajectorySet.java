@@ -1,9 +1,8 @@
 package com.team1816.season.paths;
 
+import com.google.inject.Singleton;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
-
-import com.google.inject.Singleton;
 import java.util.List;
 
 @Singleton

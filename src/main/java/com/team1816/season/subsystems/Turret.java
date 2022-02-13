@@ -5,12 +5,11 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.team1816.season.Constants;
-import com.team1816.season.RobotState;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
-import com.team254.lib.util.Units;
+import com.team1816.season.Constants;
+import com.team1816.season.RobotState;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
@@ -117,9 +116,8 @@ public class Turret extends Subsystem implements PidProvider {
             ); // Reverse = MIN
             turret.overrideLimitSwitchesEnable(true);
             turret.overrideSoftLimitsEnable(true);
-
-//            turretAngleRelativeToField =
-//                robotState.getHeadingRelativeToInitial().getDegrees();
+            //            turretAngleRelativeToField =
+            //                robotState.getHeadingRelativeToInitial().getDegrees();
         }
     }
 
@@ -232,8 +230,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     @Override
     public void readPeriodicInputs() {
-        turretAngleRelativeToField =
-            robotState.getLatestFieldToTurret();
+        turretAngleRelativeToField = robotState.getLatestFieldToTurret();
         if (RobotBase.isSimulation()) {
             //show turret
             var robotPose = robotState.field_to_vehicle;

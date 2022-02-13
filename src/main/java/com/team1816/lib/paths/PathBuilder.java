@@ -3,10 +3,9 @@ package com.team1816.lib.paths;
 import com.team1816.lib.hardware.RobotFactory;
 import com.team254.lib.control.Path;
 import com.team254.lib.control.PathSegment;
+import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
-import com.team254.lib.geometry.Pose2d;
-
 import java.util.List;
 
 /**
@@ -201,11 +200,13 @@ public class PathBuilder {
         private static Translation2d intersect(Line l1, Line l2) {
             final Pose2d lineA = new Pose2d(
                 new Translation2d(l1.end.x(), l1.end.y()),
-                new Rotation2d(Math.atan(l1.slope.y()/l1.slope.x()))
+                new Rotation2d(Math.atan(l1.slope.y() / l1.slope.x()))
             );
             final Pose2d lineB = new Pose2d(
                 new Translation2d(l2.start.x(), l2.start.y()),
-                new com.team254.lib.geometry.Rotation2d(Math.atan(l1.slope.y()/l1.slope.x()))
+                new com.team254.lib.geometry.Rotation2d(
+                    Math.atan(l1.slope.y() / l1.slope.x())
+                )
             );
             return lineA.intersection(lineB);
         }

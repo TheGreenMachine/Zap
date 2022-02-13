@@ -1,9 +1,7 @@
 package com.team1816.season.subsystems;
 
-import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.sensors.PigeonIMU;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.EnhancedMotorChecker;
@@ -18,7 +16,6 @@ import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
-
 import java.util.List;
 
 @Singleton
@@ -53,7 +50,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     }
 
     @Override
-    public Rotation2d getTrajectoryHeadings(){
+    public Rotation2d getTrajectoryHeadings() {
         return Constants.emptyRotation;
     }
 
@@ -103,25 +100,25 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             Constants.kLongCANTimeoutMs
         );
         ((IMotorControllerEnhanced) mLeftSlaveA).configSupplyCurrentLimit(
-            currentLimitConfig,
-            Constants.kLongCANTimeoutMs
-        );
+                currentLimitConfig,
+                Constants.kLongCANTimeoutMs
+            );
         ((IMotorControllerEnhanced) mLeftSlaveB).configSupplyCurrentLimit(
-            currentLimitConfig,
-            Constants.kLongCANTimeoutMs
-        );
+                currentLimitConfig,
+                Constants.kLongCANTimeoutMs
+            );
         mRightMaster.configSupplyCurrentLimit(
             currentLimitConfig,
             Constants.kLongCANTimeoutMs
         );
         ((IMotorControllerEnhanced) mRightSlaveA).configSupplyCurrentLimit(
-            currentLimitConfig,
-            Constants.kLongCANTimeoutMs
-        );
+                currentLimitConfig,
+                Constants.kLongCANTimeoutMs
+            );
         ((IMotorControllerEnhanced) mRightSlaveB).configSupplyCurrentLimit(
-            currentLimitConfig,
-            Constants.kLongCANTimeoutMs
-        );
+                currentLimitConfig,
+                Constants.kLongCANTimeoutMs
+            );
 
         if (((int) factory.getConstant(NAME, "pigeonOnTalon")) == 1) {
             var pigeonId = ((int) factory.getConstant(NAME, "pigeonId"));
@@ -184,9 +181,9 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             gyroDrift -=
                 (
                     mPeriodicIO.left_velocity_ticks_per_100ms -
-                        mPeriodicIO.right_velocity_ticks_per_100ms
+                    mPeriodicIO.right_velocity_ticks_per_100ms
                 ) /
-                    robotWidthTicks;
+                robotWidthTicks;
             mPeriodicIO.gyro_heading_no_offset =
                 getDesiredRotation2d().rotateBy(Rotation2d.fromDegrees(gyroDrift * .3));
         } else {
@@ -369,16 +366,16 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         resetPigeon();
         setHeading(Constants.emptyRotation);
         resetEncoders();
-//        if (mPigeon.getLastError() != ErrorCode.OK) {
-//            // BadLog.createValue("PigeonErrorDetected", "true");
-//            System.out.println(
-//                "Error detected with Pigeon IMU - check if the sensor is present and plugged in!"
-//            );
-//            System.out.println("Defaulting to drive straight mode");
-//            autoModeSelector.setHardwareFailure(true);
-//        } else {
-            autoModeSelector.setHardwareFailure(false);
-//        }
+        //        if (mPigeon.getLastError() != ErrorCode.OK) {
+        //            // BadLog.createValue("PigeonErrorDetected", "true");
+        //            System.out.println(
+        //                "Error detected with Pigeon IMU - check if the sensor is present and plugged in!"
+        //            );
+        //            System.out.println("Defaulting to drive straight mode");
+        //            autoModeSelector.setHardwareFailure(true);
+        //        } else {
+        autoModeSelector.setHardwareFailure(false);
+        //        }
     }
 
     @Override

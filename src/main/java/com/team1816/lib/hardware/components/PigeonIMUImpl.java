@@ -5,13 +5,13 @@ import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
-public class PigeonIMUImpl extends PigeonIMU implements IPigeonIMU{
+public class PigeonIMUImpl extends PigeonIMU implements IPigeonIMU {
 
-    public PigeonIMUImpl(int id){
+    public PigeonIMUImpl(int id) {
         super(id);
     }
 
-    public PigeonIMUImpl(IMotorControllerEnhanced motor){
+    public PigeonIMUImpl(IMotorControllerEnhanced motor) {
         super((TalonSRX) motor);
     }
 
@@ -44,5 +44,4 @@ public class PigeonIMUImpl extends PigeonIMU implements IPigeonIMU{
     public ErrorCode configFactoryDefault() {
         return super.configFactoryDefault();
     }
-
 }

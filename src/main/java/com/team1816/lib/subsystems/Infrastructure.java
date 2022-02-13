@@ -1,10 +1,10 @@
 package com.team1816.lib.subsystems;
 
 import com.google.inject.Inject;
-import com.team1816.season.subsystems.Superstructure;
 import com.team1816.lib.hardware.components.pcm.ICompressor;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.lib.loops.Loop;
+import com.team1816.season.subsystems.Superstructure;
 import edu.wpi.first.util.sendable.SendableBuilder;
 
 /**

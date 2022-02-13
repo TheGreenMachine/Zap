@@ -5,12 +5,15 @@ import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.auto.actions.WaitAction;
 import com.team1816.lib.auto.modes.AutoModeBase;
 import com.team1816.season.paths.TrajectorySet;
-import com.team254.lib.trajectory.Trajectory;
 
 public class LivingRoomMode extends AutoModeBase {
 
     public LivingRoomMode() {
-        trajectory = new TrajectoryAction(TrajectorySet.LIVING_ROOM, TrajectorySet.LIVING_ROOM_HEADINGS);
+        trajectory =
+            new TrajectoryAction(
+                TrajectorySet.LIVING_ROOM,
+                TrajectorySet.LIVING_ROOM_HEADINGS
+            );
     }
 
     @Override

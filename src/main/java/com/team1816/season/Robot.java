@@ -5,9 +5,6 @@ import static com.team1816.season.controlboard.ControlUtils.*;
 import badlog.lib.BadLog;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.team1816.season.controlboard.ActionManager;
-import com.team1816.season.paths.TrajectorySet;
-import com.team1816.season.subsystems.*;
 import com.team1816.lib.LibModule;
 import com.team1816.lib.auto.AutoModeExecutor;
 import com.team1816.lib.auto.modes.AutoModeBase;
@@ -18,10 +15,12 @@ import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.DrivetrainLogger;
 import com.team1816.lib.subsystems.Infrastructure;
 import com.team1816.lib.subsystems.SubsystemManager;
+import com.team1816.season.controlboard.ActionManager;
+import com.team1816.season.paths.TrajectorySet;
+import com.team1816.season.subsystems.*;
 import com.team254.lib.util.LatchedBoolean;
 import com.team254.lib.util.SwerveDriveSignal;
 import com.team254.lib.util.TimeDelayedBoolean;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.*;
 import java.nio.file.Files;
@@ -48,7 +47,10 @@ public class Robot extends TimedRobot {
     private final Infrastructure mInfrastructure;
     private final RobotState mRobotState;
     private final Drive mDrive;
-    private final PowerDistribution pdh = new PowerDistribution(22, PowerDistribution.ModuleType.kRev);
+    private final PowerDistribution pdh = new PowerDistribution(
+        1,
+        PowerDistribution.ModuleType.kRev
+    );
     private final LedManager ledManager;
     private final Turret mTurret;
     private final Camera camera;
@@ -71,7 +73,7 @@ public class Robot extends TimedRobot {
     private Turret.ControlMode prevTurretControlMode = Turret.ControlMode.FIELD_FOLLOWING;
 
     Robot() {
-        super(Constants.kLooperDt);
+        super();
         // initialize injector
         injector = Guice.createInjector(new LibModule(), new SeasonModule());
         mDrive = (injector.getInstance(Drive.Factory.class)).getInstance();
@@ -214,7 +216,7 @@ public class Robot extends TimedRobot {
                 mInfrastructure,
                 // spinner,
                 mTurret
-//                camera
+                //                camera
             );
 
             mDrive.zeroSensors(Constants.StartingPose);
@@ -422,10 +424,10 @@ public class Robot extends TimedRobot {
                 autoMode.isPresent() && autoMode.get() != mAutoModeExecutor.getAutoMode()
             ) {
                 var auto = autoMode.get();
-                System.out.println(
-                    "Set auto mode to: " + auto.getClass().toString()
-                );
-                mRobotState.field.getObject("Trajectory").setTrajectory(auto.getTrajectory());
+                System.out.println("Set auto mode to: " + auto.getClass().toString());
+                mRobotState.field
+                    .getObject("Trajectory")
+                    .setTrajectory(auto.getTrajectory());
                 mAutoModeExecutor.setAutoMode(auto);
             }
         } catch (Throwable t) {

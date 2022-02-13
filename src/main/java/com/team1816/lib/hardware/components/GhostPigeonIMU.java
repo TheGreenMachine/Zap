@@ -5,9 +5,9 @@ import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 
 public class GhostPigeonIMU implements IPigeonIMU {
 
-    public GhostPigeonIMU(int id){}
+    public GhostPigeonIMU(int id) {}
 
-    public GhostPigeonIMU(IMotorControllerEnhanced motor){}
+    public GhostPigeonIMU(IMotorControllerEnhanced motor) {}
 
     @Override
     public double getFusedHeading() {

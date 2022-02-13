@@ -2,11 +2,11 @@ package com.team1816.season.controlboard;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.team1816.season.Constants;
 import com.team1816.lib.controlboard.Controller;
 import com.team1816.lib.controlboard.IDriveControlBoard;
 import com.team1816.lib.controlboard.LogitechController;
 import com.team1816.lib.controlboard.XboxController;
+import com.team1816.season.Constants;
 import edu.wpi.first.math.geometry.Rotation2d;
 
 @Singleton
@@ -160,7 +160,10 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
                 }
                 var checkDirection = values[i];
                 var distance = Math.abs(
-                    stickDirection.unaryMinus().rotateBy(checkDirection.inputDirection).getRadians()
+                    stickDirection
+                        .unaryMinus()
+                        .rotateBy(checkDirection.inputDirection)
+                        .getRadians()
                 );
                 if (distance < closestDistance) {
                     closestDistance = distance;

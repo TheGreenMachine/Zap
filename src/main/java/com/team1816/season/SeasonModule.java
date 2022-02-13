@@ -1,18 +1,18 @@
 package com.team1816.season;
 
 import com.google.inject.AbstractModule;
+import com.team1816.lib.auto.AutoModeExecutor;
 import com.team1816.lib.auto.actions.TrajectoryAction;
+import com.team1816.lib.controlboard.IButtonControlBoard;
+import com.team1816.lib.controlboard.IControlBoard;
+import com.team1816.lib.controlboard.IDriveControlBoard;
+import com.team1816.lib.subsystems.Infrastructure;
 import com.team1816.season.auto.actions.actions2020.*;
 import com.team1816.season.controlboard.ControlBoard;
 import com.team1816.season.controlboard.GamepadButtonControlBoard;
 import com.team1816.season.controlboard.GamepadDriveControlBoard;
 import com.team1816.season.paths.TrajectorySet;
 import com.team1816.season.subsystems.*;
-import com.team1816.lib.auto.AutoModeExecutor;
-import com.team1816.lib.controlboard.IButtonControlBoard;
-import com.team1816.lib.controlboard.IControlBoard;
-import com.team1816.lib.controlboard.IDriveControlBoard;
-import com.team1816.lib.subsystems.Infrastructure;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 

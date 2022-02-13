@@ -1,10 +1,10 @@
 package com.team1816.season;
 
 import com.google.inject.Singleton;
+import com.team1816.lib.hardware.RobotFactory;
 import com.team1816.season.subsystems.Drive;
 import com.team1816.season.subsystems.SwerveDrive;
 import com.team1816.season.subsystems.TankDrive;
-import com.team1816.lib.hardware.RobotFactory;
 
 @Singleton
 public class SeasonFactory implements Drive.Factory {

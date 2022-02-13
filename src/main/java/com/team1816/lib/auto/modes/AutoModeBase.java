@@ -1,13 +1,11 @@
 package com.team1816.lib.auto.modes;
 
-import com.google.inject.Inject;
 import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.actions.Action;
 import com.team1816.lib.auto.actions.NoopAction;
-import com.team1816.season.subsystems.Drive;
-import edu.wpi.first.wpilibj.DriverStation;
 import com.team1816.lib.auto.actions.TrajectoryAction;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.DriverStation;
 
 /**
  * An abstract class that is the basis of the robot's autonomous routines. This is implemented in auto modes (which are
@@ -22,7 +20,7 @@ public abstract class AutoModeBase {
 
     protected abstract void routine() throws AutoModeEndedException;
 
-    public Trajectory getTrajectory(){
+    public Trajectory getTrajectory() {
         return trajectory.getTrajectory();
     }
 

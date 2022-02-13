@@ -10,9 +10,8 @@ import com.team1816.lib.loops.Loop;
 import com.team1816.lib.subsystems.Subsystem;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
-
-import javax.inject.Singleton;
 import java.awt.*;
+import javax.inject.Singleton;
 
 @Singleton
 public class LedManager extends Subsystem {
@@ -52,7 +51,7 @@ public class LedManager extends Subsystem {
         this.canifier = factory.getCanifier(NAME);
         this.cameraCanifier = factory.getCanifier("camera");
         this.candle = factory.getCandle("camera", 10);
-        this.candle.animate(new RainbowAnimation(1,.5,8));
+        this.candle.animate(new RainbowAnimation(1, .5, 8));
 
         configureCanifier(canifier);
         configureCanifier(cameraCanifier);
@@ -65,7 +64,7 @@ public class LedManager extends Subsystem {
         this.cameraLedOn = false;
     }
 
-    private void configureCandle(){
+    private void configureCandle() {
         this.candle.configStatusLedState(true);
         this.candle.configBrightnessScalar(.04);
     }

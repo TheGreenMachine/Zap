@@ -1,10 +1,10 @@
 package com.team1816.season.subsystems;
-import com.team1816.lib.subsystems.Subsystem;
-import java.net.*;
-import java.io.*;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.team1816.lib.subsystems.Subsystem;
+import java.io.*;
+import java.net.*;
 
 @Singleton
 public class Camera extends Subsystem {
@@ -47,9 +47,7 @@ public class Camera extends Subsystem {
     private boolean socketConnect() {
         try {
             socket = new Socket();
-            socket.connect(
-                new InetSocketAddress(InetAddress.getLocalHost(), 5802), 10
-            );
+            socket.connect(new InetSocketAddress(InetAddress.getLocalHost(), 5802), 10);
             socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             socketOut = new PrintWriter(socket.getOutputStream(), true);
         } catch (IOException e) {
@@ -112,15 +110,17 @@ public class Camera extends Subsystem {
     public boolean checkSystem() {
         return needsReconnect != 0;
     }
+
     public void stop() {
         try {
             socket.close();
         } catch (IOException e) {}
     }
+
     public void readPeriodicInputs() {
         // if more than 500ms, reconnect
         if (needsReconnect != 0 && (System.currentTimeMillis() - needsReconnect) >= 200) {
-//            System.out.println("Reconnect attempt at " + System.currentTimeMillis());
+            //            System.out.println("Reconnect attempt at " + System.currentTimeMillis());
             if (socketConnect()) {
                 needsReconnect = 0;
             }

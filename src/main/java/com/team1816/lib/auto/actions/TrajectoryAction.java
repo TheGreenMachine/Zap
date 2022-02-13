@@ -15,7 +15,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-
 import java.util.List;
 
 public class TrajectoryAction implements Action {
@@ -28,14 +27,15 @@ public class TrajectoryAction implements Action {
     private final List<Rotation2d> mHeadings;
     private final Drive mDrive;
 
-    public TrajectoryAction(Trajectory trajectory){
+    public TrajectoryAction(Trajectory trajectory) {
         this(trajectory, null);
     }
+
     public TrajectoryAction(Trajectory trajectory, List<Rotation2d> headings) {
         mDrive = mDriveFactory.getInstance();
         mTrajectory = trajectory;
         mHeadings = headings;
-        if(mDrive instanceof TankDrive){
+        if (mDrive instanceof TankDrive) {
             mCommand =
                 new RamseteCommand(
                     trajectory,
@@ -46,10 +46,13 @@ public class TrajectoryAction implements Action {
                     ),
                     mDrive::updateTrajectoryVelocities
                 );
-        } else if(mDrive instanceof SwerveDrive){
-            var thetaController =
-                new ProfiledPIDController(
-                    Constants.kPThetaController, 0, 0, Constants.kThetaControllerConstraints);
+        } else if (mDrive instanceof SwerveDrive) {
+            var thetaController = new ProfiledPIDController(
+                Constants.kPThetaController,
+                0,
+                0,
+                Constants.kThetaControllerConstraints
+            );
             thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
             mCommand =
@@ -64,7 +67,9 @@ public class TrajectoryAction implements Action {
                     mDrive::setModuleStates
                 );
         } else {
-            System.out.println(" oh man oh god I'm neither swerve nor tank! " + mDrive.toString());
+            System.out.println(
+                " oh man oh god I'm neither swerve nor tank! " + mDrive.toString()
+            );
             mCommand = null;
         }
     }

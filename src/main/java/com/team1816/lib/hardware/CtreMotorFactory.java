@@ -4,7 +4,6 @@ import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
 import com.ctre.phoenix.sensors.*;
-import com.revrobotics.MotorFeedbackSensor;
 import com.team1816.lib.hardware.components.motor.GhostMotorControllerEnhanced;
 import com.team1816.lib.hardware.components.motor.IConfigurableMotorController;
 import com.team1816.lib.hardware.components.motor.LazyTalonFX;
@@ -124,7 +123,15 @@ public class CtreMotorFactory {
         IConfigurableMotorController talon = isFalcon
             ? new LazyTalonFX(id)
             : new LazyTalonSRX(id);
-        configureMotorController(talon, name, config, isFalcon, subsystem, pidConfigList, remoteSensorId);
+        configureMotorController(
+            talon,
+            name,
+            config,
+            isFalcon,
+            subsystem,
+            pidConfigList,
+            remoteSensorId
+        );
 
         return talon;
     }
@@ -263,10 +270,12 @@ public class CtreMotorFactory {
         talonConfiguration.openloopRamp = config.OPEN_LOOP_RAMP_RATE;
         talonConfiguration.closedloopRamp = config.CLOSED_LOOP_RAMP_RATE;
 
-        if(remoteSensorId >= 0) {
-            talonConfiguration.primaryPID.selectedFeedbackSensor = FeedbackDevice.RemoteSensor0;
+        if (remoteSensorId >= 0) {
+            talonConfiguration.primaryPID.selectedFeedbackSensor =
+                FeedbackDevice.RemoteSensor0;
             talonConfiguration.remoteFilter0.remoteSensorDeviceID = remoteSensorId;
-            talonConfiguration.remoteFilter0.remoteSensorSource = RemoteSensorSource.CANCoder;
+            talonConfiguration.remoteFilter0.remoteSensorSource =
+                RemoteSensorSource.CANCoder;
         } else {
             talonConfiguration.primaryPID.selectedFeedbackSensor =
                 isFalcon
@@ -336,7 +345,8 @@ public class CtreMotorFactory {
         CANCoderConfiguration canCoderConfig = new CANCoderConfiguration();
         canCoderConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
         canCoderConfig.sensorDirection = invertCanCoder;
-        canCoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
+        canCoderConfig.initializationStrategy =
+            SensorInitializationStrategy.BootToAbsolutePosition;
         canCoderConfig.sensorTimeBase = SensorTimeBase.PerSecond;
         return canCoderConfig;
     }

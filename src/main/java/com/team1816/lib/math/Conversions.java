@@ -6,16 +6,18 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 
 public class Conversions {
+
     private static final double ticksPerRevolution = Constants.kTicksPerRevolution;
-    private static final double wheelCircumferenceInches = Constants.kWheelCircumferenceInches;
+    private static final double wheelCircumferenceInches =
+        Constants.kWheelCircumferenceInches;
 
     // make the degree stuff to ticks/radians/ whatnot come into here instead of being spread out everywhere
     public static double convertTicksToInches(double ticks) {
-        return ticks/ticksPerRevolution*wheelCircumferenceInches*Math.PI;
+        return ticks / ticksPerRevolution * wheelCircumferenceInches * Math.PI;
     }
 
     public static double convertInchesToTicks(double inches) {
-        return inches/Math.PI*ticksPerRevolution/wheelCircumferenceInches;
+        return inches / Math.PI * ticksPerRevolution / wheelCircumferenceInches;
     }
 
     public static double convertTicksToMeters(double ticks) {
@@ -27,19 +29,19 @@ public class Conversions {
     }
 
     public static double convertDegreesToRadians(double degrees) {
-        return degrees*Math.PI/180;
+        return degrees * Math.PI / 180;
     }
 
     public static double convertRadiansToDegrees(double radians) {
-        return radians*180/Math.PI;
+        return radians * 180 / Math.PI;
     }
 
     public static double convertTicksToRadians(double ticks) {
-        return ticks/ticksPerRevolution*2*Math.PI;
+        return ticks / ticksPerRevolution * 2 * Math.PI;
     }
 
     public static double convertRadiansToTicks(double radians) {
-        return radians/(Math.PI*2)*ticksPerRevolution;
+        return radians / (Math.PI * 2) * ticksPerRevolution;
     }
 
     public static double convertTicksToDegrees(double ticks) {
@@ -50,11 +52,19 @@ public class Conversions {
         return convertRadiansToTicks(convertDegreesToRadians(degrees));
     }
 
-    public static boolean epsilonEquals(final Pose2d reference, final Pose2d other, double epsilon) {
-        return Util.epsilonEquals(reference.getX(), other.getX(), epsilon)
-            && Util.epsilonEquals(reference.getY(), other.getY(), epsilon)
-            && Util.epsilonEquals(reference.getRotation().getDegrees(), other.getRotation().getDegrees(), epsilon
+    public static boolean epsilonEquals(
+        final Pose2d reference,
+        final Pose2d other,
+        double epsilon
+    ) {
+        return (
+            Util.epsilonEquals(reference.getX(), other.getX(), epsilon) &&
+            Util.epsilonEquals(reference.getY(), other.getY(), epsilon) &&
+            Util.epsilonEquals(
+                reference.getRotation().getDegrees(),
+                other.getRotation().getDegrees(),
+                epsilon
+            )
         );
     }
-
 }

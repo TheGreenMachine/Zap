@@ -1,12 +1,10 @@
 package com.team1816.season.subsystems;
 
-import com.team1816.season.Robot;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.lib.loops.Loop;
 import com.team1816.lib.subsystems.Subsystem;
-import com.team254.lib.vision.AimingParameters;
+import com.team1816.season.Robot;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import java.util.Optional;
 
 /**
  * The superstructure subsystem is the overarching class containing all components of the superstructure: the
@@ -20,7 +18,8 @@ import java.util.Optional;
 public class Superstructure extends Subsystem {
 
     private static Superstructure mInstance;
-//    private Optional<AimingParameters> mLatestAimingParameters = Optional.empty();
+
+    //    private Optional<AimingParameters> mLatestAimingParameters = Optional.empty();
 
     public Superstructure() {
         super("superstructure");
@@ -53,9 +52,9 @@ public class Superstructure extends Subsystem {
         );
     }
 
-//    public synchronized Optional<AimingParameters> getLatestAimingParameters() {
-//        return mLatestAimingParameters;
-//    }
+    //    public synchronized Optional<AimingParameters> getLatestAimingParameters() {
+    //        return mLatestAimingParameters;
+    //    }
 
     public synchronized boolean isAtDesiredState() {
         return true;

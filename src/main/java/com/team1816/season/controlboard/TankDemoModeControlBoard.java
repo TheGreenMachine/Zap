@@ -1,9 +1,9 @@
 package com.team1816.season.controlboard;
 
-import com.team1816.season.Constants;
 import com.team1816.lib.controlboard.Controller;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.controlboard.LogitechController;
+import com.team1816.season.Constants;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
