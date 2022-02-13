@@ -32,28 +32,28 @@ subsystems:
                     azimuth: FLAz
                     canCoder: FLEnc
                     constants:
-                        encoderOffset: 1054
+                        encoderOffset: -2121
                         invertSensorPhase: 1
                 frontRight:
                     drive: FRDr
                     azimuth: FRAz
                     canCoder: FREnc
                     constants:
-                        encoderOffset: -2721
+                        encoderOffset: -1715
                         invertSensorPhase: 1
                 backLeft:
                     drive: RLDr
                     azimuth: RLAz
                     canCoder: RLEnc
                     constants:
-                        encoderOffset: -149
+                        encoderOffset: -3141
                         invertSensorPhase: 1
                 backRight:
                     drive: RRDr
                     azimuth: RRAz
                     canCoder: RREnc
                     constants:
-                        encoderOffset: -1849
+                        encoderOffset: -2863
                         invertSensorPhase: 1
             drivePID:
                 slot0:
@@ -68,7 +68,7 @@ subsystems:
                     kD: 30
                     kF: 0
         constants:
-            pigeonId: -1
+            pigeonId: 13
             pigeonOnTalon: -1
             kP: 0.1 # 0.18 # TODO: tune PID, these are temporary PID values from Zeta
             kI: 0.0001 # 0.018

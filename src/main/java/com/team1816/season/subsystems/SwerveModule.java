@@ -6,6 +6,7 @@ import static com.team1816.season.subsystems.SwerveModule.ControlState.OPEN_LOOP
 import static com.team1816.season.subsystems.SwerveModule.ControlState.VELOCITY;
 
 import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.team1816.lib.loops.ILooper;
@@ -149,7 +150,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
         mControlState = isOpenLoop ? OPEN_LOOP : VELOCITY;
-        mPeriodicIO.desired_state = ModuleState.optimize(desiredState, getState().angle);
+        mPeriodicIO.desired_state =  desiredState ;// ModuleState.optimize(desiredState, getState().angle); // here
         if (mControlState == VELOCITY) {
             mPeriodicIO.drive_demand =
                 metersPerSecondToTicksPer100ms(
@@ -161,8 +162,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
                 Units.inchesToMeters(Constants.kPathFollowingMaxVel); // driveDemand now percent output
         }
         mPeriodicIO.azimuth_position =  Rotation2d.fromDegrees(
-            mPeriodicIO.desired_state.angle.getDegrees() - DriveConversions.convertTicksToDegrees(mConstants.kAzimuthEncoderHomeOffset)
-            // this is currently just taking away the offset and then later adding it again in write periodic - I do not think this is right?
+            mPeriodicIO.desired_state.angle.getDegrees()
         );
     }
 
@@ -170,7 +170,9 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
         double velocity =
             (mPeriodicIO.velocity_ticks_per_100ms * 10 / DRIVE_ENCODER_PPR) *
             Constants.kWheelCircumferenceMeters; // proper conversion?
-        Rotation2d angle = Rotation2d.fromDegrees(mPeriodicIO.azimuth_actual_degrees);
+        Rotation2d angle = Rotation2d.fromDegrees(
+            mPeriodicIO.azimuth_actual_degrees - DriveConversions.convertTicksToDegrees(mConstants.kAzimuthEncoderHomeOffset)
+        );
         return new SwerveModuleState(velocity, angle);
     }
 
@@ -214,7 +216,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
     public void zeroSensors() {
         // TODO there seems to be an easier way to zero sensors using setSelectedSensorPosition (see BaseFalconSwerve)
         if (mAzimuthMotor instanceof TalonSRX) {
-            var sensors = ((TalonSRX) mAzimuthMotor).getSensorCollection();
+            var sensors = ((TalonSRX) mAzimuthMotor).getSensorCollection(); // absolute position
             sensors.setQuadraturePosition(
                 sensors.getPulseWidthPosition() & Constants.Swerve.AZIMUTH_TICK_MASK,
                 Constants.kLongCANTimeoutMs

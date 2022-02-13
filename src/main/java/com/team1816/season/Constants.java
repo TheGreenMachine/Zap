@@ -3,6 +3,7 @@ package com.team1816.season;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.RobotFactory;
+import com.team1816.season.subsystems.Drive;
 import com.team254.lib.util.Units;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -67,7 +68,9 @@ public class Constants {
         public String kDriveMotorName = "";
         public String kAzimuthMotorName = "";
 
-        public static final int AZIMUTH_TICK_MASK = 0xFFF;
+        public static final int AZIMUTH_TICK_MASK = (int)factory.getConstant("drive",
+            "azimuthEncPPR",
+            4096) - 1;
         public static final double AZIMUTH_ADJUSTMENT_OFFSET_DEGREES = factory.getConstant(
             "drive",
             "azimuthHomeAdjustmentDegrees",

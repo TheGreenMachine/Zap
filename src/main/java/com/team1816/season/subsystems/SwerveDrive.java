@@ -89,6 +89,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     @Override
     public synchronized void writePeriodicOutputs() {
         if (mDriveControlState == DriveControlState.OPEN_LOOP) {
+            System.out.println(mPeriodicIO.rotation + " = swerve rotation");
             SwerveModuleState[] swerveModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
                 ChassisSpeeds.fromFieldRelativeSpeeds(
                     mPeriodicIO.forward * Constants.kPathFollowingMaxVel,
@@ -102,6 +103,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 Units.inchesToMeters(Constants.kPathFollowingMaxVel)
             ); // TODO get swerve max speed in meters/s
             for (int i = 0; i < 4; i++) {
+                System.out.println(swerveModuleStates[i].angle.getDegrees() + " = swerve mod angle degrees");
                 swerveModules[i].setDesiredState(swerveModuleStates[i], true);
             }
         }
