@@ -1,5 +1,6 @@
 package com.team1816.season.subsystems;
 
+import static com.team1816.lib.math.DriveConversions.metersPerSecondToTicksPer100ms;
 import static com.team1816.season.subsystems.Drive.*;
 import static com.team1816.season.subsystems.SwerveModule.ControlState.OPEN_LOOP;
 import static com.team1816.season.subsystems.SwerveModule.ControlState.VELOCITY;
@@ -9,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.lib.loops.Loop;
+import com.team1816.lib.math.DriveConversions;
 import com.team1816.lib.subsystems.ISwerveModule;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.util.ModuleState;
@@ -27,6 +29,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
         // INPUTS
         public SwerveModuleState desired_state = new SwerveModuleState();
         public double velocity_ticks_per_100ms = 0;
+        public double azimuth_actual_degrees = 0;
 
         // OUTPUTS
         public double drive_demand = 0;
@@ -128,8 +131,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
     @Override
     public void readPeriodicInputs() {
         mPeriodicIO.velocity_ticks_per_100ms = mDriveMotor.getSelectedSensorVelocity(0);
-        mPeriodicIO.azimuth_position =
-            Rotation2d.fromDegrees(mAzimuthMotor.getSelectedSensorPosition(0));
+        mPeriodicIO.azimuth_actual_degrees = DriveConversions.convertTicksToDegrees(mAzimuthMotor.getSelectedSensorPosition(0));
     }
 
     @Override
@@ -141,11 +143,8 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
             mDriveMotor.set(ControlMode.PercentOutput, mPeriodicIO.drive_demand);
         }
 
-        double angle = mPeriodicIO.azimuth_position.getDegrees();
-        mAzimuthMotor.set(ControlMode.Position, angle);
-        //
-
-        //        mPeriodicIO.azimuth_position = new Rotation2d(Units.degreesToRadians(angle)); redundant?
+        double position = DriveConversions.convertDegreesToTicks(mPeriodicIO.azimuth_position.getDegrees());
+        mAzimuthMotor.set(ControlMode.Position, position + mConstants.kAzimuthEncoderHomeOffset);
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
@@ -161,14 +160,17 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
                 mPeriodicIO.desired_state.speedMetersPerSecond /
                 Units.inchesToMeters(Constants.kPathFollowingMaxVel); // driveDemand now percent output
         }
-        mPeriodicIO.azimuth_position = mPeriodicIO.desired_state.angle;
+        mPeriodicIO.azimuth_position =  Rotation2d.fromDegrees(
+            mPeriodicIO.desired_state.angle.getDegrees() - DriveConversions.convertTicksToDegrees(mConstants.kAzimuthEncoderHomeOffset)
+            // this is currently just taking away the offset and then later adding it again in write periodic - I do not think this is right?
+        );
     }
 
     public SwerveModuleState getState() {
         double velocity =
             (mPeriodicIO.velocity_ticks_per_100ms * 10 / DRIVE_ENCODER_PPR) *
             Constants.kWheelCircumferenceMeters; // proper conversion?
-        Rotation2d angle = mPeriodicIO.azimuth_position;
+        Rotation2d angle = Rotation2d.fromDegrees(mPeriodicIO.azimuth_actual_degrees);
         return new SwerveModuleState(velocity, angle);
     }
 
@@ -227,14 +229,6 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
         mAzimuthMotor.set(ControlMode.Velocity, 0);
     }
 
-    public Rotation2d getAzimuthFromEncoderTicks() { // includes offset calculation
-        return Rotation2d.fromDegrees(
-            Units.radiansToDegrees(
-                encoderUnitsToRadians(mAzimuthMotor.getSelectedSensorPosition(0))
-            )
-        );
-    }
-
     @Override
     public double getAzimuthPosition() {
         return mPeriodicIO.azimuth_position.getDegrees();
@@ -288,10 +282,6 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
     //    public synchronized double encoderUnitsToDistance(double ticks) {
     //        return ticks * mConstants.kDriveTicksPerUnitDistance;
     //
-
-    public synchronized Rotation2d getAngle() {
-        return new Rotation2d(encoderUnitsToRadians(getAzimuthPosition()));
-    }
 
     public synchronized Rotation2d getAngleToDegrees() {
         var azimuthPosition = getAzimuthPosition();

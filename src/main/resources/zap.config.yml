@@ -6,16 +6,17 @@ subsystems:
             FRDr: 10 #1
             RLDr: 18 #13
             RRDr: 15
-            FLAz: -1 #8
-            FRAz: -1 #11
-            RLAz: -1 #19
-            RRAz: -1 #14
+            FLAz: 8
+            FRAz: 11
+            RLAz: 19
+            RRAz: 14
         canCoders:
             FLEnc: 9 #TODO check values
             FREnc: 12
             RLEnc: 17
             RREnc: 16
         invertMotor:
+            - FLAz
             - FRAz
             - RLAz
             - RRAz
@@ -31,28 +32,28 @@ subsystems:
                     azimuth: FLAz
                     canCoder: FLEnc
                     constants:
-                        encoderOffset: 183.252
-                        invertSensorPhase: 0
+                        encoderOffset: 1054
+                        invertSensorPhase: 1
                 frontRight:
                     drive: FRDr
                     azimuth: FRAz
                     canCoder: FREnc
                     constants:
-                        encoderOffset: 149.59
+                        encoderOffset: -2721
                         invertSensorPhase: 1
                 backLeft:
                     drive: RLDr
                     azimuth: RLAz
                     canCoder: RLEnc
                     constants:
-                        encoderOffset: 273.516
+                        encoderOffset: -149
                         invertSensorPhase: 1
                 backRight:
                     drive: RRDr
                     azimuth: RRAz
                     canCoder: RREnc
                     constants:
-                        encoderOffset: 250.488
+                        encoderOffset: -1849
                         invertSensorPhase: 1
             drivePID:
                 slot0:
@@ -62,7 +63,7 @@ subsystems:
                     kF: 0.0499
             azimuthPID:
                 slot0:
-                    kP: 9.0 # 6.0
+                    kP: 4.0 # 6.0
                     kI: 0.0005
                     kD: 30
                     kF: 0

@@ -1,15 +1,17 @@
 package com.team1816.lib.math;
 
 import com.team1816.season.Constants;
+import com.team1816.season.subsystems.Drive;
 import com.team254.lib.util.Util;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 
-public class Conversions {
+public class DriveConversions {
 
     private static final double ticksPerRevolution = Constants.kTicksPerRevolution;
     private static final double wheelCircumferenceInches =
         Constants.kWheelCircumferenceInches;
+    private static final double DRIVE_ENCODER_PPR = Drive.DRIVE_ENCODER_PPR;
 
     // make the degree stuff to ticks/radians/ whatnot come into here instead of being spread out everywhere
     public static double convertTicksToInches(double ticks) {
@@ -50,6 +52,41 @@ public class Conversions {
 
     public static double convertDegreesToTicks(double degrees) {
         return convertRadiansToTicks(convertDegreesToRadians(degrees));
+    }
+
+    public static double rotationsToInches(double rotations) {
+        return rotations * (Constants.kDriveWheelDiameterInches * Math.PI);
+    }
+
+    public static double rpmToInchesPerSecond(double rpm) {
+        return rotationsToInches(rpm) / 60;
+    }
+
+    public static double inchesToRotations(double inches) {
+        return inches / (Constants.kDriveWheelDiameterInches * Math.PI);
+    }
+
+    public static double metersPerSecondToTicksPer100ms(double meters_per_second) {
+        return inchesPerSecondToTicksPer100ms(Units.metersToInches(meters_per_second));
+    }
+
+    public static double ticksPerSecondToMetersPer100ms(double ticks_per_second) {
+        return (
+            (Units.metersToInches(ticksPerSecondToInchesPer100ms(ticks_per_second))) /
+                4096
+        );
+    }
+
+    public static double inchesPerSecondToTicksPer100ms(double inches_per_second) {
+        return inchesToRotations(inches_per_second) * DRIVE_ENCODER_PPR / 10.0;
+    }
+
+    public static double ticksPerSecondToInchesPer100ms(double ticks_per_second) {
+        return rotationsToInches(ticks_per_second / DRIVE_ENCODER_PPR * 10.0);
+    }
+
+    public static double radiansPerSecondToTicksPer100ms(double rad_s) {
+        return rad_s / (Math.PI * 2.0) * DRIVE_ENCODER_PPR / 10.0;
     }
 
     public static boolean epsilonEquals(

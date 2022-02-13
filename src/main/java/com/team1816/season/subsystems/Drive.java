@@ -22,20 +22,11 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.List;
 
+import static com.team1816.lib.math.DriveConversions.inchesPerSecondToTicksPer100ms;
+
 public abstract class Drive
     extends Subsystem
     implements TrackableDrivetrain, PidProvider {
-
-    public abstract void updateTrajectoryVelocities(Double aDouble, Double aDouble1);
-
-    public abstract Rotation2d getTrajectoryHeadings();
-
-    public abstract Pose2d getPose();
-
-    public abstract void startTrajectory(
-        Trajectory initialPose,
-        List<Rotation2d> headings
-    );
 
     public interface Factory {
         Drive getInstance();
@@ -81,13 +72,6 @@ public abstract class Drive
     public static final double maxVelTicksPer100ms = factory.getConstant("maxTicks");
     public static final double DRIVE_ENCODER_PPR = factory.getConstant(NAME, "encPPR");
 
-    //    public static final List<Translation2d> ZERO_DRIVE_VECTOR = List.of(
-    //        new Translation2d(),
-    //        new Translation2d(),
-    //        new Translation2d(),
-    //        new Translation2d()
-    //    );
-
     protected Drive() {
         super(NAME);
         mPeriodicIO = new PeriodicIO();
@@ -95,70 +79,10 @@ public abstract class Drive
         mPigeon.configFactoryDefault();
     }
 
-    @Override
-    public double getHeadingDegrees() {
-        return mPeriodicIO.gyro_heading.getDegrees();
+    public enum DriveControlState {
+        OPEN_LOOP, // open loop voltage control
+        TRAJECTORY_FOLLOWING,
     }
-
-    @Override
-    public abstract double getDesiredHeading();
-
-    public Rotation2d getDesiredRotation2d() {
-        if (mDriveControlState == DriveControlState.TRAJECTORY_FOLLOWING) {
-            return mPeriodicIO.desired_pose.getRotation();
-        }
-        return mPeriodicIO.desired_heading;
-    }
-
-    @Override
-    public double getKP() {
-        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
-        defaultPIDConfig.kP = 0.0;
-        return (!factory.getSubsystem(NAME).implemented)
-            ? factory
-                .getSubsystem(NAME)
-                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
-                .kP
-            : 0.0;
-    }
-
-    @Override
-    public double getKI() {
-        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
-        defaultPIDConfig.kI = 0.0;
-        return (!factory.getSubsystem(NAME).implemented)
-            ? factory
-                .getSubsystem(NAME)
-                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
-                .kI
-            : 0.0;
-    }
-
-    @Override
-    public double getKD() {
-        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
-        defaultPIDConfig.kD = 0.0;
-        return (!factory.getSubsystem(NAME).implemented)
-            ? factory
-                .getSubsystem(NAME)
-                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
-                .kD
-            : 0.0;
-    }
-
-    @Override
-    public double getKF() {
-        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
-        defaultPIDConfig.kF = 0.0;
-        return (!factory.getSubsystem(NAME).implemented)
-            ? factory
-                .getSubsystem(NAME)
-                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
-                .kF
-            : 0.0;
-    }
-
-    public void setModuleStates(SwerveModuleState[] desiredStates) {}
 
     @Singleton
     public static class PeriodicIO {
@@ -200,6 +124,7 @@ public abstract class Drive
         public boolean use_heading_controller;
     }
 
+    // calls periodic methods in swerve/tank based on current control state
     @Override
     public void registerEnabledLoops(ILooper in) {
         in.register(
@@ -243,7 +168,20 @@ public abstract class Drive
         );
     }
 
-    protected abstract void updateOpenLoopPeriodic();
+    // autonomous (trajectory following)
+    public abstract void startTrajectory(
+        Trajectory initialPose,
+        List<Rotation2d> headings
+    );
+
+    //tank auto
+    public abstract void updateTrajectoryVelocities(Double aDouble, Double aDouble1);
+
+    // swerve auto
+    public abstract Rotation2d getTrajectoryHeadings();
+    public void setModuleStates(SwerveModuleState[] desiredStates) {}
+
+    public abstract Pose2d getPose();
 
     public void updateTrajectoryPeriodic(double timestamp) {
         if (mDriveControlState != DriveControlState.TRAJECTORY_FOLLOWING) {
@@ -255,40 +193,7 @@ public abstract class Drive
             mTrajectory.sample(timestamp - mTrajectoryStart).poseMeters;
     }
 
-    public static double rotationsToInches(double rotations) {
-        return rotations * (Constants.kDriveWheelDiameterInches * Math.PI);
-    }
-
-    protected static double rpmToInchesPerSecond(double rpm) {
-        return rotationsToInches(rpm) / 60;
-    }
-
-    protected static double inchesToRotations(double inches) {
-        return inches / (Constants.kDriveWheelDiameterInches * Math.PI);
-    }
-
-    public static double metersPerSecondToTicksPer100ms(double meters_per_second) {
-        return inchesPerSecondToTicksPer100ms(Units.metersToInches(meters_per_second));
-    }
-
-    public static double ticksPerSecondToMetersPer100ms(double ticks_per_second) {
-        return (
-            (Units.metersToInches(ticksPerSecondToInchesPer100ms(ticks_per_second))) /
-            4096
-        );
-    }
-
-    public static double inchesPerSecondToTicksPer100ms(double inches_per_second) {
-        return inchesToRotations(inches_per_second) * DRIVE_ENCODER_PPR / 10.0;
-    }
-
-    public static double ticksPerSecondToInchesPer100ms(double ticks_per_second) {
-        return rotationsToInches(ticks_per_second / DRIVE_ENCODER_PPR * 10.0);
-    }
-
-    protected static double radiansPerSecondToTicksPer100ms(double rad_s) {
-        return rad_s / (Math.PI * 2.0) * DRIVE_ENCODER_PPR / 10.0;
-    }
+    protected abstract void updateOpenLoopPeriodic();
 
     /**
      * Configure talons for open loop control
@@ -296,6 +201,7 @@ public abstract class Drive
      */
     public abstract void setOpenLoop(DriveSignal signal);
 
+    // general setters
     public abstract void setTeleopInputs(
         double forward,
         double strafe,
@@ -303,26 +209,6 @@ public abstract class Drive
         boolean low_power,
         boolean use_heading_controller
     );
-
-    public boolean isBrakeMode() {
-        return mIsBrakeMode;
-    }
-
-    public void setSlowMode(boolean slowMode) {
-        isSlowMode = slowMode;
-    }
-
-    public void setBrakeMode(boolean on) {
-        mIsBrakeMode = on;
-    }
-
-    public synchronized Rotation2d getHeading() {
-        return mPeriodicIO.gyro_heading;
-    }
-
-    public synchronized Rotation2d getHeadingRelativeToInitial() {
-        return mPeriodicIO.gyro_heading_no_offset;
-    }
 
     public synchronized void setHeading(Rotation2d heading) {
         System.out.println("set heading: " + heading.getDegrees());
@@ -336,32 +222,89 @@ public abstract class Drive
         mPeriodicIO.desired_heading = heading;
     }
 
-    public synchronized void resetPigeon() {
-        mPigeon.setYaw(0);
-        mPigeon.setFusedHeading(0);
-        mPigeon.setAccumZAngle(0);
+    public void setSlowMode(boolean slowMode) {
+        isSlowMode = slowMode;
     }
 
-    public abstract void zeroSensors(Pose2d pose);
+    // getters
+    @Override
+    public double getKP() {
+        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
+        defaultPIDConfig.kP = 0.0;
+        return (!factory.getSubsystem(NAME).implemented)
+            ? factory
+            .getSubsystem(NAME)
+            .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+            .kP
+            : 0.0;
+    }
+
+    @Override
+    public double getKI() {
+        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
+        defaultPIDConfig.kI = 0.0;
+        return (!factory.getSubsystem(NAME).implemented)
+            ? factory
+            .getSubsystem(NAME)
+            .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+            .kI
+            : 0.0;
+    }
+
+    @Override
+    public double getKD() {
+        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
+        defaultPIDConfig.kD = 0.0;
+        return (!factory.getSubsystem(NAME).implemented)
+            ? factory
+            .getSubsystem(NAME)
+            .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+            .kD
+            : 0.0;
+    }
+
+    @Override
+    public double getKF() {
+        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
+        defaultPIDConfig.kF = 0.0;
+        return (!factory.getSubsystem(NAME).implemented)
+            ? factory
+            .getSubsystem(NAME)
+            .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+            .kF
+            : 0.0;
+    }
+
+    @Override
+    public abstract double getDesiredHeading();
+
+    public Rotation2d getDesiredRotation2d() {
+        if (mDriveControlState == DriveControlState.TRAJECTORY_FOLLOWING) {
+            return mPeriodicIO.desired_pose.getRotation();
+        }
+        return mPeriodicIO.desired_heading;
+    }
+
+    public synchronized Rotation2d getHeading() {
+        return mPeriodicIO.gyro_heading;
+    }
+
+    @Override
+    public double getHeadingDegrees() {
+        return mPeriodicIO.gyro_heading.getDegrees();
+    }
+
+    public synchronized Rotation2d getHeadingRelativeToInitial() {
+        return mPeriodicIO.gyro_heading_no_offset;
+    }
 
     public DriveControlState getDriveControlState() {
         return mDriveControlState;
     }
 
-    public enum DriveControlState {
-        OPEN_LOOP, // open loop voltage control
-        TRAJECTORY_FOLLOWING,
-    }
-
     public boolean hasPigeonResetOccurred() {
         return mPigeon.hasResetOccurred();
     }
-
-    @Override
-    public abstract void stop();
-
-    @Override
-    public abstract boolean checkSystem();
 
     @Override
     public double getFieldXDistance() {
@@ -388,6 +331,30 @@ public abstract class Drive
             mPeriodicIO.desired_pose.getY() - Constants.StartingPose.getY()
         );
     }
+
+    // calls used during initialization || game phase change
+    public boolean isBrakeMode() {
+        return mIsBrakeMode;
+    }
+
+    public void setBrakeMode(boolean on) {
+        mIsBrakeMode = on;
+    }
+
+    public synchronized void resetPigeon() {
+        mPigeon.setYaw(0);
+        mPigeon.setFusedHeading(0);
+        mPigeon.setAccumZAngle(0);
+    }
+
+    public abstract void zeroSensors(Pose2d pose);
+
+    @Override
+    public abstract void stop();
+
+    // other
+    @Override
+    public abstract boolean checkSystem();
 
     @Override
     public void initSendable(SendableBuilder builder) {

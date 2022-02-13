@@ -7,6 +7,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 
+import static com.team1816.lib.math.DriveConversions.inchesPerSecondToTicksPer100ms;
+
 /**
  * A drivetrain signal containing the speed and azimuth for each wheel
  */
@@ -55,7 +57,7 @@ public class SwerveDriveSignal extends DriveSignal {
         return new SwerveDriveSignal(
             Arrays.stream(this.mWheelSpeeds)
                 .map(x ->
-                    x * Drive.inchesPerSecondToTicksPer100ms(Constants.kPathFollowingMaxVel)
+                    x * inchesPerSecondToTicksPer100ms(Constants.kPathFollowingMaxVel)
                 )
                 .toArray(),
             this.mWheelAzimuths,
