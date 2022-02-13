@@ -10,9 +10,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class RobotState {
 
     public final Field2d field = new Field2d();
-    public Pose2d field_to_vehicle = Constants.emptyPose;
-    public Rotation2d vehicle_to_turret = Constants.emptyRotation;
-    public Rotation2d field_to_turret = Constants.emptyRotation;
+    public Pose2d field_to_vehicle = Constants.EmptyPose;
+    public Rotation2d vehicle_to_turret = Constants.EmptyRotation;
 
     public RobotState() {
         SmartDashboard.putData("Field", field);
@@ -35,19 +34,16 @@ public class RobotState {
     }
 
     public synchronized void reset() {
-        reset(Constants.StartingPose, Constants.emptyRotation);
+        reset(Constants.StartingPose, Constants.EmptyRotation);
     }
 
     public synchronized Pose2d getLatestFieldToVehicle() {
+        // CCW rotation increases degrees
         return field_to_vehicle;
     }
 
     public Double getLatestFieldToTurret() {
-        return getLatestVehicleToTurret().getDegrees();
-    }
-
-    public Rotation2d getLatestVehicleToTurret() {
-        return vehicle_to_turret;
+        return field_to_vehicle.getRotation().minus(vehicle_to_turret).getDegrees();
     }
 
     public synchronized void outputToSmartDashboard() {

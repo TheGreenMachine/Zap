@@ -23,27 +23,27 @@ public class RobotFactory {
 
     public static RobotFactory getInstance() {
         if (factory == null) {
-            var robotName = System.getenv("ROBOT_NAME");
-            if (robotName == null) {
-                robotName = "default";
-                DriverStation.reportWarning(
-                    "ROBOT_NAME environment variable not defined, falling back to default.config.yml!",
-                    false
-                );
-            }
-            factory = new RobotFactory(robotName);
+            factory = new RobotFactory();
         }
         return factory;
     }
 
-    public RobotFactory(String configName) {
-        System.out.println("Loading Config for " + configName);
+    public RobotFactory() {
+        var robotName = System.getenv("ROBOT_NAME");
+        if (robotName == null) {
+            robotName = "default";
+            DriverStation.reportWarning(
+                "ROBOT_NAME environment variable not defined, falling back to default.config.yml!",
+                false
+            );
+        }
+        System.out.println("Loading Config for " + robotName);
         try {
             config =
                 YamlConfig.loadFrom(
                     this.getClass()
                         .getClassLoader()
-                        .getResourceAsStream(configName + ".config.yml")
+                        .getResourceAsStream(robotName + ".config.yml")
                 );
         } catch (Exception e) {
             DriverStation.reportError("Yaml Config error!", e.getStackTrace());

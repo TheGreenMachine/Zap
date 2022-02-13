@@ -34,7 +34,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
 
         // OUTPUTS
         public double drive_demand = 0;
-        public Rotation2d azimuth_position = Constants.emptyRotation; // actual desired demand in encoder units, not adjusted for home offset
+        public Rotation2d azimuth_position = Constants.EmptyRotation; // actual desired demand in encoder units, not adjusted for home offset
     }
 
     public enum ControlState {

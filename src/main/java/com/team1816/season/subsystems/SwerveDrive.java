@@ -150,10 +150,10 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     public Rotation2d getTrajectoryHeadings() {
         if (mHeadings == null) {
             System.out.println("headings are empty!");
-            return Constants.emptyRotation;
+            return Constants.EmptyRotation;
         } else if (mTrajectoryIndex > mHeadings.size() - 1) {
             System.out.println("heck the headings aren't long enough");
-            return Constants.emptyRotation;
+            return Constants.EmptyRotation;
         }
         if (
             getTrajectoryTimestamp() >

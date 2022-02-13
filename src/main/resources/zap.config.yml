@@ -101,7 +101,7 @@ subsystems:
                 kD: 40
                 kF: 0 # Should be 0 for position control
         talons:
-            turret: 9
+            turret: 33 # need to set to pdp port number
         invertSensorPhase:
             - turret
         constants:
@@ -109,6 +109,7 @@ subsystems:
             absPosTicksSouth: -3451
             fwdLimit: -1147
             encPPR: 4096
+            turretPPR: 53248 # 4096 * 13
     shooter:
         implemented: false
         invertMotor:

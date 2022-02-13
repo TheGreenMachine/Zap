@@ -54,7 +54,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     @Override
     public Rotation2d getTrajectoryHeadings() {
-        return Constants.emptyRotation;
+        return Constants.EmptyRotation;
     }
 
     @Override
@@ -367,7 +367,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     public void zeroSensors(Pose2d pose) {
         System.out.println("Zeroing drive sensors!");
         resetPigeon();
-        setHeading(Constants.emptyRotation);
+        setHeading(Constants.EmptyRotation);
         resetEncoders();
         //        if (mPigeon.getLastError() != ErrorCode.OK) {
         //            // BadLog.createValue("PigeonErrorDetected", "true");

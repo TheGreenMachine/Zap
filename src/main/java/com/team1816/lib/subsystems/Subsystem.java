@@ -22,7 +22,7 @@ import java.util.function.Supplier;
 public abstract class Subsystem implements Sendable {
 
     private final String name;
-    protected static final RobotFactory factory = Robot.getFactory();
+    public static RobotFactory factory = Robot.getFactory();
 
     protected Subsystem(String name) {
         this.name = name;

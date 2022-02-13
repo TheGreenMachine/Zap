@@ -3,62 +3,146 @@ package com.team1816.frc2020.subsystems;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.team1816.lib.LibModule;
+import com.team1816.lib.hardware.RobotFactory;
+import com.team1816.lib.subsystems.Subsystem;
+import com.team1816.season.Constants;
 import com.team1816.season.RobotState;
 import com.team1816.season.SeasonModule;
 import com.team1816.season.subsystems.Turret;
-import junit.framework.TestCase;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.mockito.Spy;
 
-public class TurretTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
-    private Turret target;
-    private Injector injector;
+// @RunWith(JUnit4.class)
+public class TurretTest {
 
-    @Override
-    public void setUp() throws Exception {
-        target = injector.getInstance(Turret.class);
-    }
+    private final RobotState state;
+    private final RobotFactory mockFactory;
+    private Turret mTurret;
+    private double encTickSouth = 1980;
+    private double encTick45 = encTickSouth + 512;
+    private double encTick315 = encTickSouth - 512;
+    private final double encPPR = 4096;
+
+    @Spy
+    private Constants constants;
 
     public TurretTest() {
-        injector = Guice.createInjector(new LibModule(), new SeasonModule());
+        mockFactory = Mockito.spy(RobotFactory.class);
+        when(mockFactory.getConstant(Turret.NAME, "absPosTicksSouth"))
+            .thenReturn(encTickSouth);
+        when(mockFactory.getConstant(Turret.NAME, "turretPPR")).thenReturn(encPPR);
+        when(mockFactory.getConstant(Turret.NAME, "encPPR")).thenReturn(encPPR);
+        Subsystem.factory = mockFactory;
+        Injector injector = Guice.createInjector(new LibModule(), new SeasonModule());
+        state = injector.getInstance(RobotState.class);
     }
 
-    public void testSetTurretFieldFollowing() {
-        target.setTurretAngle(Turret.CARDINAL_SOUTH);
-        target.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
-        target.writePeriodicOutputs();
-        assertEquals(
-            (double) Turret.ABS_TICKS_SOUTH,
-            target.getActualTurretPositionTicks()
-        );
-        assertEquals(Turret.ControlMode.FIELD_FOLLOWING, target.getControlMode());
+    @Before
+    public void setUp() {
+        mTurret = new Turret();
+        mTurret.zeroSensors();
+        state.reset();
     }
 
-    public void testSetTurretPosition() {
-        target.setTurretAngle(Turret.CARDINAL_SOUTH);
-        target.setControlMode(Turret.ControlMode.POSITION);
-        target.writePeriodicOutputs();
-        assertEquals(
-            (double) Turret.ABS_TICKS_SOUTH,
-            target.getActualTurretPositionTicks()
-        );
-        assertEquals(Turret.ControlMode.POSITION, target.getControlMode());
+    @Test
+    public void fieldFollowingTest() {
+        mTurret.setTurretAngle(0);
+        mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
+        mTurret.writePeriodicOutputs();
+        mTurret.readPeriodicInputs();
+        assertEquals(0, state.getLatestFieldToTurret(), 0.1);
+        assertEquals(0, state.vehicle_to_turret.getDegrees(), .01);
+        assertEquals(encTickSouth, mTurret.getActualTurretPositionTicks(), .01);
     }
 
-    public void testSetTurretFieldFollowingRobotTwist() {
-        RobotState state = new RobotState();
-        //        state.setHeadingRelativeToInitial(new Rotation2d(20));
-        Turret turret = new Turret();
-        turret.setTurretAngle(Turret.CARDINAL_SOUTH);
-        turret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
-        turret.writePeriodicOutputs();
-        assertEquals(
-            (double) Turret.ABS_TICKS_SOUTH,
-            turret.getActualTurretPositionTicks()
-        );
-        assertEquals(Turret.ControlMode.FIELD_FOLLOWING, turret.getControlMode());
+    @Test
+    public void fieldFollowing45Test() {
+        mTurret.setTurretAngle(0);
+        mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
+        state.field_to_vehicle = new Pose2d(0, 0, Rotation2d.fromDegrees(45));
+        mTurret.writePeriodicOutputs();
+        mTurret.readPeriodicInputs();
+        assertEquals(45, state.vehicle_to_turret.getDegrees(), .01);
+        assertEquals(0, state.getLatestFieldToTurret(), 0.1);
+        // Turret should move CW
+        assertEquals(encTick45, mTurret.getActualTurretPositionTicks(), .01);
     }
 
-    public void testTurretAutoHome() {
-        target.setControlMode(Turret.ControlMode.CAMERA_FOLLOWING);
+    @Test
+    public void fieldFollowing315Test() {
+        mTurret.setTurretAngle(0);
+        mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
+        state.field_to_vehicle = new Pose2d(0, 0, Rotation2d.fromDegrees(-45));
+        mTurret.writePeriodicOutputs();
+        mTurret.readPeriodicInputs();
+        assertEquals(315, state.vehicle_to_turret.getDegrees(), .01);
+        assertEquals(0, state.getLatestFieldToTurret(), 0.1);
+        // Turret should move CCW
+        assertEquals(encTick315, mTurret.getActualTurretPositionTicks(), .01);
+    }
+
+    @Test
+    public void fieldFollowingDoubleTest() {
+        setupDoubleRotation();
+        fieldFollowingTest();
+    }
+
+    @Test
+    public void fieldFollowing45DoubleTest() {
+        setupDoubleRotation();
+        fieldFollowing45Test();
+    }
+
+    @Test
+    public void fieldFollowing315DoubleTest() {
+        setupDoubleRotation();
+        fieldFollowing315Test();
+    }
+
+    @Test
+    public void convertTurretDegreesToTicksTest() {
+        assertEquals(encTickSouth, mTurret.convertTurretDegreesToTicks(0), .01);
+        assertEquals(encTickSouth, mTurret.convertTurretDegreesToTicks(360), .01);
+        assertEquals(encTickSouth, mTurret.convertTurretDegreesToTicks(720), .01);
+        assertEquals(encTick45, mTurret.convertTurretDegreesToTicks(45), .01);
+        assertEquals(encTick315, mTurret.convertTurretDegreesToTicks(-45), .01);
+    }
+
+    @Test
+    public void convertTurretTicksToDegrees() {
+        assertEquals(0, mTurret.convertTurretTicksToDegrees(encTickSouth), .01);
+        assertEquals(45, mTurret.convertTurretTicksToDegrees(encTick45), .01);
+        assertEquals(315, mTurret.convertTurretTicksToDegrees(encTick315), .01);
+    }
+
+    @Test
+    public void convertTurretTicksToDegreesDoubleRotation() {
+        setupDoubleRotation();
+        convertTurretTicksToDegrees();
+    }
+
+    @Test
+    public void convertTurretDegreesToTicksDoubleRotationTest() {
+        setupDoubleRotation();
+        convertTurretDegreesToTicksTest();
+    }
+
+    private void setupDoubleRotation() {
+        encTickSouth = 1980 * 2;
+        encTick45 = encTickSouth + 1024;
+        encTick315 = encTickSouth - 1024;
+        when(mockFactory.getConstant(Turret.NAME, "absPosTicksSouth"))
+            .thenReturn(encTickSouth);
+        when(mockFactory.getConstant(Turret.NAME, "turretPPR")).thenReturn(encPPR * 2);
+        mTurret = new Turret();
+        mTurret.zeroSensors();
+        state.reset();
     }
 }

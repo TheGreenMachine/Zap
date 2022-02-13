@@ -89,9 +89,9 @@ public abstract class Drive
 
         // INPUTS
         public double timestamp;
-        public Rotation2d gyro_heading = Constants.emptyRotation;
+        public Rotation2d gyro_heading = Constants.EmptyRotation;
         // no_offset = Relative to initial position, unaffected by reset
-        public Rotation2d gyro_heading_no_offset = Constants.emptyRotation;
+        public Rotation2d gyro_heading_no_offset = Constants.EmptyRotation;
         public double drive_distance_inches;
         public double velocity_inches_per_second = 0;
         public double left_position_ticks;
