@@ -89,21 +89,21 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     @Override
     public synchronized void writePeriodicOutputs() {
         if (mDriveControlState == DriveControlState.OPEN_LOOP) {
-            System.out.println(mPeriodicIO.rotation + " = swerve rotation");
-            SwerveModuleState[] swerveModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
-                ChassisSpeeds.fromFieldRelativeSpeeds(
-                    mPeriodicIO.forward * Units.inchesToMeters(Constants.kPathFollowingMaxVel),
-                    mPeriodicIO.strafe * Units.inchesToMeters(Constants.kPathFollowingMaxVel),
-                    mPeriodicIO.rotation * (Constants.kMaxAngularSpeed),
-                    getHeading()
-                )
+            var speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+                mPeriodicIO.forward * Units.inchesToMeters(Constants.kPathFollowingMaxVel),
+                mPeriodicIO.strafe * Units.inchesToMeters(Constants.kPathFollowingMaxVel),
+                mPeriodicIO.rotation * (Constants.kMaxAngularSpeed),
+                Constants.EmptyRotation // ignore gyro
             );
+            SwerveModuleState[] swerveModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
+                speeds
+            );
+            System.out.println("writePeriodicOutputs " + speeds);
             SwerveDriveKinematics.desaturateWheelSpeeds(
                 swerveModuleStates,
                 Units.inchesToMeters(Constants.kPathFollowingMaxVel)
             ); // TODO get swerve max speed in meters/s
             for (int i = 0; i < 4; i++) {
-                System.out.println(swerveModuleStates[i].angle.getDegrees() + " = swerve mod angle degrees");
                 swerveModules[i].setDesiredState(swerveModuleStates[i], true);
             }
         }

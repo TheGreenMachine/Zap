@@ -126,6 +126,7 @@ public class Constants {
             -moduleDeltaY
         );
 
+        // See https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/swerve-drive-kinematics.html
         public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
             kFrontLeftModulePosition,
             kFrontRightModulePosition,
@@ -223,7 +224,7 @@ public class Constants {
     public static final double kPXController = 1;
     public static final double kPYController = 1;
     public static final double kPThetaController = 1.0;
-    public static final double kMaxAngularSpeed = 11.5;
+    public static final double kMaxAngularSpeed = 2 * Math.PI; // rad/sec
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
     // Constraint for the motion profilied robot angle controller
