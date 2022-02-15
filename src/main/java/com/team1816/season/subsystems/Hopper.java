@@ -18,12 +18,16 @@ public class Hopper extends Subsystem {
     private final ISolenoid feederFlap;
     private final IMotorControllerEnhanced spindexer;
     private final IMotorControllerEnhanced elevator;
+
     @Inject
     private static Shooter shooter;
+
     @Inject
     private static DistanceManager distanceManager;
+
     @Inject
     private static Camera camera;
+
     private final DigitalInput ballSensor;
 
     // State
@@ -43,7 +47,8 @@ public class Hopper extends Subsystem {
         this.feederFlap = factory.getSolenoid(NAME, "feederFlap");
         this.spindexer = factory.getMotor(NAME, "spindexer");
         this.elevator = factory.getMotor(NAME, "elevator");
-        this.ballSensor = new DigitalInput((int) factory.getConstant(NAME, "ballSensor", 0));
+        this.ballSensor =
+            new DigitalInput((int) factory.getConstant(NAME, "ballSensor", 0));
     }
 
     public void setFeederFlap(boolean feederFlapOut) {
@@ -87,14 +92,17 @@ public class Hopper extends Subsystem {
     @Override
     public void writePeriodicOutputs() {
         if (lockToShooter) {
-            System.out.println("Shooter Loop: "+waitForShooterLoopCounter);
+            System.out.println("Shooter Loop: " + waitForShooterLoopCounter);
             if (waitForShooterLoopCounter < 10) {
                 waitForShooterLoopCounter++;
                 return;
             }
-            System.out.println("Near Velocity: "+ shooter.isVelocityNearTarget());
-            System.out.println("Has Ball: "+ hasBall());
-            if ((!shooter.isVelocityNearTarget() || hasBall())&& !(shooter.isVelocityNearTarget() && hasBall())) {
+            System.out.println("Near Velocity: " + shooter.isVelocityNearTarget());
+            System.out.println("Has Ball: " + hasBall());
+            if (
+                (!shooter.isVelocityNearTarget() || hasBall()) &&
+                !(shooter.isVelocityNearTarget() && hasBall())
+            ) {
                 if (wantUnjam) {
                     this.spindexer.set(ControlMode.PercentOutput, -0.25);
                 }

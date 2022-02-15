@@ -361,11 +361,12 @@ public class RobotFactory {
     }
 
     public PIDSlotConfiguration getPidSlotConfig(String subsystemName, String slot) {
+        var subsystem = getSubsystem(subsystemName);
         if (
-            !getSubsystem(subsystemName).implemented &&
-            getSubsystem(subsystemName).pidConfig != null &&
-            getSubsystem(subsystemName).pidConfig.get(slot) != null
-        ) return getSubsystem(subsystemName).pidConfig.get(slot); else { //default empty config
+            subsystem.implemented &&
+            subsystem.pidConfig != null &&
+            subsystem.pidConfig.get(slot) != null
+        ) return subsystem.pidConfig.get(slot); else { //default empty config
             PIDSlotConfiguration pidSlotConfiguration = new PIDSlotConfiguration();
             pidSlotConfiguration.kP = 0.0;
             pidSlotConfiguration.kI = 0.0;

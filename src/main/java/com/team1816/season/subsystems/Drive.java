@@ -1,5 +1,7 @@
 package com.team1816.season.subsystems;
 
+import static com.team1816.lib.math.DriveConversions.inchesPerSecondToTicksPer100ms;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
@@ -21,8 +23,6 @@ import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.List;
-
-import static com.team1816.lib.math.DriveConversions.inchesPerSecondToTicksPer100ms;
 
 public abstract class Drive
     extends Subsystem
@@ -102,14 +102,16 @@ public abstract class Drive
         double left_error;
         double right_error;
 
-        // SWERVE
+        // SWERVE OUTPUTS
         public double forward;
         public double strafe;
         public double rotation;
         public double totalRotation;
+        public SwerveModuleState[] actualModuleStates;
 
         // OUTPUTS
         public double left_demand;
+
         public double right_demand;
         public double left_accel;
         public double right_accel;
@@ -179,6 +181,7 @@ public abstract class Drive
 
     // swerve auto
     public abstract Rotation2d getTrajectoryHeadings();
+
     public void setModuleStates(SwerveModuleState[] desiredStates) {}
 
     public abstract Pose2d getPose();
@@ -233,9 +236,9 @@ public abstract class Drive
         defaultPIDConfig.kP = 0.0;
         return (!factory.getSubsystem(NAME).implemented)
             ? factory
-            .getSubsystem(NAME)
-            .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
-            .kP
+                .getSubsystem(NAME)
+                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+                .kP
             : 0.0;
     }
 
@@ -245,9 +248,9 @@ public abstract class Drive
         defaultPIDConfig.kI = 0.0;
         return (!factory.getSubsystem(NAME).implemented)
             ? factory
-            .getSubsystem(NAME)
-            .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
-            .kI
+                .getSubsystem(NAME)
+                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+                .kI
             : 0.0;
     }
 
@@ -257,9 +260,9 @@ public abstract class Drive
         defaultPIDConfig.kD = 0.0;
         return (!factory.getSubsystem(NAME).implemented)
             ? factory
-            .getSubsystem(NAME)
-            .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
-            .kD
+                .getSubsystem(NAME)
+                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+                .kD
             : 0.0;
     }
 
@@ -269,9 +272,9 @@ public abstract class Drive
         defaultPIDConfig.kF = 0.0;
         return (!factory.getSubsystem(NAME).implemented)
             ? factory
-            .getSubsystem(NAME)
-            .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
-            .kF
+                .getSubsystem(NAME)
+                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+                .kF
             : 0.0;
     }
 

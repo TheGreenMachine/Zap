@@ -4,7 +4,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.google.inject.Singleton;
-import com.team1816.season.Constants;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
@@ -35,7 +34,7 @@ public class Collector extends Subsystem {
         this.intake = factory.getMotor(NAME, "intake");
 
         intake.configSupplyCurrentLimit(
-                new SupplyCurrentLimitConfiguration(true, 25, 0, 0),
+            new SupplyCurrentLimitConfiguration(true, 25, 0, 0),
             Constants.kCANTimeoutMs
         );
     }
@@ -65,10 +64,9 @@ public class Collector extends Subsystem {
     public void setDeployed(boolean down, boolean reverse) {
         isRaising = !down;
         if (down) {
-            if(reverse){
+            if (reverse) {
                 setIntakePow(0.60);
-            }
-            else {
+            } else {
                 setIntakePow(-0.60);
             }
             setArm(true);

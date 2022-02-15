@@ -1,5 +1,8 @@
 package com.team1816.season.subsystems;
 
+import static com.team1816.lib.math.DriveConversions.metersPerSecondToTicksPer100ms;
+import static com.team1816.lib.math.DriveConversions.rotationsToInches;
+
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.google.inject.Inject;
@@ -17,9 +20,6 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import java.util.List;
-
-import static com.team1816.lib.math.DriveConversions.metersPerSecondToTicksPer100ms;
-import static com.team1816.lib.math.DriveConversions.rotationsToInches;
 
 @Singleton
 public class TankDrive extends Drive implements DifferentialDrivetrain {

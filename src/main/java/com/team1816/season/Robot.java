@@ -337,8 +337,6 @@ public class Robot extends TimedRobot {
             mDisabledLooper.stop();
             ledManager.setDefaultStatus(LedManager.RobotStatus.ENABLED);
 
-            mTurret.zeroSensors();
-
             if (mAutoModeExecutor != null) {
                 mAutoModeExecutor.stop();
             }
@@ -407,7 +405,6 @@ public class Robot extends TimedRobot {
             if (RobotController.getUserButton() && !mHasBeenEnabled) {
                 System.out.println("Zeroing Robot!");
                 mDrive.zeroSensors();
-                mTurret.zeroSensors();
                 mRobotState.reset();
                 mDrive.setHeading(new Rotation2d());
                 ledManager.indicateStatus(LedManager.RobotStatus.SEEN_TARGET);

@@ -34,7 +34,7 @@ public class Climber extends Subsystem {
         outputsChanged = true;
     }
 
-    public boolean getDeployed(){
+    public boolean getDeployed() {
         return isDeployed;
     }
 
