@@ -74,7 +74,7 @@ public class SwerveDriveTest {
         mDrive.setTeleopInputs(1, 0, 1, false, false);
         mDrive.writePeriodicOutputs();
         mDrive.readPeriodicInputs();
-        verifyStates(mDrive.getStates());
+        verifyStates(mDrive.getStates(), maxVel, 0, maxRotVel);
     }
 
     @Test
@@ -82,7 +82,7 @@ public class SwerveDriveTest {
         mDrive.setTeleopInputs(0, 1, 1, false, false);
         mDrive.writePeriodicOutputs();
         mDrive.readPeriodicInputs();
-        verifyStates(mDrive.getStates());
+        verifyStates(mDrive.getStates(), 0, maxVel, maxRotVel);
     }
 
     @Test
@@ -90,7 +90,7 @@ public class SwerveDriveTest {
         mDrive.setTeleopInputs(1, 0, 0, false, false);
         mDrive.writePeriodicOutputs();
         mDrive.readPeriodicInputs();
-        verifyStates(mDrive.getStates());
+        verifyStates(mDrive.getStates(), maxVel, 0, 0);
     }
 
     @Test
@@ -98,11 +98,21 @@ public class SwerveDriveTest {
         mDrive.setTeleopInputs(0, 1, 0, false, false);
         mDrive.writePeriodicOutputs();
         mDrive.readPeriodicInputs();
-        verifyStates(mDrive.getStates());
+        verifyStates(mDrive.getStates(), 0, maxVel, maxRotVel);
     }
 
-    public void verifyStates(SwerveModuleState[] states) {
-        var expected = getExpectedState(maxVel, 0, maxRotVel, Constants.EmptyRotation);
+    public void verifyStates(
+        SwerveModuleState[] states,
+        double vxMetersPerSecond,
+        double vyMetersPerSecond,
+        double omegaRadiansPerSecond
+    ) {
+        var expected = getExpectedState(
+            vxMetersPerSecond,
+            vyMetersPerSecond,
+            omegaRadiansPerSecond,
+            Constants.EmptyRotation
+        );
         for (int i = 0; i < states.length; i++) {
             assertEquals(
                 expected[i].speedMetersPerSecond,
