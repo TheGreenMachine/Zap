@@ -73,7 +73,7 @@ public class DriveConversions {
     public static double ticksPerSecondToMetersPer100ms(double ticks_per_second) {
         return (
             (Units.metersToInches(ticksPerSecondToInchesPer100ms(ticks_per_second))) /
-                4096
+            4096
         );
     }
 

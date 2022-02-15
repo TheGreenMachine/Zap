@@ -23,7 +23,7 @@ import java.util.List;
 @Singleton
 public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider {
 
-    private static final String NAME = "drivetrain";
+    public static final String NAME = "drivetrain";
 
     public SwerveModule[] swerveModules;
 
@@ -65,14 +65,17 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         if (RobotBase.isSimulation()) {
             // calculate rotation with gyro drift
             gyroDrift -= 0;
-            mPeriodicIO.gyro_heading_no_offset = getDesiredRotation2d().rotateBy(Rotation2d.fromDegrees(gyroDrift));
+            mPeriodicIO.gyro_heading_no_offset =
+                getDesiredRotation2d().rotateBy(Rotation2d.fromDegrees(gyroDrift));
 
             // Probably only necessary in simulation - use of Constants.kLooperDt still likely wrong b/c only allows ~1 rad/sec max chassis rotation?
             mPeriodicIO.totalRotation +=
-                mPeriodicIO.rotation * Constants.kMaxAngularSpeed * Constants.kLooperDt ;
+                mPeriodicIO.rotation * Constants.kMaxAngularSpeed * Constants.kLooperDt;
 
             mPeriodicIO.gyro_heading_no_offset =
-                mPeriodicIO.gyro_heading_no_offset.rotateBy(new Rotation2d(mPeriodicIO.totalRotation));
+                mPeriodicIO.gyro_heading_no_offset.rotateBy(
+                    new Rotation2d(mPeriodicIO.totalRotation)
+                );
         } else {
             mPeriodicIO.gyro_heading_no_offset =
                 Rotation2d.fromDegrees(mPigeon.getFusedHeading());
@@ -82,7 +85,12 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         for (SwerveModule module : swerveModules) {
             module.readPeriodicInputs();
         }
-        swerveOdometry.update(mPeriodicIO.gyro_heading, getStates());
+        SwerveModuleState[] states = new SwerveModuleState[4];
+        for (int i = 0; i < 4; i++) {
+            states[i] = swerveModules[i].getState();
+        }
+        mPeriodicIO.actualModuleStates = states;
+        swerveOdometry.update(mPeriodicIO.gyro_heading, states);
         updateRobotPose();
     }
 
@@ -90,7 +98,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     public synchronized void writePeriodicOutputs() {
         if (mDriveControlState == DriveControlState.OPEN_LOOP) {
             var speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                mPeriodicIO.forward * Units.inchesToMeters(Constants.kPathFollowingMaxVel),
+                mPeriodicIO.forward *
+                Units.inchesToMeters(Constants.kPathFollowingMaxVel),
                 mPeriodicIO.strafe * Units.inchesToMeters(Constants.kPathFollowingMaxVel),
                 mPeriodicIO.rotation * (Constants.kMaxAngularSpeed),
                 Constants.EmptyRotation // ignore gyro
@@ -157,8 +166,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
         if (
             getTrajectoryTimestamp() >
-                mTrajectory.getStates().get(mTrajectoryIndex).timeSeconds ||
-                mTrajectoryIndex == 0
+            mTrajectory.getStates().get(mTrajectoryIndex).timeSeconds ||
+            mTrajectoryIndex == 0
         ) mTrajectoryIndex++;
         if (mTrajectoryIndex >= mHeadings.size()) {
             System.out.println(mHeadings.get(mHeadings.size() - 1) + " = max");
@@ -167,7 +176,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         double timeBetweenPoints =
             (
                 mTrajectory.getStates().get(mTrajectoryIndex).timeSeconds -
-                    mTrajectory.getStates().get(mTrajectoryIndex - 1).timeSeconds
+                mTrajectory.getStates().get(mTrajectoryIndex - 1).timeSeconds
             );
         Rotation2d heading;
         heading =
@@ -177,8 +186,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                     mHeadings.get(mTrajectoryIndex),
                     getTrajectoryTimestamp() / timeBetweenPoints
                 );
-//        System.out.println(heading.getDegrees() + "aaaaa");
-//        mPeriodicIO.totalRotation = heading.getRadians();
+        //        System.out.println(heading.getDegrees() + "aaaaa");
+        //        mPeriodicIO.totalRotation = heading.getRadians();
         return heading;
     }
 
@@ -243,11 +252,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     public SwerveModuleState[] getStates() {
-        SwerveModuleState[] states = new SwerveModuleState[4];
-        for (int i = 0; i < 4; i++) {
-            states[i] = swerveModules[i].getState();
-        }
-        return states;
+        return mPeriodicIO.actualModuleStates;
     }
 
     @Override

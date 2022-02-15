@@ -1,9 +1,9 @@
 package com.team1816.season;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.google.inject.Singleton;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.RobotFactory;
-import com.team1816.season.subsystems.Drive;
 import com.team254.lib.util.Units;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
+@Singleton
 public class Constants {
 
     private static final RobotFactory factory = Robot.getFactory();
@@ -68,9 +69,12 @@ public class Constants {
         public String kDriveMotorName = "";
         public String kAzimuthMotorName = "";
 
-        public static final int AZIMUTH_TICK_MASK = (int)factory.getConstant("drive",
+        public static final int AZIMUTH_TICK_MASK = (int) factory.getConstant(
+            "drive",
             "azimuthEncPPR",
-            4096) - 1;
+            4096
+        ) -
+        1;
         public static final double AZIMUTH_ADJUSTMENT_OFFSET_DEGREES = factory.getConstant(
             "drive",
             "azimuthHomeAdjustmentDegrees",
@@ -190,7 +194,7 @@ public class Constants {
     public static double kCameraFrameRate = 30;
     public static final double kPathFollowingMaxAccel = factory.getConstant("maxAccel");
     public static final double kPathFollowingMaxVel = factory.getConstant("maxVel");
-    public static final double kMaxVel = 300; // inches per second
+    public static double kMaxVel = 300; // inches per second
     public static final double kTicksPerRevolution = 4096;
 
     // Trajectory Generator constants
@@ -224,7 +228,7 @@ public class Constants {
     public static final double kPXController = 1;
     public static final double kPYController = 1;
     public static final double kPThetaController = 1.0;
-    public static final double kMaxAngularSpeed = 2 * Math.PI; // rad/sec
+    public static double kMaxAngularSpeed = factory.getConstant("maxRotVel"); // rad/sec
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
     // Constraint for the motion profilied robot angle controller

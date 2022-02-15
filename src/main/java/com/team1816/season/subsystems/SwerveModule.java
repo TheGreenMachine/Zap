@@ -6,7 +6,6 @@ import static com.team1816.season.subsystems.SwerveModule.ControlState.OPEN_LOOP
 import static com.team1816.season.subsystems.SwerveModule.ControlState.VELOCITY;
 
 import com.ctre.phoenix.motorcontrol.*;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.team1816.lib.loops.ILooper;
@@ -14,7 +13,6 @@ import com.team1816.lib.loops.Loop;
 import com.team1816.lib.math.DriveConversions;
 import com.team1816.lib.subsystems.ISwerveModule;
 import com.team1816.lib.subsystems.Subsystem;
-import com.team1816.lib.util.ModuleState;
 import com.team1816.season.Constants;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -132,7 +130,10 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
     @Override
     public void readPeriodicInputs() {
         mPeriodicIO.velocity_ticks_per_100ms = mDriveMotor.getSelectedSensorVelocity(0);
-        mPeriodicIO.azimuth_actual_degrees = DriveConversions.convertTicksToDegrees(mAzimuthMotor.getSelectedSensorPosition(0));
+        mPeriodicIO.azimuth_actual_degrees =
+            DriveConversions.convertTicksToDegrees(
+                mAzimuthMotor.getSelectedSensorPosition(0)
+            );
     }
 
     @Override
@@ -144,13 +145,18 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
             mDriveMotor.set(ControlMode.PercentOutput, mPeriodicIO.drive_demand);
         }
 
-        double position = DriveConversions.convertDegreesToTicks(mPeriodicIO.azimuth_position.getDegrees());
-        mAzimuthMotor.set(ControlMode.Position, position + mConstants.kAzimuthEncoderHomeOffset);
+        double position = DriveConversions.convertDegreesToTicks(
+            mPeriodicIO.azimuth_position.getDegrees()
+        );
+        mAzimuthMotor.set(
+            ControlMode.Position,
+            position + mConstants.kAzimuthEncoderHomeOffset
+        );
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
         mControlState = isOpenLoop ? OPEN_LOOP : VELOCITY;
-        mPeriodicIO.desired_state =  desiredState ;// ModuleState.optimize(desiredState, getState().angle); // here
+        mPeriodicIO.desired_state = desiredState; // ModuleState.optimize(desiredState, getState().angle); // here
         if (mControlState == VELOCITY) {
             mPeriodicIO.drive_demand =
                 metersPerSecondToTicksPer100ms(
@@ -161,9 +167,8 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
                 mPeriodicIO.desired_state.speedMetersPerSecond /
                 Units.inchesToMeters(Constants.kPathFollowingMaxVel); // driveDemand now percent output
         }
-        mPeriodicIO.azimuth_position =  Rotation2d.fromDegrees(
-            mPeriodicIO.desired_state.angle.getDegrees()
-        );
+        mPeriodicIO.azimuth_position =
+            Rotation2d.fromDegrees(mPeriodicIO.desired_state.angle.getDegrees());
     }
 
     public SwerveModuleState getState() {
@@ -171,7 +176,8 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
             (mPeriodicIO.velocity_ticks_per_100ms * 10 / DRIVE_ENCODER_PPR) *
             Constants.kWheelCircumferenceMeters; // proper conversion?
         Rotation2d angle = Rotation2d.fromDegrees(
-            mPeriodicIO.azimuth_actual_degrees - DriveConversions.convertTicksToDegrees(mConstants.kAzimuthEncoderHomeOffset)
+            mPeriodicIO.azimuth_actual_degrees -
+            DriveConversions.convertTicksToDegrees(mConstants.kAzimuthEncoderHomeOffset)
         );
         return new SwerveModuleState(velocity, angle);
     }

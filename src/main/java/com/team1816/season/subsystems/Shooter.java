@@ -6,12 +6,12 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.team1816.season.Constants;
 import com.team1816.lib.hardware.EnhancedMotorChecker;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
+import com.team1816.season.Constants;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -24,8 +24,10 @@ public class Shooter extends Subsystem implements PidProvider {
     // Components
     private final IMotorControllerEnhanced shooterMain;
     private final IMotorControllerEnhanced shooterFollower;
+
     @Inject
     private static LedManager ledManager;
+
     private final ISolenoid hood;
     // State
     private boolean outputsChanged;
@@ -50,6 +52,7 @@ public class Shooter extends Subsystem implements PidProvider {
     );
 
     private SendableChooser<Integer> velocityChooser = new SendableChooser<>();
+
     @Inject
     private static DistanceManager distanceManager;
 
