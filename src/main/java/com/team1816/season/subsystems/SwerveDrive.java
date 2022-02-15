@@ -47,9 +47,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         swerveModules[Constants.Swerve.kBackRight] =
             factory.getSwerveModule(NAME, "backRight");
 
-        //        mPigeon = new PigeonIMU((int) factory.getConstant(NAME, "pigeonId", -1));
-        //        mPigeon.configFactoryDefault();
-
         setOpenLoop(SwerveDriveSignal.NEUTRAL);
 
         // force a CAN message across
@@ -77,6 +74,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             mPeriodicIO.gyro_heading_no_offset =
                 Rotation2d.fromDegrees(mPigeon.getFusedHeading());
         }
+
         mPeriodicIO.gyro_heading =
             mPeriodicIO.gyro_heading_no_offset.rotateBy(mGyroOffset);
         for (SwerveModule module : swerveModules) {
@@ -93,7 +91,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             SwerveModuleState[] swerveModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
                 ChassisSpeeds.fromFieldRelativeSpeeds(
                     mPeriodicIO.forward * Units.inchesToMeters(Constants.kPathFollowingMaxVel),
-                    mPeriodicIO.strafe * Units.inchesToMeters(Constants.kPathFollowingMaxVel),
+                    mPeriodicIO.strafe * Units.inchesToMeters(Constants.kPathFollowingMaxVel), // for some reason this method negates y but not x!
                     mPeriodicIO.rotation * (Constants.kMaxAngularSpeed),
                     getHeading()
                 )
@@ -103,7 +101,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 Units.inchesToMeters(Constants.kPathFollowingMaxVel)
             ); // TODO get swerve max speed in meters/s
             for (int i = 0; i < 4; i++) {
-                System.out.println(swerveModuleStates[i].angle.getDegrees() + " = swerve mod angle degrees");
                 swerveModules[i].setDesiredState(swerveModuleStates[i], true);
             }
         }
@@ -134,8 +131,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     public void updateTrajectoryVelocities(Double aDouble, Double aDouble1) {}
 
     /* Used by SwerveControllerCommand in Auto */
+    @Override
     public void setModuleStates(SwerveModuleState[] desiredStates) {
-        mDriveControlState = DriveControlState.TRAJECTORY_FOLLOWING;
         SwerveDriveKinematics.desaturateWheelSpeeds(
             desiredStates,
             Units.inchesToMeters(Constants.kPathFollowingMaxVel)

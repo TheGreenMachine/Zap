@@ -56,7 +56,7 @@ public abstract class Drive
     // hardware states
     protected String pidSlot = "slot0";
     protected boolean mIsBrakeMode;
-    protected Rotation2d mGyroOffset = new Rotation2d();
+    protected Rotation2d mGyroOffset = Constants.EmptyRotation;
 
     protected PeriodicIO mPeriodicIO;
     protected boolean mOverrideTrajectory = false;
