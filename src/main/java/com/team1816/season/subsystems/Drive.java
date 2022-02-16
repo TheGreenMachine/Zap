@@ -102,12 +102,15 @@ public abstract class Drive
         double left_error;
         double right_error;
 
+        // SWERVE IMPUTS
+        public SwerveModuleState[] actualModuleStates;
+
+
         // SWERVE OUTPUTS
         public double forward;
         public double strafe;
         public double rotation;
         public double totalRotation;
-        public SwerveModuleState[] actualModuleStates;
 
         // OUTPUTS
         public double left_demand;
