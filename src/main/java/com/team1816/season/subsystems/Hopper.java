@@ -11,6 +11,9 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 @Singleton
 public class Hopper extends Subsystem {
+    // from what I understand, we want to make the elevator use velocity control
+    // and also be in tandem with the shooter (w/ distance manager) so that depending on the shot distance,
+    // the elevator will be given a wee bit more or less umph
 
     private static final String NAME = "hopper";
 
