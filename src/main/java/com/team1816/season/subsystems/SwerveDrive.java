@@ -82,9 +82,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
         mPeriodicIO.gyro_heading =
             mPeriodicIO.gyro_heading_no_offset.rotateBy(mGyroOffset);
-        for (SwerveModule module : swerveModules) {
-            module.readPeriodicInputs();
-        }
         SwerveModuleState[] states = new SwerveModuleState[4];
         for (int i = 0; i < 4; i++) {
             states[i] = swerveModules[i].getState();
@@ -115,9 +112,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             for (int i = 0; i < 4; i++) {
                 swerveModules[i].setDesiredState(swerveModuleStates[i], true);
             }
-        }
-        for (int i = 0; i < 4; i++) {
-            swerveModules[i].writePeriodicOutputs();
         }
     }
 
