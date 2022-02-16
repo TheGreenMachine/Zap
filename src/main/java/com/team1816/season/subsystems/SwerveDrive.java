@@ -2,6 +2,7 @@ package com.team1816.season.subsystems;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.team1816.lib.math.DriveConversions;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.SwerveDrivetrain;
 import com.team1816.season.AutoModeSelector;
@@ -88,6 +89,10 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         for (int i = 0; i < 4; i++) {
             states[i] = swerveModules[i].getState();
         }
+
+//        System.out.println("READ PERIODIC INPUTS: LINE 92 " +
+//            ((int)DriveConversions.inchesPerSecondToTicksPer100ms(factory.getConstant("maxVel").intValue())));
+//        System.out.println(factory.getConstant("maxTicks"));
 
         mPeriodicIO.actualModuleStates = states;
         swerveOdometry.update(mPeriodicIO.gyro_heading, states);
@@ -210,7 +215,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 Units.inchesToMeters(Constants.kPathFollowingMaxVel), // test this out  -
             strafe * Units.inchesToMeters(Constants.kPathFollowingMaxVel),
             rotation * (Constants.kMaxAngularSpeed),
-            Constants.EmptyRotation // ignore gyro
+            getHeading() // ignore gyro
         );
         System.out.println("Set TeleopInputs " + speeds);
         mPeriodicIO.desiredModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
