@@ -14,16 +14,12 @@ public class DriveConversions {
     private static final double DRIVE_ENCODER_PPR = Drive.DRIVE_ENCODER_PPR;
 
     // make the degree stuff to ticks/radians/ whatnot come into here instead of being spread out everywhere
-    public static double convertTicksToInches(double ticks) {
-        return ticks / ticksPerRevolution * wheelCircumferenceInches * Math.PI;
+    public static double convertTicksToMeters(double ticks) {
+        return ticks / DRIVE_ENCODER_PPR * Constants.kWheelCircumferenceMeters;
     }
 
     public static double convertInchesToTicks(double inches) {
         return inches / Math.PI * ticksPerRevolution / wheelCircumferenceInches;
-    }
-
-    public static double convertTicksToMeters(double ticks) {
-        return Units.inchesToMeters(convertTicksToInches(ticks));
     }
 
     public static double convertMetersToTicks(double meters) {
@@ -55,7 +51,7 @@ public class DriveConversions {
     }
 
     public static double rotationsToInches(double rotations) {
-        return rotations * (Constants.kDriveWheelDiameterInches * Math.PI);
+        return rotations * (Constants.kWheelCircumferenceInches);
     }
 
     public static double rpmToInchesPerSecond(double rpm) {
@@ -72,8 +68,7 @@ public class DriveConversions {
 
     public static double ticksPerSecondToMetersPer100ms(double ticks_per_second) {
         return (
-            (Units.metersToInches(ticksPerSecondToInchesPer100ms(ticks_per_second))) /
-            4096
+            (Units.inchesToMeters(ticksPerSecondToInchesPer100ms(ticks_per_second)))
         );
     }
 
@@ -82,7 +77,7 @@ public class DriveConversions {
     }
 
     public static double ticksPerSecondToInchesPer100ms(double ticks_per_second) {
-        return rotationsToInches(ticks_per_second / DRIVE_ENCODER_PPR * 10.0);
+        return rotationsToInches(ticks_per_second / DRIVE_ENCODER_PPR) / 10.0;
     }
 
     public static double radiansPerSecondToTicksPer100ms(double rad_s) {

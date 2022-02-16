@@ -84,7 +84,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
         mPeriodicIO.gyro_heading =
             mPeriodicIO.gyro_heading_no_offset.rotateBy(mGyroOffset);
-        SwerveModuleState[] states = new SwerveModuleState[4];
+        SwerveModuleState[] states = new SwerveModuleState[4]; // why do we create 4 new states in ever single loop through the readPeriodic?
         for (int i = 0; i < 4; i++) {
             states[i] = swerveModules[i].getState();
         }
@@ -205,19 +205,17 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         mPeriodicIO.rotation = rotation;
         mPeriodicIO.use_heading_controller = use_heading_controller;
 
-        if (mDriveControlState == DriveControlState.OPEN_LOOP) {
-            var speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                forward *
-                    Units.inchesToMeters(Constants.kPathFollowingMaxVel),
-                strafe * Units.inchesToMeters(Constants.kPathFollowingMaxVel),
-                rotation * (Constants.kMaxAngularSpeed),
-                Constants.EmptyRotation // ignore gyro
-            );
-            System.out.println("Set TeleopInputs " + speeds);
-            mPeriodicIO.desiredModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
-                speeds
-            );
-        }
+        var speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+            forward *
+                Units.inchesToMeters(Constants.kPathFollowingMaxVel), // test this out  -
+            strafe * Units.inchesToMeters(Constants.kPathFollowingMaxVel),
+            rotation * (Constants.kMaxAngularSpeed),
+            Constants.EmptyRotation // ignore gyro
+        );
+        System.out.println("Set TeleopInputs " + speeds);
+        mPeriodicIO.desiredModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
+            speeds
+        );
     }
 
     @Override

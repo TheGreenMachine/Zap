@@ -87,21 +87,23 @@ subsystems:
             azimuthHomeAdjustmentDegrees: 1
 pcm: 8
 constants:
-    maxTicks: 14000 # ticks per 100ms TODO test actual maxTicks value
+    maxTicks: 12275.7 # ticks per 100ms TODO make into constant unique to each subsystem
+    maxRotVel: 11.5
+    maxVel: 120 # 160 # 240 # inches/s # 22560 native units ---30
+    maxAccel: 100 # inches/s^2
     sensorPhase: 0
-    kLooperDt: .010
     kTrackScrubFactor: 1.0
     pathKs: 2
-    isSwerve: 0
     verbose: 0 # 0 or 1
+    heading_kI: 0
+    heading_kD: 0
+    heading_kF: 0
+    ## Logging ##
+    logTeleOp: 0 # 0 or 1
+    logAuto: 1 # 0 or 1
+    badLogEnabled: 1 # 0 or 1
+    ## General ##
+    teleopFieldCentric: 1 # 0 or 1
     compressorEnabled: 0 # 0 or 1
-    useAutoAim: 1
-    maxVel: 120 # inches/s
-    maxAccel: 60 # inches/s^2
-    trackWidth: 23 # inches
-    wheelbaseLength: 21.5 #inches
-    wheelDiameter: 6.122 #inches
-    logTeleOp: 1
-    logAuto: 1
-    teleopFieldCentric: 0
-    badLogEnabled: 1
+    wheelDiameter: 4
+    kLooperDt: .020 # seconds

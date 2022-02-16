@@ -102,13 +102,13 @@ public class SwerveModule implements ISwerveModule {
         if (!isOpenLoop) {
             mDriveMotor.set(ControlMode.Velocity, DriveConversions.metersPerSecondToTicksPer100ms(desiredState.speedMetersPerSecond));
         } else {
-            mDriveMotor.set(ControlMode.PercentOutput, desired_state.speedMetersPerSecond / Units.inchesToMeters(Constants.kPathFollowingMaxVel));
+            mDriveMotor.set(ControlMode.PercentOutput, desired_state.speedMetersPerSecond / Units.inchesToMeters(Constants.kPathFollowingMaxVel)); // w/out conversion, would be lying to it - speed meters per second is percent output i
         }
         mAzimuthMotor.set(ControlMode.Position, DriveConversions.convertDegreesToTicks(desired_state.angle.getDegrees()));
     }
 
     public SwerveModuleState getState() {
-        double velocity = DriveConversions.ticksPerSecondToMetersPer100ms(mDriveMotor.getSelectedSensorVelocity(0));
+        double velocity = DriveConversions.convertTicksToMeters(mDriveMotor.getSelectedSensorVelocity(0)) * 10;
         Rotation2d angle = Rotation2d.fromDegrees(DriveConversions.convertTicksToDegrees(mAzimuthMotor.getSelectedSensorPosition(0)));
         return new SwerveModuleState(velocity, angle);
     }

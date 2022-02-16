@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.sensors.*;
 import com.team1816.lib.hardware.components.*;
 import com.team1816.lib.hardware.components.pcm.*;
+import com.team1816.lib.math.DriveConversions;
 import com.team1816.season.Constants;
 import com.team1816.season.subsystems.Drive;
 import com.team1816.season.subsystems.SwerveModule;
@@ -90,7 +91,8 @@ public class RobotFactory {
             reportGhostWarning("Motor", subsystemName, name);
             motor =
                 CtreMotorFactory.createGhostTalon(
-                    config.constants.get("maxTicks").intValue()
+//                    config.constants.get("maxTicks").intValue()
+                      (int)DriveConversions.inchesPerSecondToTicksPer100ms(config.constants.get("maxVel").intValue())
                 );
         }
 
