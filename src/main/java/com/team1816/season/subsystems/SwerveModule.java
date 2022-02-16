@@ -21,7 +21,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 
-public class SwerveModule extends Subsystem implements ISwerveModule {
+public class SwerveModule implements ISwerveModule {
 
     public static class PeriodicIO {
 
@@ -69,7 +69,7 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
         Constants.Swerve constants,
         CANCoder canCoder
     ) {
-        super(constants.kName);
+
         mConstants = constants;
 
         System.out.println(
@@ -119,39 +119,6 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
 
         System.out.println("  " + this);
 
-        zeroSensors();
-    }
-
-    public Rotation2d getFieldCentricAngle(Rotation2d robotHeading) {
-        Rotation2d normalizedAngle = getAngleToDegrees();
-        return normalizedAngle.rotateBy(robotHeading);
-    }
-
-    @Override
-    public void readPeriodicInputs() {
-        mPeriodicIO.velocity_ticks_per_100ms = mDriveMotor.getSelectedSensorVelocity(0);
-        mPeriodicIO.azimuth_actual_degrees =
-            DriveConversions.convertTicksToDegrees(
-                mAzimuthMotor.getSelectedSensorPosition(0)
-            );
-    }
-
-    @Override
-    public void writePeriodicOutputs() {
-        // do not do conversions here drive_demand should already be at the value needed for the controller
-        if (mControlState != OPEN_LOOP) {
-            mDriveMotor.set(ControlMode.Velocity, mPeriodicIO.drive_demand);
-        } else {
-            mDriveMotor.set(ControlMode.PercentOutput, mPeriodicIO.drive_demand);
-        }
-
-        double position = DriveConversions.convertDegreesToTicks(
-            mPeriodicIO.azimuth_position.getDegrees()
-        );
-        mAzimuthMotor.set(
-            ControlMode.Position,
-            position + mConstants.kAzimuthEncoderHomeOffset
-        );
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
@@ -183,58 +150,8 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
     }
 
     @Override
-    public void registerEnabledLoops(ILooper mEnabledLooper) {
-        mEnabledLooper.register(
-            new Loop() {
-                @Override
-                public void onStart(double timestamp) {
-                    synchronized (SwerveModule.this) {
-                        stop();
-                    }
-                }
-
-                @Override
-                public void onLoop(double timestamp) {
-                    synchronized (SwerveModule.this) {
-                        switch (mControlState) {
-                            case OPEN_LOOP:
-                                break;
-                            case VELOCITY:
-                                break;
-                            default:
-                                System.out.println(
-                                    "Unexpected control state: " + mControlState
-                                );
-                                break;
-                        }
-                    }
-                }
-
-                @Override
-                public void onStop(double timestamp) {
-                    stop();
-                }
-            }
-        );
-    }
-
-    @Override
-    public void zeroSensors() {
-        // TODO there seems to be an easier way to zero sensors using setSelectedSensorPosition (see BaseFalconSwerve)
-        if (mAzimuthMotor instanceof TalonSRX) {
-            var sensors = ((TalonSRX) mAzimuthMotor).getSensorCollection(); // absolute position
-            sensors.setQuadraturePosition(
-                sensors.getPulseWidthPosition() & Constants.Swerve.AZIMUTH_TICK_MASK,
-                Constants.kLongCANTimeoutMs
-            );
-        }
-        mDriveMotor.setSelectedSensorPosition(0, 0, Constants.kCANTimeoutMs);
-    }
-
-    @Override
-    public void stop() {
-        mDriveMotor.set(ControlMode.PercentOutput, 0.0);
-        mAzimuthMotor.set(ControlMode.Velocity, 0);
+    public String getSubsystemName() {
+        return null;
     }
 
     @Override
@@ -301,44 +218,6 @@ public class SwerveModule extends Subsystem implements ISwerveModule {
     public synchronized void setDriveBrakeMode(boolean brake_mode) {
         mDriveMotor.setNeutralMode(brake_mode ? NeutralMode.Brake : NeutralMode.Coast);
         isBrakeMode = brake_mode;
-    }
-
-    @Override
-    public boolean checkSystem() {
-        // boolean driveMotorPassed = EnhancedMotorChecker.checkMotors(
-        //     this,
-        //     EnhancedMotorChecker.CheckerConfig.getForSubsystemMotor(this, mDriveMotor),
-        //     new EnhancedMotorChecker.NamedMotor(mConstants.kDriveMotorName, mDriveMotor)
-        // );
-        // boolean azimuthMotorPassed = EnhancedMotorChecker.checkMotors(
-        //     this,
-        //     EnhancedMotorChecker.CheckerConfig.getForSubsystemMotor(this, mAzimuthMotor),
-        //     new EnhancedMotorChecker.NamedMotor(
-        //         mConstants.kAzimuthMotorName,
-        //         mAzimuthMotor
-        //     )
-        // );
-        zeroSensors();
-        mAzimuthMotor.set(ControlMode.Position, mConstants.kAzimuthEncoderHomeOffset);
-        Timer.delay(1);
-        mAzimuthMotor.set(
-            ControlMode.Position,
-            radiansToEncoderUnits(Math.PI) + mConstants.kAzimuthEncoderHomeOffset
-        );
-        Timer.delay(1);
-        mAzimuthMotor.set(
-            ControlMode.Position,
-            radiansToEncoderUnits(Math.PI / 2.0) + mConstants.kAzimuthEncoderHomeOffset
-        );
-        Timer.delay(1);
-        mAzimuthMotor.set(
-            ControlMode.Position,
-            radiansToEncoderUnits(-Math.PI / 2.0) + mConstants.kAzimuthEncoderHomeOffset
-        );
-        Timer.delay(1);
-        zeroSensors();
-        return true; // TODO actually make this method check the system
-        // return driveMotorPassed && azimuthMotorPassed;
     }
 
     @Override
