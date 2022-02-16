@@ -85,11 +85,6 @@ public class Constants {
         public static double driveKV = 1; //TODO: PUT VALUES
         public static double driveKA = 1; //TODO: PUT VALUES
 
-        public static final int kFrontLeft = 0;
-        public static final int kFrontRight = 1;
-        public static final int kBackRight = 2;
-        public static final int kBackLeft = 3;
-
         // general azimuth
         public boolean kInvertAzimuth = false;
         public boolean kInvertAzimuthSensorPhase = false;
@@ -137,7 +132,13 @@ public class Constants {
             kBackLeftModulePosition,
             kBackRightModulePosition
         );
+
+        public static final int kFrontLeft = 0;
+        public static final int kFrontRight = 1;
+        public static final int kBackLeft = 2;
+        public static final int kBackRight = 3;
     }
+
 
     // Swerve Heading Controller -- CHEESY Constants
     public static final double kSwerveHeadingControllerErrorTolerance = 1.0; // degrees
@@ -193,7 +194,7 @@ public class Constants {
     public static final double kPathStopSteeringDistance = 12.0;
     public static double kCameraFrameRate = 30;
     public static final double kPathFollowingMaxAccel = factory.getConstant("maxAccel");
-    public static final double kPathFollowingMaxVel = factory.getConstant("maxVel");
+    public static double kPathFollowingMaxVel = factory.getConstant("maxVel");
     public static double kMaxVel = 300; // inches per second
     public static final double kTicksPerRevolution = 4096;
 
