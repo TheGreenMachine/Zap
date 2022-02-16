@@ -108,6 +108,7 @@ public abstract class Drive
         public double rotation;
         public double totalRotation;
         public SwerveModuleState[] actualModuleStates;
+        public SwerveModuleState[] desiredModuleStates;
 
         // OUTPUTS
         public double left_demand;

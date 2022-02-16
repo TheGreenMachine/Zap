@@ -73,7 +73,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 mPeriodicIO.rotation * Constants.kMaxAngularSpeed * Constants.kLooperDt;
 
             mPeriodicIO.gyro_heading_no_offset =
-                mPeriodicIO.gyro_heading_no_offset.rotateBy(
+                (
                     new Rotation2d(mPeriodicIO.totalRotation)
                 );
         } else {
@@ -96,25 +96,12 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     @Override
     public synchronized void writePeriodicOutputs() {
-        if (mDriveControlState == DriveControlState.OPEN_LOOP) {
-            var speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                mPeriodicIO.forward *
-                Units.inchesToMeters(Constants.kPathFollowingMaxVel),
-                mPeriodicIO.strafe * Units.inchesToMeters(Constants.kPathFollowingMaxVel),
-                mPeriodicIO.rotation * (Constants.kMaxAngularSpeed),
-                Constants.EmptyRotation // ignore gyro
-            );
-            SwerveModuleState[] swerveModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
-                speeds
-            );
-            System.out.println("writePeriodicOutputs " + speeds);
-            SwerveDriveKinematics.desaturateWheelSpeeds(
-                swerveModuleStates,
-                Units.inchesToMeters(Constants.kPathFollowingMaxVel)
-            ); // TODO get swerve max speed in meters/s
-            for (int i = 0; i < 4; i++) {
-                swerveModules[i].setDesiredState(swerveModuleStates[i], true);
-            }
+        SwerveDriveKinematics.desaturateWheelSpeeds(
+            mPeriodicIO.desiredModuleStates,
+            Units.inchesToMeters(Constants.kPathFollowingMaxVel)
+        ); // TODO get swerve max speed in meters/s
+        for (int i = 0; i < 4; i++) {
+            swerveModules[i].setDesiredState(mPeriodicIO.desiredModuleStates[i], true);
         }
         for (int i = 0; i < 4; i++) {
             swerveModules[i].writePeriodicOutputs();
@@ -229,12 +216,22 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         if (mDriveControlState != DriveControlState.OPEN_LOOP) {
             mDriveControlState = DriveControlState.OPEN_LOOP;
         }
-
-        mPeriodicIO.forward = forward;
-        mPeriodicIO.strafe = strafe;
         mPeriodicIO.rotation = rotation;
-        mPeriodicIO.low_power = low_power;
         mPeriodicIO.use_heading_controller = use_heading_controller;
+
+        if (mDriveControlState == DriveControlState.OPEN_LOOP) {
+            var speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+                forward *
+                    Units.inchesToMeters(Constants.kPathFollowingMaxVel),
+                strafe * Units.inchesToMeters(Constants.kPathFollowingMaxVel),
+                rotation * (Constants.kMaxAngularSpeed),
+                Constants.EmptyRotation // ignore gyro
+            );
+            System.out.println("Set TeleopInputs " + speeds);
+            mPeriodicIO.desiredModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
+                speeds
+            );
+        }
     }
 
     @Override
