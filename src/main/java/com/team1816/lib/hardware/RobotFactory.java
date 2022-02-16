@@ -92,7 +92,7 @@ public class RobotFactory {
             motor =
                 CtreMotorFactory.createGhostTalon(
 //                    config.constants.get("maxTicks").intValue()
-                      (int)DriveConversions.inchesPerSecondToTicksPer100ms(config.constants.get("maxVel").intValue())
+                      (int)DriveConversions.inchesPerSecondToTicksPer100ms(Constants.kPathFollowingMaxVel)
                 );
         }
 
