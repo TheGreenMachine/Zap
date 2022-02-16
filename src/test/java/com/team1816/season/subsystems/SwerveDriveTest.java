@@ -6,10 +6,12 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.team1816.lib.LibModule;
 import com.team1816.lib.hardware.RobotFactory;
+import com.team1816.lib.math.DriveConversions;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
 import com.team1816.season.RobotState;
 import com.team1816.season.SeasonModule;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -25,7 +27,7 @@ public class SwerveDriveTest {
     private final RobotFactory mockFactory;
     private final RobotState state;
     private SwerveDrive mDrive;
-    private double maxVel = 100; //  in per sec to match yaml we need to convert to metric in constants class;
+    private double maxVel = Constants.kPathFollowingMaxVel; //  in per sec to match yaml we need to convert to metric in constants class;
     private double maxRotVel = 2 * Math.PI; // rad per sec;
 
     public SwerveDriveTest() {

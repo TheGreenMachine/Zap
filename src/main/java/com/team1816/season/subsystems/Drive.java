@@ -111,6 +111,7 @@ public abstract class Drive
         public double strafe;
         public double rotation;
         public double totalRotation;
+        public SwerveModuleState[] desiredModuleStates;
 
         // OUTPUTS
         public double left_demand;

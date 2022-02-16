@@ -115,7 +115,7 @@ public class SwerveModule implements ISwerveModule {
 
     @Override
     public String getSubsystemName() {
-        return null;
+        return "drivetrain";
     }
 
     @Override
