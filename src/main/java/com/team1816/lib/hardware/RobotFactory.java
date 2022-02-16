@@ -13,6 +13,7 @@ import com.team1816.season.subsystems.SwerveModule;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotBase;
+
 import java.util.Map;
 import javax.annotation.Nonnull;
 
@@ -85,20 +86,34 @@ public class RobotFactory {
                         pidConfigs,
                         remoteSensorId
                     );
-            } // Never make the victor a master
+            } else if(
+                subsystem.sparkmaxes != null && isHardwareValid(subsystem.sparkmaxes.get(name))
+            ) {
+                motor =
+                    RevMotorFactory.createDefaultSpark(
+                        subsystem.sparkmaxes.get(name),
+                        name,
+                        true,
+                        subsystem,
+                        pidConfigs,
+                        remoteSensorId
+                    );
+            }
+
+            // Never make the victor a master
         }
         if (motor == null) {
             reportGhostWarning("Motor", subsystemName, name);
             motor =
                 CtreMotorFactory.createGhostTalon(
 //                    config.constants.get("maxTicks").intValue()
-                      (int)DriveConversions.inchesPerSecondToTicksPer100ms(config.constants.get("maxVel").intValue())
+                      (int)DriveConversions.inchesPerSecondToTicksPer100ms(Constants.kPathFollowingMaxVel)
                 );
         }
 
         var motorId = motor.getDeviceID();
 
-        //no need to invert of print if ghosted
+        //no need to invert of print if ghosted - this is done in both here and CTREMotorFactory - why?
         if (motorId >= 0) {
             // Motor configuration
             if (subsystem.implemented && subsystem.invertMotor.contains(name)) {

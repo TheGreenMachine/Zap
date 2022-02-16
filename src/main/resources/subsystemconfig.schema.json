@@ -25,6 +25,9 @@
         "victors": {
             "$ref": "int.map.schema.json"
         },
+        "sparkmaxes": {
+            "$ref": "int.map.schema.json"
+        },
         "canCoders": {
             "$ref": "int.map.schema.json"
         },

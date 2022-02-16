@@ -103,15 +103,11 @@ public abstract class Drive
         double right_error;
 
         // SWERVE IMPUTS
-        public SwerveModuleState[] actualModuleStates;
+        public SwerveModuleState[] actualModuleStates = new SwerveModuleState[4];
 
 
         // SWERVE OUTPUTS
-        public double forward;
-        public double strafe;
-        public double rotation;
-        public double totalRotation;
-        public SwerveModuleState[] desiredModuleStates;
+        public SwerveModuleState[] desiredModuleStates = new SwerveModuleState[4];
 
         // OUTPUTS
         public double left_demand;
@@ -227,6 +223,10 @@ public abstract class Drive
         System.out.println("gyro offset: " + mGyroOffset.getDegrees());
 
         mPeriodicIO.desired_heading = heading;
+    }
+
+    public void setControlState(DriveControlState driveControlState){
+        mDriveControlState = driveControlState;
     }
 
     public void setSlowMode(boolean slowMode) {

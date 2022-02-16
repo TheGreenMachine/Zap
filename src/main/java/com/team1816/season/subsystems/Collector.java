@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.Timer;
 
 @Singleton
 public class Collector extends Subsystem {
+    // the main reason we're messing with spark motors in the factory is to use a neo motor on our collector.
+    // this means we'll be making a spark controller here (which probably means no calling IMotorControllerEnhanced?)
 
     private static final String NAME = "collector";
 
