@@ -4,10 +4,7 @@ import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
 import com.ctre.phoenix.sensors.*;
-import com.team1816.lib.hardware.components.motor.GhostMotorControllerEnhanced;
-import com.team1816.lib.hardware.components.motor.IConfigurableMotorController;
-import com.team1816.lib.hardware.components.motor.LazyTalonFX;
-import com.team1816.lib.hardware.components.motor.LazyTalonSRX;
+import com.team1816.lib.hardware.components.motor.*;
 import edu.wpi.first.wpilibj.RobotBase;
 import java.util.*;
 

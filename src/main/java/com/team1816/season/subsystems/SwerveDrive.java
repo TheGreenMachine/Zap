@@ -62,12 +62,14 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     @Override
     public synchronized void writePeriodicOutputs() {
-        SwerveDriveKinematics.desaturateWheelSpeeds(
-            mPeriodicIO.desiredModuleStates,
-            Units.inchesToMeters(Constants.kPathFollowingMaxVel)
-        ); // TODO get swerve max speed in meters/s
-        for (int i = 0; i < 4; i++) {
-            swerveModules[i].setDesiredState(mPeriodicIO.desiredModuleStates[i], true);
+        if(mDriveControlState == DriveControlState.OPEN_LOOP){ // autonomous (Trajectory_Following) loop is in setModuleStates
+            SwerveDriveKinematics.desaturateWheelSpeeds(
+                mPeriodicIO.desiredModuleStates,
+                Units.inchesToMeters(Constants.kPathFollowingMaxVel)
+            ); // TODO get swerve max speed in meters/s
+            for (int i = 0; i < 4; i++) {
+                swerveModules[i].setDesiredState(mPeriodicIO.desiredModuleStates[i], true);
+            }
         }
     }
 
@@ -105,7 +107,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             trajectory.getInitialPose(),
             trajectory.getInitialPose().getRotation()
         );
-        mPeriodicIO.totalRotation = getPose().getRotation().getRadians(); //this needs ot get updated to whatever the current heading of swerve is in autonomous
         updateRobotPose();
         mDriveControlState = DriveControlState.TRAJECTORY_FOLLOWING;
         setBrakeMode(true);
@@ -117,12 +118,14 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     /* Used by SwerveControllerCommand in Auto */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
-        mDriveControlState = DriveControlState.TRAJECTORY_FOLLOWING;
+        if(mDriveControlState != DriveControlState.TRAJECTORY_FOLLOWING){
+            mDriveControlState = DriveControlState.TRAJECTORY_FOLLOWING;
+        }
         SwerveDriveKinematics.desaturateWheelSpeeds(
             desiredStates,
             Units.inchesToMeters(Constants.kPathFollowingMaxVel)
         );
-
+        mPeriodicIO.desiredModuleStates = desiredStates;
         for (int i = 0; i < 4; i++) {
             swerveModules[i].setDesiredState(desiredStates[i], false);
         }
@@ -187,6 +190,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             mDriveControlState = DriveControlState.OPEN_LOOP;
             for (int i = 0; i < 4; i++) {
                 swerveModules[i].setDesiredState(new SwerveModuleState(), true);
+                mPeriodicIO.desiredModuleStates[i] = new SwerveModuleState();
+                mPeriodicIO.actualModuleStates[i] = new SwerveModuleState();
             }
         }
     }
@@ -202,7 +207,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         if (mDriveControlState != DriveControlState.OPEN_LOOP) {
             mDriveControlState = DriveControlState.OPEN_LOOP;
         }
-        mPeriodicIO.rotation = rotation;
         mPeriodicIO.use_heading_controller = use_heading_controller;
 
         var speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -210,7 +214,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 Units.inchesToMeters(Constants.kPathFollowingMaxVel), // test this out  -
             strafe * Units.inchesToMeters(Constants.kPathFollowingMaxVel),
             rotation * (Constants.kMaxAngularSpeed),
-            Constants.EmptyRotation // ignore gyro
+            mPeriodicIO.gyro_heading // ignore gyro
         );
         System.out.println("Set TeleopInputs " + speeds);
         mPeriodicIO.desiredModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
@@ -289,9 +293,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         resetPigeon();
         setHeading(pose.getRotation());
         resetOdometry(pose);
-        for (SwerveModule module : swerveModules) {
-            module.setDesiredState(new SwerveModuleState(), true);
-        }
         mRobotState.field.setRobotPose(Constants.StartingPose);
         //        if (mPigeon.getLastError() != ErrorCode.OK) {
         //            // BadLog.createValue("PigeonErrorDetected", "true");
