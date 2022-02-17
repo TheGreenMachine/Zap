@@ -23,10 +23,10 @@ public class Constants {
 
     // Drivetrain characterization
     public static final double kDriveWheelTrackWidthInches = factory.getConstant(
-        "trackWidth"
+        "trackWidth", 22
     );
     public static final double kDriveWheelbaseLengthInches = factory.getConstant(
-        "wheelbaseLength"
+        "wheelbaseLength", 22
     );
     public static final double kDriveWheelDiameterInches = factory.getConstant(
         "wheelDiameter"

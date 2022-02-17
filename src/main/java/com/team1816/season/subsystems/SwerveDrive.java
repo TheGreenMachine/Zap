@@ -2,7 +2,6 @@ package com.team1816.season.subsystems;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.team1816.lib.math.DriveConversions;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.SwerveDrivetrain;
 import com.team1816.season.AutoModeSelector;
@@ -26,7 +25,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     public static final String NAME = "drivetrain";
 
     private final SwerveDriveHelper swerveDriveHelper = new SwerveDriveHelper();
-    private final double spinningGabagoolMultiplier = Constants.kLooperDt; // arbitrary rotation constant that sort of matches loop time
+    private final double looperDt = Constants.kLooperDt;
 
     public SwerveModule[] swerveModules;
 
@@ -87,7 +86,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         if (RobotBase.isSimulation()) { // calculate rotation based on actualModeStates
             var chassisSpeed = Constants.Swerve.swerveKinematics.toChassisSpeeds(states);
             mPeriodicIO.gyro_heading_no_offset =
-                mPeriodicIO.gyro_heading_no_offset.rotateBy(new Rotation2d(chassisSpeed.omegaRadiansPerSecond * spinningGabagoolMultiplier));
+                mPeriodicIO.gyro_heading_no_offset.rotateBy(new Rotation2d(chassisSpeed.omegaRadiansPerSecond * looperDt)); // simulates rotation by computing the rotational motion per interval
             // calculate rotation with gyro drift
             gyroDrift -= 0;
             mPeriodicIO.gyro_heading_no_offset =
@@ -101,6 +100,42 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
         swerveOdometry.update(mPeriodicIO.gyro_heading, states);
         updateRobotPose();
+    }
+
+    @Override
+    public Rotation2d getTrajectoryHeadings() {
+        if (mHeadings == null) {
+            System.out.println("headings are empty!");
+            return Constants.EmptyRotation;
+        } else if (mTrajectoryIndex > mHeadings.size() - 1) {
+            System.out.println("heck the headings aren't long enough");
+            return Constants.EmptyRotation;
+        }
+        if (
+            getTrajectoryTimestamp() >
+                mTrajectory.getStates().get(mTrajectoryIndex).timeSeconds ||
+                mTrajectoryIndex == 0
+        ) mTrajectoryIndex++;
+        if (mTrajectoryIndex >= mHeadings.size()) {
+            System.out.println(mHeadings.get(mHeadings.size() - 1) + " = max");
+            return mHeadings.get(mHeadings.size() - 1);
+        }
+        double timeBetweenPoints =
+            (
+                mTrajectory.getStates().get(mTrajectoryIndex).timeSeconds -
+                    mTrajectory.getStates().get(mTrajectoryIndex - 1).timeSeconds
+            );
+        Rotation2d heading;
+        heading =
+            mHeadings
+                .get(mTrajectoryIndex - 1)
+                .interpolate(
+                    mHeadings.get(mTrajectoryIndex),
+                    getTrajectoryTimestamp() / timeBetweenPoints
+                );
+                System.out.println(heading.getDegrees() + "aaaaa");
+        //        mPeriodicIO.totalRotation = heading.getRadians();
+        return heading;
     }
 
     // autonomous (trajectory following)
@@ -134,42 +169,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         for (int i = 0; i < 4; i++) {
             swerveModules[i].setDesiredState(desiredStates[i], false);
         }
-    }
-
-    @Override
-    public Rotation2d getTrajectoryHeadings() {
-        if (mHeadings == null) {
-            System.out.println("headings are empty!");
-            return Constants.EmptyRotation;
-        } else if (mTrajectoryIndex > mHeadings.size() - 1) {
-            System.out.println("heck the headings aren't long enough");
-            return Constants.EmptyRotation;
-        }
-        if (
-            getTrajectoryTimestamp() >
-            mTrajectory.getStates().get(mTrajectoryIndex).timeSeconds ||
-            mTrajectoryIndex == 0
-        ) mTrajectoryIndex++;
-        if (mTrajectoryIndex >= mHeadings.size()) {
-            System.out.println(mHeadings.get(mHeadings.size() - 1) + " = max");
-            return mHeadings.get(mHeadings.size() - 1);
-        }
-        double timeBetweenPoints =
-            (
-                mTrajectory.getStates().get(mTrajectoryIndex).timeSeconds -
-                mTrajectory.getStates().get(mTrajectoryIndex - 1).timeSeconds
-            );
-        Rotation2d heading;
-        heading =
-            mHeadings
-                .get(mTrajectoryIndex - 1)
-                .interpolate(
-                    mHeadings.get(mTrajectoryIndex),
-                    getTrajectoryTimestamp() / timeBetweenPoints
-                );
-                System.out.println(heading.getDegrees() + "aaaaa");
-        //        mPeriodicIO.totalRotation = heading.getRadians();
-        return heading;
     }
 
     public Pose2d getPose() {
