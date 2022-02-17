@@ -155,11 +155,6 @@ public class ControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getClimberDeploy() {
-        return mButtonControlBoard.getClimberDeploy();
-    }
-
-    @Override
     public double getDPad() {
         return mDriveControlBoard.getDPad();
     }

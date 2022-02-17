@@ -121,11 +121,6 @@ public class TankDemoModeControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getClimberDeploy() {
-        return false;
-    }
-
-    @Override
     public boolean getFieldFollowing() {
         return false;
     }

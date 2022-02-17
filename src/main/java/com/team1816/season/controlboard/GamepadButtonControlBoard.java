@@ -63,7 +63,7 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
 
     @Override
     public boolean getFieldFollowing() {
-        return mController.getDPad() == 180;
+        return false;
     }
 
     // Feeder Flap
@@ -79,7 +79,7 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
 
     @Override
     public boolean getClimberUp() {
-        return false;
+        return mController.getDPad() == 0;
     }
 
     @Override
@@ -102,8 +102,4 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
         return mController.getButton(Controller.Button.RIGHT_BUMPER);
     }
 
-    @Override
-    public boolean getClimberDeploy() {
-        return mController.getButton(Controller.Button.Y);
-    }
 }

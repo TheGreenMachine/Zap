@@ -2,6 +2,7 @@ package com.team1816.season.subsystems;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.team1816.lib.math.DriveConversions;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.SwerveDrivetrain;
 import com.team1816.season.AutoModeSelector;
@@ -119,9 +120,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     /* Used by SwerveControllerCommand in Auto */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
-        if(mDriveControlState != DriveControlState.TRAJECTORY_FOLLOWING){
-            mDriveControlState = DriveControlState.TRAJECTORY_FOLLOWING;
-        }
+        mDriveControlState = DriveControlState.TRAJECTORY_FOLLOWING;
         SwerveDriveKinematics.desaturateWheelSpeeds(
             desiredStates,
             Units.inchesToMeters(Constants.kPathFollowingMaxVel)
@@ -308,6 +307,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         resetPigeon();
         setHeading(pose.getRotation());
         resetOdometry(pose);
+        for (SwerveModule module : swerveModules) {
+            module.setDesiredState(new SwerveModuleState(), true);
+        }
         mRobotState.field.setRobotPose(Constants.StartingPose);
         //        if (mPigeon.getLastError() != ErrorCode.OK) {
         //            // BadLog.createValue("PigeonErrorDetected", "true");

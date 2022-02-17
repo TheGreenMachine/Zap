@@ -29,7 +29,5 @@ public interface IButtonControlBoard {
 
     boolean getUnusedButton();
 
-    boolean getClimberDeploy();
-
     boolean getFieldFollowing();
 }
