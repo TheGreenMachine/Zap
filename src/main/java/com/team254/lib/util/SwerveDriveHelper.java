@@ -2,8 +2,8 @@ package com.team254.lib.util;
 
 import com.google.inject.Inject;
 import com.team1816.season.SwerveKinematics;
-import com.team254.lib.geometry.Rotation2d;
-import com.team254.lib.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 
 /**
  * Class based on Team 1323's sendInput method to make driving feel better
@@ -31,20 +31,23 @@ public class SwerveDriveHelper implements DriveHelper {
                                                   boolean low_power, boolean field_relative, boolean use_heading_controller) {
 
         Translation2d translationalInput = new Translation2d(forwardInput, -strafeInput);
-        double inputMagnitude = translationalInput.norm();
+        double inputMagnitude = translationalInput.getNorm();
 
         // Snap the translational input to its nearest pole, if it is within a certain
         // threshold of it.
 
+
+        Rotation2d translationalInputDirection = new Rotation2d(translationalInput.getX(), translationalInput.getY());
+
         if (field_relative) {
-            if (Math.abs(translationalInput.direction()
-                .distance(translationalInput.direction().nearestPole())) < kPoleThreshold) {
-                translationalInput = translationalInput.direction().nearestPole().toTranslation().scale(inputMagnitude);
+            if (Math.abs(translationalInputDirection
+                .unaryMinus().rotateBy(nearestPole(translationalInputDirection)).getRadians()) < kPoleThreshold) {
+                translationalInput = new Translation2d(nearestPole(translationalInputDirection).getCos(), nearestPole(translationalInputDirection).getSin()).times(inputMagnitude);
             }
         } else {
-            if (Math.abs(translationalInput.direction()
-                .distance(translationalInput.direction().nearestPole())) < kRobotRelativePoleThreshold) {
-                translationalInput = translationalInput.direction().nearestPole().toTranslation().scale(inputMagnitude);
+            if (Math.abs(translationalInputDirection
+                .unaryMinus().rotateBy(nearestPole(translationalInputDirection)).getRadians()) < kRobotRelativePoleThreshold) {
+                translationalInput = new Translation2d(nearestPole(translationalInputDirection).getCos(), nearestPole(translationalInputDirection).getSin()).times(inputMagnitude);
             }
         }
 
@@ -57,9 +60,9 @@ public class SwerveDriveHelper implements DriveHelper {
         // Scale x and y by applying a power to the magnitude of the vector they create,
         // in order to make the controls less sensitive at the lower end.
         final double power = (low_power) ? kHighAdjustmentPower : kLowAdjustmentPower;
-        Rotation2d direction = translationalInput.direction();
+        Rotation2d direction = translationalInputDirection;
         double scaledMagnitude = Math.pow(inputMagnitude, power);
-        translationalInput = new Translation2d(direction.cos() * scaledMagnitude, direction.sin() * scaledMagnitude);
+        translationalInput = new Translation2d(direction.getCos() * scaledMagnitude, direction.getSin() * scaledMagnitude);
 
         rotationInput = (Math.abs(rotationInput) < kRotationDeadband) ? 0 : rotationInput;
         if (use_heading_controller) { // current constants are tuned to be put to the power of 1.75, and I don't want to retune right now
@@ -68,17 +71,30 @@ public class SwerveDriveHelper implements DriveHelper {
             rotationInput = Math.pow(Math.abs(rotationInput), kRotationExponent) * Math.signum(rotationInput);
         }
 
-        translationalInput = translationalInput.scale(kMaxSpeed);
+        translationalInput = translationalInput.times(kMaxSpeed);
         rotationInput *= kMaxSpeed;
 
         if (low_power) {
-            translationalInput = translationalInput.scale(kLowPowerScalar);
+            translationalInput = translationalInput.times(kLowPowerScalar);
             rotationInput *= kLowPowerScalar;
         } else {
             rotationInput *= kHighPowerRotationScalar;
         }
 
-        return SwerveKinematics.inverseKinematics(translationalInput.x(), translationalInput.y(), rotationInput,
+        return SwerveKinematics.inverseKinematics(translationalInput.getX(), translationalInput.getY(), rotationInput,
             field_relative);
+    }
+
+    public Rotation2d nearestPole(Rotation2d rotation) {
+        double pole_sin = 0.0;
+        double pole_cos = 0.0;
+        if (Math.abs(rotation.getCos()) > Math.abs(rotation.getSin())) {
+            pole_cos = Math.signum(rotation.getCos());
+            pole_sin = 0.0;
+        } else {
+            pole_cos = 0.0;
+            pole_sin = Math.signum(rotation.getSin());
+        }
+        return new Rotation2d(pole_cos, pole_sin);
     }
 }
