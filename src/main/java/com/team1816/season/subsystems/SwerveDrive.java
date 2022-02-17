@@ -209,31 +209,32 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
         mPeriodicIO.use_heading_controller = use_heading_controller;
 
-        SwerveDriveSignal signal = swerveDriveHelper.calculateDriveSignal(
-            forward,
-            strafe,
-            rotation,
-            low_power,
-         true,
-            use_heading_controller
+//        SwerveDriveSignal signal = swerveDriveHelper.calculateDriveSignal(
+//            forward,
+//            strafe,
+//            rotation,
+//            low_power,
+//         true,
+//            use_heading_controller
+//        );
+//
+//        for(int i = 0; i < 4; i++){
+//            mPeriodicIO.desiredModuleStates[i].speedMetersPerSecond = signal.getWheelSpeeds()[i];
+//            mPeriodicIO.desiredModuleStates[i].angle = signal.getWheelAzimuths()[i];
+//        }
+
+        var speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+            forward *
+                Units.inchesToMeters(Constants.kPathFollowingMaxVel), // test this out  -
+            strafe * Units.inchesToMeters(Constants.kPathFollowingMaxVel),
+            rotation * (Constants.kMaxAngularSpeed),
+            mPeriodicIO.gyro_heading // ignore gyro
         );
-
-        for(int i = 0; i < 4; i++){
-            mPeriodicIO.desiredModuleStates[i].speedMetersPerSecond = signal.getWheelSpeeds()[i];
-            mPeriodicIO.desiredModuleStates[i].angle = signal.getWheelAzimuths()[i];
-        }
-
-//        var speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-//            forward *
-//                Units.inchesToMeters(Constants.kPathFollowingMaxVel), // test this out  -
-//            strafe * Units.inchesToMeters(Constants.kPathFollowingMaxVel),
-//            rotation * (Constants.kMaxAngularSpeed),
-//            mPeriodicIO.gyro_heading // ignore gyro
-//        );
-//        System.out.println("Set TeleopInputs " + speeds);
-//        mPeriodicIO.desiredModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
-//            speeds
-//        );
+        System.out.println(speeds + " ++++++ ----");
+        mPeriodicIO.desiredModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
+            speeds
+        );
+        System.out.println(mPeriodicIO.desiredModuleStates[0].angle);
     }
 
     @Override

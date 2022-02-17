@@ -29,6 +29,8 @@ public class SwerveModule implements ISwerveModule {
     public static final int kBackLeft = 2;
     public static final int kBackRight = 3;
 
+    private double angledemand;
+
     // State
     private boolean isBrakeMode = false;
 
@@ -99,18 +101,22 @@ public class SwerveModule implements ISwerveModule {
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
-        SwerveModuleState desired_state = ModuleState.optimize(desiredState, getState().angle); // here
+        SwerveModuleState desired_state = desiredState; //ModuleState.optimize(desiredState, getState().angle); // here
         if (!isOpenLoop) {
             mDriveMotor.set(ControlMode.Velocity, DriveConversions.metersPerSecondToTicksPer100ms(desiredState.speedMetersPerSecond));
         } else {
             mDriveMotor.set(ControlMode.PercentOutput, desired_state.speedMetersPerSecond / Units.inchesToMeters(Constants.kPathFollowingMaxVel)); // w/out conversion, would be lying to it - speed meters per second is percent output i
         }
-        mAzimuthMotor.set(ControlMode.Position, DriveConversions.convertDegreesToTicks(desired_state.angle.getDegrees()));
+        mAzimuthMotor.set(ControlMode.Position, DriveConversions.convertDegreesToTicks(desired_state.angle.getDegrees()) + mConstants.kAzimuthEncoderHomeOffset);
+//        if(desired_state.angle.getDegrees() != angledemand){
+//            System.out.println(desired_state.angle.getDegrees() + " ++++++++");
+//        }
+
     }
 
     public SwerveModuleState getState() {
         double velocity = DriveConversions.convertTicksToMeters(mDriveMotor.getSelectedSensorVelocity(0)) * 10;
-        Rotation2d angle = Rotation2d.fromDegrees(DriveConversions.convertTicksToDegrees(mAzimuthMotor.getSelectedSensorPosition(0)));
+        Rotation2d angle = Rotation2d.fromDegrees(DriveConversions.convertTicksToDegrees(mAzimuthMotor.getSelectedSensorPosition(0) - mConstants.kAzimuthEncoderHomeOffset));
         return new SwerveModuleState(velocity, angle);
     }
 
@@ -200,9 +206,8 @@ public class SwerveModule implements ISwerveModule {
             mConstants.kInvertAzimuthSensorPhase +
             " invertAzimuth: " +
             mConstants.kInvertAzimuth +
-            " encPPR: " +
-            Drive.DRIVE_ENCODER_PPR +
-            " }"
+            " Azimuth position " +
+            angledemand
         );
     }
 }

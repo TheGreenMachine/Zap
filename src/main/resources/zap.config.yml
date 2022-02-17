@@ -94,7 +94,7 @@ subsystems:
             raveSpeed: 0.05
             cameraLed: 1
     turret:
-        implemented: true
+        implemented: false
         pidConfig:
             slot0:
                 kP: 1.0
@@ -157,6 +157,8 @@ pcm: -1
 constants:
     maxTicks: 12275.7 # ticks per 100ms TODO make into constant unique to each subsystem
     maxRotVel: 11.5
+    trackWidth: 21 #inches
+    wheelbaseLength: 21.5 #inches
     maxVel: 153 # 160 # 240 # inches/s # 22560 native units ---30
     maxAccel: 100 # inches/s^2
     sensorPhase: 0
