@@ -26,6 +26,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     public static final String NAME = "drivetrain";
 
     private final SwerveDriveHelper swerveDriveHelper = new SwerveDriveHelper();
+    private final double spinningGabagoolMultiplier = Constants.kLooperDt; // arbitrary rotation constant that sort of matches loop time
 
     public SwerveModule[] swerveModules;
 
@@ -77,23 +78,27 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     @Override
     public synchronized void readPeriodicInputs() {
-        if (RobotBase.isSimulation()) {
+        SwerveModuleState[] states = new SwerveModuleState[4]; // why do we create 4 new states in every single loop through the readPeriodic?
+        for (int i = 0; i < 4; i++) {
+            states[i] = swerveModules[i].getState();
+        }
+        mPeriodicIO.actualModuleStates = states;
+
+        if (RobotBase.isSimulation()) { // calculate rotation based on actualModeStates
+            var chassisSpeed = Constants.Swerve.swerveKinematics.toChassisSpeeds(states);
+            mPeriodicIO.gyro_heading_no_offset =
+                mPeriodicIO.gyro_heading_no_offset.rotateBy(new Rotation2d(chassisSpeed.omegaRadiansPerSecond * spinningGabagoolMultiplier));
             // calculate rotation with gyro drift
             gyroDrift -= 0;
             mPeriodicIO.gyro_heading_no_offset =
-                getDesiredRotation2d().rotateBy(Rotation2d.fromDegrees(gyroDrift));
+                mPeriodicIO.gyro_heading_no_offset.rotateBy(Rotation2d.fromDegrees(gyroDrift));
         } else {
             mPeriodicIO.gyro_heading_no_offset =
                 Rotation2d.fromDegrees(mPigeon.getFusedHeading());
         }
         mPeriodicIO.gyro_heading =
             mPeriodicIO.gyro_heading_no_offset.rotateBy(mGyroOffset);
-        SwerveModuleState[] states = new SwerveModuleState[4]; // why do we create 4 new states in ever single loop through the readPeriodic?
-        for (int i = 0; i < 4; i++) {
-            states[i] = swerveModules[i].getState();
-        }
 
-        mPeriodicIO.actualModuleStates = states;
         swerveOdometry.update(mPeriodicIO.gyro_heading, states);
         updateRobotPose();
     }
@@ -209,6 +214,17 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
         mPeriodicIO.use_heading_controller = use_heading_controller;
 
+        var speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+            forward *
+                Units.inchesToMeters(Constants.kPathFollowingMaxVel), // test this out  -
+            strafe * Units.inchesToMeters(Constants.kPathFollowingMaxVel),
+            rotation * (Constants.kMaxAngularSpeed),
+            mPeriodicIO.gyro_heading // ignore gyro
+        );
+        mPeriodicIO.desiredModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
+            speeds
+        );
+
 //        SwerveDriveSignal signal = swerveDriveHelper.calculateDriveSignal(
 //            forward,
 //            strafe,
@@ -218,23 +234,12 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 //            use_heading_controller
 //        );
 //
+//        SwerveModuleState[] states = new SwerveModuleState[4];
 //        for(int i = 0; i < 4; i++){
-//            mPeriodicIO.desiredModuleStates[i].speedMetersPerSecond = signal.getWheelSpeeds()[i];
-//            mPeriodicIO.desiredModuleStates[i].angle = signal.getWheelAzimuths()[i];
+//            states[i] = new SwerveModuleState(signal.getWheelSpeeds()[i], signal.getWheelAzimuths()[i]);
 //        }
-
-        var speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-            forward *
-                Units.inchesToMeters(Constants.kPathFollowingMaxVel), // test this out  -
-            strafe * Units.inchesToMeters(Constants.kPathFollowingMaxVel),
-            rotation * (Constants.kMaxAngularSpeed),
-            mPeriodicIO.gyro_heading // ignore gyro
-        );
-        System.out.println(speeds + " ++++++ ----");
-        mPeriodicIO.desiredModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
-            speeds
-        );
-        System.out.println(mPeriodicIO.desiredModuleStates[0].angle);
+//
+//        mPeriodicIO.desiredModuleStates = states;
     }
 
     @Override

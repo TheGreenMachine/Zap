@@ -109,7 +109,8 @@ public class SwerveModule implements ISwerveModule {
         }
         mAzimuthMotor.set(ControlMode.Position, DriveConversions.convertDegreesToTicks(desired_state.angle.getDegrees()) + mConstants.kAzimuthEncoderHomeOffset);
 //        if(desired_state.angle.getDegrees() != angledemand){
-//            System.out.println(desired_state.angle.getDegrees() + " ++++++++");
+            System.out.println(desired_state.angle.getDegrees() + " ++++++++");
+
 //        }
 
     }

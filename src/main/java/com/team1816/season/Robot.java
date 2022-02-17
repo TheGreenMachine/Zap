@@ -358,6 +358,8 @@ public class Robot extends TimedRobot {
                 mAutoModeExecutor.stop();
             }
 
+            mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
+
             mHasBeenEnabled = true;
 
             mEnabledLooper.start();
@@ -365,7 +367,6 @@ public class Robot extends TimedRobot {
             mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
             System.out.println(mTurret.getActualTurretPositionTicks() + "+++++++"); // for debugging whether or not getActTicks works. doesn't seem to - ginget
 
-            mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
 
             mInfrastructure.setIsManualControl(true);
             mControlBoard.reset();
