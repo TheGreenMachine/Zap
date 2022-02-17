@@ -2,6 +2,7 @@ package com.team1816.season.subsystems;
 
 import static com.team1816.lib.math.DriveConversions.inchesPerSecondToTicksPer100ms;
 
+import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
@@ -77,6 +78,8 @@ public abstract class Drive
         mPeriodicIO = new PeriodicIO();
         mPigeon = factory.getPigeon((int) factory.getConstant(NAME, "pigeonId", -1)); // factory.getPigeon((int) factory.getConstant(NAME, "pigeonId", -1));
         mPigeon.configFactoryDefault();
+        mPigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_1_General, 200);
+        mPigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_6_Accel, 1000);
     }
 
     public enum DriveControlState {
