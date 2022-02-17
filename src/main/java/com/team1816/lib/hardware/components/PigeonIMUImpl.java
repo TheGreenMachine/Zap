@@ -44,4 +44,5 @@ public class PigeonIMUImpl extends PigeonIMU implements IPigeonIMU {
     public ErrorCode configFactoryDefault() {
         return super.configFactoryDefault();
     }
+
 }
