@@ -36,7 +36,7 @@ public class CtreMotorFactory {
         public int GENERAL_STATUS_FRAME_RATE_MS = 10;
         public int FEEDBACK_STATUS_FRAME_RATE_MS = 20;
         public int QUAD_ENCODER_STATUS_FRAME_RATE_MS = 160;
-        public int ANALOG_TEMP_VBAT_STATUS_FRAME_RATE_MS = 160;
+        public int ANALOG_TEMP_VBAT_STATUS_FRAME_RATE_MS = 1000;
         public int PULSE_WIDTH_STATUS_FRAME_RATE_MS = 160;
 
         public VelocityMeasPeriod VELOCITY_MEASUREMENT_PERIOD =
@@ -204,7 +204,8 @@ public class CtreMotorFactory {
         CANCoder canCoder = new CANCoder(canCoderID);
         canCoder.configFactoryDefault();
         canCoder.configAllSettings(configureCanCoder(invertCanCoder));
-        canCoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 5);
+        canCoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 10);
+        canCoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 1000);
         return canCoder;
     }
 
