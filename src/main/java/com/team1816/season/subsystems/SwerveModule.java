@@ -1,24 +1,20 @@
 package com.team1816.season.subsystems;
 
-import static com.team1816.lib.math.DriveConversions.metersPerSecondToTicksPer100ms;
-import static com.team1816.season.subsystems.Drive.*;
-
-import com.ctre.phoenix.motorcontrol.*;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.sensors.CANCoder;
-import com.team1816.lib.loops.ILooper;
-import com.team1816.lib.loops.Loop;
 import com.team1816.lib.math.DriveConversions;
 import com.team1816.lib.subsystems.ISwerveModule;
-import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.util.ModuleState;
 import com.team1816.season.Constants;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Timer;
+
+import static com.team1816.season.subsystems.Drive.factory;
 
 public class SwerveModule implements ISwerveModule {
 

@@ -39,7 +39,7 @@ public class LazySparkMax implements IMotorControllerEnhanced {
          */
         mPidController = mMotor.getPIDController();
 
-        // Encoder object created to display position values
+         // Encoder object created to display position values
         mEncoder = mMotor.getEncoder();
     }
 

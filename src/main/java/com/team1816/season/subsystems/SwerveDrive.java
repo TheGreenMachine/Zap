@@ -6,8 +6,7 @@ import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.SwerveDrivetrain;
 import com.team1816.season.AutoModeSelector;
 import com.team1816.season.Constants;
-import com.team254.lib.util.DriveSignal;
-import com.team254.lib.util.SwerveDriveSignal;
+import com.team254.lib.util.*;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -24,6 +23,8 @@ import java.util.List;
 public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider {
 
     public static final String NAME = "drivetrain";
+
+    private final SwerveDriveHelper swerveDriveHelper = new SwerveDriveHelper();
 
     public SwerveModule[] swerveModules;
 
@@ -209,17 +210,31 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
         mPeriodicIO.use_heading_controller = use_heading_controller;
 
-        var speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-            forward *
-                Units.inchesToMeters(Constants.kPathFollowingMaxVel), // test this out  -
-            strafe * Units.inchesToMeters(Constants.kPathFollowingMaxVel),
-            rotation * (Constants.kMaxAngularSpeed),
-            mPeriodicIO.gyro_heading // ignore gyro
+        SwerveDriveSignal signal = swerveDriveHelper.calculateDriveSignal(
+            forward,
+            strafe,
+            rotation,
+            low_power,
+         true,
+            use_heading_controller
         );
-        System.out.println("Set TeleopInputs " + speeds);
-        mPeriodicIO.desiredModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
-            speeds
-        );
+
+        for(int i = 0; i < 4; i++){
+            mPeriodicIO.desiredModuleStates[i].speedMetersPerSecond = signal.getWheelSpeeds()[i];
+            mPeriodicIO.desiredModuleStates[i].angle = signal.getWheelAzimuths()[i];
+        }
+
+//        var speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+//            forward *
+//                Units.inchesToMeters(Constants.kPathFollowingMaxVel), // test this out  -
+//            strafe * Units.inchesToMeters(Constants.kPathFollowingMaxVel),
+//            rotation * (Constants.kMaxAngularSpeed),
+//            mPeriodicIO.gyro_heading // ignore gyro
+//        );
+//        System.out.println("Set TeleopInputs " + speeds);
+//        mPeriodicIO.desiredModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
+//            speeds
+//        );
     }
 
     @Override

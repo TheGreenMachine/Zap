@@ -59,7 +59,7 @@ public interface PathContainer {
     default List<Rotation2d> generateHeadings() {
         Trajectory trajectory = generateTrajectory();
         List<Pose2d> waypointsMeters = new ArrayList<>();
-        for (Pose2d pose2d : buildWaypoints()) {
+        for (Pose2d pose2d : buildWaypoints()) {;
             waypointsMeters.add(
                 new Pose2d(
                     Units.inches_to_meters(pose2d.getX()) + .5,
