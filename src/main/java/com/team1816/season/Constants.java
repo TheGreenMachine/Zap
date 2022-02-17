@@ -52,7 +52,7 @@ public class Constants {
     );
     public static double kTrackScrubFactor = factory.getConstant("kTrackScrubFactor");
 
-    public static final Pose2d StartingPose = new Pose2d(.5, 3.5, new Rotation2d());
+    public static final Pose2d StartingPose = new Pose2d(0.5, 3.5, new Rotation2d());
 
     // CAN Timeouts
     public static final int kCANTimeoutMs = 10; // use for important on the fly updates

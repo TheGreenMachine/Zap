@@ -23,21 +23,6 @@ public class BarrelPath implements PathContainer {
             //            new Pose2d(143, 108, Rotation2d.fromDegrees(180)),
             //            new Pose2d(32, 113, Rotation2d.fromDegrees(-180))
         );
-        /*return List.of(
-            new Pose2d(0, 0, -90),
-            new Pose2d(50, -50, 0),
-            new Pose2d(100, 0, 90),
-            new Pose2d(50, 50, 180),
-            new Pose2d(0, 0, -90),
-            new Pose2d(50, -50, 0),
-            new Pose2d(100, 0, 90),
-            new Pose2d(50, 50, 180),
-            new Pose2d(0, 0, -90),
-            new Pose2d(50, -50, 0),
-            new Pose2d(100, 0, 90),
-            new Pose2d(50, 50, 180),
-            new Pose2d(0, 0, -90)
-        );*/
     }
 
     @Override
@@ -52,7 +37,7 @@ public class BarrelPath implements PathContainer {
     }
 
     @Override
-    public boolean isReversed() {
+    public boolean isFiveBall() {
         return false;
     }
 }

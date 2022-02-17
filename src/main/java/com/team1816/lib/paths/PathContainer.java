@@ -24,7 +24,7 @@ public interface PathContainer {
     List<Rotation2d> buildHeadings();
 
     default Trajectory generateTrajectory() {
-        return generateBaseTrajectory(isReversed(), buildWaypoints());
+        return generateBaseTrajectory(isFiveBall(), buildWaypoints());
     }
 
     private Trajectory generateBaseTrajectory(
@@ -35,9 +35,10 @@ public interface PathContainer {
         for (Pose2d pose2d : waypoints) {
             waypointsMeters.add(
                 new Pose2d(
-                    Units.inches_to_meters(pose2d.getX()),
-                    Units.inches_to_meters(pose2d.getY()),
-                    pose2d.getRotation()
+                    // manually adding the starting pose to each waypoint - wpilib transformBy acts up when transforming FiveBall - bug?
+                    Units.inches_to_meters(pose2d.getX()), // + Constants.StartingPose.getTranslation().getX(),
+                    Units.inches_to_meters(pose2d.getY()), // + Constants.StartingPose.getTranslation().getY(),
+                    pose2d.getRotation() // .plus(Constants.StartingPose.getRotation())
                 )
             );
         }
@@ -46,24 +47,35 @@ public interface PathContainer {
             waypointsMeters,
             config
         );
-        return baseTrajectory.transformBy(
-            new Transform2d(
-                Constants.StartingPose.getTranslation(),
-                Constants.StartingPose.getRotation()
-            )
-        );
+        if(!isReversed){
+            baseTrajectory = baseTrajectory.transformBy(
+                new Transform2d(
+                    Constants.StartingPose.getTranslation(),
+                    Constants.StartingPose.getRotation()
+                )
+            );
+        }
+        return baseTrajectory;
     }
 
-    boolean isReversed();
+    boolean isFiveBall();
 
     default List<Rotation2d> generateHeadings() {
+        double startX = .5;
+        double startY = 3.5;
+
+
         Trajectory trajectory = generateTrajectory();
         List<Pose2d> waypointsMeters = new ArrayList<>();
-        for (Pose2d pose2d : buildWaypoints()) {;
+        if(isFiveBall()){
+            startX = 0;
+            startY = 0;
+        }
+        for (Pose2d pose2d : buildWaypoints()) {
             waypointsMeters.add(
                 new Pose2d(
-                    Units.inches_to_meters(pose2d.getX()) + .5,
-                    Units.inches_to_meters(pose2d.getY()) + 3.5,
+                    Units.inches_to_meters(pose2d.getX()) + startX,
+                    Units.inches_to_meters(pose2d.getY()) + startY,
                     pose2d.getRotation()
                 )
             );
@@ -74,10 +86,10 @@ public interface PathContainer {
         List<Double> waypointTimes = new ArrayList<>();
         List<Integer> waypointIndexes = new ArrayList<>();
         int iWaypointCheckpoint = 0;
-        for (Pose2d pose2d : waypointsMeters) {
+        for (Pose2d waypointPose2d : waypointsMeters) {
             for (int i = iWaypointCheckpoint; i < trajectory.getStates().size(); i++) {
-                var point = trajectory.getStates().get(i).poseMeters;
-                if (point.equals(pose2d)) { // Conversions.epsilonEquals(point, pose2d, .0001
+                var trajectoryPose2d = trajectory.getStates().get(i).poseMeters;
+                if (trajectoryPose2d.equals(waypointPose2d)) { // Conversions.epsilonEquals(point, pose2d, .0001
                     waypointTimes.add(trajectory.getStates().get(i).timeSeconds);
                     waypointIndexes.add(i);
                     break;

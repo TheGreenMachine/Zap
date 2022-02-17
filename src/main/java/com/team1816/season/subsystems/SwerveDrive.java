@@ -167,7 +167,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                     mHeadings.get(mTrajectoryIndex),
                     getTrajectoryTimestamp() / timeBetweenPoints
                 );
-        //        System.out.println(heading.getDegrees() + "aaaaa");
+                System.out.println(heading.getDegrees() + "aaaaa");
         //        mPeriodicIO.totalRotation = heading.getRadians();
         return heading;
     }

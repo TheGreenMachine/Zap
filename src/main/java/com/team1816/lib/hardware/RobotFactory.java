@@ -1,8 +1,12 @@
 package com.team1816.lib.hardware;
 
+import com.ctre.phoenix.CANifier;
+import com.ctre.phoenix.CANifierStatusFrame;
 import com.ctre.phoenix.led.CANdle;
+import com.ctre.phoenix.led.CANdleStatusFrame;
 import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.sensors.*;
 import com.team1816.lib.hardware.components.*;
 import com.team1816.lib.hardware.components.pcm.*;
@@ -127,6 +131,7 @@ public class RobotFactory {
                 motor.setSensorPhase(true);
             }
         }
+        setStatusFrame(motor); // make motor send one signal per second - FOR DEBUGGING!
 
         return motor;
     }
@@ -247,9 +252,11 @@ public class RobotFactory {
                     subsystem.canCoders.get(subsystem.invertCanCoder) != null &&
                     subsystem.invertCanCoder.contains(module.canCoder)
                 ); //TODO: For now placeholder true is placed
+            setStatusFrame(canCoder); // make canCoder send one signal per second - FOR DEBUGGING!
         } else {
             // ghost. potentially implement this in the future
         }
+
         return canCoder;
     }
 
@@ -301,19 +308,28 @@ public class RobotFactory {
     @Nonnull
     public ICanifier getCanifier(String subsystemName) {
         var subsystem = getSubsystem(subsystemName);
+        ICanifier canifier;
         if (subsystem.implemented && isHardwareValid(subsystem.canifier)) {
-            return new CanifierImpl(subsystem.canifier);
+            canifier = new CanifierImpl(subsystem.canifier);
+            setStatusFrame((CANifier) canifier); // make signal time of 1 sec
+            return canifier;
         }
         reportGhostWarning("CANifier", subsystemName, "canifier");
+
         return new GhostCanifier();
     }
 
     public CANdle getCandle(String subsystemName, int defaultVal) {
+        CANdle candle;
         var subsystem = getSubsystem(subsystemName);
         if (subsystem.implemented && isHardwareValid((subsystem.candle))) {
-            return new CANdle(subsystem.candle);
+            candle = new CANdle(subsystem.candle);
+            setStatusFrame(candle); // make CANdle send one signal per second - FOR DEBUGGING!
+            return candle;
         } else if (defaultVal > -1) {
-            return new CANdle(defaultVal);
+            candle = new CANdle(defaultVal);
+            setStatusFrame(candle); // make CANdle send one signal per second - FOR DEBUGGING!
+            return candle;
         } else {
             //ghost
         }
@@ -396,9 +412,12 @@ public class RobotFactory {
     }
 
     public IPigeonIMU getPigeon(int id) {
+        IPigeonIMU pigeonIMU;
         if (id < 0) {
             return new GhostPigeonIMU(id);
         } else {
+            pigeonIMU = new PigeonIMUImpl(id);
+            setStatusFrame((PigeonIMU) pigeonIMU);
             return new PigeonIMUImpl(id);
         }
     }
@@ -439,4 +458,60 @@ public class RobotFactory {
             ", using ghost!"
         );
     }
+
+    private final int canMaxStatus = 100;
+    private void setStatusFrame(IMotorControllerEnhanced device){
+        device.setStatusFramePeriod(StatusFrame.Status_1_General,canMaxStatus, 100);
+        device.setStatusFramePeriod(StatusFrame.Status_2_Feedback0,canMaxStatus, 100);
+        device.setStatusFramePeriod(StatusFrame.Status_4_AinTempVbat,canMaxStatus, 100);
+        device.setStatusFramePeriod(StatusFrame.Status_6_Misc,canMaxStatus, 100);
+        device.setStatusFramePeriod(StatusFrame.Status_7_CommStatus,canMaxStatus, 100);
+        device.setStatusFramePeriod(StatusFrame.Status_9_MotProfBuffer,canMaxStatus, 100);
+        device.setStatusFramePeriod(StatusFrame.Status_10_Targets,canMaxStatus, 100);
+        device.setStatusFramePeriod(StatusFrame.Status_12_Feedback1,canMaxStatus, 100);
+        device.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0,canMaxStatus, 100);
+        device.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1,canMaxStatus, 100);
+        device.setStatusFramePeriod(StatusFrame.Status_15_FirmwareApiStatus,canMaxStatus, 100);
+        device.setStatusFramePeriod(StatusFrame.Status_17_Targets1,canMaxStatus, 100);
+    }
+
+    private void setStatusFrame(PigeonIMU device){
+        device.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_1_General, 100);
+        device.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_2_Gyro, 100);
+        device.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_2_GeneralCompass, 100);
+        device.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_3_GeneralAccel, 100);
+        device.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_4_Mag, 100);
+        device.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_6_Accel, 100);
+        device.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_6_SensorFusion, 100);
+        device.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR, 100);
+        device.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_10_SixDeg_Quat, 100);
+        device.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_11_GyroAccum, 100);
+        device.setStatusFramePeriod(PigeonIMU_StatusFrame.RawStatus_4_Mag, 100);
+    }
+
+    private void setStatusFrame(CANCoder device){
+        device.setStatusFramePeriod(CANCoderStatusFrame.SensorData, canMaxStatus, 100);
+        device.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, canMaxStatus, 100);
+    }
+
+    private void setStatusFrame(CANifier device){
+        device.setStatusFramePeriod(CANifierStatusFrame.Status_1_General, canMaxStatus, 100);
+        device.setStatusFramePeriod(CANifierStatusFrame.Status_2_General, canMaxStatus, 100);
+        device.setStatusFramePeriod(CANifierStatusFrame.Status_3_PwmInputs0, canMaxStatus, 100);
+        device.setStatusFramePeriod(CANifierStatusFrame.Status_4_PwmInputs1, canMaxStatus, 100);
+        device.setStatusFramePeriod(CANifierStatusFrame.Status_5_PwmInputs2, canMaxStatus, 100);
+        device.setStatusFramePeriod(CANifierStatusFrame.Status_6_PwmInputs3, canMaxStatus, 100);
+        device.setStatusFramePeriod(CANifierStatusFrame.Status_8_Misc, canMaxStatus, 100);
+    }
+
+    private void setStatusFrame(CANdle device){
+        device.setStatusFramePeriod(CANdleStatusFrame.CANdleStatusFrame_Status_1_General, canMaxStatus, 100);
+        device.setStatusFramePeriod(CANdleStatusFrame.CANdleStatusFrame_Status_2_Startup, canMaxStatus, 100);
+        device.setStatusFramePeriod(CANdleStatusFrame.CANdleStatusFrame_Status_3_FirmwareApiStatus, canMaxStatus, 100);
+        device.setStatusFramePeriod(CANdleStatusFrame.CANdleStatusFrame_Status_4_ControlTelem, canMaxStatus, 100);
+        device.setStatusFramePeriod(CANdleStatusFrame.CANdleStatusFrame_Status_5_PixelPulseTrain, canMaxStatus, 100);
+        device.setStatusFramePeriod(CANdleStatusFrame.CANdleStatusFrame_Status_6_BottomPixels, canMaxStatus, 100);
+        device.setStatusFramePeriod(CANdleStatusFrame.CANdleStatusFrame_Status_7_TopPixels, canMaxStatus, 100);
+    }
+
 }

@@ -4,6 +4,7 @@ import com.team1816.lib.auto.modes.AutoModeBase;
 import com.team1816.lib.auto.modes.DoNothingMode;
 import com.team1816.season.auto.modes.LivingRoomMode;
 import com.team1816.season.auto.modes.modes2020.*;
+import com.team1816.season.auto.modes.modes2022.FiveBallMode;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -35,6 +36,9 @@ public class AutoModeSelector {
 
         // 2021
         BARREL,
+
+        // 2022
+        FIVE_BALL;
     }
 
     private DesiredMode mCachedDesiredMode = null;
@@ -76,6 +80,8 @@ public class AutoModeSelector {
         mModeChooser.addOption("Living Room", DesiredMode.LIVING_ROOM);
 
         mModeChooser.addOption("Barrel", DesiredMode.BARREL);
+        mModeChooser.addOption("Five Ball", DesiredMode.FIVE_BALL);
+
 
         SmartDashboard.putData("Auto mode", mModeChooser);
         SmartDashboard.putData("Starting Position", mStartPositionChooser);
@@ -143,6 +149,8 @@ public class AutoModeSelector {
                 return (Optional.of(new LivingRoomMode()));
             case BARREL:
                 return (Optional.of(new BarrelMode()));
+            case FIVE_BALL:
+                return (Optional.of(new FiveBallMode()));
             default:
                 break;
         }

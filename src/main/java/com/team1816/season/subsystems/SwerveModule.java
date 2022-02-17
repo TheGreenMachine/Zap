@@ -108,11 +108,6 @@ public class SwerveModule implements ISwerveModule {
             mDriveMotor.set(ControlMode.PercentOutput, desired_state.speedMetersPerSecond / Units.inchesToMeters(Constants.kPathFollowingMaxVel)); // w/out conversion, would be lying to it - speed meters per second is percent output i
         }
         mAzimuthMotor.set(ControlMode.Position, DriveConversions.convertDegreesToTicks(desired_state.angle.getDegrees()) + mConstants.kAzimuthEncoderHomeOffset);
-//        if(desired_state.angle.getDegrees() != angledemand){
-            System.out.println(desired_state.angle.getDegrees() + " ++++++++");
-
-//        }
-
     }
 
     public SwerveModuleState getState() {

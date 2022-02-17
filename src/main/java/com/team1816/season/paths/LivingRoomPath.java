@@ -27,7 +27,7 @@ public class LivingRoomPath implements PathContainer {
     }
 
     @Override
-    public boolean isReversed() {
+    public boolean isFiveBall() {
         return false;
     }
 }
