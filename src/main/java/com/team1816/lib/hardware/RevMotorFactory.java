@@ -13,7 +13,6 @@ public class RevMotorFactory {
         public CANSparkMax.IdleMode IDLE_MODE = CANSparkMax.IdleMode.kCoast;
         // This is factory default.
         public double NEUTRAL_DEADBAND = 0.04;
-
         public boolean ENABLE_CURRENT_LIMIT = false;
         public boolean ENABLE_SOFT_LIMIT = false;
         public boolean ENABLE_LIMIT_SWITCH = false;
@@ -39,7 +38,7 @@ public class RevMotorFactory {
         public double CLOSED_LOOP_RAMP_RATE = 0.0;
     }
 
-    private static final CtreMotorFactory.Configuration kDefaultConfiguration = new CtreMotorFactory.Configuration();
+    private static final RevMotorFactory.Configuration kDefaultConfiguration = new RevMotorFactory.Configuration();
 
     public static IMotorControllerEnhanced createDefaultSpark(
            int id,
@@ -63,7 +62,7 @@ public class RevMotorFactory {
     private static IMotorControllerEnhanced createSpark(
          int id,
          String name,
-         CtreMotorFactory.Configuration config,
+         RevMotorFactory.Configuration config,
          boolean isSparkmax,
          SubsystemConfig subsystem,
          Map<String, PIDSlotConfiguration> pidConfigList,
@@ -95,7 +94,7 @@ public class RevMotorFactory {
     private static void configureMotorController(
         LazySparkMax motor, // going to be an interface of some sort
         String name,
-        CtreMotorFactory.Configuration config,
+        RevMotorFactory.Configuration config,
         boolean isFalcon,
         SubsystemConfig subsystem,
         Map<String, PIDSlotConfiguration> pidConfigList,
