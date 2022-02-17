@@ -14,7 +14,6 @@ public class Climber extends Subsystem {
 
     // Components
     private final IMotorControllerEnhanced elevator;
-    private final ISolenoid deployer;
 
     // State
     private double climberPow;
@@ -24,16 +23,10 @@ public class Climber extends Subsystem {
     public Climber() {
         super(NAME);
         elevator = factory.getMotor(NAME, "elevator");
-        deployer = factory.getSolenoid(NAME, "deployer");
     }
 
     public void setClimberPower(double power) {
         climberPow = power;
-        outputsChanged = true;
-    }
-
-    public void setDeployed(boolean deployed) {
-        this.isDeployed = deployed;
         outputsChanged = true;
     }
 
@@ -45,7 +38,6 @@ public class Climber extends Subsystem {
     public void writePeriodicOutputs() {
         if (outputsChanged) {
             elevator.set(ControlMode.PercentOutput, climberPow);
-            deployer.set(isDeployed);
             outputsChanged = false;
         }
     }

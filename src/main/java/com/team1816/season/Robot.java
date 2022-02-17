@@ -53,6 +53,7 @@ public class Robot extends TimedRobot {
     );
     private final LedManager ledManager;
     private final Turret mTurret;
+    private final Climber mClimber;
     private final Camera camera;
     private boolean mHasBeenEnabled = false;
 
@@ -78,6 +79,7 @@ public class Robot extends TimedRobot {
         injector = Guice.createInjector(new LibModule(), new SeasonModule());
         mDrive = (injector.getInstance(Drive.Factory.class)).getInstance();
         mTurret = injector.getInstance(Turret.class);
+        mClimber = injector.getInstance(Climber.class);
         mRobotState = injector.getInstance(RobotState.class);
         mSuperstructure = injector.getInstance(Superstructure.class);
         mInfrastructure = injector.getInstance(Infrastructure.class);
@@ -215,12 +217,14 @@ public class Robot extends TimedRobot {
                 mSuperstructure,
                 mInfrastructure,
                 // spinner,
-                mTurret
+                mTurret,
+                mClimber
                 //                camera
             );
 
             mDrive.zeroSensors(Constants.StartingPose);
             mTurret.zeroSensors();
+            mClimber.zeroSensors();
 
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mSubsystemManager.registerDisabledLoops(mDisabledLooper);
@@ -258,6 +262,16 @@ public class Robot extends TimedRobot {
                         mControlBoard::getTurretJogRight,
                         moving ->
                             mTurret.setTurretSpeed(moving ? Turret.TURRET_JOG_SPEED : 0)
+                    ),
+                    createHoldAction(
+                        mControlBoard::getClimberUp,
+                        moving ->
+                            mClimber.setClimberPower(moving ? 1: 0)
+                    ),
+                    createHoldAction(
+                        mControlBoard::getClimberDown,
+                        moving ->
+                            mClimber.setClimberPower(moving ? -1: 0)
                     )
                 );
 
@@ -316,6 +330,7 @@ public class Robot extends TimedRobot {
 
             mDrive.zeroSensors();
             mTurret.zeroSensors();
+            mClimber.zeroSensors();
 
             mDrive.setControlState(Drive.DriveControlState.TRAJECTORY_FOLLOWING);
 
