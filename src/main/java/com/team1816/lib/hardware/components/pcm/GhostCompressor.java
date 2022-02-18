@@ -7,7 +7,7 @@ public class GhostCompressor implements ICompressor {
     private boolean enabled = false;
 
     @Override
-    public void start() {
+    public void enableDigital() {
         this.enabled = true;
     }
 
@@ -27,6 +27,11 @@ public class GhostCompressor implements ICompressor {
     }
 
     @Override
+    public boolean getCompressorSwitchValue() {
+        return false;
+    }
+
+    @Override
     public void initSendable(SendableBuilder builder) {
         builder.setSmartDashboardType("Compressor");
         builder.addBooleanProperty(
@@ -34,7 +39,7 @@ public class GhostCompressor implements ICompressor {
             this::enabled,
             value -> {
                 if (value) {
-                    start();
+                    enableDigital();
                 } else {
                     stop();
                 }

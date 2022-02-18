@@ -268,7 +268,7 @@ public class RobotFactory {
             if (subsystem.implemented && isHardwareValid(solenoidId) && isPcmEnabled()) {
                 return new SolenoidImpl(
                     config.pcm,
-                    PneumaticsModuleType.CTREPCM,
+                    PneumaticsModuleType.REVPH,
                     solenoidId
                 );
             }
@@ -295,7 +295,7 @@ public class RobotFactory {
             ) {
                 return new DoubleSolenoidImpl(
                     config.pcm,
-                    PneumaticsModuleType.CTREPCM,
+                    PneumaticsModuleType.REVPH,
                     solenoidConfig.forward,
                     solenoidConfig.reverse
                 );

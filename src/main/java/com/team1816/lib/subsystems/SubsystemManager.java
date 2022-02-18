@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Used to reset, start, stop, and update all subsystems at once
+ * Used to reset, enableDigital, stop, and update all subsystems at once
  */
 public class SubsystemManager implements ILooper {
 

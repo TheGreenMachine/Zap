@@ -101,7 +101,7 @@ public class SwerveModule implements ISwerveModule {
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
-        SwerveModuleState desired_state = ModuleState.optimize(desiredState, getState().angle); // here
+        SwerveModuleState desired_state = desiredState; // here
         if (!isOpenLoop) {
             mDriveMotor.set(ControlMode.Velocity, DriveConversions.metersPerSecondToTicksPer100ms(desiredState.speedMetersPerSecond));
         } else {

@@ -34,7 +34,7 @@ public class MotionProfileGeneratorTest {
                                           MotionState start, MotionProfile profile) {
         // Profile should be valid.
         assertTrue(profile.isValid());
-        // Profile should start at the start state (clamped to accel and velocity
+        // Profile should enableDigital at the enableDigital state (clamped to accel and velocity
         // limits).
         assertThat(profile.startState().t(), epsilonEqualTo(start.t(), kEpsilon));
         assertThat(profile.startState().pos(), epsilonEqualTo(start.pos(), kEpsilon));

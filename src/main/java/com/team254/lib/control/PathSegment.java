@@ -27,8 +27,8 @@ public class PathSegment {
     /**
      * Constructor for a linear segment
      *
-     * @param x1       start x
-     * @param y1       start y
+     * @param x1       enableDigital x
+     * @param y1       enableDigital y
      * @param x2       end x
      * @param y2       end y
      * @param maxSpeed maximum speed allowed on the segment
@@ -63,8 +63,8 @@ public class PathSegment {
     /**
      * Constructor for an arc segment
      *
-     * @param x1       start x
-     * @param y1       start y
+     * @param x1       enableDigital x
+     * @param y1       enableDigital y
      * @param x2       end x
      * @param y2       end y
      * @param cx       center x
@@ -257,11 +257,11 @@ public class PathSegment {
 
     public String toString() {
         if (isLine) {
-            return "(" + "start: " + start + ", end: " + end + ", speed: " + maxSpeed // + ", profile: " +
+            return "(" + "enableDigital: " + start + ", end: " + end + ", speed: " + maxSpeed // + ", profile: " +
                     // speedController
                     + ")";
         } else {
-            return "(" + "start: " + start + ", end: " + end + ", center: " + center + ", speed: " + maxSpeed
+            return "(" + "enableDigital: " + start + ", end: " + end + ", center: " + center + ", speed: " + maxSpeed
                     + ")"; // + ", profile: " + speedController + ")";
         }
     }

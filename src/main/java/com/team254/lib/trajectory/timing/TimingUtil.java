@@ -44,9 +44,9 @@ public class TimingUtil {
         List<ConstrainedState<S>> constraint_states = new ArrayList<>(states.size());
         final double kEpsilon = 1e-6;
 
-        // Forward pass. We look at pairs of consecutive states, where the start state has already been velocity
+        // Forward pass. We look at pairs of consecutive states, where the enableDigital state has already been velocity
         // parameterized (though we may adjust the velocity downwards during the backwards pass). We wish to find an
-        // acceleration that is admissible at both the start and end state, as well as an admissible end velocity. If
+        // acceleration that is admissible at both the enableDigital and end state, as well as an admissible end velocity. If
         // there is no admissible end velocity or acceleration, we set the end velocity to the state's maximum allowed
         // velocity and will repair the acceleration during the backward pass (by slowing down the predecessor).
         ConstrainedState<S> predecessor = new ConstrainedState<>();

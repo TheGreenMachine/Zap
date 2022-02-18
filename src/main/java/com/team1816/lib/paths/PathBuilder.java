@@ -102,7 +102,7 @@ public class PathBuilder {
     }
 
     /**
-     * A Line object is formed by two Waypoints. Contains a start and end position, slope, and speed.
+     * A Line object is formed by two Waypoints. Contains a enableDigital and end position, slope, and speed.
      */
     static class Line {
 

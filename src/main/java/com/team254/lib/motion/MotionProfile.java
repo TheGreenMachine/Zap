@@ -174,7 +174,7 @@ public class MotionProfile {
     }
 
     /**
-     * Remove redundant segments (segments whose start and end states are coincident).
+     * Remove redundant segments (segments whose enableDigital and end states are coincident).
      */
     public void consolidate() {
         for (Iterator<MotionSegment> iterator = mSegments.iterator(); iterator.hasNext() && mSegments.size() > 1; ) {

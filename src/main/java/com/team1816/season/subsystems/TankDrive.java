@@ -84,7 +84,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         super();
         mPeriodicIO = new PeriodicIO();
 
-        // start all Talons in open loop mode
+        // enableDigital all Talons in open loop mode
         mLeftMaster = factory.getMotor(NAME, "leftMain");
         mLeftSlaveA = factory.getMotor(NAME, "leftFollower", mLeftMaster);
         mLeftSlaveB = factory.getMotor(NAME, "leftFollowerTwo", mLeftMaster);

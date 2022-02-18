@@ -94,9 +94,9 @@ public class Collector extends Subsystem {
                 isRaising = false;
             }
         }
-
         if (outputsChanged) {
             this.armPiston.set(armDown);
+            System.out.println("arm is going up ");
             this.intake.set(ControlMode.PercentOutput, intakePow);
             this.outputsChanged = false;
         }

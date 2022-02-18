@@ -27,9 +27,9 @@ public class Infrastructure extends Subsystem {
     public Infrastructure() {
         super("Infrastructure");
         mCompressor = factory.getCompressor();
-        if (factory.getConstant("compressorEnabled") > 0) {
-            mCompressor.stop();
-        }
+//        if (factory.getConstant("compressorEnabled") > 0) {
+//            mCompressor.stop();
+//        }
     }
 
     @Override
@@ -77,6 +77,7 @@ public class Infrastructure extends Subsystem {
 
         if (mIsManualControl) {
             startCompressor();
+            System.out.println("pressure switch value " + mCompressor.getCompressorSwitchValue() + " enabled: " + mCompressor.enabled());
         }
     }
 
@@ -86,7 +87,7 @@ public class Infrastructure extends Subsystem {
 
     private void startCompressor() {
         if (COMPRESSOR_ENABLED) {
-            mCompressor.start();
+            mCompressor.enableDigital();
         }
     }
 
