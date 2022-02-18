@@ -359,7 +359,7 @@ public class Robot extends TimedRobot {
             }
 
             mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
-
+            mTurret.zeroSensors();
             mHasBeenEnabled = true;
 
             mEnabledLooper.start();
@@ -388,7 +388,8 @@ public class Robot extends TimedRobot {
 
             mEnabledLooper.stop();
             mDisabledLooper.start();
-
+            mTurret.zeroSensors();
+            mDrive.zeroSensors();
             blinkTimer.reset();
 
             ledManager.blinkStatus(LedManager.RobotStatus.DISABLED);
