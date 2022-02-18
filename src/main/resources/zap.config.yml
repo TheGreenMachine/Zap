@@ -127,7 +127,7 @@ subsystems:
             rpmEpsilonCheck: 60
             velocityThreshold: 500
     climber:
-        implemented: false
+        implemented: true
         talons:
             elevator: 6
         solenoids:
@@ -143,7 +143,7 @@ subsystems:
             ballSensor: 0
     collector:
         implemented: true
-        talons:
+        sparkMaxes:
             intake: 7
         invertMotor:
             - intake

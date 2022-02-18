@@ -54,6 +54,7 @@ public class Robot extends TimedRobot {
     private final LedManager ledManager;
     private final Turret mTurret;
     private final Climber mClimber;
+    private final Collector mCollector;
     private final Camera camera;
     private boolean mHasBeenEnabled = false;
 
@@ -80,6 +81,7 @@ public class Robot extends TimedRobot {
         mDrive = (injector.getInstance(Drive.Factory.class)).getInstance();
         mTurret = injector.getInstance(Turret.class);
         mClimber = injector.getInstance(Climber.class);
+        mCollector = injector.getInstance(Collector.class);
         mRobotState = injector.getInstance(RobotState.class);
         mSuperstructure = injector.getInstance(Superstructure.class);
         mInfrastructure = injector.getInstance(Infrastructure.class);
@@ -249,6 +251,21 @@ public class Robot extends TimedRobot {
                     //     mControlBoard::getSpinnerThreeTimes,
                     //     spinner::spinThreeTimes
                     // ),
+                    createHoldAction(
+                        mControlBoard::getCollectorToggle,
+                        collecting -> {
+                            System.out.println("Collector toggled!");
+                            mCollector.setDeployed(collecting, false);
+                            //hopper.setSpindexer(collecting ? -1 : 0);
+                        }
+                    ),
+                    createHoldAction(
+                        mControlBoard::getCollectorBackspin,
+                        pressed -> {
+                            mCollector.setDeployed(pressed, true);
+                            //hopper.setSpindexer(pressed ? -1 : 0);
+                        }
+                    ),
                     createAction(
                         mControlBoard::getFieldFollowing,
                         () -> mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING)
