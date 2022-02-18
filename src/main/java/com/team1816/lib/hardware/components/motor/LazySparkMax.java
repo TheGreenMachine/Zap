@@ -30,7 +30,7 @@ public class LazySparkMax implements IMotorControllerEnhanced {
          * in the SPARK MAX to their factory default state. If no argument is passed, these
          * parameters will not persist between power cycles
          */
-        mMotor.restoreFactoryDefaults(); // do we need this?
+//        mMotor.restoreFactoryDefaults(); // do we need this?
 
         /**
          * In order to use PID functionality for a controller, a SparkMaxPIDController object

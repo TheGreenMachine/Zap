@@ -63,8 +63,8 @@ public class Constants {
         "openLoopRampRate"
     );
 
-    private static final double moduleDeltaX = kDriveWheelbaseLengthInches / 2.0;
-    private static final double moduleDeltaY = kDriveWheelTrackWidthInches / 2.0;
+    private static final double moduleDeltaX = Units.inches_to_meters(kDriveWheelbaseLengthInches) / 2.0;
+    private static final double moduleDeltaY = Units.inches_to_meters(kDriveWheelTrackWidthInches) / 2.0;
 
     public static final Translation2d kFrontLeftModulePosition = new Translation2d(
         moduleDeltaX,
