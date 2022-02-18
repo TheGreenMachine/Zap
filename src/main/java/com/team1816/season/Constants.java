@@ -132,8 +132,8 @@ public class Constants {
         // drive current/voltage -ginget  - removed these
         // drive measurement
 
-        private static final double moduleDeltaX = kDriveWheelbaseLengthMeters / 2.0;
-        private static final double moduleDeltaY = kDriveWheelTrackWidthMeters / 2.0;
+        private static final double moduleDeltaX = Units.inches_to_meters(kDriveWheelbaseLengthMeters / 2.0);
+        private static final double moduleDeltaY = Units.inches_to_meters(kDriveWheelTrackWidthMeters / 2.0);
 
         public static final Translation2d kFrontLeftModulePosition = new Translation2d(
             moduleDeltaX,

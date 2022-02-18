@@ -338,7 +338,7 @@ public class RobotFactory {
 
     public ICompressor getCompressor() {
         if (isPcmEnabled()) {
-            return new CompressorImpl(getPcmId(), PneumaticsModuleType.CTREPCM);
+            return new CompressorImpl(getPcmId(), PneumaticsModuleType.REVPH);
         }
         reportGhostWarning("Compressor", "ROOT", "on PCM ID " + getPcmId());
         return new GhostCompressor();
