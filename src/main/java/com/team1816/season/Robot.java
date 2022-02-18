@@ -51,6 +51,7 @@ public class Robot extends TimedRobot {
         1,
         PowerDistribution.ModuleType.kRev
     );
+    private final PneumaticHub ph = new PneumaticHub(1); //use fatory.getPcm later
     private final LedManager ledManager;
     private final Turret mTurret;
     private final Climber mClimber;

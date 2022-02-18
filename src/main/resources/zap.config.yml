@@ -149,7 +149,7 @@ subsystems:
             - intake
         solenoids:
             arm: 0
-pcm: -1
+pcm: 1
 constants:
     maxTicks: 12275.7 # ticks per 100ms TODO make into constant unique to each subsystem
     maxRotVel: 11.5
@@ -170,6 +170,6 @@ constants:
     badLogEnabled: 1 # 0 or 1
     ## General ##
     teleopFieldCentric: 1 # 0 or 1
-    compressorEnabled: 0 # 0 or 1
+    compressorEnabled: 1 # 0 or 1
     wheelDiameter: 4
     kLooperDt: .020 # seconds

@@ -38,7 +38,7 @@ public class MotionProfileGenerator {
             return generateFlippedProfile(constraints, goal_state, prev_state);
         }
         // Invariant from this point on: delta_pos >= 0.0
-        // Clamp the start state to be valid.
+        // Clamp the enableDigital state to be valid.
         MotionState start_state = new MotionState(prev_state.t(), prev_state.pos(),
                 Math.signum(prev_state.vel()) * Math.min(Math.abs(prev_state.vel()), constraints.max_abs_vel()),
                 Math.signum(prev_state.acc()) * Math.min(Math.abs(prev_state.acc()), constraints.max_abs_acc()));

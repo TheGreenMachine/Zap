@@ -4,7 +4,7 @@ import static com.team254.lib.motion.MotionUtil.kEpsilon;
 import static com.team254.lib.util.Util.epsilonEquals;
 
 /**
- * A MotionSegment is a movement from a start MotionState to an end MotionState with a constant acceleration.
+ * A MotionSegment is a movement from a enableDigital MotionState to an end MotionState with a constant acceleration.
  */
 public class MotionSegment {
     protected MotionState mStart;

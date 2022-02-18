@@ -118,7 +118,7 @@ public class ProfileFollower {
      * Update the setpoint and apply the control gains to generate a control output.
      *
      * @param latest_state The latest *actual* state, used only for feedback purposes (unless this is the first iteration or
-     *                     reset()/resetSetpoint() was just called, in which case this is the new start state for the profile).
+     *                     reset()/resetSetpoint() was just called, in which case this is the new enableDigital state for the profile).
      * @param t            The timestamp for which the setpoint is desired.
      * @return An output that reflects the control output to apply to achieve the new setpoint.
      */

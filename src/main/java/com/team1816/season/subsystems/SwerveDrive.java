@@ -39,7 +39,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         super();
         swerveModules = new SwerveModule[4];
 
-        // start all Talons in open loop mode
+        // enableDigital all Talons in open loop mode
         swerveModules[Constants.Swerve.kFrontLeft] =
             factory.getSwerveModule(NAME, "frontLeft");
         swerveModules[Constants.Swerve.kFrontRight] =
