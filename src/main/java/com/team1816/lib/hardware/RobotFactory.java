@@ -490,7 +490,7 @@ public class RobotFactory {
     }
 
     private void setStatusFrame(CANCoder device){
-        device.setStatusFramePeriod(CANCoderStatusFrame.SensorData, canMaxStatus, 100);
+//        device.setStatusFramePeriod(CANCoderStatusFrame.SensorData, canMaxStatus, 100);
         device.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, canMaxStatus, 100);
     }
 

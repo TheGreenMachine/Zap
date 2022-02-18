@@ -133,13 +133,13 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                     mHeadings.get(mTrajectoryIndex),
                     getTrajectoryTimestamp() / timeBetweenPoints
                 );
-                System.out.println(heading.getDegrees() + "aaaaa");
         //        mPeriodicIO.totalRotation = heading.getRadians();
         return heading;
     }
 
     // autonomous (trajectory following)
     public void startTrajectory(Trajectory trajectory, List<Rotation2d> headings) {
+        System.out.println("STARTING TRAJECTORY ");
         mPeriodicIO.timestamp = 0;
         mTrajectoryStart = 0;
         mTrajectory = trajectory;
@@ -150,6 +150,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             trajectory.getInitialPose().getRotation()
         );
         updateRobotPose();
+        setHeading(trajectory.getInitialPose().getRotation());
         mDriveControlState = DriveControlState.TRAJECTORY_FOLLOWING;
         setBrakeMode(true);
         mOverrideTrajectory = false;
@@ -224,21 +225,21 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             speeds
         );
 
-//        SwerveDriveSignal signal = swerveDriveHelper.calculateDriveSignal(
-//            forward,
-//            strafe,
-//            rotation,
-//            low_power,
-//         true,
-//            use_heading_controller
-//        );
-//
-//        SwerveModuleState[] states = new SwerveModuleState[4];
-//        for(int i = 0; i < 4; i++){
-//            states[i] = new SwerveModuleState(signal.getWheelSpeeds()[i], signal.getWheelAzimuths()[i]);
-//        }
-//
-//        mPeriodicIO.desiredModuleStates = states;
+        SwerveDriveSignal signal = swerveDriveHelper.calculateDriveSignal(
+            forward,
+            strafe,
+            rotation,
+            low_power,
+         true,
+            use_heading_controller
+        );
+
+        SwerveModuleState[] states = new SwerveModuleState[4];
+        for(int i = 0; i < 4; i++){
+            states[i] = new SwerveModuleState(signal.getWheelSpeeds()[i], signal.getWheelAzimuths()[i]);
+        }
+
+        mPeriodicIO.desiredModuleStates = states;
     }
 
     @Override

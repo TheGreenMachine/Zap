@@ -1,6 +1,7 @@
 package com.team254.lib.util;
 
 import com.google.inject.Inject;
+import com.team1816.season.Constants;
 import com.team1816.season.SwerveKinematics;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -12,13 +13,13 @@ public class SwerveDriveHelper implements DriveHelper {
 
     private final static double kHighAdjustmentPower = 1.75 + 0.4375;
     private final static double kLowAdjustmentPower = 1.50;
-    private final static double kMaxSpeed = 1.0;
+    private final static double kMaxSpeed = Constants.kPathFollowingMaxVel;
     private final static double kHighPowerRotationScalar = 0.8;
     private final static double kLowPowerScalar = 0.5;
     private final static double kRotationExponent = 4.0;
     private final static double kPoleThreshold = 0.0;
     private final static double kRobotRelativePoleThreshold = Math.toRadians(5);
-    private final static double kDeadband = 0.25;
+    private final static double kDeadband = 0.15;
     private final static double kRotationDeadband = 0.15;
 
 
@@ -30,7 +31,7 @@ public class SwerveDriveHelper implements DriveHelper {
     public SwerveDriveSignal calculateDriveSignal(double forwardInput, double strafeInput, double rotationInput,
                                                   boolean low_power, boolean field_relative, boolean use_heading_controller) {
 
-        Translation2d translationalInput = new Translation2d(forwardInput, -strafeInput);
+        Translation2d translationalInput = new Translation2d(forwardInput, strafeInput);
         double inputMagnitude = translationalInput.getNorm();
 
         // Snap the translational input to its nearest pole, if it is within a certain
