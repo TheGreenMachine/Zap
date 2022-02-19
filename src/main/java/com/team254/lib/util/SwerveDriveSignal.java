@@ -1,7 +1,6 @@
 package com.team254.lib.util;
 
 import com.team1816.season.Constants;
-import com.team1816.season.subsystems.Drive;
 import edu.wpi.first.math.geometry.Rotation2d;
 
 import java.text.DecimalFormat;
@@ -57,7 +56,7 @@ public class SwerveDriveSignal extends DriveSignal {
         return new SwerveDriveSignal(
             Arrays.stream(this.mWheelSpeeds)
                 .map(x ->
-                    x * inchesPerSecondToTicksPer100ms(Constants.kPathFollowingMaxVel)
+                    x * inchesPerSecondToTicksPer100ms(Constants.kPathFollowingMaxVelMeters)
                 )
                 .toArray(),
             this.mWheelAzimuths,

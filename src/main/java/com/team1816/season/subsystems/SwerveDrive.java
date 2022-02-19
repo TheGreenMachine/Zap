@@ -9,12 +9,10 @@ import com.team1816.season.Constants;
 import com.team254.lib.util.*;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.RobotBase;
 import java.util.List;
@@ -67,7 +65,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         if(mDriveControlState == DriveControlState.OPEN_LOOP){ // autonomous (Trajectory_Following) loop is in setModuleStates
             SwerveDriveKinematics.desaturateWheelSpeeds(
                 mPeriodicIO.desiredModuleStates,
-                Units.inchesToMeters(Constants.kPathFollowingMaxVel)
+                Constants.kPathFollowingMaxVelMeters
             ); // TODO get swerve max speed in meters/s
             for (int i = 0; i < 4; i++) {
                 swerveModules[i].setDesiredState(mPeriodicIO.desiredModuleStates[i], true);
@@ -164,7 +162,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         mDriveControlState = DriveControlState.TRAJECTORY_FOLLOWING;
         SwerveDriveKinematics.desaturateWheelSpeeds(
             desiredStates,
-            Units.inchesToMeters(Constants.kPathFollowingMaxVel)
+            (Constants.kPathFollowingMaxVelMeters)
         );
         mPeriodicIO.desiredModuleStates = desiredStates;
         for (int i = 0; i < 4; i++) {
@@ -226,9 +224,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 //        );
 
         SwerveDriveSignal signal = swerveDriveHelper.calculateDriveSignal(
-            forward,
+            -forward,
             strafe,
-            rotation,
+            -rotation,
             low_power,
          true,
             use_heading_controller

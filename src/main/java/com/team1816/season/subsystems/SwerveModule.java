@@ -105,7 +105,7 @@ public class SwerveModule implements ISwerveModule {
         if (!isOpenLoop) {
             mDriveMotor.set(ControlMode.Velocity, DriveConversions.metersPerSecondToTicksPer100ms(desiredState.speedMetersPerSecond));
         } else {
-            mDriveMotor.set(ControlMode.PercentOutput, desired_state.speedMetersPerSecond / Units.inchesToMeters(Constants.kPathFollowingMaxVel)); // w/out conversion, would be lying to it - speed meters per second is percent output i
+            mDriveMotor.set(ControlMode.PercentOutput, desired_state.speedMetersPerSecond * .75); // w/out conversion, would be lying to it - speed meters per second is percent output i
         }
         mAzimuthMotor.set(ControlMode.Position, DriveConversions.convertDegreesToTicks(desired_state.angle.getDegrees()) + mConstants.kAzimuthEncoderHomeOffset);
     }

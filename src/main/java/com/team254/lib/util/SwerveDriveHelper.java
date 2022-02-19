@@ -1,6 +1,5 @@
 package com.team254.lib.util;
 
-import com.google.inject.Inject;
 import com.team1816.season.Constants;
 import com.team1816.season.SwerveKinematics;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -13,7 +12,7 @@ public class SwerveDriveHelper implements DriveHelper {
 
     private final static double kHighAdjustmentPower = 1.75 + 0.4375;
     private final static double kLowAdjustmentPower = 1.50;
-    private final static double kMaxSpeed = Units.inches_to_meters(Constants.kPathFollowingMaxVel);
+    private final static double kMaxSpeed = (Constants.kPathFollowingMaxVelMeters);
     private final static double kMaxRotation = Constants.kMaxAngularSpeed;
 
     private final static double kHighPowerRotationScalar = 0.8;

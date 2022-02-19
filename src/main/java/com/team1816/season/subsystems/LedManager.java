@@ -50,7 +50,7 @@ public class LedManager extends Subsystem {
         super(NAME);
         this.canifier = factory.getCanifier(NAME);
         this.cameraCanifier = factory.getCanifier("camera");
-        this.candle = factory.getCandle("camera", 10);
+        this.candle = factory.getCandle("ledmanager", 22);
 //        this.candle.animate(new RainbowAnimation(1, .5, 8));
 
         configureCanifier(canifier);
@@ -66,7 +66,7 @@ public class LedManager extends Subsystem {
 
     private void configureCandle() {
         this.candle.configStatusLedState(true);
-        this.candle.configBrightnessScalar(.04);
+        this.candle.configBrightnessScalar(1);
     }
 
     private void configureCanifier(ICanifier canifier) {
@@ -80,6 +80,7 @@ public class LedManager extends Subsystem {
 
     public void setCameraLed(boolean cameraLedOn) {
         if (this.cameraLedOn != cameraLedOn) {
+            System.out.println("turning on LED");
             this.cameraLedOn = cameraLedOn;
             outputsChanged = true;
         }
@@ -159,11 +160,13 @@ public class LedManager extends Subsystem {
 //                    cameraLedOn ? 1 : 0,
 //                    CANifier.LEDChannel.LEDChannelB
 //                );
-                candle.setLEDs(0,255,0);
-                candle.configBrightnessScalar(
-                    cameraLedOn ? 1 : 0
-                );
+                if(cameraLedOn){
+                    candle.setLEDs(0,255,0);
+                } else {
+                    candle.setLEDs(0,0,0);
 
+                }
+                System.out.println("writing led state: " + outputsChanged);
             }
         }
         if (canifier != null || candle != null) {

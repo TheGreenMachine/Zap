@@ -26,8 +26,10 @@ public class SeasonModule extends AbstractModule {
         bind(IButtonControlBoard.class).to(GamepadButtonControlBoard.class);
         requestStaticInjection(SwerveKinematics.class);
         requestStaticInjection(Drive.class);
+        requestStaticInjection(Hopper.class);
         requestStaticInjection(TankDrive.class);
         requestStaticInjection(SwerveDrive.class);
+        requestStaticInjection(Shooter.class);
         requestStaticInjection(Infrastructure.class);
         requestStaticInjection(Camera.class);
         requestStaticInjection(Turret.class);

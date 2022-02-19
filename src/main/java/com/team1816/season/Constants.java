@@ -221,7 +221,7 @@ public class Constants {
     public static final double kPathStopSteeringDistance = 12.0;
     public static double kCameraFrameRate = 30;
     public static final double kPathFollowingMaxAccel = factory.getConstant("maxAccel");
-    public static double kPathFollowingMaxVel = factory.getConstant("maxVel");
+    public static double kPathFollowingMaxVelMeters = factory.getConstant("maxVel");
     public static final double kTicksPerRevolution = 4096;
 
     // Trajectory Generator constants

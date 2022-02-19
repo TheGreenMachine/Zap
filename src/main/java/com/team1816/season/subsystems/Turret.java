@@ -143,9 +143,9 @@ public class Turret extends Subsystem implements PidProvider {
             turret.setSelectedSensorPosition(ABS_TICKS_SOUTH, 0, 0);
         }
         if (turret instanceof TalonSRX) {
-            var sensors = ((TalonSRX) turret).getSensorCollection();
+            var sensors = ((TalonSRX) turret).getSensorCollection(); // not absolute
             // If we have a sensorVal < turret ppr then it is safe to reset
-            if(sensors.getQuadraturePosition() < TURRET_PPR) {
+            if(sensors.getQuadraturePosition() < TURRET_PPR) { // ABSOLUTE
                 //get absolute sensor value
                 var sensorVal = sensors.getPulseWidthPosition();
                 sensors.setQuadraturePosition(sensorVal, Constants.kLongCANTimeoutMs);

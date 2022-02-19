@@ -13,7 +13,6 @@ import com.team1816.lib.hardware.RobotFactory;
 import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.DrivetrainLogger;
-import com.team1816.lib.subsystems.Infrastructure;
 import com.team1816.lib.subsystems.SubsystemManager;
 import com.team1816.season.controlboard.ActionManager;
 import com.team1816.season.paths.TrajectorySet;
@@ -134,7 +133,7 @@ public class Robot extends TimedRobot {
 
                 BadLog.createValue(
                     "Max Velocity",
-                    String.valueOf(Constants.kPathFollowingMaxVel)
+                    String.valueOf(Constants.kPathFollowingMaxVelMeters)
                 );
                 BadLog.createValue(
                     "Max Acceleration",
@@ -269,26 +268,39 @@ public class Robot extends TimedRobot {
                             }
                         }
                     ),
-                    // Operator Gamepad
-                    // createAction(mControlBoard::getSpinnerReset, spinner::initialize),
-                    // createHoldAction(mControlBoard::getSpinnerColor, spinner::goToColor),
-                    // createHoldAction(
-                    //     mControlBoard::getSpinnerThreeTimes,
-                    //     spinner::spinThreeTimes
-                    // ),
                     createHoldAction(
+                        mControlBoard::getShoot,
+                        shooting -> {
+                            if (shooting) {
+//                                mDrive.setOpenLoop(SwerveDriveSignal.BRAKE);
+//                                mShooter.startShooter(); // Uses ZED distance
+                                mShooter.setVelocity(Shooter.MID_VELOCITY);
+//                                mTurret.lockTurret();
+                            } else {
+//                                mTurret.setControlMode(
+//                                    Turret.ControlMode.FIELD_FOLLOWING
+//                                );
+                                mShooter.stopShooter();
+//                                mShooter.setHood(false);
+                            }
+//                            mHopper.lockToShooter(shooting, false);
+                            mHopper.setIntake(shooting ? 1 : 0);
+                            mCollector.setIntakePow(shooting ? 0.5 : 0);
+                        }
+                    ),
+                    createHoldAction( // make this an actual toggle?
                         mControlBoard::getCollectorToggle,
                         collecting -> {
                             System.out.println("Collector toggled!");
                             mCollector.setDeployed(collecting, false);
-                            //hopper.setSpindexer(collecting ? -1 : 0);
+                            mHopper.setSpindexer(collecting ? 1 : 0);
                         }
                     ),
                     createHoldAction(
                         mControlBoard::getCollectorBackspin,
                         pressed -> {
                             mCollector.setDeployed(pressed, true);
-                            //hopper.setSpindexer(pressed ? -1 : 0);
+                            mHopper.setSpindexer(pressed ? -1 : 0);
                         }
                     ),
                     createAction(
@@ -334,6 +346,7 @@ public class Robot extends TimedRobot {
             mEnabledLooper.stop();
 
             ledManager.setDefaultStatus(LedManager.RobotStatus.DISABLED);
+            ledManager.setCameraLed(false);
 
             // Reset all auto mode state.
             if (mAutoModeExecutor != null) {
@@ -395,6 +408,7 @@ public class Robot extends TimedRobot {
         try {
             mDisabledLooper.stop();
             ledManager.setDefaultStatus(LedManager.RobotStatus.ENABLED);
+
 
             if (mAutoModeExecutor != null) {
                 mAutoModeExecutor.stop();

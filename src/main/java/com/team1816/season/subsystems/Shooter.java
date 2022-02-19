@@ -66,7 +66,7 @@ public class Shooter extends Subsystem implements PidProvider {
                 shooterMain
             );
 
-        this.shooterFollower.setInverted(false);
+        this.shooterFollower.setInverted(true);
         this.hood = factory.getSolenoid(NAME, "hood");
 
         PIDSlotConfiguration pidConfig = factory.getPidSlotConfig(NAME, pidSlot);

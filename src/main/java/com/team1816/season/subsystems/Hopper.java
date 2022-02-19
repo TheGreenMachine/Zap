@@ -76,7 +76,8 @@ public class Hopper extends Subsystem {
     public void setIntake(double intakeOutput) {
         setElevator(intakeOutput);
         if (intakeOutput > 0) {
-            startSpindexerBasedOnDistance();
+            setSpindexer(intakeOutput);
+//            startSpindexerBasedOnDistance(); INTRODUCE DISTANCEMANAGER
         } else {
             setSpindexer(0);
         }
@@ -101,9 +102,10 @@ public class Hopper extends Subsystem {
                 return;
             }
             System.out.println("Near Velocity: " + shooter.isVelocityNearTarget());
-            System.out.println("Has Ball: " + hasBall());
+//            System.out.println("Has Ball: " + hasBall());
             if (
-                (!shooter.isVelocityNearTarget() || hasBall()) &&
+                (!shooter.isVelocityNearTarget()
+                    || hasBall()) &&
                 !(shooter.isVelocityNearTarget() && hasBall())
             ) {
                 if (wantUnjam) {

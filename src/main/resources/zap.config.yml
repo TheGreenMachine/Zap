@@ -64,7 +64,7 @@ subsystems:
                     kD: 30
                     kF: 0
         constants:
-            pigeonId: -1
+            pigeonId: 13
             pigeonOnTalon: -1
             kP: 0.1 # 0.18 # TODO: tune PID, these are temporary PID values from Zeta
             kI: 0.0001 # 0.018
@@ -101,23 +101,23 @@ subsystems:
         talons:
             turret: 33 # need to set to pdp port number
         constants:
-            revLimit: 0
-            absPosTicksSouth: 3451
-            fwdLimit: 40000
+            revLimit: -1225 # NOT ABSOLUTE
+            absPosTicksSouth: 2437 # absolute - test
+            zeroOffset: 2048 # might not be necessary
+            fwdLimit: 29436 # TEST -- NOT ABSOLUTE
             encPPR: 4096
             turretPPR: 53248 # 4096 * 13
     shooter:
-        implemented: false
-        invertMotor:
-            - shooterMain
+        implemented: true
         falcons:
             shooterMain: 16
-            shooterFollower: 15
+            shooterFollower: 34
         solenoids:
             hood: 1
-        pid:
-            -   kP: 0.15 #0.30
-                kI: 0
+        pidConfig:
+            slot0:
+                kP: 0.15
+                kI: 0.0
                 kD: 2.5 #4.5
                 kF: 0.05671 #0.00953253
         constants:
@@ -127,16 +127,16 @@ subsystems:
             rpmEpsilonCheck: 60
             velocityThreshold: 500
     climber:
-        implemented: true
+        implemented: false
         sparkmaxes:
             elevator: 20
         solenoids:
             deployer: 2
     hopper:
-        implemented: false
+        implemented: true
         talons:
-            spindexer: 10
-            elevator: 5
+            spindexer: 31
+            elevator: 32
         solenoids:
             feederFlap: -1
         constants:
@@ -150,14 +150,14 @@ subsystems:
         solenoids:
             arm: 0
     camera:
-        implemented: true
+        implemented: false
 pcm: 28
 constants:
     maxTicks: 12275.7 # ticks per 100ms TODO make into constant unique to each subsystem
     maxRotVel: 11.5
     trackWidth: 21 #inches
     wheelbaseLength: 21.5 #inches
-    maxVel: 153 # 160 # 240 # inches/s # 22560 native units ---30
+    maxVel: 4 # 160 # 240 # inches/s # 22560 native units ---30
     maxAccel: 100 # inches/s^2
     sensorPhase: 0
     kTrackScrubFactor: 1.0
@@ -168,7 +168,7 @@ constants:
     heading_kF: 0
     ## Logging ##
     logTeleOp: 0 # 0 or 1
-    logAuto: 1 # 0 or 1
+    logAuto: 0 # 0 or 1
     badLogEnabled: 1 # 0 or 1
     ## General ##
     teleopFieldCentric: 1 # 0 or 1

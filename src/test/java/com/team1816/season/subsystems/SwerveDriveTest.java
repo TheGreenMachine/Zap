@@ -30,7 +30,7 @@ public class SwerveDriveTest {
 
     public SwerveDriveTest() {
         mockFactory = Mockito.spy(RobotFactory.class);
-        Constants.kPathFollowingMaxVel = maxVel;
+        Constants.kPathFollowingMaxVelMeters = maxVel;
         Constants.kMaxAngularSpeed = maxRotVel;
         Subsystem.factory = mockFactory;
         Injector injector = Guice.createInjector(new LibModule(), new SeasonModule());
@@ -65,7 +65,7 @@ public class SwerveDriveTest {
 
     @Test
     public void testFactoryMock() {
-        assertEquals(maxVel, Constants.kPathFollowingMaxVel, .01);
+        assertEquals(maxVel, Constants.kPathFollowingMaxVelMeters, .01);
         assertEquals(maxRotVel, Constants.kMaxAngularSpeed, .01);
     }
 

@@ -69,9 +69,9 @@ public class Collector extends Subsystem {
         isRaising = !down;
         if (down) {
             if (reverse) {
-                setIntakePow(0.60);
-            } else {
                 setIntakePow(-0.60);
+            } else {
+                setIntakePow(0.60);
             }
             setArm(true);
         } else {
