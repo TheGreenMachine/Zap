@@ -4,6 +4,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.google.inject.Singleton;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
@@ -18,7 +20,7 @@ public class Collector extends Subsystem {
 
     // Components
     private final ISolenoid armPiston;
-    private final IMotorControllerEnhanced intake;
+    private final CANSparkMax intake;
 
     // State
     private double intakePow;
@@ -33,11 +35,11 @@ public class Collector extends Subsystem {
     public Collector() {
         super(NAME);
         this.armPiston = factory.getSolenoid(NAME, "arm");
-        this.intake = factory.getMotor(NAME, "intake");
+        this.intake =  new CANSparkMax(23, CANSparkMaxLowLevel.MotorType.kBrushless); // factory.getMotor(NAME, "intake");
 
-        intake.configSupplyCurrentLimit(
-            new SupplyCurrentLimitConfiguration(true, 25, 0, 0),
-            Constants.kCANTimeoutMs
+        intake.setSmartCurrentLimit( 25
+//            new SupplyCurrentLimitConfiguration(true, 25, 0, 0),
+//            Constants.kCANTimeoutMs
         );
     }
 
@@ -80,7 +82,7 @@ public class Collector extends Subsystem {
 
     @Override
     public void readPeriodicInputs() {
-        this.actualVelocity = intake.getSelectedSensorVelocity(0);
+//        this.actualVelocity = intake.getSelectedSensorVelocity(0);
     }
 
     @Override
@@ -97,7 +99,8 @@ public class Collector extends Subsystem {
         if (outputsChanged) {
             this.armPiston.set(armDown);
             System.out.println("arm is going up ");
-            this.intake.set(ControlMode.PercentOutput, intakePow);
+//            this.intake.set(ControlMode.PercentOutput, intakePow);
+            intake.set(intakePow);
             this.outputsChanged = false;
         }
     }

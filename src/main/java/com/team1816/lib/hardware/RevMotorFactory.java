@@ -82,6 +82,7 @@ public class RevMotorFactory {
             pidConfigList,
             remoteSensorId
         );
+        System.out.println("created collector");
 
         return spark;
     }

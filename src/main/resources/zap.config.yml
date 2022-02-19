@@ -64,7 +64,7 @@ subsystems:
                     kD: 30
                     kF: 0
         constants:
-            pigeonId: 13
+            pigeonId: -1
             pigeonOnTalon: -1
             kP: 0.1 # 0.18 # TODO: tune PID, these are temporary PID values from Zeta
             kI: 0.0001 # 0.018
@@ -82,9 +82,9 @@ subsystems:
             azimuthAllowableErrorTicks: 20
             azimuthHomeAdjustmentDegrees: 1
     ledmanager:
-        implemented: false
-        canifier: 18
-        candle: 10
+        implemented: true
+        canifier: -1
+        candle: 22
         constants:
             raveEnabled: 0
             raveSpeed: 0.05
@@ -128,8 +128,8 @@ subsystems:
             velocityThreshold: 500
     climber:
         implemented: true
-        talons:
-            elevator: 6
+        sparkmaxes:
+            elevator: 20
         solenoids:
             deployer: 2
     hopper:
@@ -144,12 +144,14 @@ subsystems:
     collector:
         implemented: true
         sparkMaxes:
-            intake: 7
+            intake: 23
         invertMotor:
             - intake
         solenoids:
             arm: 0
-pcm: 1
+    camera:
+        implemented: true
+pcm: 28
 constants:
     maxTicks: 12275.7 # ticks per 100ms TODO make into constant unique to each subsystem
     maxRotVel: 11.5

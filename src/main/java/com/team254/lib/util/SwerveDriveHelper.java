@@ -13,7 +13,9 @@ public class SwerveDriveHelper implements DriveHelper {
 
     private final static double kHighAdjustmentPower = 1.75 + 0.4375;
     private final static double kLowAdjustmentPower = 1.50;
-    private final static double kMaxSpeed = Constants.kPathFollowingMaxVel;
+    private final static double kMaxSpeed = Units.inches_to_meters(Constants.kPathFollowingMaxVel);
+    private final static double kMaxRotation = Constants.kMaxAngularSpeed;
+
     private final static double kHighPowerRotationScalar = 0.8;
     private final static double kLowPowerScalar = 0.5;
     private final static double kRotationExponent = 4.0;
@@ -73,7 +75,7 @@ public class SwerveDriveHelper implements DriveHelper {
         }
 
         translationalInput = translationalInput.times(kMaxSpeed);
-        rotationInput *= kMaxSpeed;
+        rotationInput *= kMaxRotation;
 
         if (low_power) {
             translationalInput = translationalInput.times(kLowPowerScalar);

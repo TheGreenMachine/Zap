@@ -6,6 +6,8 @@ import com.team1816.lib.loops.ILooper;
 import com.team1816.lib.loops.Loop;
 import com.team1816.season.subsystems.Superstructure;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 /**
  * Subsystem to ensure the compressor never runs while the superstructure moves
@@ -17,7 +19,7 @@ public class Infrastructure extends Subsystem {
     @Inject
     private Superstructure mSuperstructure;
 
-    private ICompressor mCompressor;
+    private Compressor mCompressor;
 
     private boolean mIsManualControl = false;
     private static final boolean COMPRESSOR_ENABLED =
@@ -26,7 +28,7 @@ public class Infrastructure extends Subsystem {
 
     public Infrastructure() {
         super("Infrastructure");
-        mCompressor = factory.getCompressor();
+        mCompressor = new Compressor(8, PneumaticsModuleType.REVPH);
 //        if (factory.getConstant("compressorEnabled") > 0) {
 //            mCompressor.stop();
 //        }
@@ -77,7 +79,7 @@ public class Infrastructure extends Subsystem {
 
         if (mIsManualControl) {
             startCompressor();
-            System.out.println("pressure switch value " + mCompressor.getCompressorSwitchValue() + " enabled: " + mCompressor.enabled());
+            System.out.println("current value " + mCompressor.getCurrent() + " enabled: " + mCompressor.enabled());
         }
     }
 
@@ -93,7 +95,7 @@ public class Infrastructure extends Subsystem {
 
     private void stopCompressor() {
         if (COMPRESSOR_ENABLED) {
-            mCompressor.stop();
+            mCompressor.disable();
         }
     }
 

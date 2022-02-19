@@ -1,5 +1,6 @@
 package com.team1816.season.subsystems;
 
+import com.ctre.phoenix.led.CANdle;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.subsystems.Subsystem;
@@ -9,6 +10,7 @@ import java.net.*;
 @Singleton
 public class Camera extends Subsystem {
 
+    private static final String NAME = "camera";
     private static Camera INSTANCE;
 
     private final String PROTOCOL_LINE = "\\|";
@@ -118,7 +120,7 @@ public class Camera extends Subsystem {
     }
 
     public void readPeriodicInputs() {
-        // if more than 500ms, reconnect
+        // if more than 200ms, reconnect
         if (needsReconnect != 0 && (System.currentTimeMillis() - needsReconnect) >= 200) {
             //            System.out.println("Reconnect attempt at " + System.currentTimeMillis());
             if (socketConnect()) {

@@ -44,20 +44,23 @@ public class Robot extends TimedRobot {
 
     // subsystems
     private final Superstructure mSuperstructure;
-    private final Infrastructure mInfrastructure;
+//    private final Infrastructure mInfrastructure;
     private final RobotState mRobotState;
     private final Drive mDrive;
     private final PowerDistribution pdh = new PowerDistribution(
         1,
         PowerDistribution.ModuleType.kRev
     );
-    private final PneumaticHub ph = new PneumaticHub(1); //use fatory.getPcm later
-    private final LedManager ledManager;
-    private final Turret mTurret;
-    private final Climber mClimber;
+//    private final PneumaticHub ph = new PneumaticHub(1); //use fatory.getPcm later
     private final Collector mCollector;
-    private final Camera camera;
-    private boolean mHasBeenEnabled = false;
+    private final Shooter mShooter;
+    private final Turret mTurret;
+    // private final Spinner spinner = Spinner.getInstance();
+    private final Hopper mHopper;
+    private final Climber mClimber;
+    private final Camera mCamera;
+    private final LedManager ledManager;
+    private final Compressor compressor;
 
     private LatchedBoolean mWantsAutoExecution = new LatchedBoolean();
     private LatchedBoolean mWantsAutoInterrupt = new LatchedBoolean();
@@ -68,6 +71,7 @@ public class Robot extends TimedRobot {
 
     private boolean mDriveByCameraInAuto = false;
     private double loopStart;
+    private boolean mHasBeenEnabled = false;
 
     private ActionManager actionManager;
     private AsyncTimer blinkTimer;
@@ -83,14 +87,17 @@ public class Robot extends TimedRobot {
         mTurret = injector.getInstance(Turret.class);
         mClimber = injector.getInstance(Climber.class);
         mCollector = injector.getInstance(Collector.class);
+        mHopper = injector.getInstance(Hopper.class);
+        mShooter = injector.getInstance(Shooter.class);
         mRobotState = injector.getInstance(RobotState.class);
         mSuperstructure = injector.getInstance(Superstructure.class);
-        mInfrastructure = injector.getInstance(Infrastructure.class);
+//        mInfrastructure = injector.getInstance(Infrastructure.class);
         ledManager = injector.getInstance(LedManager.class);
-        camera = injector.getInstance(Camera.class);
+        mCamera = injector.getInstance(Camera.class);
         mSubsystemManager = injector.getInstance(SubsystemManager.class);
         mAutoModeSelector = injector.getInstance(AutoModeSelector.class);
         trajectorySet = injector.getInstance(TrajectorySet.class);
+        compressor = new Compressor(getFactory().getPcmId(), PneumaticsModuleType.REVPH);
     }
 
     public static RobotFactory getFactory() {
@@ -166,10 +173,10 @@ public class Robot extends TimedRobot {
                     BadLog.createTopic(
                         "Vision/DeltaXAngle",
                         "Degrees",
-                        camera::getDeltaXAngle
+                        mCamera::getDeltaXAngle
                     );
-                    BadLog.createTopic("Vision/Distance", "inches", camera::getDistance);
-                    BadLog.createTopic("Vision/CenterX", "pixels", camera::getRawCenterX);
+                    BadLog.createTopic("Vision/Distance", "inches", mCamera::getDistance);
+                    BadLog.createTopic("Vision/CenterX", "pixels", mCamera::getRawCenterX);
                 }
                 mTurret.CreateBadLogTopic(
                     "Turret/ActPos",
@@ -218,11 +225,14 @@ public class Robot extends TimedRobot {
             mSubsystemManager.setSubsystems(
                 mDrive,
                 mSuperstructure,
-                mInfrastructure,
+//                mInfrastructure,
+                mShooter,
                 // spinner,
+                mCollector,
+                mHopper,
                 mTurret,
-                mClimber
-                //                camera
+                mClimber,
+                mCamera
             );
 
             mDrive.zeroSensors(Constants.StartingPose);
@@ -245,6 +255,20 @@ public class Robot extends TimedRobot {
                 new ActionManager(
                     // Driver Gamepad
                     createHoldAction(mControlBoard::getSlowMode, mDrive::setSlowMode),
+                    createHoldAction(
+                        mControlBoard::getAutoAim,
+                        pressed -> {
+                            if (pressed) {
+                                prevTurretControlMode = mTurret.getControlMode();
+                                mTurret.setControlMode(
+                                    Turret.ControlMode.CAMERA_FOLLOWING
+                                );
+//                                mShooter.startShooter();
+                            } else {
+                                mTurret.setControlMode(prevTurretControlMode);
+                            }
+                        }
+                    ),
                     // Operator Gamepad
                     // createAction(mControlBoard::getSpinnerReset, spinner::initialize),
                     // createHoldAction(mControlBoard::getSpinnerColor, spinner::goToColor),
@@ -284,12 +308,12 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         mControlBoard::getClimberUp,
                         moving ->
-                            mClimber.setClimberPower(moving ? 1: 0)
+                            mClimber.setClimberPower(moving ? -.7: 0)
                     ),
                     createHoldAction(
                         mControlBoard::getClimberDown,
                         moving ->
-                            mClimber.setClimberPower(moving ? -1: 0)
+                            mClimber.setClimberPower(moving ? .7: 0)
                     )
                 );
 
@@ -319,7 +343,7 @@ public class Robot extends TimedRobot {
             mAutoModeSelector.updateModeCreator();
             mAutoModeExecutor = new AutoModeExecutor();
 
-            mInfrastructure.setIsManualControl(false);
+//            mInfrastructure.setIsManualControl(false);
 
             mDisabledLooper.start();
 
@@ -342,7 +366,7 @@ public class Robot extends TimedRobot {
 
             mHasBeenEnabled = true;
 
-            mInfrastructure.setIsManualControl(true); // turn on compressor when superstructure is not moving
+//            mInfrastructure.setIsManualControl(false); // turn on compressor when superstructure is not moving
 
             mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
 
@@ -386,7 +410,7 @@ public class Robot extends TimedRobot {
             System.out.println(mTurret.getActualTurretPositionTicks() + "+++++++"); // for debugging whether or not getActTicks works. doesn't seem to - ginget
 
 
-            mInfrastructure.setIsManualControl(true);
+//            mInfrastructure.setIsManualControl(true);
             mControlBoard.reset();
         } catch (Throwable t) {
             throw t;

@@ -233,7 +233,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
          true,
             use_heading_controller
         );
-
         SwerveModuleState[] states = new SwerveModuleState[4];
         for(int i = 0; i < 4; i++){
             states[i] = new SwerveModuleState(signal.getWheelSpeeds()[i], signal.getWheelAzimuths()[i]);

@@ -51,7 +51,7 @@ public class LedManager extends Subsystem {
         this.canifier = factory.getCanifier(NAME);
         this.cameraCanifier = factory.getCanifier("camera");
         this.candle = factory.getCandle("camera", 10);
-        this.candle.animate(new RainbowAnimation(1, .5, 8));
+//        this.candle.animate(new RainbowAnimation(1, .5, 8));
 
         configureCanifier(canifier);
         configureCanifier(cameraCanifier);
@@ -144,22 +144,29 @@ public class LedManager extends Subsystem {
     }
 
     private void writeLedHardware(int r, int g, int b) {
-        canifier.setLEDOutput(r / 255.0, CANifier.LEDChannel.LEDChannelB);
-        canifier.setLEDOutput(g / 255.0, CANifier.LEDChannel.LEDChannelA);
-        canifier.setLEDOutput(b / 255.0, CANifier.LEDChannel.LEDChannelC);
+        if(canifier != null){
+            canifier.setLEDOutput(r / 255.0, CANifier.LEDChannel.LEDChannelB);
+            canifier.setLEDOutput(g / 255.0, CANifier.LEDChannel.LEDChannelA);
+            canifier.setLEDOutput(b / 255.0, CANifier.LEDChannel.LEDChannelC);
+        }
     }
 
     @Override
     public void writePeriodicOutputs() {
-        if (cameraCanifier != null) {
+        if (cameraCanifier != null || candle != null) {
             if (outputsChanged) {
-                cameraCanifier.setLEDOutput(
-                    cameraLedOn ? 1 : 0,
-                    CANifier.LEDChannel.LEDChannelB
+//                cameraCanifier.setLEDOutput(
+//                    cameraLedOn ? 1 : 0,
+//                    CANifier.LEDChannel.LEDChannelB
+//                );
+                candle.setLEDs(0,255,0);
+                candle.configBrightnessScalar(
+                    cameraLedOn ? 1 : 0
                 );
+
             }
         }
-        if (canifier != null) {
+        if (canifier != null || candle != null) {
             switch (controlState) {
                 case RAVE:
                     var color = Color.getHSBColor(raveHue, 1.0f, MAX / 255.0f);
