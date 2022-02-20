@@ -15,14 +15,14 @@ public class DrivetrainLogger {
                 var prefix = "Drivetrain/" + name;
 
                 // Azimuth
-                BadLog.createTopic(
+                subsystem.CreateBadLogTopic(
                     prefix + "AzimuthPosition",
                     "ticks",
                     module::getAzimuthPosition,
                     "hide",
                     "join:Drivetrain/AzimuthPosition"
                 );
-                BadLog.createTopic(
+                subsystem.CreateBadLogTopic(
                     prefix + "AzimuthError",
                     "ticks",
                     module::getAzimuthError,
@@ -31,21 +31,21 @@ public class DrivetrainLogger {
                 );
 
                 // Drive
-                BadLog.createTopic(
+                subsystem.CreateBadLogTopic(
                     prefix + "DriveVelocity",
                     "ticks",
                     module::getDriveVelocity,
                     "hide",
                     "join:Drivetrain/DriveVelocity"
                 );
-                BadLog.createTopic(
+                subsystem.CreateBadLogTopic(
                     prefix + "DriveVelocityDemand",
                     "ticks",
                     module::getDriveVelocityDemand,
                     "hide",
                     "join:Drivetrain/DriveVelocity"
                 );
-                BadLog.createTopic(
+                subsystem.CreateBadLogTopic(
                     prefix + "DriveError",
                     "ticks",
                     module::getDriveError,

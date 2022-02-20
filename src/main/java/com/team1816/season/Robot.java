@@ -55,6 +55,8 @@ public class Robot extends TimedRobot {
     private final Shooter mShooter;
     private final Turret mTurret;
     // private final Spinner spinner = Spinner.getInstance();
+    private final Spindexer mSpindexer;
+    private final Elevator mElevator;
     private final Hopper mHopper;
     private final Climber mClimber;
     private final Camera mCamera;
@@ -86,13 +88,15 @@ public class Robot extends TimedRobot {
         mTurret = injector.getInstance(Turret.class);
         mClimber = injector.getInstance(Climber.class);
         mCollector = injector.getInstance(Collector.class);
+        mElevator = injector.getInstance(Elevator.class);
+        mCamera = injector.getInstance(Camera.class);
+        mSpindexer = injector.getInstance(Spindexer.class);
         mHopper = injector.getInstance(Hopper.class);
         mShooter = injector.getInstance(Shooter.class);
         mRobotState = injector.getInstance(RobotState.class);
         mSuperstructure = injector.getInstance(Superstructure.class);
 //        mInfrastructure = injector.getInstance(Infrastructure.class);
         ledManager = injector.getInstance(LedManager.class);
-        mCamera = injector.getInstance(Camera.class);
         mSubsystemManager = injector.getInstance(SubsystemManager.class);
         mAutoModeSelector = injector.getInstance(AutoModeSelector.class);
         trajectorySet = injector.getInstance(TrajectorySet.class);
@@ -421,7 +425,7 @@ public class Robot extends TimedRobot {
             mEnabledLooper.start();
             mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
             mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
-
+            mHopper.setStopped(false);
             System.out.println(mTurret.getActualTurretPositionTicks() + "+++++++"); // for debugging whether or not getActTicks works. doesn't seem to - ginget
 
 

@@ -28,7 +28,7 @@ subsystems:
                     azimuth: FLAz
                     canCoder: FLEnc
                     constants:
-                        encoderOffset: 2121
+                        encoderOffset: 2074
                         invertSensorPhase: 1
                 frontRight:
                     drive: FRDr
@@ -90,7 +90,7 @@ subsystems:
             raveSpeed: 0.05
             cameraLed: 1
     turret:
-        implemented: true
+        implemented: false
         pidConfig:
             slot0:
                 kP: 1.0
@@ -108,7 +108,7 @@ subsystems:
             encPPR: 4096
             turretPPR: 53248 # 4096 * 13
     shooter:
-        implemented: false
+        implemented: true
         falcons:
             shooterMain: 16
             shooterFollower: 34
@@ -127,20 +127,25 @@ subsystems:
             rpmEpsilonCheck: 60
             velocityThreshold: 500
     climber:
-        implemented: true
+        implemented: false
         sparkmaxes:
             elevator: 20
         solenoids:
             deployer: 2
-    hopper:
+    elevator:
+        implemented: true
+        talons:
+            elevator: 32
+        constants:
+            ballSensor: 0
+    spindexer:
         implemented: true
         talons:
             spindexer: 31
-            elevator: 32
         solenoids:
             feederFlap: -1
-        constants:
-            ballSensor: 0
+    hopper:
+        implemented: true
     collector:
         implemented: true
         sparkMaxes:

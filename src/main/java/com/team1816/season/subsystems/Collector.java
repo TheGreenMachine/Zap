@@ -4,6 +4,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.google.inject.Singleton;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
@@ -18,7 +20,8 @@ public class Collector extends Subsystem {
 
     // Components
     private final ISolenoid armPiston;
-    private final IMotorControllerEnhanced intake;
+//    private final IMotorControllerEnhanced intake;
+    private final CANSparkMax intake;
 
     // State
     private double intakePow;
@@ -34,12 +37,13 @@ public class Collector extends Subsystem {
     public Collector() {
         super(NAME);
         this.armPiston = factory.getSolenoid(NAME, "arm");
-        this.intake = factory.getMotor(NAME, "intake"); // factory.getMotor(NAME, "intake");
+//        this.intake = factory.getMotor(NAME, "intake"); // factory.getMotor(NAME, "intake");
+        intake = new CANSparkMax(23, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-        intake.configSupplyCurrentLimit(
-            new SupplyCurrentLimitConfiguration(true, 25, 0, 0),
-            Constants.kCANTimeoutMs
-        );
+//        intake.configSupplyCurrentLimit(
+//            new SupplyCurrentLimitConfiguration(true, 25, 0, 0),
+//            Constants.kCANTimeoutMs
+//        );
     }
 
     public boolean isArmDown() {
@@ -66,7 +70,7 @@ public class Collector extends Subsystem {
 
     @Override
     public void readFromHardware() {
-        this.actualVelocity = intake.getSelectedSensorVelocity(0);
+//        this.actualVelocity = intake.getSelectedSensorVelocity(0);
     }
 
     @Override
@@ -96,7 +100,8 @@ public class Collector extends Subsystem {
                     intakePow = -1;
                     armDown = true; // NOT SURE IF WE WANT COLLECTOR DOWN HERE
             }
-            intake.set(ControlMode.PercentOutput, intakePow);
+//            intake.set(ControlMode.PercentOutput, intakePow);
+            intake.set(intakePow);
             this.armPiston.set(armDown);
 
             this.outputsChanged = false;

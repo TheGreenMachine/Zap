@@ -13,7 +13,7 @@ public class Elevator extends Subsystem {
 
     // Components
     private final IMotorControllerEnhanced elevator;
-    private final DigitalInput ballSensor;
+//    private final DigitalInput ballSensor;
 
     // State
     private double elevatorPower;
@@ -25,8 +25,8 @@ public class Elevator extends Subsystem {
     public Elevator() {
         super(NAME);
         this.elevator = factory.getMotor(NAME, "elevator");
-        this.ballSensor =
-            new DigitalInput((int) factory.getConstant(NAME, "ballSensor", 0));
+//        this.ballSensor =
+//            new DigitalInput((int) factory.getConstant(NAME, "ballSensor", 0));
     }
 
     public void autoElevator(double elevatorOutput) {
@@ -40,7 +40,8 @@ public class Elevator extends Subsystem {
     }
 
     public boolean hasBallInElevator() {
-        return ballSensor.get();
+        return false;
+//        return ballSensor.get(); // TODO get Digital IO
     }
 
     // TODO: implement when we have color sensors
@@ -67,7 +68,7 @@ public class Elevator extends Subsystem {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        builder.addBooleanProperty("Hopper/HasBall", this::hasBallInElevator, null);
+//        builder.addBooleanProperty("Hopper/HasBall", this::hasBallInElevator, null);
     }
 
     @Override

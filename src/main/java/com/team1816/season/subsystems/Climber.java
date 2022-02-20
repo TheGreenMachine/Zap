@@ -16,7 +16,8 @@ public class Climber extends Subsystem {
     private static final String NAME = "climber";
 
     // Components
-    private final IMotorControllerEnhanced elevator;
+//    private final IMotorControllerEnhanced elevator;
+    private final CANSparkMax elevator;
 
     // State
     private double climberPow;
@@ -25,7 +26,8 @@ public class Climber extends Subsystem {
 
     public Climber() {
         super(NAME);
-        elevator =  factory.getMotor(NAME, "elevator");
+//        elevator =  factory.getMotor(NAME, "elevator");
+        elevator = new CANSparkMax( 20, CANSparkMaxLowLevel.MotorType.kBrushless);
     }
 
     public void setClimberPower(double power) {
@@ -40,7 +42,8 @@ public class Climber extends Subsystem {
     @Override
     public void writeToHardware() {
         if (outputsChanged) {
-            elevator.set(ControlMode.PercentOutput, climberPow);
+//            elevator.set(ControlMode.PercentOutput, climberPow);
+            elevator.set(climberPow);
             outputsChanged = false;
         }
     }
