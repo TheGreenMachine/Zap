@@ -12,7 +12,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -25,7 +24,7 @@ public class SwerveDriveTest {
     private final RobotFactory mockFactory;
     private final RobotState state;
     private SwerveDrive mDrive;
-    private double maxVel = 100; //  in per sec to match yaml we need to convert to metric in constants class;
+    private double maxVel = 2.54; //  m per sec
     private double maxRotVel = 2 * Math.PI; // rad per sec;
 
     public SwerveDriveTest() {
@@ -53,13 +52,13 @@ public class SwerveDriveTest {
         // TODO remove conversion when constants class is converted to metric
         var states = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
             ChassisSpeeds.fromFieldRelativeSpeeds(
-                Units.inchesToMeters(vxMetersPerSecond),
-                Units.inchesToMeters(vyMetersPerSecond),
+                vxMetersPerSecond,
+                vyMetersPerSecond,
                 omegaRadiansPerSecond,
                 robotAngle
             )
         );
-        SwerveDriveKinematics.desaturateWheelSpeeds(states, Units.inchesToMeters(maxVel));
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, maxVel);
         return states;
     }
 
@@ -70,34 +69,26 @@ public class SwerveDriveTest {
     }
 
     @Test
-    public void testTeleopForwardWithRotation() {
-        mDrive.setTeleopInputs(1, 0, 1, false, false);
-        mDrive.writeToHardware();
-        mDrive.readFromHardware();
-        verifyStates(mDrive.getStates(), maxVel, 0, maxRotVel);
-    }
-
-    @Test
-    public void testTeleopStrafeWithRotation() {
-        mDrive.setTeleopInputs(0, 1, 1, false, false);
-        mDrive.writeToHardware();
-        mDrive.readFromHardware();
+    public void testTeleopRotation() {
+        mDrive.setTeleopInputs(0, 0, 1, false, false);
+        mDrive.writePeriodicOutputs();
+        mDrive.readPeriodicInputs();
         verifyStates(mDrive.getStates(), 0, maxVel, maxRotVel);
     }
 
     @Test
     public void testTeleopForward() {
         mDrive.setTeleopInputs(1, 0, 0, false, false);
-        mDrive.writeToHardware();
-        mDrive.readFromHardware();
+        mDrive.writePeriodicOutputs();
+        mDrive.readPeriodicInputs();
         verifyStates(mDrive.getStates(), maxVel, 0, 0);
     }
 
     @Test
     public void testTeleopStrafe() {
         mDrive.setTeleopInputs(0, 1, 0, false, false);
-        mDrive.writeToHardware();
-        mDrive.readFromHardware();
+        mDrive.writePeriodicOutputs();
+        mDrive.readPeriodicInputs();
         verifyStates(mDrive.getStates(), 0, maxVel, maxRotVel);
     }
 
@@ -118,16 +109,17 @@ public class SwerveDriveTest {
         // So even though we are percent output the getState is used for feedback
         // this needs to be real velocity values that are returned
         for (int i = 0; i < states.length; i++) {
+            var actVel = states[i].speedMetersPerSecond;
             assertEquals(
-                expected[i].speedMetersPerSecond,
-                states[i].speedMetersPerSecond,
+                Math.abs(expected[i].speedMetersPerSecond),
+                Math.abs(actVel),
                 .01
             );
-            assertEquals(
-                expected[i].angle.getRadians(),
-                states[i].angle.getRadians(),
-                .01
-            );
+            var actRot = states[i].angle.getRadians();
+            var expRot = expected[i].angle.getRadians();
+            if(actRot >= 2*Math.PI) actRot -= 2*Math.PI;
+            if(actVel < 0) expRot += Math.PI;
+            assertEquals(expRot,actRot, .2 );
         }
     }
 }
