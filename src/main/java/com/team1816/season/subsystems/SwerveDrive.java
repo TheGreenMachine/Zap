@@ -6,7 +6,9 @@ import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.SwerveDrivetrain;
 import com.team1816.season.AutoModeSelector;
 import com.team1816.season.Constants;
-import com.team254.lib.util.*;
+import com.team254.lib.util.DriveSignal;
+import com.team254.lib.util.SwerveDriveHelper;
+import com.team254.lib.util.SwerveDriveSignal;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -224,9 +226,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 //        );
 
         SwerveDriveSignal signal = swerveDriveHelper.calculateDriveSignal(
-            -forward,
+            forward,
             strafe,
-            -rotation,
+            rotation,
             low_power,
          true,
             use_heading_controller
