@@ -90,7 +90,7 @@ subsystems:
             raveSpeed: 0.05
             cameraLed: 1
     turret:
-        implemented: false
+        implemented: true
         pidConfig:
             slot0:
                 kP: 1.0
@@ -127,7 +127,7 @@ subsystems:
             rpmEpsilonCheck: 60
             velocityThreshold: 500
     climber:
-        implemented: false
+        implemented: true
         sparkmaxes:
             elevator: 20
         solenoids:
@@ -150,7 +150,7 @@ subsystems:
         solenoids:
             arm: 0
     camera:
-        implemented: false
+        implemented: true
 pcm: 28
 constants:
     maxTicks: 12275.7 # ticks per 100ms TODO make into constant unique to each subsystem
@@ -162,6 +162,7 @@ constants:
     sensorPhase: 0
     kTrackScrubFactor: 1.0
     pathKs: 2
+    useAutoAim: 1
     verbose: 0 # 0 or 1
     heading_kI: 0
     heading_kD: 0

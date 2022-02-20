@@ -119,7 +119,7 @@ public class Camera extends Subsystem {
         } catch (IOException e) {}
     }
 
-    public void readPeriodicInputs() {
+    public void readFromHardware() {
         // if more than 200ms, reconnect
         if (needsReconnect != 0 && (System.currentTimeMillis() - needsReconnect) >= 200) {
             //            System.out.println("Reconnect attempt at " + System.currentTimeMillis());

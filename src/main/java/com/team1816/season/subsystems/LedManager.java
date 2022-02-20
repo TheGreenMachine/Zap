@@ -3,7 +3,6 @@ package com.team1816.season.subsystems;
 import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifierStatusFrame;
 import com.ctre.phoenix.led.CANdle;
-import com.ctre.phoenix.led.RainbowAnimation;
 import com.team1816.lib.hardware.components.ICanifier;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.lib.loops.Loop;
@@ -153,7 +152,7 @@ public class LedManager extends Subsystem {
     }
 
     @Override
-    public void writePeriodicOutputs() {
+    public void writeToHardware() {
         if (cameraCanifier != null || candle != null) {
             if (outputsChanged) {
 //                cameraCanifier.setLEDOutput(
@@ -209,7 +208,7 @@ public class LedManager extends Subsystem {
 
                 @Override
                 public void onLoop(double timestamp) {
-                    LedManager.this.writePeriodicOutputs();
+                    LedManager.this.writeToHardware();
                 }
 
                 @Override

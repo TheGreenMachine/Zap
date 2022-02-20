@@ -61,7 +61,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     @Override
-    public synchronized void writePeriodicOutputs() {
+    public synchronized void writeToHardware() {
         if(mDriveControlState == DriveControlState.OPEN_LOOP){ // autonomous (Trajectory_Following) loop is in setModuleStates
             SwerveDriveKinematics.desaturateWheelSpeeds(
                 mPeriodicIO.desiredModuleStates,
@@ -74,7 +74,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     @Override
-    public synchronized void readPeriodicInputs() {
+    public synchronized void readFromHardware() {
         SwerveModuleState[] states = new SwerveModuleState[4]; // why do we create 4 new states in every single loop through the readPeriodic?
         for (int i = 0; i < 4; i++) {
             states[i] = swerveModules[i].getState();

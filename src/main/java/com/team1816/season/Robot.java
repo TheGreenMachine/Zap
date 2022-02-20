@@ -43,7 +43,6 @@ public class Robot extends TimedRobot {
 
     // subsystems
     private final Superstructure mSuperstructure;
-//    private final Infrastructure mInfrastructure;
     private final RobotState mRobotState;
     private final Drive mDrive;
     private final PowerDistribution pdh = new PowerDistribution(
@@ -262,7 +261,7 @@ public class Robot extends TimedRobot {
                                 mTurret.setControlMode(
                                     Turret.ControlMode.CAMERA_FOLLOWING
                                 );
-//                                mShooter.startShooter();
+                                mShooter.startShooter();
                             } else {
                                 mTurret.setControlMode(prevTurretControlMode);
                             }
@@ -272,18 +271,15 @@ public class Robot extends TimedRobot {
                         mControlBoard::getShoot,
                         shooting -> {
                             if (shooting) {
-//                                mDrive.setOpenLoop(SwerveDriveSignal.BRAKE);
-//                                mShooter.startShooter(); // Uses ZED distance
-                                mShooter.setVelocity(Shooter.MID_VELOCITY);
-//                                mTurret.lockTurret();
+                                mShooter.startShooter(); // Uses ZED distance
                             } else {
-//                                mTurret.setControlMode(
-//                                    Turret.ControlMode.FIELD_FOLLOWING
-//                                );
+                                mTurret.setControlMode(
+                                    Turret.ControlMode.FIELD_FOLLOWING
+                                );
                                 mShooter.stopShooter();
-//                                mShooter.setHood(false);
+                                mShooter.setHood(false);
                             }
-//                            mHopper.lockToShooter(shooting, false);
+                            mHopper.lockToShooter(shooting, false);
                             mHopper.setIntake(shooting ? 1 : 0);
                             mCollector.setIntakePow(shooting ? 0.5 : 0);
                         }
@@ -439,7 +435,7 @@ public class Robot extends TimedRobot {
             ledManager.blinkStatus(LedManager.RobotStatus.DRIVETRAIN_FLIPPED);
             // Warning - blocks thread - intended behavior?
             while (System.currentTimeMillis() - initTime <= 3000) {
-                ledManager.writePeriodicOutputs();
+                ledManager.writeToHardware();
             }
 
             mEnabledLooper.stop();

@@ -243,7 +243,7 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     @Override
-    public void readPeriodicInputs() {
+    public void readFromHardware() {
         robotState.vehicle_to_turret =
             Rotation2d.fromDegrees(getActualTurretPositionDegrees());
         // show turret
@@ -257,7 +257,7 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     @Override
-    public void writePeriodicOutputs() {
+    public void writeToHardware() {
         switch (controlMode) {
             case CAMERA_FOLLOWING:
                 autoHome();

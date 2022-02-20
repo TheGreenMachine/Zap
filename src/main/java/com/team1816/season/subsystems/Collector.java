@@ -20,7 +20,7 @@ public class Collector extends Subsystem {
 
     // Components
     private final ISolenoid armPiston;
-    private final CANSparkMax intake;
+    private final IMotorControllerEnhanced intake;
 
     // State
     private double intakePow;
@@ -35,11 +35,11 @@ public class Collector extends Subsystem {
     public Collector() {
         super(NAME);
         this.armPiston = factory.getSolenoid(NAME, "arm");
-        this.intake =  new CANSparkMax(23, CANSparkMaxLowLevel.MotorType.kBrushless); // factory.getMotor(NAME, "intake");
+        this.intake = factory.getMotor(NAME, "intake"); // factory.getMotor(NAME, "intake");
 
-        intake.setSmartCurrentLimit( 25
-//            new SupplyCurrentLimitConfiguration(true, 25, 0, 0),
-//            Constants.kCANTimeoutMs
+        intake.configSupplyCurrentLimit(
+            new SupplyCurrentLimitConfiguration(true, 25, 0, 0),
+            Constants.kCANTimeoutMs
         );
     }
 
@@ -81,12 +81,12 @@ public class Collector extends Subsystem {
     }
 
     @Override
-    public void readPeriodicInputs() {
-//        this.actualVelocity = intake.getSelectedSensorVelocity(0);
+    public void readFromHardware() {
+        this.actualVelocity = intake.getSelectedSensorVelocity(0);
     }
 
     @Override
-    public void writePeriodicOutputs() {
+    public void writeToHardware() {
         if (isRaising) {
             if ((Timer.getFPGATimestamp() - startTime) > 1) {
                 System.out.println(
@@ -99,8 +99,7 @@ public class Collector extends Subsystem {
         if (outputsChanged) {
             this.armPiston.set(armDown);
             System.out.println("arm is going up ");
-//            this.intake.set(ControlMode.PercentOutput, intakePow);
-            intake.set(intakePow);
+            intake.set(ControlMode.PercentOutput, intakePow);
             this.outputsChanged = false;
         }
     }

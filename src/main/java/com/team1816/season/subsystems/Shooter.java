@@ -163,13 +163,13 @@ public class Shooter extends Subsystem implements PidProvider {
     }
 
     @Override
-    public void readPeriodicInputs() {
+    public void readFromHardware() {
         mPeriodicIO.actualShooterVelocity = shooterMain.getSelectedSensorVelocity(0);
         mPeriodicIO.closedLoopError = shooterMain.getClosedLoopError(0);
     }
 
     @Override
-    public void writePeriodicOutputs() {
+    public void writeToHardware() {
         if (outputsChanged) {
             this.hood.set(hoodOut);
             if (mPeriodicIO.velocityDemand == 0) {

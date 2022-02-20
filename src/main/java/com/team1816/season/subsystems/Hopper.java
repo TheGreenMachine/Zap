@@ -94,7 +94,7 @@ public class Hopper extends Subsystem {
     }
 
     @Override
-    public void writePeriodicOutputs() {
+    public void writeToHardware() {
         if (lockToShooter) {
             System.out.println("Shooter Loop: " + waitForShooterLoopCounter);
             if (waitForShooterLoopCounter < 10) {
@@ -112,15 +112,6 @@ public class Hopper extends Subsystem {
                     this.spindexer.set(ControlMode.PercentOutput, -0.25);
                 }
                 return;
-                //                 Shooter has not sped up ye02.
-                //                 +
-                //                 -t, wait.
-                //                 if (shooterWasAtTarget) {
-                //                     this.spindexer.set(ControlMode.PercentOutput, 0);
-                //                     this.elevator.set(ControlMode.PercentOutput, 0);
-                //                     shooterWasAtTarget = false;
-                //                 }
-                //
             }
             lockToShooter = false;
             shooterWasAtTarget = true;

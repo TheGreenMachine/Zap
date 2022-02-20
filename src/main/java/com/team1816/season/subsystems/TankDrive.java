@@ -162,7 +162,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     }
 
     @Override
-    public synchronized void readPeriodicInputs() {
+    public synchronized void readFromHardware() {
         if (RobotBase.isSimulation()) {
             double leftAdjDemand = mPeriodicIO.left_demand;
             double rightAdjDemand = mPeriodicIO.right_demand;
@@ -217,7 +217,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     }
 
     @Override
-    public synchronized void writePeriodicOutputs() {
+    public synchronized void writeToHardware() {
         if (mDriveControlState == DriveControlState.OPEN_LOOP) {
             if (isSlowMode) {
                 mLeftMaster.set(ControlMode.PercentOutput, mPeriodicIO.left_demand * 0.5);
