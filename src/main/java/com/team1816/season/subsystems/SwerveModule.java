@@ -12,7 +12,6 @@ import com.team1816.season.Constants;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
 
 import static com.team1816.season.subsystems.Drive.factory;
 
@@ -28,8 +27,6 @@ public class SwerveModule implements ISwerveModule {
     public static final int kFrontRight = 1;
     public static final int kBackLeft = 2;
     public static final int kBackRight = 3;
-
-    private double angledemand;
 
     // State
     private boolean isBrakeMode = false;
@@ -101,11 +98,11 @@ public class SwerveModule implements ISwerveModule {
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
-        SwerveModuleState desired_state = ModuleState.optimize(desiredState, getState().angle); // here
+        SwerveModuleState desired_state = ModuleState.optimize(desiredState, getState().angle);
         if (!isOpenLoop) {
             mDriveMotor.set(ControlMode.Velocity, DriveConversions.metersPerSecondToTicksPer100ms(desiredState.speedMetersPerSecond));
         } else {
-            mDriveMotor.set(ControlMode.PercentOutput, desired_state.speedMetersPerSecond * .75); // w/out conversion, would be lying to it - speed meters per second is percent output i
+            mDriveMotor.set(ControlMode.PercentOutput, desired_state.speedMetersPerSecond); // w/out conversion, would be lying to it - speed meters per second is percent output i
         }
         mAzimuthMotor.set(ControlMode.Position, DriveConversions.convertDegreesToTicks(desired_state.angle.getDegrees()) + mConstants.kAzimuthEncoderHomeOffset);
     }
@@ -126,11 +123,6 @@ public class SwerveModule implements ISwerveModule {
         return mAzimuthMotor.getSelectedSensorPosition(0);
     }
 
-    //    @Override
-    //    public double getAzimuthPositionDemand() {
-    //        return mPeriodicIO.azimuth_position;
-    //    }
-
     @Override
     public double getAzimuthError() {
         return mAzimuthMotor.getClosedLoopError(0);
@@ -149,35 +141,6 @@ public class SwerveModule implements ISwerveModule {
     @Override
     public double getDriveError() {
         return mDriveMotor.getClosedLoopError(0);
-    }
-
-    /**
-     * @param ticks azimuth ticks
-     */
-    public synchronized double encoderUnitsToRadians(double ticks) {
-        return ticks / mConstants.kAzimuthTicksPerRadian;
-    }
-
-    /**
-     * @return azimuth ticks
-     */
-    public synchronized double radiansToEncoderUnits(double radians) {
-        return radians * mConstants.kAzimuthTicksPerRadian;
-    }
-
-    //
-    //    /**
-    //     * @param ticks drive ticks
-    //     */
-    //    public synchronized double encoderUnitsToDistance(double ticks) {
-    //        return ticks * mConstants.kDriveTicksPerUnitDistance;
-    //
-
-    public synchronized Rotation2d getAngleToDegrees() {
-        var azimuthPosition = getAzimuthPosition();
-        var radians = encoderUnitsToRadians(azimuthPosition);
-        var degrees = (180 / Math.PI) * radians;
-        return Rotation2d.fromDegrees(degrees);
     }
 
     public synchronized void setDriveBrakeMode(boolean brake_mode) {
@@ -201,9 +164,7 @@ public class SwerveModule implements ISwerveModule {
             " invertSensor: " +
             mConstants.kInvertAzimuthSensorPhase +
             " invertAzimuth: " +
-            mConstants.kInvertAzimuth +
-            " Azimuth position " +
-            angledemand
+            mConstants.kInvertAzimuth
         );
     }
 }

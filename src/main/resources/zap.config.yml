@@ -157,7 +157,7 @@ constants:
     maxRotVel: 11.5
     trackWidth: 21 #inches
     wheelbaseLength: 21.5 #inches
-    maxVel: 4 # 160 # 240 # inches/s # 22560 native units ---30
+    maxVel: 3 # 160 # 240 # inches/s # 22560 native units ---30
     maxAccel: 100 # inches/s^2
     sensorPhase: 0
     kTrackScrubFactor: 1.0
