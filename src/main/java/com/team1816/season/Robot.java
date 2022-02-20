@@ -43,6 +43,7 @@ public class Robot extends TimedRobot {
 
     // subsystems
     private final Superstructure mSuperstructure;
+//    private final Infrastructure mInfrastructure;
     private final RobotState mRobotState;
     private final Drive mDrive;
     private final PowerDistribution pdh = new PowerDistribution(
@@ -261,7 +262,7 @@ public class Robot extends TimedRobot {
                                 mTurret.setControlMode(
                                     Turret.ControlMode.CAMERA_FOLLOWING
                                 );
-                                mShooter.startShooter();
+//                                mShooter.startShooter();
                             } else {
                                 mTurret.setControlMode(prevTurretControlMode);
                             }
@@ -417,6 +418,11 @@ public class Robot extends TimedRobot {
             mEnabledLooper.start();
             mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
             mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
+
+            // start shooter at a default state to keep velocity
+            // (spin-up takes a while, so doing it only once is preferable)
+            mShooter.setVelocity(Shooter.MID_VELOCITY);
+
             System.out.println(mTurret.getActualTurretPositionTicks() + "+++++++"); // for debugging whether or not getActTicks works. doesn't seem to - ginget
 
 
@@ -435,7 +441,7 @@ public class Robot extends TimedRobot {
             ledManager.blinkStatus(LedManager.RobotStatus.DRIVETRAIN_FLIPPED);
             // Warning - blocks thread - intended behavior?
             while (System.currentTimeMillis() - initTime <= 3000) {
-                ledManager.writeToHardware();
+                ledManager.writePeriodicOutputs();
             }
 
             mEnabledLooper.stop();
