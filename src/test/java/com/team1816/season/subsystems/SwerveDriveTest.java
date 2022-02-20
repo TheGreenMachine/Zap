@@ -71,24 +71,24 @@ public class SwerveDriveTest {
     @Test
     public void testTeleopRotation() {
         mDrive.setTeleopInputs(0, 0, 1, false, false);
-        mDrive.writePeriodicOutputs();
-        mDrive.readPeriodicInputs();
+        mDrive.writeToHardware();
+        mDrive.readFromHardware();
         verifyStates(mDrive.getStates(), 0, maxVel, maxRotVel);
     }
 
     @Test
     public void testTeleopForward() {
         mDrive.setTeleopInputs(1, 0, 0, false, false);
-        mDrive.writePeriodicOutputs();
-        mDrive.readPeriodicInputs();
+        mDrive.writeToHardware();
+        mDrive.readFromHardware();
         verifyStates(mDrive.getStates(), maxVel, 0, 0);
     }
 
     @Test
     public void testTeleopStrafe() {
         mDrive.setTeleopInputs(0, 1, 0, false, false);
-        mDrive.writePeriodicOutputs();
-        mDrive.readPeriodicInputs();
+        mDrive.writeToHardware();
+        mDrive.readFromHardware();
         verifyStates(mDrive.getStates(), 0, maxVel, maxRotVel);
     }
 
