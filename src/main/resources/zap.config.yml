@@ -90,7 +90,7 @@ subsystems:
             raveSpeed: 0.05
             cameraLed: 1
     turret:
-        implemented: false
+        implemented: true
         pidConfig:
             slot0:
                 kP: 1.0
@@ -108,7 +108,7 @@ subsystems:
             encPPR: 4096
             turretPPR: 53248 # 4096 * 13
     shooter:
-        implemented: true
+        implemented: false
         falcons:
             shooterMain: 16
             shooterFollower: 34

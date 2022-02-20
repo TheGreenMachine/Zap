@@ -399,15 +399,22 @@ public class RobotFactory {
             subsystem.implemented &&
             subsystem.pidConfig != null &&
             subsystem.pidConfig.get(slot) != null
-        ) return subsystem.pidConfig.get(slot); else { //default empty config
-            PIDSlotConfiguration pidSlotConfiguration = new PIDSlotConfiguration();
-            pidSlotConfiguration.kP = 0.0;
-            pidSlotConfiguration.kI = 0.0;
-            pidSlotConfiguration.kD = 0.0;
-            pidSlotConfiguration.kF = 0.0;
-            pidSlotConfiguration.iZone = 0;
-            pidSlotConfiguration.allowableError = 0.0;
-            return pidSlotConfiguration;
+        ) return subsystem.pidConfig.get(slot); else {
+            if(subsystem.implemented) {
+                DriverStation.reportError("pidConfig missing for " + subsystemName + " " + slot, true);
+                return null;
+            } else {
+                // return a default config if not implemented
+                PIDSlotConfiguration pidSlotConfiguration = new PIDSlotConfiguration();
+                pidSlotConfiguration.kP = 0.0;
+                pidSlotConfiguration.kI = 0.0;
+                pidSlotConfiguration.kD = 0.0;
+                pidSlotConfiguration.kF = 0.0;
+                pidSlotConfiguration.iZone = 0;
+                pidSlotConfiguration.allowableError = 0.0;
+                return pidSlotConfiguration;
+            }
+
         }
     }
 
