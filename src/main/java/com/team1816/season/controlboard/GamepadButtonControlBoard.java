@@ -36,7 +36,7 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
 
     // Spinner
     @Override
-    public boolean getSpinnerReset() {
+    public boolean getHopper() {
         return mController.getButton(Controller.Button.START);
     }
 
@@ -88,8 +88,8 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
     }
 
     @Override
-    public boolean getShoot() {
-        return mController.getTrigger(Controller.Axis.RIGHT_TRIGGER);
+    public boolean getRevShooter() {
+        return mController.getTrigger(Controller.Axis.LEFT_TRIGGER);
     }
 
     @Override
@@ -98,7 +98,7 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
     }
 
     @Override
-    public boolean getUnusedButton() {
+    public boolean getShoot() {
         return mController.getButton(Controller.Button.RIGHT_BUMPER);
     }
 

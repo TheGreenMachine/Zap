@@ -61,7 +61,7 @@ public class TankDemoModeControlBoard implements IControlBoard {
     public void setRumble(boolean on) {}
 
     @Override
-    public boolean getSpinnerReset() {
+    public boolean getHopper() {
         return false;
     }
 
@@ -106,7 +106,7 @@ public class TankDemoModeControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getShoot() {
+    public boolean getRevShooter() {
         return mController.getTrigger(Controller.Axis.RIGHT_TRIGGER);
     }
 
@@ -116,7 +116,7 @@ public class TankDemoModeControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getUnusedButton() {
+    public boolean getShoot() {
         return false;
     }
 

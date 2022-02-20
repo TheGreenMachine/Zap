@@ -50,11 +50,8 @@ public class Shooter extends Subsystem implements PidProvider {
         "velocityThreshold",
         3000
     );
+    private SHOOTER_STATE state = SHOOTER_STATE.STOP;
 
-    private SendableChooser<Integer> velocityChooser = new SendableChooser<>();
-
-    @Inject
-    private static DistanceManager distanceManager;
 
     public Shooter() {
         super(NAME);
@@ -130,20 +127,8 @@ public class Shooter extends Subsystem implements PidProvider {
         this.outputsChanged = true;
     }
 
-    public void autoHood() {
-        setHood(distanceManager.getHoodRetracted());
-    }
-
-    public void shootFromChooser(boolean shooting) {
-        setVelocity(shooting ? velocityChooser.getSelected() : 0);
-    }
-
-    public void startShooter() {
-        setVelocity(distanceManager.getShooterVelocity());
-    }
-
-    public void stopShooter() {
-        setVelocity(0);
+    public void setState(SHOOTER_STATE state){
+        this.state = state;
     }
 
     public double getActualVelocity() {
@@ -173,7 +158,7 @@ public class Shooter extends Subsystem implements PidProvider {
         if (outputsChanged) {
             this.hood.set(hoodOut);
             if (mPeriodicIO.velocityDemand == 0) {
-                this.shooterMain.set(ControlMode.PercentOutput, 0); // Inertia coast to 0
+                this.shooterMain.set(ControlMode.PercentOutput, 0); // Inertia coast ! Set 0 to coasting value
             } else {
                 this.shooterMain.set(ControlMode.Velocity, mPeriodicIO.velocityDemand);
             }
@@ -189,13 +174,6 @@ public class Shooter extends Subsystem implements PidProvider {
             this::getActualVelocity,
             this::setVelocity
         );
-
-        velocityChooser.setDefaultOption("NEAR_VELOCITY", NEAR_VELOCITY);
-        velocityChooser.addOption("MID_VELOCITY", MID_VELOCITY);
-        velocityChooser.addOption("MID_FAR_VELOCITY", MID_FAR_VELOCITY);
-        velocityChooser.addOption("MAX_VELOCITY", MAX_VELOCITY);
-
-        SmartDashboard.putData(velocityChooser);
     }
 
     @Override
@@ -226,5 +204,11 @@ public class Shooter extends Subsystem implements PidProvider {
 
         //OUPUTS
         public double velocityDemand;
+    }
+
+    public enum SHOOTER_STATE{
+        STOP,
+        COASTING,
+        REVVING
     }
 }

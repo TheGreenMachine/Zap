@@ -5,7 +5,7 @@ public interface IButtonControlBoard {
 
     void setRumble(boolean on);
 
-    boolean getSpinnerReset();
+    boolean getHopper();
 
     boolean getFeederFlapOut();
 
@@ -23,11 +23,11 @@ public interface IButtonControlBoard {
 
     boolean getTurretJogRight();
 
-    boolean getShoot();
+    boolean getRevShooter();
 
     boolean getAutoAim();
 
-    boolean getUnusedButton();
+    boolean getShoot();
 
     boolean getFieldFollowing();
 }

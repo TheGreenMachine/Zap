@@ -29,11 +29,11 @@ public class Camera extends Subsystem {
     private Socket socket;
     private BufferedReader socketIn;
     private PrintWriter socketOut;
-    private Boolean usingVision = true;
+    private Boolean usingVision = factory.getConstant("useAutoAim") > 0;
     private long needsReconnect = 0;
 
     public Camera() {
-        super("Camera");
+        super(NAME);
         socketConnect();
     }
 
@@ -60,7 +60,7 @@ public class Camera extends Subsystem {
     }
 
     public double getDeltaXAngle() {
-        if (!usingVision) return -1;
+        if (!usingVision) return 0;
         try {
             String line = query("center_x");
             String coord = line.split(PROTOCOL_LINE)[1];
@@ -73,34 +73,34 @@ public class Camera extends Subsystem {
             return Math.toDegrees(Math.atan2(deltaXPixels, CAMERA_FOCAL_LENGTH)) * 0.64;
         } catch (IOException e) {
             needsReconnect = System.currentTimeMillis();
-            return -1;
+            return 0;
         }
     }
 
     public double getDistance() {
-        if (!usingVision) return -1;
+        if (!usingVision) return 0;
         try {
             String line = query("distance");
             String[] parts = line.split(PROTOCOL_LINE);
             if (parts.length < 2) {
-                return -1;
+                return 0;
             }
             return Double.parseDouble(parts[1]);
         } catch (IOException e) {
             needsReconnect = System.currentTimeMillis();
-            return -1;
+            return 0;
         }
     }
 
     public double getRawCenterX() {
-        if (!usingVision) return -1;
+        if (!usingVision) return 0;
         try {
             String line = query("center_x");
             String coord = line.split(PROTOCOL_LINE)[1];
             return Double.parseDouble(coord);
         } catch (IOException e) {
             needsReconnect = System.currentTimeMillis();
-            return -1;
+            return 0;
         }
     }
 

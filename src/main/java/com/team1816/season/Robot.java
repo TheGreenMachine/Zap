@@ -237,6 +237,7 @@ public class Robot extends TimedRobot {
             mDrive.zeroSensors(Constants.StartingPose);
             mTurret.zeroSensors();
             mClimber.zeroSensors();
+            mHopper.setStopped(true);
 
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mSubsystemManager.registerDisabledLoops(mDisabledLooper);
@@ -262,43 +263,43 @@ public class Robot extends TimedRobot {
                                 mTurret.setControlMode(
                                     Turret.ControlMode.CAMERA_FOLLOWING
                                 );
-//                                mShooter.startShooter();
                             } else {
                                 mTurret.setControlMode(prevTurretControlMode);
                             }
                         }
                     ),
                     createHoldAction(
-                        mControlBoard::getShoot,
-                        shooting -> {
-                            if (shooting) {
-                                mShooter.startShooter(); // Uses ZED distance
-                            } else {
+                        mControlBoard::getRevShooter,
+                        revving -> {
+                            mHopper.setRevving(revving);
+                            if(!revving){
                                 mTurret.setControlMode(
                                     Turret.ControlMode.FIELD_FOLLOWING
                                 );
-                                mShooter.stopShooter();
                                 mShooter.setHood(false);
                             }
-                            mHopper.lockToShooter(shooting, false);
-                            mHopper.setIntake(shooting ? 1 : 0);
-                            mCollector.setIntakePow(shooting ? 0.5 : 0);
+                        }
+                    ),
+                    createHoldAction(
+                        mControlBoard::getShoot,
+                        shooting -> {
+                            mHopper.setFiring(shooting);
                         }
                     ),
                     createHoldAction( // make this an actual toggle?
                         mControlBoard::getCollectorToggle,
                         collecting -> {
                             System.out.println("Collector toggled!");
-                            mCollector.setDeployed(collecting, false);
-                            mHopper.setSpindexer(collecting ? 1 : 0);
+                            mHopper.setCollecting(collecting);
                         }
                     ),
                     createHoldAction(
                         mControlBoard::getCollectorBackspin,
-                        pressed -> {
-                            mCollector.setDeployed(pressed, true);
-                            mHopper.setSpindexer(pressed ? -1 : 0);
-                        }
+                        mHopper::setFlushing
+                    ),
+                    createAction( // to turn the shooter on and off from its idle state - use at start of match
+                        mControlBoard::getHopper,
+                        () -> mHopper.setStopped()
                     ),
                     createAction(
                         mControlBoard::getFieldFollowing,
@@ -359,6 +360,8 @@ public class Robot extends TimedRobot {
 
             mDrive.stop();
             mDrive.setBrakeMode(false);
+
+            mHopper.setStopped(true);
         } catch (Throwable t) {
             throw t;
         }
@@ -419,10 +422,6 @@ public class Robot extends TimedRobot {
             mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
             mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
 
-            // start shooter at a default state to keep velocity
-            // (spin-up takes a while, so doing it only once is preferable)
-            mShooter.setVelocity(Shooter.MID_VELOCITY);
-
             System.out.println(mTurret.getActualTurretPositionTicks() + "+++++++"); // for debugging whether or not getActTicks works. doesn't seem to - ginget
 
 
@@ -441,7 +440,7 @@ public class Robot extends TimedRobot {
             ledManager.blinkStatus(LedManager.RobotStatus.DRIVETRAIN_FLIPPED);
             // Warning - blocks thread - intended behavior?
             while (System.currentTimeMillis() - initTime <= 3000) {
-                ledManager.writePeriodicOutputs();
+                ledManager.writeToHardware();
             }
 
             mEnabledLooper.stop();

@@ -4,8 +4,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.google.inject.Singleton;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
@@ -26,6 +24,7 @@ public class Collector extends Subsystem {
     private double intakePow;
     private boolean armDown;
     private boolean outputsChanged = false;
+    private COLLECTOR_STATE state = COLLECTOR_STATE.STOP;
 
     private boolean isRaising;
     private double startTime;
@@ -55,29 +54,14 @@ public class Collector extends Subsystem {
         return this.actualVelocity;
     }
 
-    public void setArm(boolean down) {
+    private void setArm(boolean down) {
         this.armDown = down;
         this.outputsChanged = true;
     }
 
-    public void setIntakePow(double intakePower) {
-        this.intakePow = intakePower;
+    public void setState(COLLECTOR_STATE state){
+        this.state = state;
         outputsChanged = true;
-    }
-
-    public void setDeployed(boolean down, boolean reverse) {
-        isRaising = !down;
-        if (down) {
-            if (reverse) {
-                setIntakePow(-0.60);
-            } else {
-                setIntakePow(0.60);
-            }
-            setArm(true);
-        } else {
-            startTime = Timer.getFPGATimestamp();
-            setArm(false);
-        }
     }
 
     @Override
@@ -87,19 +71,34 @@ public class Collector extends Subsystem {
 
     @Override
     public void writeToHardware() {
-        if (isRaising) {
-            if ((Timer.getFPGATimestamp() - startTime) > 1) {
-                System.out.println(
-                    "Raising timer passed at : " + (Timer.getFPGATimestamp() - startTime)
-                );
-                setIntakePow(0);
-                isRaising = false;
-            }
-        }
+//        if (isRaising) {
+//            if ((Timer.getFPGATimestamp() - startTime) > 1) {
+//                System.out.println(
+//                    "Raising timer passed at : " + (Timer.getFPGATimestamp() - startTime)
+//                );
+//                setIntakePow(0);
+//                isRaising = false;
+//            }
+//        }
         if (outputsChanged) {
-            this.armPiston.set(armDown);
-            System.out.println("arm is going up ");
+            switch (state){
+                case STOP:
+                    System.out.println("arm is going up ");
+                    intakePow = 0;
+                    armDown = false;
+                case REVVING:
+                    intakePow = 0.25;
+                    armDown = false;
+                case COLLECTING:
+                    intakePow = 1;
+                    armDown = true;
+                case FLUSH:
+                    intakePow = -1;
+                    armDown = true; // NOT SURE IF WE WANT COLLECTOR DOWN HERE
+            }
             intake.set(ControlMode.PercentOutput, intakePow);
+            this.armPiston.set(armDown);
+
             this.outputsChanged = false;
         }
     }
@@ -110,5 +109,12 @@ public class Collector extends Subsystem {
     @Override
     public boolean checkSystem() {
         return true;
+    }
+
+    public enum COLLECTOR_STATE{
+        STOP,
+        REVVING,
+        COLLECTING,
+        FLUSH
     }
 }

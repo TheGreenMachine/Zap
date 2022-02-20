@@ -1,13 +1,9 @@
 package com.team1816.season.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.DigitalInput;
 
 @Singleton
 public class Hopper extends Subsystem {
@@ -15,134 +11,193 @@ public class Hopper extends Subsystem {
     // and also be in tandem with the shooter (w/ distance manager) so that depending on the shot distance,
     // the elevator will be given a wee bit more or less umph
 
+    // this class will now deal with organizing the collector, spindexer, elevator, and shooter -- heck this might as well just be a SUPERSTRUCTURE
+
     private static final String NAME = "hopper";
 
-    // Components
-    private final ISolenoid feederFlap;
-    private final IMotorControllerEnhanced spindexer;
-    private final IMotorControllerEnhanced elevator;
+    @Inject
+    private static Collector collector;
+
+    @Inject
+    private static Spindexer spindexer;
+
+    @Inject
+    private static Elevator elevator;
 
     @Inject
     private static Shooter shooter;
 
+    // for automatic value setting
     @Inject
     private static DistanceManager distanceManager;
-
     @Inject
     private static Camera camera;
 
-    private final DigitalInput ballSensor;
 
     // State
-    private boolean feederFlapOut;
-    private double spindexerPower;
-    private double elevatorPower;
     private boolean outputsChanged;
 
-    private boolean lockToShooter;
-    private int waitForShooterLoopCounter;
-    private boolean shooterWasAtTarget;
+    private boolean stopped = false;
+    private boolean collecting = false;
+    private boolean flushing = false;
+    private boolean revving = false;
+    private boolean firing = false;
+    private final boolean isAutoAim = factory.getConstant("useAutoAim") < 0;
 
-    private boolean wantUnjam;
+    //band-aid patches
+    private double COAST_VELOCIY = 9_000; // tune this and make changeable with a button in shooter itself
+
 
     public Hopper() {
         super(NAME);
-        this.feederFlap = factory.getSolenoid(NAME, "feederFlap");
-        this.spindexer = factory.getMotor(NAME, "spindexer");
-        this.elevator = factory.getMotor(NAME, "elevator");
-        this.ballSensor =
-            new DigitalInput((int) factory.getConstant(NAME, "ballSensor", 0));
     }
 
-    public void setFeederFlap(boolean feederFlapOut) {
-        this.feederFlapOut = feederFlapOut;
-        outputsChanged = true;
+    public void setStopped(boolean stopped){
+        this.stopped = stopped;
+        if(stopped){
+            collecting = false;
+            flushing = false;
+            revving = false;
+            firing = false;
+        }
     }
 
-    public void setSpindexer(double spindexerOutput) {
-        this.spindexerPower = 0.25 * spindexerOutput;
-        outputsChanged = true;
+    public void setStopped(){
+        setStopped(!stopped);
+        System.out.println("starting/stopping hopper");
     }
 
-    public void startSpindexerBasedOnDistance() {
-        setSpindexer(distanceManager.getSpindexerOutput(0));
+    public void setFlushing(boolean flushing){
+        this.flushing = flushing;
+        if(flushing){
+            stopped = false;
+            collecting = false;
+            revving = false;
+            firing = false;
+        }
     }
 
-    public void setElevator(double elevatorOutput) {
-        this.elevatorPower = elevatorOutput;
-        outputsChanged = true;
+    public void setCollecting(boolean collecting){
+        this.collecting = collecting;
     }
 
-    public void setIntake(double intakeOutput) {
-        setElevator(intakeOutput);
-        if (intakeOutput > 0) {
-            setSpindexer(intakeOutput);
-//            startSpindexerBasedOnDistance(); INTRODUCE DISTANCEMANAGER
+    public void setRevving(boolean revving){
+        this.revving = revving;
+    }
+
+    public void setFiring(boolean firing){
+        this.firing = firing;
+    }
+
+    public void stopAll(){
+        shooter.setVelocity(0); // TODO make shooter use states as well
+        collector.setState(Collector.COLLECTOR_STATE.STOP); // stop states auto-set subsystems to stop moving
+        spindexer.setState(Spindexer.SPIN_STATE.STOP);
+        elevator.setState(Elevator.ELEVATOR_STATE.STOP);
+        shooter.setState(Shooter.SHOOTER_STATE.STOP);
+    }
+
+    public void flush(){
+        elevator.autoElevator(-1);
+        shooter.setVelocity(COAST_VELOCIY);
+        collector.setState(Collector.COLLECTOR_STATE.FLUSH);
+        spindexer.setState(Spindexer.SPIN_STATE.FLUSH);
+        elevator.setState(Elevator.ELEVATOR_STATE.FLUSH);
+        shooter.setState(Shooter.SHOOTER_STATE.COASTING);
+    }
+
+    public void collect(){
+        collector.setState(Collector.COLLECTOR_STATE.COLLECTING);
+        if(!firing){
+            spindexer.setState(Spindexer.SPIN_STATE.INTAKE);
+        }
+    }
+
+    public void revUp(){
+        shooter.setState(Shooter.SHOOTER_STATE.REVVING);
+        if(isAutoAim){
+            shooter.setVelocity(getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
+            shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) == 1);
         } else {
-            setSpindexer(0);
+            shooter.setVelocity(Shooter.MID_VELOCITY);
+        }
+        if(!collecting){
+            collector.setState(Collector.COLLECTOR_STATE.REVVING);
+            if(!collecting){
+                spindexer.setState(Spindexer.SPIN_STATE.STOP);
+            }
+        }
+        if(!firing){ // make the elevator flush unless firing
+            elevator.setState(Elevator.ELEVATOR_STATE.FLUSH);
+            elevator.autoElevator(-0.25);
         }
     }
 
-    public void lockToShooter(boolean lock, boolean unjam) {
-        this.lockToShooter = lock;
-        this.wantUnjam = unjam;
-        this.waitForShooterLoopCounter = 0;
-    }
-
-    public boolean hasBallInElevator() {
-        return ballSensor.get();
-    }
-    // TODO: implement when we have color sensors
-    public boolean colorOfBall() { return false; }
-
-    /**
-     * Should the shooter fire immediately, 
-     * or should it pause and reverse the spindexer?
-     */
-    public boolean shouldFire() {
-        if (wantUnjam) return false;
-        boolean fire = false;
-        if (hasBallInElevator()) { // color sensor check for team color here
-            fire = shooter.isVelocityNearTarget();
+    public void fire(){
+        if(!elevator.colorOfBall()){ // spit out ball if wrong color ? idk maybe make this into a flush command
+            shooter.setHood(false);
+        } else if(shooter.isVelocityNearTarget()){ // only fire if
+            if(isAutoAim){
+                spindexer.autoSpindexer(getDistance(DistanceManager.SUBSYSTEM.SPINDEXER));
+                elevator.autoElevator(getDistance(DistanceManager.SUBSYSTEM.ELEVATOR));
+                shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) > 0);
+            }
+        } else {
+            return; // do not switch states to firing if not close to desired velocity
         }
-        return fire;
+
+        elevator.setState(Elevator.ELEVATOR_STATE.FIRING);
+        spindexer.setState(Spindexer.SPIN_STATE.INTAKE);
+    }
+
+    public double getDistance(DistanceManager.SUBSYSTEM subsystem){
+        return distanceManager.getOutput(camera.getDistance(), subsystem);
+    }
+
+    public void idle(){ // not rly efficient organization rn but easier to understand - each action has its own priority over idling
+        if(!collecting && !revving){
+            collector.setState(Collector.COLLECTOR_STATE.STOP);
+        }
+
+        if(!firing && ! collecting && !revving){
+            spindexer.setState(Spindexer.SPIN_STATE.STOP);
+        }
+
+        if(!firing && !revving){
+            elevator.setState(Elevator.ELEVATOR_STATE.STOP);
+        }
+
+        if(!firing){
+            shooter.setState(Shooter.SHOOTER_STATE.COASTING);
+            shooter.setVelocity(COAST_VELOCIY);
+        }
     }
 
     @Override
     public void writeToHardware() {
-        if (lockToShooter) {
-            if (!shooter.isVelocityNearTarget()) {
-                setSpindexer(-1);
+        if (outputsChanged) { // boolean land!
+            if(stopped) {
+                stopAll();
+            } else if(flushing){
+                flush();
             } else {
-               setSpindexer(1);
+                if(firing){
+                    fire();
+                }
+                if(revving){
+                    revUp();
+                }
+                if(collecting){
+                    collect();
+                }
+                idle(); // idle all subsystems not in use
             }
-            System.out.println("Near Velocity: " + shooter.isVelocityNearTarget());
-            // System.out.println("Has Ball: " + hasBallInElevator());
-            if (!shouldFire()) {
-                // spindexer needs to be stopped so that it doesn't accidentally
-                // push the ball back in / etc
-                this.spindexer.set(ControlMode.PercentOutput, 0);
-                // spit the ball back out
-                this.elevator.set(ControlMode.PercentOutput, -0.25);
-                return;
-            }
-            // 
-            lockToShooter = false;
-            shooterWasAtTarget = true;
-            setSpindexer(1);
-            setElevator(1);
-        }
-        if (outputsChanged) {
-            this.spindexer.set(ControlMode.PercentOutput, spindexerPower);
-            this.elevator.set(ControlMode.PercentOutput, elevatorPower);
-            this.feederFlap.set(feederFlapOut);
             outputsChanged = false;
         }
     }
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        builder.addBooleanProperty("Hopper/HasBall", this::hasBallInElevator, null);
     }
 
     @Override

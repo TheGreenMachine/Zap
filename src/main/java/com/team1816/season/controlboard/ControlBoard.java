@@ -115,8 +115,8 @@ public class ControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getShoot() {
-        return mButtonControlBoard.getShoot();
+    public boolean getRevShooter() {
+        return mButtonControlBoard.getRevShooter();
     }
 
     @Override
@@ -125,8 +125,8 @@ public class ControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getSpinnerReset() {
-        return mButtonControlBoard.getSpinnerReset();
+    public boolean getHopper() {
+        return mButtonControlBoard.getHopper();
     }
 
     @Override
@@ -150,8 +150,8 @@ public class ControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getUnusedButton() {
-        return mButtonControlBoard.getUnusedButton();
+    public boolean getShoot() {
+        return mButtonControlBoard.getShoot();
     }
 
     @Override
