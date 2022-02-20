@@ -3,11 +3,13 @@ package com.team1816.season.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
 
+@Singleton
 public class Spindexer extends Subsystem {
 
     private static final String NAME = "spindexer";
@@ -51,17 +53,26 @@ public class Spindexer extends Subsystem {
         if(outputsChanged){
             switch (state){
                 case STOP:
+                    System.out.println("spindexer is stopped ");
                     spindexerPower = 0;
+                    break;
                 case INTAKE:
+                    System.out.println("spindexer is intaking ");
                     spindexerPower = 0.75;
+                    break;
                 case INDEX:
+                    System.out.println("spindexer is indexing ");
                     spindexerPower = -0.25;
+                    break;
                 case FLUSH:
                     spindexerPower = -1;
+                    break;
                 case FIRE:
                     if(!distanceManaged)
                     spindexerPower = 1;
+                    break;
             }
+            System.out.println("spindexer output = " + spindexerPower);
             spindexer.set(ControlMode.PercentOutput, spindexerPower);
             this.feederFlap.set(feederFlapOut);
             distanceManaged = false;

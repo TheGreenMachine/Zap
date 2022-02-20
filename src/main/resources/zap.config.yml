@@ -1,6 +1,6 @@
 subsystems:
     drivetrain:
-        implemented: false
+        implemented: true
         falcons:
             FLDr: 7
             FRDr: 10 #1
@@ -153,7 +153,7 @@ subsystems:
         invertMotor:
             - intake
         solenoids:
-            arm: 0
+            arm: 3
     camera:
         implemented: false #if false then also turn off useAutoAim
 pcm: 28

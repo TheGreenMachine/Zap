@@ -3,10 +3,12 @@ package com.team1816.season.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.team1816.lib.subsystems.Subsystem;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
 
+@Singleton
 public class Elevator extends Subsystem {
 
     private static final String NAME = "elevator";
@@ -52,12 +54,18 @@ public class Elevator extends Subsystem {
         if (outputsChanged) {
             switch (state){
                 case STOP:
+                    System.out.println("elevator is stopped ");
                     elevatorPower = 0;
+                    break;
                 case FIRING:
+                    System.out.println("elevator is firing ");
                     if(!distanceManaged)
                     elevatorPower = 1;
+                    break;
                 case FLUSH:
-                    elevatorPower = -1;
+                    System.out.println("elevator is flushing ");
+                    elevatorPower = -0.5;
+                    break;
             }
             this.elevator.set(ControlMode.PercentOutput, elevatorPower);
             // create ball color updating here once sensor created

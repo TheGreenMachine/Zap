@@ -57,7 +57,7 @@ public class Robot extends TimedRobot {
     // private final Spinner spinner = Spinner.getInstance();
     private final Spindexer mSpindexer;
     private final Elevator mElevator;
-    private final Hopper mHopper;
+    private final TheOrchestrator mHopper;
     private final Climber mClimber;
     private final Camera mCamera;
     private final LedManager ledManager;
@@ -91,7 +91,7 @@ public class Robot extends TimedRobot {
         mElevator = injector.getInstance(Elevator.class);
         mCamera = injector.getInstance(Camera.class);
         mSpindexer = injector.getInstance(Spindexer.class);
-        mHopper = injector.getInstance(Hopper.class);
+        mHopper = injector.getInstance(TheOrchestrator.class);
         mShooter = injector.getInstance(Shooter.class);
         mRobotState = injector.getInstance(RobotState.class);
         mSuperstructure = injector.getInstance(Superstructure.class);
@@ -228,6 +228,8 @@ public class Robot extends TimedRobot {
             mSubsystemManager.setSubsystems(
                 mDrive,
                 mSuperstructure,
+                mElevator,
+                mSpindexer,
 //                mInfrastructure,
                 mShooter,
                 // spinner,

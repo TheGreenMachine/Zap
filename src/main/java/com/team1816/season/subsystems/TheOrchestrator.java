@@ -6,7 +6,7 @@ import com.team1816.lib.subsystems.Subsystem;
 import edu.wpi.first.util.sendable.SendableBuilder;
 
 @Singleton
-public class Hopper extends Subsystem {
+public class TheOrchestrator extends Subsystem {
     // from what I understand, we want to make the elevator use velocity control
     // and also be in tandem with the shooter (w/ distance manager) so that depending on the shot distance,
     // the elevator will be given a wee bit more or less umph
@@ -48,7 +48,7 @@ public class Hopper extends Subsystem {
     private double COAST_VELOCIY = 9_000; // tune this and make changeable with a button in shooter itself
 
 
-    public Hopper() {
+    public TheOrchestrator() {
         super(NAME);
     }
 
@@ -64,6 +64,7 @@ public class Hopper extends Subsystem {
 
     public void setStopped(){
         setStopped(!stopped);
+        outputsChanged = true;
         System.out.println("starting/stopping hopper");
     }
 
@@ -75,18 +76,22 @@ public class Hopper extends Subsystem {
             revving = false;
             firing = false;
         }
+        outputsChanged = true;
     }
 
     public void setCollecting(boolean collecting){
         this.collecting = collecting;
+        outputsChanged = true;
     }
 
     public void setRevving(boolean revving){
         this.revving = revving;
+        outputsChanged = true;
     }
 
     public void setFiring(boolean firing){
         this.firing = firing;
+        outputsChanged = true;
     }
 
     public void stopAll(){
@@ -98,7 +103,6 @@ public class Hopper extends Subsystem {
     }
 
     public void flush(){
-        elevator.autoElevator(-1);
         shooter.setVelocity(COAST_VELOCIY);
         collector.setState(Collector.COLLECTOR_STATE.FLUSH);
         spindexer.setState(Spindexer.SPIN_STATE.FLUSH);
@@ -114,22 +118,22 @@ public class Hopper extends Subsystem {
     }
 
     public void revUp(){
+        System.out.println("revving!");
         shooter.setState(Shooter.SHOOTER_STATE.REVVING);
         if(isAutoAim){
             shooter.setVelocity(getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
             shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) == 1);
         } else {
-            shooter.setVelocity(Shooter.MID_VELOCITY);
+            shooter.setVelocity(Shooter.MAX_VELOCITY);
         }
         if(!collecting){
             collector.setState(Collector.COLLECTOR_STATE.REVVING);
-            if(!collecting){
+            if(!firing){
                 spindexer.setState(Spindexer.SPIN_STATE.STOP);
             }
         }
         if(!firing){ // make the elevator flush unless firing
             elevator.setState(Elevator.ELEVATOR_STATE.FLUSH);
-            elevator.autoElevator(-0.25);
         }
     }
 
@@ -147,7 +151,7 @@ public class Hopper extends Subsystem {
         }
 
         elevator.setState(Elevator.ELEVATOR_STATE.FIRING);
-        spindexer.setState(Spindexer.SPIN_STATE.INTAKE);
+        spindexer.setState(Spindexer.SPIN_STATE.FIRE);
     }
 
     public double getDistance(DistanceManager.SUBSYSTEM subsystem){
@@ -167,7 +171,7 @@ public class Hopper extends Subsystem {
             elevator.setState(Elevator.ELEVATOR_STATE.STOP);
         }
 
-        if(!firing){
+        if(!revving){
             shooter.setState(Shooter.SHOOTER_STATE.COASTING);
             shooter.setVelocity(COAST_VELOCIY);
         }

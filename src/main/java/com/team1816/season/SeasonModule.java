@@ -13,8 +13,6 @@ import com.team1816.season.controlboard.GamepadButtonControlBoard;
 import com.team1816.season.controlboard.GamepadDriveControlBoard;
 import com.team1816.season.paths.TrajectorySet;
 import com.team1816.season.subsystems.*;
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
 public class SeasonModule extends AbstractModule {
 
@@ -26,7 +24,7 @@ public class SeasonModule extends AbstractModule {
         bind(IButtonControlBoard.class).to(GamepadButtonControlBoard.class);
         requestStaticInjection(SwerveKinematics.class);
         requestStaticInjection(Drive.class);
-        requestStaticInjection(Hopper.class);
+        requestStaticInjection(TheOrchestrator.class);
         requestStaticInjection(TankDrive.class);
         requestStaticInjection(SwerveDrive.class);
         requestStaticInjection(Shooter.class);

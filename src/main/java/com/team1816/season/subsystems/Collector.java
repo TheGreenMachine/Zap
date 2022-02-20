@@ -75,32 +75,27 @@ public class Collector extends Subsystem {
 
     @Override
     public void writeToHardware() {
-//        if (isRaising) {
-//            if ((Timer.getFPGATimestamp() - startTime) > 1) {
-//                System.out.println(
-//                    "Raising timer passed at : " + (Timer.getFPGATimestamp() - startTime)
-//                );
-//                setIntakePow(0);
-//                isRaising = false;
-//            }
-//        }
         if (outputsChanged) {
             switch (state){
                 case STOP:
-                    System.out.println("arm is going up ");
                     intakePow = 0;
                     armDown = false;
+                    break;
                 case REVVING:
                     intakePow = 0.25;
                     armDown = false;
+                    break;
                 case COLLECTING:
-                    intakePow = 1;
+                    intakePow = 0.75;
                     armDown = true;
+                    break;
                 case FLUSH:
                     intakePow = -1;
                     armDown = true; // NOT SURE IF WE WANT COLLECTOR DOWN HERE
+                    break;
             }
 //            intake.set(ControlMode.PercentOutput, intakePow);
+            System.out.println(intakePow + " = intake pwr");
             intake.set(intakePow);
             this.armPiston.set(armDown);
 
