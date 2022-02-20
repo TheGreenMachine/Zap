@@ -89,41 +89,48 @@ public class Hopper extends Subsystem {
         this.waitForShooterLoopCounter = 0;
     }
 
-    public boolean hasBall() {
+    public boolean hasBallInElevator() {
         return ballSensor.get();
+    }
+    // TODO: implement when we have color sensors
+    public boolean colorOfBall() { return false; }
+
+    /**
+     * Should the shooter fire immediately, 
+     * or should it pause and reverse the spindexer?
+     */
+    public boolean shouldFire() {
+        if (wantUnjam) return false;
+        boolean fire = false;
+        if (hasBallInElevator()) { // color sensor check for team color here
+            fire = shooter.isVelocityNearTarget();
+        }
+        return fire;
     }
 
     @Override
     public void writePeriodicOutputs() {
         if (lockToShooter) {
-            System.out.println("Shooter Loop: " + waitForShooterLoopCounter);
-            if (waitForShooterLoopCounter < 10) {
-                waitForShooterLoopCounter++;
-                return;
+            if (!shooter.isVelocityNearTarget()) {
+                setSpindexer(-1);
+            } else {
+               setSpindexer(1);
             }
             System.out.println("Near Velocity: " + shooter.isVelocityNearTarget());
-//            System.out.println("Has Ball: " + hasBall());
-            if (
-                (!shooter.isVelocityNearTarget()
-                    || hasBall()) &&
-                !(shooter.isVelocityNearTarget() && hasBall())
-            ) {
-                if (wantUnjam) {
-                    this.spindexer.set(ControlMode.PercentOutput, -0.25);
-                }
+            // System.out.println("Has Ball: " + hasBallInElevator());
+            if (!shouldFire()) {
+                // spindexer needs to be stopped so that it doesn't accidentally
+                // push the ball back in / etc
+                this.spindexer.set(ControlMode.PercentOutput, 0);
+                // spit the ball back out
+                this.elevator.set(ControlMode.PercentOutput, -0.25);
                 return;
-                //                 Shooter has not sped up ye02.
-                //                 +
-                //                 -t, wait.
-                //                 if (shooterWasAtTarget) {
-                //                     this.spindexer.set(ControlMode.PercentOutput, 0);
-                //                     this.elevator.set(ControlMode.PercentOutput, 0);
-                //                     shooterWasAtTarget = false;
-                //                 }
-                //
             }
+            // 
             lockToShooter = false;
             shooterWasAtTarget = true;
+            setSpindexer(1);
+            setElevator(1);
         }
         if (outputsChanged) {
             this.spindexer.set(ControlMode.PercentOutput, spindexerPower);
@@ -135,7 +142,7 @@ public class Hopper extends Subsystem {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        builder.addBooleanProperty("Hopper/HasBall", this::hasBall, null);
+        builder.addBooleanProperty("Hopper/HasBall", this::hasBallInElevator, null);
     }
 
     @Override
