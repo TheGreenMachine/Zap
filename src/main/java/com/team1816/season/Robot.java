@@ -272,18 +272,13 @@ public class Robot extends TimedRobot {
                         mControlBoard::getShoot,
                         shooting -> {
                             if (shooting) {
-//                                mDrive.setOpenLoop(SwerveDriveSignal.BRAKE);
-//                                mShooter.startShooter(); // Uses ZED distance
-                                mShooter.setVelocity(Shooter.MID_VELOCITY);
-//                                mTurret.lockTurret();
+                                mShooter.autoHood();
+                                mShooter.startShooter();
                             } else {
-//                                mTurret.setControlMode(
-//                                    Turret.ControlMode.FIELD_FOLLOWING
-//                                );
-                                mShooter.stopShooter();
-//                                mShooter.setHood(false);
+                                mShooter.setVelocity(Shooter.MID_VELOCITY);
+                                mShooter.setHood(false);
                             }
-//                            mHopper.lockToShooter(shooting, false);
+//                          mHopper.lockToShooter(shooting, false);
                             mHopper.setIntake(shooting ? 1 : 0);
                             mCollector.setIntakePow(shooting ? 0.5 : 0);
                         }
@@ -421,6 +416,11 @@ public class Robot extends TimedRobot {
             mEnabledLooper.start();
             mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
             mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
+
+            // start shooter at a default state to keep velocity 
+            // (spin-up takes a while, so doing it only once is preferable)
+            mShooter.setVelocity(Shooter.MID_VELOCITY);
+
             System.out.println(mTurret.getActualTurretPositionTicks() + "+++++++"); // for debugging whether or not getActTicks works. doesn't seem to - ginget
 
 
