@@ -53,15 +53,12 @@ public class Spindexer extends Subsystem {
         if(outputsChanged){
             switch (state){
                 case STOP:
-                    System.out.println("spindexer is stopped ");
                     spindexerPower = 0;
                     break;
                 case INTAKE:
-                    System.out.println("spindexer is intaking ");
                     spindexerPower = 0.75;
                     break;
                 case INDEX:
-                    System.out.println("spindexer is indexing ");
                     spindexerPower = -0.25;
                     break;
                 case FLUSH:
@@ -72,7 +69,6 @@ public class Spindexer extends Subsystem {
                     spindexerPower = 1;
                     break;
             }
-            System.out.println("spindexer output = " + spindexerPower);
             spindexer.set(ControlMode.PercentOutput, spindexerPower);
             this.feederFlap.set(feederFlapOut);
             distanceManaged = false;

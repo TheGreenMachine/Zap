@@ -42,10 +42,8 @@ public class Orchestrator extends Subsystem {
     private boolean flushing = false;
     private boolean revving = false;
     private boolean firing = false;
-    private final boolean isAutoAim = factory.getConstant("useAutoAim") < 0;
+    private final boolean isAutoAim = factory.getConstant("useAutoAim") > 0;
 
-    //band-aid patches
-    private double COAST_VELOCIY = (int) factory.getConstant("shooter","coast");; // tune this and make changeable with a button in shooter itself
 
 
     public Orchestrator() {
@@ -79,6 +77,10 @@ public class Orchestrator extends Subsystem {
         outputsChanged = true;
     }
 
+    public void setCollecting(){
+        setCollecting(!collecting);
+    }
+
     public void setCollecting(boolean collecting){
         this.collecting = collecting;
         outputsChanged = true;
@@ -107,7 +109,7 @@ public class Orchestrator extends Subsystem {
         spindexer.setState(Spindexer.SPIN_STATE.FLUSH);
         elevator.setState(Elevator.ELEVATOR_STATE.FLUSH);
         shooter.setState(Shooter.SHOOTER_STATE.COASTING);
-        shooter.setVelocity(COAST_VELOCIY);
+        shooter.setVelocity(Shooter.COAST_VELOCIY);
     }
 
     public void collect(){
@@ -124,7 +126,9 @@ public class Orchestrator extends Subsystem {
             shooter.setVelocity(getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
             shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) == 1);
         } else {
+            System.out.println("SETTING TO MAX VEL!!!!");
             shooter.setVelocity(Shooter.MAX_VELOCITY);
+            shooter.setHood(true);
         }
         if(!collecting){
             collector.setState(Collector.COLLECTOR_STATE.REVVING);
@@ -140,7 +144,8 @@ public class Orchestrator extends Subsystem {
     public void fire(){
         if(!elevator.colorOfBall()){ // spit out ball if wrong color ? idk maybe make this into a flush command
             shooter.setHood(false);
-        } else if(shooter.isVelocityNearTarget()){ // only fire if
+        }
+        if(shooter.isVelocityNearTarget()){ // only fire if
             if(isAutoAim){
                 spindexer.autoSpindexer(getDistance(DistanceManager.SUBSYSTEM.SPINDEXER));
                 elevator.autoElevator(getDistance(DistanceManager.SUBSYSTEM.ELEVATOR));
@@ -173,7 +178,7 @@ public class Orchestrator extends Subsystem {
 
         if(!revving){
             shooter.setState(Shooter.SHOOTER_STATE.COASTING);
-            shooter.setVelocity(COAST_VELOCIY);
+            shooter.setVelocity(Shooter.COAST_VELOCIY);
         }
     }
 

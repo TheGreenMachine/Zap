@@ -99,7 +99,7 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
 
     @Override
     public boolean getShoot() {
-        return mController.getButton(Controller.Button.RIGHT_BUMPER);
+        return mController.getTrigger(Controller.Axis.RIGHT_TRIGGER);
     }
 
 }

@@ -282,7 +282,7 @@ public class Robot extends TimedRobot {
                                 mTurret.setControlMode(
                                     Turret.ControlMode.FIELD_FOLLOWING
                                 );
-                                mShooter.setHood(false);
+                                mShooter.setHood(true);
                             }
                         }
                     ),
@@ -292,11 +292,10 @@ public class Robot extends TimedRobot {
                             mHopper.setFiring(shooting);
                         }
                     ),
-                    createHoldAction( // make this an actual toggle?
+                    createAction( // make this an actual toggle?
                         mControlBoard::getCollectorToggle,
-                        collecting -> {
-                            System.out.println("Collector toggled!");
-                            mHopper.setCollecting(collecting);
+                       () -> {
+                            mHopper.setCollecting();
                         }
                     ),
                     createHoldAction(

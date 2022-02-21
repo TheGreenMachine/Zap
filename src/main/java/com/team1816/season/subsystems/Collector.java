@@ -99,7 +99,6 @@ public class Collector extends Subsystem {
                     break;
             }
 //            intake.set(ControlMode.PercentOutput, intakePow);
-            System.out.println(intakePow + " = intake pwr");
             intake.set(intakePow);
             this.armPiston.set(armDown);
 

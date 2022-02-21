@@ -45,10 +45,12 @@ public class Shooter extends Subsystem implements PidProvider {
     public static final int NEAR_VELOCITY = 11_100; // Initiation line
     public static final int MID_VELOCITY = 9_900; // Trench this also worked from initiation
     public static final int MID_FAR_VELOCITY = 11_200;
+    public static final int COAST_VELOCIY = (int) factory.getConstant(NAME , "coast");; // tune this and make changeable with a button in shooter itself
+
     public static final int VELOCITY_THRESHOLD = (int) factory.getConstant(
         NAME,
         "velocityThreshold",
-        3000
+        500
     );
     private SHOOTER_STATE state = SHOOTER_STATE.STOP;
 
@@ -144,7 +146,7 @@ public class Shooter extends Subsystem implements PidProvider {
     }
 
     public boolean isVelocityNearTarget() {
-        return Math.abs(this.getError()) < VELOCITY_THRESHOLD;
+        return Math.abs(this.getError()) < VELOCITY_THRESHOLD && (int)this.getTargetVelocity() != COAST_VELOCIY;
     }
 
     @Override
@@ -162,6 +164,7 @@ public class Shooter extends Subsystem implements PidProvider {
             } else {
                 this.shooterMain.set(ControlMode.Velocity, mPeriodicIO.velocityDemand);
             }
+            System.out.println("velocity shooter demand = " + mPeriodicIO.velocityDemand);
             outputsChanged = false;
         }
     }

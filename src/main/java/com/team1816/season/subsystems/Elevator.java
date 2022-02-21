@@ -54,16 +54,13 @@ public class Elevator extends Subsystem {
         if (outputsChanged) {
             switch (state){
                 case STOP:
-                    System.out.println("elevator is stopped ");
                     elevatorPower = 0;
                     break;
                 case FIRING:
-                    System.out.println("elevator is firing ");
                     if(!distanceManaged)
                     elevatorPower = 1;
                     break;
                 case FLUSH:
-                    System.out.println("elevator is flushing ");
                     elevatorPower = -0.5;
                     break;
             }
