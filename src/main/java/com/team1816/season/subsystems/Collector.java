@@ -29,6 +29,10 @@ public class Collector extends Subsystem {
     private boolean outputsChanged = false;
     private COLLECTOR_STATE state = COLLECTOR_STATE.STOP;
 
+    private double REVVING = factory.getConstant(NAME,"revving");
+    private double COLLECTING = factory.getConstant(NAME,"collecting");
+    private double FLUSH = factory.getConstant(NAME,"flush");
+
     private boolean isRaising;
     private double startTime;
 
@@ -82,15 +86,15 @@ public class Collector extends Subsystem {
                     armDown = false;
                     break;
                 case REVVING:
-                    intakePow = 0.25;
+                    intakePow = REVVING;
                     armDown = false;
                     break;
                 case COLLECTING:
-                    intakePow = 0.75;
+                    intakePow = COLLECTING;
                     armDown = true;
                     break;
                 case FLUSH:
-                    intakePow = -1;
+                    intakePow = FLUSH;
                     armDown = true; // NOT SURE IF WE WANT COLLECTOR DOWN HERE
                     break;
             }

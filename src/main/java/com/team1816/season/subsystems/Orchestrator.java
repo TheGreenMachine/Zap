@@ -6,7 +6,7 @@ import com.team1816.lib.subsystems.Subsystem;
 import edu.wpi.first.util.sendable.SendableBuilder;
 
 @Singleton
-public class TheOrchestrator extends Subsystem {
+public class Orchestrator extends Subsystem {
     // from what I understand, we want to make the elevator use velocity control
     // and also be in tandem with the shooter (w/ distance manager) so that depending on the shot distance,
     // the elevator will be given a wee bit more or less umph
@@ -45,10 +45,10 @@ public class TheOrchestrator extends Subsystem {
     private final boolean isAutoAim = factory.getConstant("useAutoAim") < 0;
 
     //band-aid patches
-    private double COAST_VELOCIY = 10_500; // tune this and make changeable with a button in shooter itself
+    private double COAST_VELOCIY = (int) factory.getConstant("shooter","coast");; // tune this and make changeable with a button in shooter itself
 
 
-    public TheOrchestrator() {
+    public Orchestrator() {
         super(NAME);
     }
 
@@ -95,19 +95,19 @@ public class TheOrchestrator extends Subsystem {
     }
 
     public void stopAll(){
-        shooter.setVelocity(0); // TODO make shooter use states as well
         collector.setState(Collector.COLLECTOR_STATE.STOP); // stop states auto-set subsystems to stop moving
         spindexer.setState(Spindexer.SPIN_STATE.STOP);
         elevator.setState(Elevator.ELEVATOR_STATE.STOP);
         shooter.setState(Shooter.SHOOTER_STATE.STOP);
+        shooter.setVelocity(0); // TODO make shooter use states as well
     }
 
     public void flush(){
-        shooter.setVelocity(COAST_VELOCIY);
         collector.setState(Collector.COLLECTOR_STATE.FLUSH);
         spindexer.setState(Spindexer.SPIN_STATE.FLUSH);
         elevator.setState(Elevator.ELEVATOR_STATE.FLUSH);
         shooter.setState(Shooter.SHOOTER_STATE.COASTING);
+        shooter.setVelocity(COAST_VELOCIY);
     }
 
     public void collect(){

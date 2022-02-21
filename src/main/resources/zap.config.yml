@@ -126,6 +126,8 @@ subsystems:
             rpmFloorCheck: 2000
             rpmEpsilonCheck: 60
             velocityThreshold: 500
+            maxVel: 10500
+            coast: 9000
     climber:
         implemented: false
         sparkmaxes:
@@ -154,12 +156,16 @@ subsystems:
             - intake
         solenoids:
             arm: 2
+        constants:
+            revving: .25
+            collecting: .65
+            flush: -.75
     camera:
         implemented: false #if false then also turn off useAutoAim
 pcm: 28
 constants:
     maxTicks: 12275.7 # ticks per 100ms TODO make into constant unique to each subsystem
-    maxRotVel: 77.5
+    maxRotVel: 7.5
     trackWidth: 21 #inches
     wheelbaseLength: 21.5 #inches
     maxVel: 3 # 160 # 240 # inches/s # 22560 native units ---30

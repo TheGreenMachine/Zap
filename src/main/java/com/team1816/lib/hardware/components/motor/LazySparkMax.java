@@ -41,22 +41,23 @@ public class LazySparkMax implements IMotorControllerEnhanced {
         mEncoder = mMotor.getEncoder();
     }
 
-    public double getLastSet() {
-        return mLastSet;
-    }
-
-    public void set(ControlMode mode, double value) {
-        CANSparkMax.ControlType controlType = convertControlMode(mode);
-        if (value != mLastSet || controlType != mLastControlMode) {
-            mLastSet = value;
-            mLastControlMode = controlType;
-            mMotor.set(value);
-//            mPidController.setReference(value, controlType); // VELOCITY WILL NOT WORK BECAUSE REV READS IT IN RPM
-        }
+    @Override
+    public void set(ControlMode mode, double demand) {
+        canMaxSet(mode, demand);
     }
 
     @Override
-    public void set(ControlMode Mode, double demand0, DemandType demand1Type, double demand1) {
+    public void set(ControlMode mode, double demand0, DemandType demand1Type, double demand1) {
+        canMaxSet(mode, demand0);
+    }
+
+    private void canMaxSet(ControlMode mode, double demand){
+        CANSparkMax.ControlType controlType = convertControlMode(mode);
+        if (demand != mLastSet || controlType != mLastControlMode) {
+            mLastSet = demand;
+            mLastControlMode = controlType;
+            mMotor.set(demand);
+        }
     }
 
     @Override

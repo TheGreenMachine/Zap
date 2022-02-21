@@ -51,12 +51,12 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
 
     @Override
     public boolean getCollectorToggle() {
-        return mController.getButton(Controller.Button.LEFT_BUMPER);
+        return mController.getButton(Controller.Button.RIGHT_BUMPER);
     }
 
     @Override
     public boolean getCollectorBackspin() {
-        return mController.getButton(Controller.Button.RIGHT_BUMPER);
+        return mController.getButton(Controller.Button.LEFT_BUMPER);
     }
 
     @Override
