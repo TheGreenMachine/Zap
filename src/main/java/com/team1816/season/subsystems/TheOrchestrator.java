@@ -45,7 +45,7 @@ public class TheOrchestrator extends Subsystem {
     private final boolean isAutoAim = factory.getConstant("useAutoAim") < 0;
 
     //band-aid patches
-    private double COAST_VELOCIY = 9_000; // tune this and make changeable with a button in shooter itself
+    private double COAST_VELOCIY = 10_500; // tune this and make changeable with a button in shooter itself
 
 
     public TheOrchestrator() {

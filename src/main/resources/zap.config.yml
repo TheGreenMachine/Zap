@@ -153,13 +153,13 @@ subsystems:
         invertMotor:
             - intake
         solenoids:
-            arm: 3
+            arm: 2
     camera:
         implemented: false #if false then also turn off useAutoAim
 pcm: 28
 constants:
     maxTicks: 12275.7 # ticks per 100ms TODO make into constant unique to each subsystem
-    maxRotVel: 11.5
+    maxRotVel: 77.5
     trackWidth: 21 #inches
     wheelbaseLength: 21.5 #inches
     maxVel: 3 # 160 # 240 # inches/s # 22560 native units ---30
