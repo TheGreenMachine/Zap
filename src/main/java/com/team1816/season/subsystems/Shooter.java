@@ -41,7 +41,7 @@ public class Shooter extends Subsystem implements PidProvider {
     private final double kI;
     private final double kD;
     private final double kF;
-    public static final int MAX_VELOCITY = 11_800; // Far
+    public static final int MAX_VELOCITY = (int) factory.getConstant(NAME,"maxVel");
     public static final int NEAR_VELOCITY = 11_100; // Initiation line
     public static final int MID_VELOCITY = 9_900; // Trench this also worked from initiation
     public static final int MID_FAR_VELOCITY = 11_200;

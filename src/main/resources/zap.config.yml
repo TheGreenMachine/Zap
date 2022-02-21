@@ -90,7 +90,7 @@ subsystems:
             raveSpeed: 0.05
             cameraLed: 1
     turret:
-        implemented: false
+        implemented: true
         pidConfig:
             slot0:
                 kP: 1.0
@@ -126,6 +126,9 @@ subsystems:
             rpmFloorCheck: 2000
             rpmEpsilonCheck: 60
             velocityThreshold: 500
+            maxVel: 11800
+            coast: 9000
+
     climber:
         implemented: false
         sparkmaxes:
@@ -153,7 +156,12 @@ subsystems:
         invertMotor:
             - intake
         solenoids:
-            arm: 3
+            arm: 2
+        constants:
+            revving: .25
+            collecting: .65
+            flush: -.75
+
     camera:
         implemented: false #if false then also turn off useAutoAim
 pcm: 28
