@@ -19,7 +19,7 @@ public class Infrastructure extends Subsystem {
     @Inject
     private Superstructure mSuperstructure;
 
-    private Compressor mCompressor;
+    private ICompressor mCompressor;
 
     private boolean mIsManualControl = false;
     private static final boolean COMPRESSOR_ENABLED =
@@ -28,9 +28,10 @@ public class Infrastructure extends Subsystem {
 
     public Infrastructure() {
         super("Infrastructure");
-        mCompressor = new Compressor(8, PneumaticsModuleType.REVPH);
+        mCompressor = factory.getCompressor(true);
+//        mCompressor = new Compressor(8, PneumaticsModuleType.REVPH);
 //        if (factory.getConstant("compressorEnabled") > 0) {
-//            mCompressor.stop();
+//            mCompressor.dissable();
 //        }
     }
 
@@ -79,7 +80,7 @@ public class Infrastructure extends Subsystem {
 
         if (mIsManualControl) {
             startCompressor();
-            System.out.println("current value " + mCompressor.getCurrent() + " enabled: " + mCompressor.enabled());
+            System.out.println("current value " + mCompressor.getCompressorCurrent() + " enabled: " + mCompressor.enabled());
         }
     }
 

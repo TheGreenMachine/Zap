@@ -1,6 +1,7 @@
 package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
@@ -17,7 +18,7 @@ public class Climber extends Subsystem {
 
     // Components
 //    private final IMotorControllerEnhanced elevator;
-    private final CANSparkMax elevator;
+    private final IMotorControllerEnhanced elevator;
 
     // State
     private double climberPow;
@@ -26,8 +27,8 @@ public class Climber extends Subsystem {
 
     public Climber() {
         super(NAME);
-//        elevator =  factory.getMotor(NAME, "elevator");
-        elevator = new CANSparkMax( 20, CANSparkMaxLowLevel.MotorType.kBrushless);
+        elevator =  factory.getMotor(NAME, "elevator");
+        //elevator = new CANSparkMax( 20, CANSparkMaxLowLevel.MotorType.kBrushless);
     }
 
     public void setClimberPower(double power) {
@@ -43,7 +44,7 @@ public class Climber extends Subsystem {
     public void writeToHardware() {
         if (outputsChanged) {
 //            elevator.set(ControlMode.PercentOutput, climberPow);
-            elevator.set(climberPow);
+            elevator.set(ControlMode.PercentOutput, climberPow);
             outputsChanged = false;
         }
     }

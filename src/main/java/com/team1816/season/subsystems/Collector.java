@@ -20,8 +20,8 @@ public class Collector extends Subsystem {
 
     // Components
     private final ISolenoid armPiston;
-//    private final IMotorControllerEnhanced intake;
-    private final CANSparkMax intake;
+    private final IMotorControllerEnhanced intake;
+    //private final CANSparkMax intake;
 
     // State
     private double intakePow;
@@ -41,8 +41,7 @@ public class Collector extends Subsystem {
     public Collector() {
         super(NAME);
         this.armPiston = factory.getSolenoid(NAME, "arm");
-//        this.intake = factory.getMotor(NAME, "intake"); // factory.getMotor(NAME, "intake");
-        intake = new CANSparkMax(23, CANSparkMaxLowLevel.MotorType.kBrushless);
+        this.intake = factory.getMotor(NAME, "intake");
 
 //        intake.configSupplyCurrentLimit(
 //            new SupplyCurrentLimitConfiguration(true, 25, 0, 0),
@@ -99,7 +98,7 @@ public class Collector extends Subsystem {
                     break;
             }
 //            intake.set(ControlMode.PercentOutput, intakePow);
-            intake.set(intakePow);
+            intake.set(ControlMode.PercentOutput, intakePow);
             this.armPiston.set(armDown);
 
             this.outputsChanged = false;

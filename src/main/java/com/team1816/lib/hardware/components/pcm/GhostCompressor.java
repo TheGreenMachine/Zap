@@ -12,7 +12,7 @@ public class GhostCompressor implements ICompressor {
     }
 
     @Override
-    public void stop() {
+    public void disable() {
         this.enabled = false;
     }
 
@@ -41,7 +41,7 @@ public class GhostCompressor implements ICompressor {
                 if (value) {
                     enableDigital();
                 } else {
-                    stop();
+                    disable();
                 }
             }
         );

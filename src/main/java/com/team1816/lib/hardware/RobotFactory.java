@@ -343,9 +343,12 @@ public class RobotFactory {
         return null;
     }
 
-    public ICompressor getCompressor() {
+    public ICompressor getCompressor(boolean isREV) {
         if (isPcmEnabled()) {
-            return new CompressorImpl(getPcmId(), PneumaticsModuleType.REVPH);
+            if (isREV)
+                return new CompressorImpl(getPcmId(), PneumaticsModuleType.REVPH);
+            else
+                return new CompressorImpl(getPcmId(), PneumaticsModuleType.CTREPCM);
         }
         reportGhostWarning("Compressor", "ROOT", "on PCM ID " + getPcmId());
         return new GhostCompressor();
@@ -437,7 +440,6 @@ public class RobotFactory {
                 pidSlotConfiguration.allowableError = 0.0;
                 return pidSlotConfiguration;
             }
-
         }
     }
 
