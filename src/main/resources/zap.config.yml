@@ -187,3 +187,4 @@ constants:
     compressorEnabled: 1 # 0 or 1
     wheelDiameter: 4
     kLooperDt: .020 # seconds
+    pdIsRev: 1

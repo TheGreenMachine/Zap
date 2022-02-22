@@ -18,6 +18,7 @@ subsystems:
                 kF: 0.5383998
                 iZone: 30
         constants:
+            isSwerve: 0
             pigeonId: 13
             pigeonOnTalon: 0
             encPPR: 4096 # CTRE mag encoder
@@ -52,6 +53,7 @@ subsystems:
                 kF: 0 # Should be 0 for position control
                 iZone: 200
         constants:
+            turretPPR: 4096
             encPPR: 4096
             revLimit: 960
             fwdLimit: 2990
@@ -63,6 +65,7 @@ subsystems:
             rpmEpsilonCheck: 60
 pcm: -1
 constants:
+    pdIsRev: 0
     wheelDiameter: 4.058
     trackWidth: 15.75
     maxVel: 30
@@ -79,3 +82,5 @@ constants:
     badLogEnabled: 1
     useAutoAim: 1
     compressorEnabled: 0
+    wheelbaseLength: .3
+    maxRotVel: 1

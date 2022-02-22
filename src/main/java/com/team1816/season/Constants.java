@@ -206,19 +206,6 @@ public class Constants {
     public static final double kDeltaLookAhead = kMaxLookAhead - kMinLookAhead;
     public static final double kDeltaLookAheadSpeed =
         kMaxLookAheadSpeed - kMinLookAheadSpeed;
-    public static final double kInertiaSteeringGain = 0.0; // angular velocity command is multiplied by this gain * our speed in inches per sec
-    public static final double kPathFollowingProfileKp = factory.getConstant(
-        "drivetrain",
-        "kP"
-    );
-    public static final double kPathFollowingProfileKi = factory.getConstant(
-        "drivetrain",
-        "kI"
-    );
-
-    public static final double kPathFollowingGoalPosTolerance = 1.0;
-    public static final double kPathFollowingGoalVelTolerance = 12.0;
-    public static final double kPathStopSteeringDistance = 12.0;
     public static double kCameraFrameRate = 30;
     public static final double kPathFollowingMaxAccel = factory.getConstant("maxAccel");
     public static double kPathFollowingMaxVelMeters = factory.getConstant("maxVel");

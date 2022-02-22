@@ -21,6 +21,7 @@ public class SeasonFactory implements Drive.Factory {
             } else {
                 mDrive = new TankDrive();
             }
+            System.out.println("Created " + mDrive.getClass().getSimpleName());
         }
         return mDrive;
     }

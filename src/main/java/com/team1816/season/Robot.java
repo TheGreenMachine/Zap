@@ -46,11 +46,8 @@ public class Robot extends TimedRobot {
 //    private final Infrastructure mInfrastructure;
     private final RobotState mRobotState;
     private final Drive mDrive;
-    private final PowerDistribution pdh = new PowerDistribution(
-        1,
-        PowerDistribution.ModuleType.kRev
-    );
-//    private final PneumaticHub ph = new PneumaticHub(1); //use fatory.getPcm later
+    private final PowerDistribution pdh;
+    private final PneumaticHub ph = new PneumaticHub(1); //use fatory.getPcm later
     private final Collector mCollector;
     private final Shooter mShooter;
     private final Turret mTurret;
@@ -100,7 +97,11 @@ public class Robot extends TimedRobot {
         mSubsystemManager = injector.getInstance(SubsystemManager.class);
         mAutoModeSelector = injector.getInstance(AutoModeSelector.class);
         trajectorySet = injector.getInstance(TrajectorySet.class);
-        compressor = new Compressor(getFactory().getPcmId(), PneumaticsModuleType.REVPH);
+        compressor =  new Compressor(getFactory().getPcmId(), PneumaticsModuleType.REVPH);
+        pdh = new PowerDistribution(
+            1,
+                getFactory().getConstant("pdIsRev") == 0 ? PowerDistribution.ModuleType.kCTRE: PowerDistribution.ModuleType.kRev
+            );
     }
 
     public static RobotFactory getFactory() {

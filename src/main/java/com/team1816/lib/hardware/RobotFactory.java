@@ -118,6 +118,8 @@ public class RobotFactory {
 //                    config.constants.get("maxTicks").intValue()
                     (int) (DriveConversions.inchesPerSecondToTicksPer100ms(Constants.kPathFollowingMaxVelMeters / 0.0254))
                 );
+        } else {
+            System.out.println("Created " + motor.getClass().getSimpleName() + " id:" + motor.getDeviceID());
         }
 
         var motorId = motor.getDeviceID();
@@ -374,7 +376,7 @@ public class RobotFactory {
 
     public Double getConstant(String name, double defaultVal) {
         if (getConstants() == null || !getConstants().containsKey(name)) {
-            DriverStation.reportError("Yaml constants:" + name + " missing", false);
+            DriverStation.reportError("Yaml constants:" + name + " missing", true);
             return defaultVal;
         }
         return getConstants().get(name);
@@ -391,7 +393,7 @@ public class RobotFactory {
         if (!getSubsystem(subsystemName).constants.containsKey(name)) {
             DriverStation.reportError(
                 "Yaml " + subsystemName + " constants:" + name + " missing",
-                false
+                defaultVal == 0
             );
             return defaultVal;
         }
