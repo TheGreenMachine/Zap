@@ -1,4 +1,4 @@
-package com.team1816.season.auto.modes.modes2020;
+package com.team1816.season.auto.modes;
 
 import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.actions.TrajectoryAction;
@@ -6,15 +6,15 @@ import com.team1816.lib.auto.actions.WaitAction;
 import com.team1816.lib.auto.modes.AutoModeBase;
 import com.team1816.season.paths.TrajectorySet;
 
-public class TuneDrivetrainMode extends AutoModeBase {
+public class DriveStraightMode extends AutoModeBase {
 
-    public TuneDrivetrainMode() {
-        trajectory = new TrajectoryAction(TrajectorySet.TUNE_DRIVETRAIN);
+    public DriveStraightMode() {
+        trajectory = new TrajectoryAction(TrajectorySet.DRIVE_STRAIGHT);
     }
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        System.out.println("Running Tune Drivetrain Mode");
+        System.out.println("Running Drive Straight Mode");
         runAction(new WaitAction(.5));
         runAction(trajectory);
     }

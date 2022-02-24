@@ -81,7 +81,7 @@ public class LazySparkMax implements IMotorControllerEnhanced {
 
     @Override
     public boolean getInverted() {
-        return false;
+        return mMotor.getInverted();
     }
 
     @Override

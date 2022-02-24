@@ -7,7 +7,10 @@ import com.team1816.lib.controlboard.IButtonControlBoard;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.controlboard.IDriveControlBoard;
 import com.team1816.lib.subsystems.Infrastructure;
-import com.team1816.season.auto.actions.actions2020.*;
+import com.team1816.season.auto.actions.CollectAction;
+import com.team1816.season.auto.actions.RampUpShooterAction;
+import com.team1816.season.auto.actions.ShootAction;
+import com.team1816.season.auto.actions.TurretAction;
 import com.team1816.season.controlboard.ControlBoard;
 import com.team1816.season.controlboard.GamepadButtonControlBoard;
 import com.team1816.season.controlboard.GamepadDriveControlBoard;
@@ -37,5 +40,8 @@ public class SeasonModule extends AbstractModule {
         requestStaticInjection(TrajectorySet.class);
         requestStaticInjection(TrajectoryAction.class);
         requestStaticInjection(TurretAction.class);
+        requestStaticInjection(CollectAction.class);
+        requestStaticInjection(RampUpShooterAction.class);
+        requestStaticInjection(ShootAction.class);
     }
 }

@@ -33,7 +33,7 @@ public class Spindexer extends Subsystem {
         this.spindexer = factory.getMotor(NAME, "spindexer");
     }
 
-    public void autoSpindexer(double spindexerPower){
+    public void setSpindexer(double spindexerPower){
         distanceManaged = true;
         this.spindexerPower = spindexerPower;
     }

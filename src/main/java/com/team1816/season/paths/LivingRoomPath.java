@@ -27,7 +27,7 @@ public class LivingRoomPath implements PathContainer {
     }
 
     @Override
-    public boolean isFiveBall() {
+    public boolean usingApp() {
         return false;
     }
 }
