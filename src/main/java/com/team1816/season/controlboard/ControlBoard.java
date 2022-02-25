@@ -90,11 +90,6 @@ public class ControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getSpinnerThreeTimes() {
-        return mButtonControlBoard.getSpinnerThreeTimes();
-    }
-
-    @Override
     public boolean getTurretJogLeft() {
         return mButtonControlBoard.getTurretJogLeft();
     }
@@ -120,13 +115,8 @@ public class ControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getSpinnerColor() {
-        return mButtonControlBoard.getSpinnerColor();
-    }
-
-    @Override
-    public boolean getHopper() {
-        return mButtonControlBoard.getHopper();
+    public boolean getOrchestrator() {
+        return mButtonControlBoard.getOrchestrator();
     }
 
     @Override
@@ -147,6 +137,16 @@ public class ControlBoard implements IControlBoard {
     @Override
     public boolean getClimberDown() {
         return mButtonControlBoard.getClimberDown();
+    }
+
+    @Override
+    public double getTurretXVal() {
+        return mButtonControlBoard.getTurretXVal();
+    }
+
+    @Override
+    public double getTurretYVal() {
+        return mButtonControlBoard.getTurretYVal();
     }
 
     @Override

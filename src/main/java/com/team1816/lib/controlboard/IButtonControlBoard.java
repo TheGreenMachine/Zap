@@ -5,7 +5,7 @@ public interface IButtonControlBoard {
 
     void setRumble(boolean on);
 
-    boolean getHopper();
+    boolean getOrchestrator();
 
     boolean getFeederFlapOut();
 
@@ -15,9 +15,9 @@ public interface IButtonControlBoard {
 
     boolean getClimberDown();
 
-    boolean getSpinnerColor();
+    double getTurretXVal(); // front-to-back portion of angle - using X and Y as used in the path generator! may be the wrong axes!
 
-    boolean getSpinnerThreeTimes();
+    double getTurretYVal(); // side-to-side portion of angle
 
     boolean getTurretJogLeft();
 

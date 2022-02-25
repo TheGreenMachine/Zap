@@ -34,23 +34,23 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
         mDPadValid = new DelayedBoolean(Timer.getFPGATimestamp(), kDPadDelay);
     }
 
-    // Spinner
     @Override
-    public boolean getHopper() {
+    public boolean getOrchestrator() {
         return mController.getButton(Controller.Button.START);
     }
 
+    // Turret teleop control
     @Override
-    public boolean getSpinnerColor() {
-        return mController.getButton(Controller.Button.X);
+    public double getTurretXVal(){
+        return mController.getJoystick(Controller.Axis.LEFT_X);
     }
 
     @Override
-    public boolean getSpinnerThreeTimes() {
-        return mController.getButton(Controller.Button.B);
+    public double getTurretYVal(){
+        return mController.getJoystick(Controller.Axis.LEFT_Y);
     }
 
-    // Turret
+    // Turret manual teleop control - use if turret position control not working
     @Override
     public boolean getTurretJogLeft() {
         return mController.getDPad() == 270;

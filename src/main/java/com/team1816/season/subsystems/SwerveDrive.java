@@ -25,7 +25,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     public static final String NAME = "drivetrain";
 
     private final SwerveDriveHelper swerveDriveHelper = new SwerveDriveHelper();
-    private final double looperDt = Constants.kLooperDt / 40;
+    private final double looperDt = Constants.kLooperDt * 50;
 
     public SwerveModule[] swerveModules;
 

@@ -61,7 +61,7 @@ public class TankDemoModeControlBoard implements IControlBoard {
     public void setRumble(boolean on) {}
 
     @Override
-    public boolean getHopper() {
+    public boolean getOrchestrator() {
         return false;
     }
 
@@ -86,13 +86,15 @@ public class TankDemoModeControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getSpinnerColor() {
-        return false;
+    public double getTurretXVal() {
+        System.out.println("turret field_following teleop control not implemented for TankDemoMode!");
+        return 0;
     }
 
     @Override
-    public boolean getSpinnerThreeTimes() {
-        return false;
+    public double getTurretYVal() {
+        System.out.println("turret field_following teleop control not implemented for TankDemoMode!");
+        return 0;
     }
 
     @Override

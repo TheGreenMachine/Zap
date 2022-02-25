@@ -49,7 +49,7 @@ public class FiveBallMode extends AutoModeBase {
             new SeriesAction(
                 new CollectAction(true),
                 new RampUpShooterAction(Shooter.MID_VELOCITY), // make actual shooting vel
-                new TurretAction(Turret.CARDINAL_WEST),
+                new TurretAction(Turret.CARDINAL_WEST), // setting this doesn't seem to work right in simulator - magically relative to field and not the robot
                 trajectory,
                 new ParallelAction(
                     new SeriesAction(
@@ -74,22 +74,15 @@ public class FiveBallMode extends AutoModeBase {
                 new ShootAction(false, true),
                 trajectory2,
                 new RampUpShooterAction(Shooter.MID_FAR_VELOCITY),
-                new ParallelAction(
-                    new SeriesAction(
-                        new WaitUntilInsideRegion(
-                            new Translation2d(126, 116), // make actual region to change turret/shooter velocity
-                            new Translation2d(206, 178)
-                        ),
-                        new TurretAction(0), // tune these two
-                        new ShootAction(true, true)
-                    ),
-                    trajectory3
-                ),
+                trajectory3,
+                new WaitAction(.5),
+                new TurretAction(Turret.CARDINAL_SOUTH), // tune these two
+                new ShootAction(true, true),
+                new WaitAction(2),
                 new ParallelAction( // stop all at end - make a stop action in the future
                     new CollectAction(false),
                     new RampUpShooterAction(Shooter.COAST_VELOCIY),
-                    new ShootAction(false, false),
-                    new TurretAction(Turret.CARDINAL_SOUTH)
+                    new ShootAction(false, false)
                 )
             )
         );

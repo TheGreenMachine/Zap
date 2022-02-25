@@ -305,7 +305,7 @@ public class Robot extends TimedRobot {
                         mOrchestrator::setFlushing
                     ),
                     createAction( // to turn the shooter on and off from its idle state - use at start of match
-                        mControlBoard::getHopper,
+                        mControlBoard::getOrchestrator,
                         () -> mOrchestrator.setStopped()
                     ),
                     createAction(
@@ -547,7 +547,7 @@ public class Robot extends TimedRobot {
         loopStart = Timer.getFPGATimestamp();
 
         try {
-            manualControl();
+            manualControl(); // controls drivetrain and turret joystick calcs
         } catch (Throwable t) {
             throw t;
         }
@@ -565,54 +565,13 @@ public class Robot extends TimedRobot {
         // boolean arcadeDrive = false;
         actionManager.update();
 
-        boolean maintainAzimuth = mShouldMaintainAzimuth.update(
-            mControlBoard.getTurn() == 0,
-            0.2
-        );
-        boolean changeAzimuthSetpoint = shouldChangeAzimuthSetpoint.update(
-            maintainAzimuth
-        );
+        if(Math.abs(mControlBoard.getTurretXVal()) > .15 || Math.abs(mControlBoard.getTurretYVal()) > .15){
+            // currently only checking if not 0 - we want to make this check if not close to the turret's previous position
+            // so we don't end up with a bunch of Rotation2d values being made to move the turret .001 degrees
+            mTurret.setFieldFollowingAngle((new Rotation2d(mControlBoard.getTurretXVal(), mControlBoard.getTurretYVal())).getDegrees());
 
-        //        if (mControlBoard.getDPad() != -1) {
-        //            swerveHeadingController.setState(
-        //                SwerveHeadingController.State.Snap
-        //            );
-        //            double heading_goal = mControlBoard.getDPad();
-        //            SmartDashboard.putNumber("Heading Goal", heading_goal);
-        //            swerveHeadingController.setGoal(heading_goal);
-        //        } else {
-        //            if (!maintainAzimuth) {
-        //                swerveHeadingController.setState(
-        //                    SwerveHeadingController.State.Off
-        //                );
-        //            } else if (
-        //                (
-        //                    swerveHeadingController.getState() ==
-        //                    SwerveHeadingController.State.Snap &&
-        //                    swerveHeadingController.is()
-        //                ) ||
-        //                changeAzimuthSetpoint
-        //            ) {
-        //                swerveHeadingController.setState(
-        //                    SwerveHeadingController.HeadingControllerState.MAINTAIN
-        //                );
-        //                swerveHeadingController.setGoal(mDrive.getHeading().getDegrees());
-        //            }
-        //        }
-        //
-        //        if (
-        //            swerveHeadingController.getHeadingControllerState() !=
-        //            SwerveHeadingController.HeadingControllerState.OFF
-        //        ) {
-        //            mDrive.setTeleopInputs(
-        //                mControlBoard.getThrottle(),
-        //                mControlBoard.getStrafe(),
-        //                swerveHeadingController.update(),
-        //                mControlBoard.getSlowMode(),
-        //                mControlBoard.getFieldRelative(),
-        //                true
-        //            );
-        //        } else {
+        }
+
         mDrive.setTeleopInputs(
             mControlBoard.getThrottle(),
             mControlBoard.getStrafe(),

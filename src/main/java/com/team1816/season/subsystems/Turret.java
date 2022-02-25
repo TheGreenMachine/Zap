@@ -229,6 +229,11 @@ public class Turret extends Subsystem implements PidProvider {
         setTurretPosition(convertTurretDegreesToTicks(angle));
     }
 
+    public synchronized void setFieldFollowingAngle(double angle) {
+        setTurretPosition(convertTurretDegreesToTicks(angle));
+    }
+
+
     public synchronized void lockTurret() {
         setTurretAngle(getActualTurretPositionDegrees());
     }
@@ -257,7 +262,7 @@ public class Turret extends Subsystem implements PidProvider {
         var robotPose = robotState.field.getRobotPose();
         var turret = robotState.field.getObject("turret");
         turret.setPose(
-            robotPose.getX() - .1,
+            robotPose.getX() - .1, // could be off because if the robot is rotated, the translation offset is different
             robotPose.getY() + .1,
             Rotation2d.fromDegrees(robotState.getLatestFieldToTurret())
         );
@@ -295,6 +300,12 @@ public class Turret extends Subsystem implements PidProvider {
         }
     }
 
+    /* since rn our desiredTurretPos is being used as the point to which the turret should lock on to,
+    all we should need to do is create a method that's called in teleopPeriodic taking the operator's joystick (x,y) values
+    and making them into Rotation2Ds from which we'd draw degree values to put into setTurretAngle.
+    Since setTurretAngle currently can only change desiredTurretPos by also changing the ControlMode to position, we may
+    just have to create a new method that only sets the desiredTurretPos without changing the controlMode.
+     */
     private void trackGyro() {
         // since convertTurretDegreesToTicks adjusts to zero we need to remove offset
         int fieldTickOffset =
