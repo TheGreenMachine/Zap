@@ -24,21 +24,6 @@ public class LazySparkMax implements IMotorControllerEnhanced {
 
     public LazySparkMax(int deviceNumber) {
         mMotor = new CANSparkMax(deviceNumber, CANSparkMaxLowLevel.MotorType.kBrushless);
-
-        /**
-         * The RestoreFactoryDefaults method can be used to reset the configuration parameters
-         * in the SPARK MAX to their factory default state. If no argument is passed, these
-         * parameters will not persist between power cycles
-         */
-        /**
-         * In order to use PID functionality for a controller, a SparkMaxPIDController object
-         * is constructed by calling the getPIDController() method on an existing
-         * CANSparkMax object
-         */
-        mPidController = mMotor.getPIDController();
-
-         // Encoder object created to display position values
-        mEncoder = mMotor.getEncoder();
     }
 
     @Override
@@ -58,6 +43,10 @@ public class LazySparkMax implements IMotorControllerEnhanced {
             mLastControlMode = controlType;
             mMotor.set(demand);
         }
+    }
+
+    public CANSparkMax getSpark() {
+        return mMotor;
     }
 
     @Override

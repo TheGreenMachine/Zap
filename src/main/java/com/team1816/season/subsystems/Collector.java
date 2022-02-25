@@ -40,8 +40,8 @@ public class Collector extends Subsystem {
 
     public Collector() {
         super(NAME);
-        this.armPiston = factory.getSolenoid(NAME, "arm");
-        this.intake = factory.getMotor(NAME, "intake");
+        armPiston = factory.getSolenoid(NAME, "arm");
+        intake = factory.getMotor(NAME, "intake");
 
 //        intake.configSupplyCurrentLimit(
 //            new SupplyCurrentLimitConfiguration(true, 25, 0, 0),

@@ -13,6 +13,7 @@ import com.team1816.lib.hardware.RobotFactory;
 import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.DrivetrainLogger;
+import com.team1816.lib.subsystems.Infrastructure;
 import com.team1816.lib.subsystems.SubsystemManager;
 import com.team1816.season.controlboard.ActionManager;
 import com.team1816.season.paths.TrajectorySet;
@@ -43,7 +44,7 @@ public class Robot extends TimedRobot {
 
     // subsystems
     private final Superstructure mSuperstructure;
-//    private final Infrastructure mInfrastructure;
+    private final Infrastructure mInfrastructure;
     private final RobotState mRobotState;
     private final Drive mDrive;
     private final PowerDistribution pdh;
@@ -57,8 +58,8 @@ public class Robot extends TimedRobot {
     private final Orchestrator mHopper;
     private final Climber mClimber;
     private final Camera mCamera;
-    private final LedManager ledManager;
-    private final Compressor compressor;
+    private final //    private final Compressor compressor;
+    LedManager ledManager;
 
     private LatchedBoolean mWantsAutoExecution = new LatchedBoolean();
     private LatchedBoolean mWantsAutoInterrupt = new LatchedBoolean();
@@ -92,12 +93,12 @@ public class Robot extends TimedRobot {
         mShooter = injector.getInstance(Shooter.class);
         mRobotState = injector.getInstance(RobotState.class);
         mSuperstructure = injector.getInstance(Superstructure.class);
-//        mInfrastructure = injector.getInstance(Infrastructure.class);
+        mInfrastructure = injector.getInstance(Infrastructure.class);
         ledManager = injector.getInstance(LedManager.class);
         mSubsystemManager = injector.getInstance(SubsystemManager.class);
         mAutoModeSelector = injector.getInstance(AutoModeSelector.class);
         trajectorySet = injector.getInstance(TrajectorySet.class);
-        compressor =  new Compressor(getFactory().getPcmId(), PneumaticsModuleType.REVPH);
+        //compressor =  new Compressor(getFactory().getPcmId(), PneumaticsModuleType.REVPH);
         pdh = new PowerDistribution(
             1,
                 getFactory().getConstant("pdIsRev") == 0 ? PowerDistribution.ModuleType.kCTRE: PowerDistribution.ModuleType.kRev

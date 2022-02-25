@@ -239,7 +239,7 @@ public class LedManager extends Subsystem {
     private static final boolean RAVE_ENABLED =
         factory.getConstant(NAME, "raveEnabled") > 0;
     private static final double RAVE_SPEED = factory.getConstant(NAME, "raveSpeed", 0.01);
-    private static final int MAX = (int) factory.getConstant(NAME, "maxLevel");
+    private static final int MAX = (int) factory.getConstant(NAME, "maxLevel", 1);
 
     public enum RobotStatus {
         ENABLED(0, MAX, 0), // green
