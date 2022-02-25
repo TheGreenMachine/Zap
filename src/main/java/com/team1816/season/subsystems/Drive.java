@@ -241,6 +241,7 @@ public abstract class Drive
     public double getKP() {
         PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
         defaultPIDConfig.kP = 0.0;
+
         return (!factory.getSubsystem(NAME).implemented)
             ? factory
                 .getSubsystem(NAME)

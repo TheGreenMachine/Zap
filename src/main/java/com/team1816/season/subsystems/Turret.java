@@ -23,11 +23,12 @@ public class Turret extends Subsystem implements PidProvider {
     public static final double CARDINAL_NORTH = 180; // deg
     public static final double CARDINAL_WEST = 270; // deg
     public static final String NAME = "turret";
-    public static final int TURRET_LIMIT_REVERSE =
+    public static int TURRET_LIMIT_REVERSE =
         ((int) factory.getConstant(NAME, "revLimit"));
-    public static final int TURRET_LIMIT_FORWARD =
+    public static int TURRET_LIMIT_FORWARD =
         ((int) factory.getConstant(NAME, "fwdLimit"));
     public final int ABS_TICKS_SOUTH;
+    public static int ZERO_OFFSET; //used to make sure turret tick range is non-negative
 
     // Constants
     private static final int kPrimaryCloseLoop = 0;
@@ -72,7 +73,7 @@ public class Turret extends Subsystem implements PidProvider {
         TURRET_ENCODER_MASK = TURRET_PPR - 1;
         TURRET_ENC_RATIO = (double) TURRET_PPR / TURRET_ENCODER_PPR;
         ABS_TICKS_SOUTH = ((int) factory.getConstant(NAME, "absPosTicksSouth"));
-
+        ZERO_OFFSET = (TURRET_PPR - TURRET_LIMIT_FORWARD + TURRET_LIMIT_REVERSE) / 2;
         turret.setNeutralMode(NeutralMode.Brake);
 
         PIDSlotConfiguration pidConfig = factory.getPidSlotConfig(NAME, pidSlot);
@@ -148,10 +149,16 @@ public class Turret extends Subsystem implements PidProvider {
             if(sensors.getQuadraturePosition() < TURRET_PPR) { // ABSOLUTE
                 //get absolute sensor value
                 var sensorVal = sensors.getPulseWidthPosition();
-                sensors.setQuadraturePosition(sensorVal, Constants.kLongCANTimeoutMs);
+
+                sensors.setQuadraturePosition(getOffset(sensorVal), Constants.kLongCANTimeoutMs);
                 System.out.println("zeroing turret at " + sensorVal);
             }
         }
+    }
+
+    public int getOffset(int curSensorVal) {
+        var offset = ZERO_OFFSET - (curSensorVal - TURRET_ENCODER_MASK/2);
+        return offset;
     }
 
     public ControlMode getControlMode() {
