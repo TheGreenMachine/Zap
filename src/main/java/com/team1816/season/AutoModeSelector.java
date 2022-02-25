@@ -2,9 +2,7 @@ package com.team1816.season;
 
 import com.team1816.lib.auto.modes.AutoModeBase;
 import com.team1816.lib.auto.modes.DoNothingMode;
-import com.team1816.season.auto.modes.LivingRoomMode;
-import com.team1816.season.auto.modes.modes2020.*;
-import com.team1816.season.auto.modes.modes2022.FiveBallMode;
+import com.team1816.season.auto.modes.*;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -29,13 +27,9 @@ public class AutoModeSelector {
         DRIVE_BY_CAMERA,
         DO_NOTHING,
         TUNE_DRIVETRAIN,
-        TUNE_DRIVETRAIN_REVERSE,
         TURRET_TEST,
         LIVING_ROOM,
         DRIVE_STRAIGHT,
-
-        // 2021
-        BARREL,
 
         // 2022
         FIVE_BALL;
@@ -65,10 +59,6 @@ public class AutoModeSelector {
 
         mModeChooser.addOption("Drive By Camera", DesiredMode.DRIVE_BY_CAMERA);
         mModeChooser.addOption("Tune Drivetrain", DesiredMode.TUNE_DRIVETRAIN);
-        mModeChooser.addOption(
-            "Tune Drivetrain Reverse",
-            DesiredMode.TUNE_DRIVETRAIN_REVERSE
-        );
         mModeChooser.addOption("Do Nothing", DesiredMode.DO_NOTHING);
         SmartDashboard.putData("Auto mode", mModeChooser);
 
@@ -79,7 +69,6 @@ public class AutoModeSelector {
         mModeChooser.addOption("Turret Tuning", DesiredMode.TURRET_TEST);
         mModeChooser.addOption("Living Room", DesiredMode.LIVING_ROOM);
 
-        mModeChooser.addOption("Barrel", DesiredMode.BARREL);
         mModeChooser.addOption("Five Ball", DesiredMode.FIVE_BALL);
 
 
@@ -139,16 +128,12 @@ public class AutoModeSelector {
                 return Optional.of(new DoNothingMode());
             case TUNE_DRIVETRAIN:
                 return Optional.of(new TuneDrivetrainMode());
-            case TUNE_DRIVETRAIN_REVERSE:
-                return Optional.of(new TuneDrivetrainMode());
             case TURRET_TEST:
                 return Optional.of(new TurretTestMode());
             case DRIVE_STRAIGHT:
                 return (Optional.of(new DriveStraightMode()));
             case LIVING_ROOM:
                 return (Optional.of(new LivingRoomMode()));
-            case BARREL:
-                return (Optional.of(new BarrelMode()));
             case FIVE_BALL:
                 return (Optional.of(new FiveBallMode()));
             default:

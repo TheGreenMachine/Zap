@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.Timer;
 @Singleton
 public class Collector extends Subsystem {
     // the main reason we're messing with spark motors in the factory is to use a neo motor on our collector.
-    // this means we'll be making a spark controller here (which probably means no calling IMotorControllerEnhanced?)
+    // this means we'll be making a spark controller here (which probably means calling IMotorControllerEnhanced?)
 
     private static final String NAME = "collector";
 
@@ -32,9 +32,6 @@ public class Collector extends Subsystem {
     private double REVVING = factory.getConstant(NAME,"revving");
     private double COLLECTING = factory.getConstant(NAME,"collecting");
     private double FLUSH = factory.getConstant(NAME,"flush");
-
-    private boolean isRaising;
-    private double startTime;
 
     private double actualVelocity;
 
@@ -97,7 +94,6 @@ public class Collector extends Subsystem {
                     armDown = true; // NOT SURE IF WE WANT COLLECTOR DOWN HERE
                     break;
             }
-//            intake.set(ControlMode.PercentOutput, intakePow);
             intake.set(ControlMode.PercentOutput, intakePow);
             this.armPiston.set(armDown);
 

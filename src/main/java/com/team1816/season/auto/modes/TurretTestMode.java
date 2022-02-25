@@ -1,10 +1,10 @@
-package com.team1816.season.auto.modes.modes2020;
+package com.team1816.season.auto.modes;
 
 import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.actions.SeriesAction;
 import com.team1816.lib.auto.actions.WaitAction;
 import com.team1816.lib.auto.modes.AutoModeBase;
-import com.team1816.season.auto.actions.actions2020.TurretAction;
+import com.team1816.season.auto.actions.TurretAction;
 import com.team1816.season.subsystems.Turret;
 
 public class TurretTestMode extends AutoModeBase {

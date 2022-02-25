@@ -350,7 +350,7 @@ public class RobotFactory {
             else
                 return new CompressorImpl(getPcmId(), PneumaticsModuleType.CTREPCM);
         }
-        reportGhostWarning("Compressor", "ROOT", "on PCM ID " + getPcmId());
+        reportGhostWarning("Compressor", "ROOT", "on PCM ID " + getPcmId()); // root?
         return new GhostCompressor();
     }
 

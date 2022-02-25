@@ -45,6 +45,9 @@ public class Orchestrator extends Subsystem {
     private final boolean isAutoAim = factory.getConstant("useAutoAim") > 0;
 
 
+    private double shooterVel; // band-aid fix
+
+
 
     public Orchestrator() {
         super(NAME);
@@ -63,7 +66,7 @@ public class Orchestrator extends Subsystem {
     public void setStopped(){
         setStopped(!stopped);
         outputsChanged = true;
-        System.out.println("starting/stopping hopper");
+        System.out.println("starting/stopping orchestrator");
     }
 
     public void setFlushing(boolean flushing){
@@ -86,8 +89,9 @@ public class Orchestrator extends Subsystem {
         outputsChanged = true;
     }
 
-    public void setRevving(boolean revving){
+    public void setRevving(boolean revving, double shooterVel){
         this.revving = revving;
+        this.shooterVel = shooterVel;
         outputsChanged = true;
     }
 
@@ -126,9 +130,7 @@ public class Orchestrator extends Subsystem {
             shooter.setVelocity(getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
             shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) == 1);
         } else {
-            System.out.println("SETTING TO MAX VEL!!!!");
-            shooter.setVelocity(Shooter.MAX_VELOCITY);
-            shooter.setHood(true);
+            shooter.setVelocity(shooterVel);
         }
         if(!collecting){
             collector.setState(Collector.COLLECTOR_STATE.REVVING);
@@ -147,7 +149,7 @@ public class Orchestrator extends Subsystem {
         }
         if(shooter.isVelocityNearTarget()){ // only fire if
             if(isAutoAim){
-                spindexer.autoSpindexer(getDistance(DistanceManager.SUBSYSTEM.SPINDEXER));
+                spindexer.setSpindexer(getDistance(DistanceManager.SUBSYSTEM.SPINDEXER));
                 elevator.autoElevator(getDistance(DistanceManager.SUBSYSTEM.ELEVATOR));
                 shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) > 0);
             }

@@ -1,4 +1,4 @@
-package com.team1816.season.auto.actions.actions2020;
+package com.team1816.season.auto.actions;
 
 import com.google.inject.Inject;
 import com.team1816.lib.auto.actions.Action;

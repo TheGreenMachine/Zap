@@ -55,7 +55,7 @@ public class Robot extends TimedRobot {
     // private final Spinner spinner = Spinner.getInstance();
     private final Spindexer mSpindexer;
     private final Elevator mElevator;
-    private final Orchestrator mHopper;
+    private final Orchestrator mOrchestrator;
     private final Climber mClimber;
     private final Camera mCamera;
     private final //    private final Compressor compressor;
@@ -89,7 +89,7 @@ public class Robot extends TimedRobot {
         mElevator = injector.getInstance(Elevator.class);
         mCamera = injector.getInstance(Camera.class);
         mSpindexer = injector.getInstance(Spindexer.class);
-        mHopper = injector.getInstance(Orchestrator.class);
+        mOrchestrator = injector.getInstance(Orchestrator.class);
         mShooter = injector.getInstance(Shooter.class);
         mRobotState = injector.getInstance(RobotState.class);
         mSuperstructure = injector.getInstance(Superstructure.class);
@@ -236,7 +236,7 @@ public class Robot extends TimedRobot {
                 mShooter,
                 // spinner,
                 mCollector,
-                mHopper,
+                mOrchestrator,
                 mTurret,
                 mClimber,
                 mCamera
@@ -245,7 +245,7 @@ public class Robot extends TimedRobot {
             mDrive.zeroSensors(Constants.StartingPose);
             mTurret.zeroSensors();
             mClimber.zeroSensors();
-            mHopper.setStopped(true);
+            mOrchestrator.setStopped(true);
 
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mSubsystemManager.registerDisabledLoops(mDisabledLooper);
@@ -279,7 +279,7 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         mControlBoard::getRevShooter,
                         revving -> {
-                            mHopper.setRevving(revving);
+                            mOrchestrator.setRevving(revving, Shooter.MAX_VELOCITY);
                             if(!revving){
                                 mTurret.setControlMode(
                                     Turret.ControlMode.FIELD_FOLLOWING
@@ -291,22 +291,22 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         mControlBoard::getShoot,
                         shooting -> {
-                            mHopper.setFiring(shooting);
+                            mOrchestrator.setFiring(shooting);
                         }
                     ),
                     createAction( // make this an actual toggle?
                         mControlBoard::getCollectorToggle,
                        () -> {
-                            mHopper.setCollecting();
+                            mOrchestrator.setCollecting();
                         }
                     ),
                     createHoldAction(
                         mControlBoard::getCollectorBackspin,
-                        mHopper::setFlushing
+                        mOrchestrator::setFlushing
                     ),
                     createAction( // to turn the shooter on and off from its idle state - use at start of match
                         mControlBoard::getHopper,
-                        () -> mHopper.setStopped()
+                        () -> mOrchestrator.setStopped()
                     ),
                     createAction(
                         mControlBoard::getFieldFollowing,
@@ -368,7 +368,7 @@ public class Robot extends TimedRobot {
             mDrive.stop();
             mDrive.setBrakeMode(false);
 
-            mHopper.setStopped(true);
+            mOrchestrator.setStopped(true);
         } catch (Throwable t) {
             throw t;
         }
@@ -393,6 +393,7 @@ public class Robot extends TimedRobot {
             mDrive.zeroSensors();
             mTurret.zeroSensors();
             mClimber.zeroSensors();
+            mOrchestrator.setStopped(false);
 
             mDrive.setControlState(Drive.DriveControlState.TRAJECTORY_FOLLOWING);
 
@@ -428,7 +429,7 @@ public class Robot extends TimedRobot {
             mEnabledLooper.start();
             mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
             mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
-            mHopper.setStopped(false);
+            mOrchestrator.setStopped(false);
             System.out.println(mTurret.getActualTurretPositionTicks() + "+++++++"); // for debugging whether or not getActTicks works. doesn't seem to - ginget
 
 

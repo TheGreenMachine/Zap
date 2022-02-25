@@ -24,7 +24,7 @@ public interface PathContainer {
     List<Rotation2d> buildHeadings();
 
     default Trajectory generateTrajectory() {
-        return generateBaseTrajectory(isFiveBall(), buildWaypoints());
+        return generateBaseTrajectory(usingApp(), buildWaypoints());
     }
 
     private Trajectory generateBaseTrajectory(
@@ -58,7 +58,7 @@ public interface PathContainer {
         return baseTrajectory;
     }
 
-    boolean isFiveBall();
+    boolean usingApp(); // just to check whether to add the starting pose of .5 X and 3.5 Y
 
     default List<Rotation2d> generateHeadings() {
         double startX = .5;
@@ -67,7 +67,7 @@ public interface PathContainer {
 
         Trajectory trajectory = generateTrajectory();
         List<Pose2d> waypointsMeters = new ArrayList<>();
-        if(isFiveBall()){
+        if(usingApp()){
             startX = 0;
             startY = 0;
         }
@@ -130,7 +130,7 @@ public interface PathContainer {
                 //System.out.println(generatedHeadings.get(i).getDegrees() + " = generated headings");
             }
         }
-        // add the end rotation to make sure that last rotation imput is the last heading - kind of a band-aid fix.
+        // add the end rotation to make sure that last rotation imput is the last heading - band-aid fix.
         generatedHeadings.add(waypointHeadings.get(waypointHeadings.size() - 1));
 
         return generatedHeadings;

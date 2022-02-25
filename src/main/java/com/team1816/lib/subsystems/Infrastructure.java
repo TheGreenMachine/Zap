@@ -29,16 +29,12 @@ public class Infrastructure extends Subsystem {
     public Infrastructure() {
         super("Infrastructure");
         mCompressor = factory.getCompressor(true);
-//        mCompressor = new Compressor(8, PneumaticsModuleType.REVPH);
-//        if (factory.getConstant("compressorEnabled") > 0) {
-//            mCompressor.dissable();
-//        }
     }
 
     @Override
     public boolean isImplemented() {
         return true;
-    }
+    } // TODO make logic for YAML implementation
 
     @Override
     public void registerEnabledLoops(ILooper mEnabledLooper) {

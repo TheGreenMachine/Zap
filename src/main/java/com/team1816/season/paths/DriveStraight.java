@@ -40,7 +40,7 @@ public class DriveStraight implements PathContainer {
     }
 
     @Override
-    public boolean isFiveBall() {
+    public boolean usingApp() {
         return false;
     }
 }
