@@ -67,9 +67,7 @@ public class DriveConversions {
     }
 
     public static double ticksPerSecondToMetersPer100ms(double ticks_per_second) {
-        return (
-            (Units.inchesToMeters(ticksPerSecondToInchesPer100ms(ticks_per_second)))
-        );
+        return ((Units.inchesToMeters(ticksPerSecondToInchesPer100ms(ticks_per_second))));
     }
 
     public static double inchesPerSecondToTicksPer100ms(double inches_per_second) {

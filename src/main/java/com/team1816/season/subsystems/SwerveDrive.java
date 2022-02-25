@@ -64,13 +64,16 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     @Override
     public synchronized void writeToHardware() {
-        if(mDriveControlState == DriveControlState.OPEN_LOOP){ // autonomous (Trajectory_Following) loop is in setModuleStates
+        if (mDriveControlState == DriveControlState.OPEN_LOOP) { // autonomous (Trajectory_Following) loop is in setModuleStates
             SwerveDriveKinematics.desaturateWheelSpeeds(
                 mPeriodicIO.desiredModuleStates,
                 Constants.kPathFollowingMaxVelMeters
             ); // TODO get swerve max speed in meters/s
             for (int i = 0; i < 4; i++) {
-                swerveModules[i].setDesiredState(mPeriodicIO.desiredModuleStates[i], true);
+                swerveModules[i].setDesiredState(
+                        mPeriodicIO.desiredModuleStates[i],
+                        true
+                    );
             }
         }
     }
@@ -87,11 +90,15 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             var chassisSpeed = Constants.Swerve.swerveKinematics.toChassisSpeeds(states);
             // simulates rotation by computing the rotational motion per interval - looperDt not enough for auto paths? Need to test on real robot
             mPeriodicIO.gyro_heading_no_offset =
-                mPeriodicIO.gyro_heading_no_offset.rotateBy(new Rotation2d(chassisSpeed.omegaRadiansPerSecond * looperDt));
+                mPeriodicIO.gyro_heading_no_offset.rotateBy(
+                    new Rotation2d(chassisSpeed.omegaRadiansPerSecond * looperDt)
+                );
             // calculate rotation with gyro drift
             gyroDrift -= 0;
             mPeriodicIO.gyro_heading_no_offset =
-                mPeriodicIO.gyro_heading_no_offset.rotateBy(Rotation2d.fromDegrees(gyroDrift));
+                mPeriodicIO.gyro_heading_no_offset.rotateBy(
+                    Rotation2d.fromDegrees(gyroDrift)
+                );
         } else {
             mPeriodicIO.gyro_heading_no_offset =
                 Rotation2d.fromDegrees(mPigeon.getFusedHeading());
@@ -114,8 +121,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
         if (
             getTrajectoryTimestamp() >
-                mTrajectory.getStates().get(mTrajectoryIndex).timeSeconds ||
-                mTrajectoryIndex == 0
+            mTrajectory.getStates().get(mTrajectoryIndex).timeSeconds ||
+            mTrajectoryIndex == 0
         ) mTrajectoryIndex++;
         if (mTrajectoryIndex >= mHeadings.size()) {
             System.out.println(mHeadings.get(mHeadings.size() - 1) + " = max");
@@ -124,7 +131,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         double timeBetweenPoints =
             (
                 mTrajectory.getStates().get(mTrajectoryIndex).timeSeconds -
-                    mTrajectory.getStates().get(mTrajectoryIndex - 1).timeSeconds
+                mTrajectory.getStates().get(mTrajectoryIndex - 1).timeSeconds
             );
         Rotation2d heading;
         heading =
@@ -213,29 +220,33 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             mDriveControlState = DriveControlState.OPEN_LOOP;
         }
         mPeriodicIO.use_heading_controller = use_heading_controller;
-//
-//        var speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-//            forward *
-//                Units.inchesToMeters(Constants.kPathFollowingMaxVel), // test this out  -
-//            strafe * Units.inchesToMeters(Constants.kPathFollowingMaxVel),
-//            rotation * (Constants.kMaxAngularSpeed),
-//            mPeriodicIO.gyro_heading // ignore gyro
-//        );
-//        mPeriodicIO.desiredModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
-//            speeds
-//        );
+        //
+        //        var speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+        //            forward *
+        //                Units.inchesToMeters(Constants.kPathFollowingMaxVel), // test this out  -
+        //            strafe * Units.inchesToMeters(Constants.kPathFollowingMaxVel),
+        //            rotation * (Constants.kMaxAngularSpeed),
+        //            mPeriodicIO.gyro_heading // ignore gyro
+        //        );
+        //        mPeriodicIO.desiredModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
+        //            speeds
+        //        );
 
         SwerveDriveSignal signal = swerveDriveHelper.calculateDriveSignal(
             forward,
             strafe,
             rotation,
             low_power,
-         true,
+            true,
             use_heading_controller
         );
         SwerveModuleState[] states = new SwerveModuleState[4];
-        for(int i = 0; i < 4; i++){
-            states[i] = new SwerveModuleState(signal.getWheelSpeeds()[i], signal.getWheelAzimuths()[i]);
+        for (int i = 0; i < 4; i++) {
+            states[i] =
+                new SwerveModuleState(
+                    signal.getWheelSpeeds()[i],
+                    signal.getWheelAzimuths()[i]
+                );
         }
 
         mPeriodicIO.desiredModuleStates = states;

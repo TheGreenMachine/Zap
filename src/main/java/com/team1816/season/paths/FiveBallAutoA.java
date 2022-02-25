@@ -17,10 +17,7 @@ public class FiveBallAutoA implements PathContainer {
 
     @Override
     public List<Rotation2d> buildHeadings() {
-        return List.of(
-            Rotation2d.fromDegrees(130),
-            Rotation2d.fromDegrees(220)
-        );
+        return List.of(Rotation2d.fromDegrees(130), Rotation2d.fromDegrees(220));
     }
 
     @Override

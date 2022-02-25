@@ -7,7 +7,6 @@ import com.team1816.lib.controlboard.IDriveControlBoard;
 import com.team1816.lib.controlboard.LogitechController;
 import com.team1816.lib.controlboard.XboxController;
 import com.team1816.season.Constants;
-import edu.wpi.first.math.geometry.Rotation2d;
 
 @Singleton
 public class GamepadDriveControlBoard implements IDriveControlBoard {

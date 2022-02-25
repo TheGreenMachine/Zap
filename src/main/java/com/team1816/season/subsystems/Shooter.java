@@ -13,8 +13,6 @@ import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 @Singleton
 public class Shooter extends Subsystem implements PidProvider {
@@ -41,19 +39,19 @@ public class Shooter extends Subsystem implements PidProvider {
     private final double kI;
     private final double kD;
     private final double kF;
-    public static final int MAX_VELOCITY = (int) factory.getConstant(NAME,"maxVel");
+    public static final int MAX_VELOCITY = (int) factory.getConstant(NAME, "maxVel");
     public static final int NEAR_VELOCITY = 11_100; // Initiation line
     public static final int MID_VELOCITY = 9_900; // Trench this also worked from initiation
     public static final int MID_FAR_VELOCITY = 11_200;
-    public static final int COAST_VELOCIY = (int) factory.getConstant(NAME , "coast");; // tune this and make changeable with a button in shooter itself
+    public static final int COAST_VELOCIY = (int) factory.getConstant(NAME, "coast");
 
+    // tune this and make changeable with a button in shooter itself
     public static final int VELOCITY_THRESHOLD = (int) factory.getConstant(
         NAME,
         "velocityThreshold",
         500
     );
     private SHOOTER_STATE state = SHOOTER_STATE.STOP;
-
 
     public Shooter() {
         super(NAME);
@@ -129,7 +127,7 @@ public class Shooter extends Subsystem implements PidProvider {
         this.outputsChanged = true;
     }
 
-    public void setState(SHOOTER_STATE state){
+    public void setState(SHOOTER_STATE state) {
         this.state = state;
     }
 
@@ -146,7 +144,10 @@ public class Shooter extends Subsystem implements PidProvider {
     }
 
     public boolean isVelocityNearTarget() {
-        return Math.abs(this.getError()) < VELOCITY_THRESHOLD && (int)this.getTargetVelocity() != COAST_VELOCIY;
+        return (
+            Math.abs(this.getError()) < VELOCITY_THRESHOLD &&
+            (int) this.getTargetVelocity() != COAST_VELOCIY
+        );
     }
 
     @Override
@@ -209,9 +210,9 @@ public class Shooter extends Subsystem implements PidProvider {
         public double velocityDemand;
     }
 
-    public enum SHOOTER_STATE{
+    public enum SHOOTER_STATE {
         STOP,
         COASTING,
-        REVVING
+        REVVING,
     }
 }

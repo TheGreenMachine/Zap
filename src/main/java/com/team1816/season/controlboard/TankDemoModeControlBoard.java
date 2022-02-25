@@ -87,13 +87,17 @@ public class TankDemoModeControlBoard implements IControlBoard {
 
     @Override
     public double getTurretXVal() {
-        System.out.println("turret field_following teleop control not implemented for TankDemoMode!");
+        System.out.println(
+            "turret field_following teleop control not implemented for TankDemoMode!"
+        );
         return 0;
     }
 
     @Override
     public double getTurretYVal() {
-        System.out.println("turret field_following teleop control not implemented for TankDemoMode!");
+        System.out.println(
+            "turret field_following teleop control not implemented for TankDemoMode!"
+        );
         return 0;
     }
 

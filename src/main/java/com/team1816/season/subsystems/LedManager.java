@@ -50,7 +50,7 @@ public class LedManager extends Subsystem {
         this.canifier = factory.getCanifier(NAME);
         this.cameraCanifier = factory.getCanifier("camera");
         this.candle = factory.getCandle("ledmanager", 22);
-//        this.candle.animate(new RainbowAnimation(1, .5, 8));
+        //        this.candle.animate(new RainbowAnimation(1, .5, 8));
 
         configureCanifier(canifier);
         configureCanifier(cameraCanifier);
@@ -144,7 +144,7 @@ public class LedManager extends Subsystem {
     }
 
     private void writeLedHardware(int r, int g, int b) {
-        if(canifier != null){
+        if (canifier != null) {
             canifier.setLEDOutput(r / 255.0, CANifier.LEDChannel.LEDChannelB);
             canifier.setLEDOutput(g / 255.0, CANifier.LEDChannel.LEDChannelA);
             canifier.setLEDOutput(b / 255.0, CANifier.LEDChannel.LEDChannelC);
@@ -155,15 +155,14 @@ public class LedManager extends Subsystem {
     public void writeToHardware() {
         if (cameraCanifier != null || candle != null) {
             if (outputsChanged) {
-//                cameraCanifier.setLEDOutput(
-//                    cameraLedOn ? 1 : 0,
-//                    CANifier.LEDChannel.LEDChannelB
-//                );
-                if(cameraLedOn){
-                    candle.setLEDs(0,255,0);
+                //                cameraCanifier.setLEDOutput(
+                //                    cameraLedOn ? 1 : 0,
+                //                    CANifier.LEDChannel.LEDChannelB
+                //                );
+                if (cameraLedOn) {
+                    candle.setLEDs(0, 255, 0);
                 } else {
-                    candle.setLEDs(0,0,0);
-
+                    candle.setLEDs(0, 0, 0);
                 }
                 System.out.println("writing led state: " + outputsChanged);
             }

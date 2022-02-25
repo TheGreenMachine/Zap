@@ -2,10 +2,10 @@ package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
+import com.team1816.lib.hardware.components.motor.IMotorSensor;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
@@ -143,21 +143,21 @@ public class Turret extends Subsystem implements PidProvider {
             // populate sensor with offset
             turret.setSelectedSensorPosition(ABS_TICKS_SOUTH, 0, 0);
         }
-        if (turret instanceof TalonSRX) {
-            var sensors = ((TalonSRX) turret).getSensorCollection(); // not absolute
+        if (turret instanceof IMotorSensor) {
+            var sensors = (IMotorSensor) turret;
             // If we have a sensorVal < turret ppr then it is safe to reset
-            if(sensors.getQuadraturePosition() < TURRET_PPR) { // ABSOLUTE
+            if (sensors.getQuadraturePosition() < TURRET_PPR) { // ABSOLUTE
                 //get absolute sensor value
                 var sensorVal = sensors.getPulseWidthPosition();
 
-                sensors.setQuadraturePosition(getOffset(sensorVal), Constants.kLongCANTimeoutMs);
+                sensors.setQuadraturePosition(getOffset(sensorVal));
                 System.out.println("zeroing turret at " + sensorVal);
             }
         }
     }
 
     public int getOffset(int curSensorVal) {
-        var offset = ZERO_OFFSET - (curSensorVal - TURRET_ENCODER_MASK/2);
+        var offset = ZERO_OFFSET - (curSensorVal - TURRET_ENCODER_MASK / 2);
         return offset;
     }
 
@@ -232,7 +232,6 @@ public class Turret extends Subsystem implements PidProvider {
     public synchronized void setFieldFollowingAngle(double angle) {
         setTurretPosition(convertTurretDegreesToTicks(angle));
     }
-
 
     public synchronized void lockTurret() {
         setTurretAngle(getActualTurretPositionDegrees());

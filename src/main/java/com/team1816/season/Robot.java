@@ -58,8 +58,7 @@ public class Robot extends TimedRobot {
     private final Orchestrator mOrchestrator;
     private final Climber mClimber;
     private final Camera mCamera;
-    private final //    private final Compressor compressor;
-    LedManager ledManager;
+    private final LedManager ledManager; //    private final Compressor compressor;
 
     private LatchedBoolean mWantsAutoExecution = new LatchedBoolean();
     private LatchedBoolean mWantsAutoInterrupt = new LatchedBoolean();
@@ -99,9 +98,12 @@ public class Robot extends TimedRobot {
         mAutoModeSelector = injector.getInstance(AutoModeSelector.class);
         trajectorySet = injector.getInstance(TrajectorySet.class);
         //compressor =  new Compressor(getFactory().getPcmId(), PneumaticsModuleType.REVPH);
-        pdh = new PowerDistribution(
-            1,
-                getFactory().getConstant("pdIsRev") == 0 ? PowerDistribution.ModuleType.kCTRE: PowerDistribution.ModuleType.kRev
+        pdh =
+            new PowerDistribution(
+                1,
+                getFactory().getConstant("pdIsRev") == 0
+                    ? PowerDistribution.ModuleType.kCTRE
+                    : PowerDistribution.ModuleType.kRev
             );
     }
 
@@ -181,7 +183,11 @@ public class Robot extends TimedRobot {
                         mCamera::getDeltaXAngle
                     );
                     BadLog.createTopic("Vision/Distance", "inches", mCamera::getDistance);
-                    BadLog.createTopic("Vision/CenterX", "pixels", mCamera::getRawCenterX);
+                    BadLog.createTopic(
+                        "Vision/CenterX",
+                        "pixels",
+                        mCamera::getRawCenterX
+                    );
                 }
                 mTurret.CreateBadLogTopic(
                     "Turret/ActPos",
@@ -232,7 +238,7 @@ public class Robot extends TimedRobot {
                 mSuperstructure,
                 mElevator,
                 mSpindexer,
-//                mInfrastructure,
+                //                mInfrastructure,
                 mShooter,
                 // spinner,
                 mCollector,
@@ -280,7 +286,7 @@ public class Robot extends TimedRobot {
                         mControlBoard::getRevShooter,
                         revving -> {
                             mOrchestrator.setRevving(revving, Shooter.MAX_VELOCITY);
-                            if(!revving){
+                            if (!revving) {
                                 mTurret.setControlMode(
                                     Turret.ControlMode.FIELD_FOLLOWING
                                 );
@@ -296,7 +302,7 @@ public class Robot extends TimedRobot {
                     ),
                     createAction( // make this an actual toggle?
                         mControlBoard::getCollectorToggle,
-                       () -> {
+                        () -> {
                             mOrchestrator.setCollecting();
                         }
                     ),
@@ -324,13 +330,11 @@ public class Robot extends TimedRobot {
                     ),
                     createHoldAction(
                         mControlBoard::getClimberUp,
-                        moving ->
-                            mClimber.setClimberPower(moving ? -.7: 0)
+                        moving -> mClimber.setClimberPower(moving ? -.7 : 0)
                     ),
                     createHoldAction(
                         mControlBoard::getClimberDown,
-                        moving ->
-                            mClimber.setClimberPower(moving ? .7: 0)
+                        moving -> mClimber.setClimberPower(moving ? .7 : 0)
                     )
                 );
 
@@ -361,7 +365,7 @@ public class Robot extends TimedRobot {
             mAutoModeSelector.updateModeCreator();
             mAutoModeExecutor = new AutoModeExecutor();
 
-//            mInfrastructure.setIsManualControl(false);
+            //            mInfrastructure.setIsManualControl(false);
 
             mDisabledLooper.start();
 
@@ -386,7 +390,7 @@ public class Robot extends TimedRobot {
 
             mHasBeenEnabled = true;
 
-//            mInfrastructure.setIsManualControl(false); // turn on compressor when superstructure is not moving
+            //            mInfrastructure.setIsManualControl(false); // turn on compressor when superstructure is not moving
 
             mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
 
@@ -417,7 +421,6 @@ public class Robot extends TimedRobot {
             mDisabledLooper.stop();
             ledManager.setDefaultStatus(LedManager.RobotStatus.ENABLED);
 
-
             if (mAutoModeExecutor != null) {
                 mAutoModeExecutor.stop();
             }
@@ -432,8 +435,7 @@ public class Robot extends TimedRobot {
             mOrchestrator.setStopped(false);
             System.out.println(mTurret.getActualTurretPositionTicks() + "+++++++"); // for debugging whether or not getActTicks works. doesn't seem to - ginget
 
-
-//            mInfrastructure.setIsManualControl(true);
+            //            mInfrastructure.setIsManualControl(true);
             mControlBoard.reset();
         } catch (Throwable t) {
             throw t;
@@ -565,11 +567,20 @@ public class Robot extends TimedRobot {
         // boolean arcadeDrive = false;
         actionManager.update();
 
-        if(Math.abs(mControlBoard.getTurretXVal()) > .15 || Math.abs(mControlBoard.getTurretYVal()) > .15){
+        if (
+            Math.abs(mControlBoard.getTurretXVal()) > .15 ||
+            Math.abs(mControlBoard.getTurretYVal()) > .15
+        ) {
             // currently only checking if not 0 - we want to make this check if not close to the turret's previous position
             // so we don't end up with a bunch of Rotation2d values being made to move the turret .001 degrees
-            mTurret.setFieldFollowingAngle((new Rotation2d(mControlBoard.getTurretXVal(), mControlBoard.getTurretYVal())).getDegrees());
-
+            mTurret.setFieldFollowingAngle(
+                (
+                    new Rotation2d(
+                        mControlBoard.getTurretXVal(),
+                        mControlBoard.getTurretYVal()
+                    )
+                ).getDegrees()
+            );
         }
 
         mDrive.setTeleopInputs(

@@ -15,7 +15,7 @@ public class RampUpShooterAction implements Action {
 
     private final int shooterVel;
 
-    public RampUpShooterAction(int shooterVel){
+    public RampUpShooterAction(int shooterVel) {
         this.shooterVel = shooterVel;
     }
 

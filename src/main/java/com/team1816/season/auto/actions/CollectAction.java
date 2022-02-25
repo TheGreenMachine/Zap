@@ -2,9 +2,7 @@ package com.team1816.season.auto.actions;
 
 import com.google.inject.Inject;
 import com.team1816.lib.auto.actions.Action;
-import com.team1816.season.subsystems.Collector;
 import com.team1816.season.subsystems.Orchestrator;
-import com.team1816.season.subsystems.Spindexer;
 
 public class CollectAction implements Action {
 

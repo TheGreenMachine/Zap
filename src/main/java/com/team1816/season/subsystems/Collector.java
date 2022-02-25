@@ -2,17 +2,13 @@ package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.google.inject.Singleton;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
-import com.team1816.season.Constants;
-import edu.wpi.first.wpilibj.Timer;
 
 @Singleton
 public class Collector extends Subsystem {
+
     // the main reason we're messing with spark motors in the factory is to use a neo motor on our collector.
     // this means we'll be making a spark controller here (which probably means calling IMotorControllerEnhanced?)
 
@@ -29,9 +25,9 @@ public class Collector extends Subsystem {
     private boolean outputsChanged = false;
     private COLLECTOR_STATE state = COLLECTOR_STATE.STOP;
 
-    private double REVVING = factory.getConstant(NAME,"revving");
-    private double COLLECTING = factory.getConstant(NAME,"collecting");
-    private double FLUSH = factory.getConstant(NAME,"flush");
+    private double REVVING = factory.getConstant(NAME, "revving");
+    private double COLLECTING = factory.getConstant(NAME, "collecting");
+    private double FLUSH = factory.getConstant(NAME, "flush");
 
     private double actualVelocity;
 
@@ -39,11 +35,10 @@ public class Collector extends Subsystem {
         super(NAME);
         armPiston = factory.getSolenoid(NAME, "arm");
         intake = factory.getMotor(NAME, "intake");
-
-//        intake.configSupplyCurrentLimit(
-//            new SupplyCurrentLimitConfiguration(true, 25, 0, 0),
-//            Constants.kCANTimeoutMs
-//        );
+        //        intake.configSupplyCurrentLimit(
+        //            new SupplyCurrentLimitConfiguration(true, 25, 0, 0),
+        //            Constants.kCANTimeoutMs
+        //        );
     }
 
     public boolean isArmDown() {
@@ -63,20 +58,20 @@ public class Collector extends Subsystem {
         this.outputsChanged = true;
     }
 
-    public void setState(COLLECTOR_STATE state){
+    public void setState(COLLECTOR_STATE state) {
         this.state = state;
         outputsChanged = true;
     }
 
     @Override
     public void readFromHardware() {
-//        this.actualVelocity = intake.getSelectedSensorVelocity(0);
+        //        this.actualVelocity = intake.getSelectedSensorVelocity(0);
     }
 
     @Override
     public void writeToHardware() {
         if (outputsChanged) {
-            switch (state){
+            switch (state) {
                 case STOP:
                     intakePow = 0;
                     armDown = false;
@@ -109,10 +104,10 @@ public class Collector extends Subsystem {
         return true;
     }
 
-    public enum COLLECTOR_STATE{
+    public enum COLLECTOR_STATE {
         STOP,
         REVVING,
         COLLECTING,
-        FLUSH
+        FLUSH,
     }
 }

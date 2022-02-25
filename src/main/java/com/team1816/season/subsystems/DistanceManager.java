@@ -1,7 +1,5 @@
 package com.team1816.season.subsystems;
 
-import com.google.inject.Inject;
-
 public class DistanceManager {
 
     // State
@@ -102,6 +100,6 @@ public class DistanceManager {
         SPINDEXER,
         ELEVATOR,
         SHOOTER,
-        HOOD
+        HOOD,
     }
 }

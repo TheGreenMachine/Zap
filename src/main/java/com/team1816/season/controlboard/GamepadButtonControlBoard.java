@@ -41,12 +41,12 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
 
     // Turret teleop control
     @Override
-    public double getTurretXVal(){
+    public double getTurretXVal() {
         return mController.getJoystick(Controller.Axis.LEFT_X);
     }
 
     @Override
-    public double getTurretYVal(){
+    public double getTurretYVal() {
         return mController.getJoystick(Controller.Axis.LEFT_Y);
     }
 
@@ -101,5 +101,4 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
     public boolean getShoot() {
         return mController.getTrigger(Controller.Axis.RIGHT_TRIGGER);
     }
-
 }

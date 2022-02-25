@@ -1,5 +1,7 @@
 package com.team1816.season.subsystems;
 
+import static org.junit.Assert.assertEquals;
+
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.team1816.lib.LibModule;
@@ -15,8 +17,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-
-import static org.junit.Assert.assertEquals;
 
 // @RunWith(JUnit4.class)
 public class SwerveDriveTest {
@@ -117,9 +117,9 @@ public class SwerveDriveTest {
             );
             var actRot = states[i].angle.getRadians();
             var expRot = expected[i].angle.getRadians();
-            if(actRot >= 2*Math.PI) actRot -= 2*Math.PI;
-            if(actVel < 0) expRot += Math.PI;
-            assertEquals(expRot,actRot, .2 );
+            if (actRot >= 2 * Math.PI) actRot -= 2 * Math.PI;
+            if (actVel < 0) expRot += Math.PI;
+            assertEquals(expRot, actRot, .2);
         }
     }
 }

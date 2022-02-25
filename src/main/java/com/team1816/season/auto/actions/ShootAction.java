@@ -2,7 +2,6 @@ package com.team1816.season.auto.actions;
 
 import com.google.inject.Inject;
 import com.team1816.lib.auto.actions.Action;
-import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.season.subsystems.Orchestrator;
 import com.team1816.season.subsystems.Shooter;
 
@@ -29,9 +28,7 @@ public class ShootAction implements Action {
     }
 
     @Override
-    public void update() {
-
-    }
+    public void update() {}
 
     @Override
     public boolean isFinished() {
@@ -39,7 +36,5 @@ public class ShootAction implements Action {
     }
 
     @Override
-    public void done() {
-
-    }
+    public void done() {}
 }

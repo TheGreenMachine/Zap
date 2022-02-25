@@ -2,11 +2,9 @@ package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.subsystems.Subsystem;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.DigitalInput;
 
 @Singleton
 public class Elevator extends Subsystem {
@@ -15,7 +13,7 @@ public class Elevator extends Subsystem {
 
     // Components
     private final IMotorControllerEnhanced elevator;
-//    private final DigitalInput ballSensor;
+    //    private final DigitalInput ballSensor;
 
     // State
     private double elevatorPower;
@@ -23,12 +21,11 @@ public class Elevator extends Subsystem {
     private ELEVATOR_STATE state = ELEVATOR_STATE.STOP;
     private boolean distanceManaged = false;
 
-
     public Elevator() {
         super(NAME);
         this.elevator = factory.getMotor(NAME, "elevator");
-//        this.ballSensor =
-//            new DigitalInput((int) factory.getConstant(NAME, "ballSensor", 0));
+        //        this.ballSensor =
+        //            new DigitalInput((int) factory.getConstant(NAME, "ballSensor", 0));
     }
 
     public void autoElevator(double elevatorOutput) {
@@ -36,29 +33,30 @@ public class Elevator extends Subsystem {
         this.elevatorPower = elevatorOutput;
     }
 
-    public void setState(ELEVATOR_STATE state){
+    public void setState(ELEVATOR_STATE state) {
         this.state = state;
         outputsChanged = true;
     }
 
     public boolean hasBallInElevator() {
         return false;
-//        return ballSensor.get(); // TODO get Digital IO
+        //        return ballSensor.get(); // TODO get Digital IO
     }
 
     // TODO: implement when we have color sensors
-    public boolean colorOfBall() { return true; }
+    public boolean colorOfBall() {
+        return true;
+    }
 
     @Override
     public void writeToHardware() {
         if (outputsChanged) {
-            switch (state){
+            switch (state) {
                 case STOP:
                     elevatorPower = 0;
                     break;
                 case FIRING:
-                    if(!distanceManaged)
-                    elevatorPower = 1;
+                    if (!distanceManaged) elevatorPower = 1;
                     break;
                 case FLUSH:
                     elevatorPower = -0.5;
@@ -73,7 +71,7 @@ public class Elevator extends Subsystem {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-//        builder.addBooleanProperty("Hopper/HasBall", this::hasBallInElevator, null);
+        //        builder.addBooleanProperty("Hopper/HasBall", this::hasBallInElevator, null);
     }
 
     @Override

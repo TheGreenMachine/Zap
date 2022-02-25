@@ -3,10 +3,8 @@ package com.team1816.season;
 import com.google.inject.Inject;
 import com.team1816.season.subsystems.Drive;
 import com.team1816.season.subsystems.SwerveModule;
-import edu.wpi.first.math.geometry.*;
 import com.team254.lib.util.SwerveDriveSignal;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+import edu.wpi.first.math.geometry.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -192,14 +190,10 @@ public class SwerveKinematics {
         Rotation2d[] wheel_azimuths = new Rotation2d[4];
 
         if (forward != 0 || strafe != 0 || rotation != 0) {
-            wheel_azimuths[SwerveModule.kFrontLeft] =
-                new Rotation2d(Math.atan2(A, D));
-            wheel_azimuths[SwerveModule.kFrontRight] =
-                new Rotation2d(Math.atan2(A, C));
-            wheel_azimuths[SwerveModule.kBackLeft] =
-                new Rotation2d(Math.atan2(B, D));
-            wheel_azimuths[SwerveModule.kBackRight] =
-                new Rotation2d(Math.atan2(B, C));
+            wheel_azimuths[SwerveModule.kFrontLeft] = new Rotation2d(Math.atan2(A, D));
+            wheel_azimuths[SwerveModule.kFrontRight] = new Rotation2d(Math.atan2(A, C));
+            wheel_azimuths[SwerveModule.kBackLeft] = new Rotation2d(Math.atan2(B, D));
+            wheel_azimuths[SwerveModule.kBackRight] = new Rotation2d(Math.atan2(B, C));
 
             prev_wheel_azimuths = wheel_azimuths;
         } else {
@@ -209,7 +203,11 @@ public class SwerveKinematics {
         return new SwerveDriveSignal(wheel_speeds, wheel_azimuths, false);
     }
 
-    public static List<Translation2d> updateDriveVectors(Translation2d curPosition, Pose2d pose, double maxRotationSpeed) {
+    public static List<Translation2d> updateDriveVectors(
+        Translation2d curPosition,
+        Pose2d pose,
+        double maxRotationSpeed
+    ) {
         List<Translation2d> driveVectors = new ArrayList<>(4);
         var mDrive = mDriveFactory.getInstance();
         var curRot = mDrive.getHeading();
@@ -223,7 +221,6 @@ public class SwerveKinematics {
         Pose2d robotPose,
         boolean robotCentric
     ) {
-
         if (!robotCentric) translationalVector =
             translationalVector.rotateBy(robotPose.getRotation().unaryMinus());
         List<Translation2d> driveVectors = new ArrayList<>(4);

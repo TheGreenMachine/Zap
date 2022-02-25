@@ -47,13 +47,14 @@ public interface PathContainer {
             waypointsMeters,
             config
         );
-        if(!isReversed){
-            baseTrajectory = baseTrajectory.transformBy(
-                new Transform2d(
-                    Constants.StartingPose.getTranslation(),
-                    Constants.StartingPose.getRotation()
-                )
-            );
+        if (!isReversed) {
+            baseTrajectory =
+                baseTrajectory.transformBy(
+                    new Transform2d(
+                        Constants.StartingPose.getTranslation(),
+                        Constants.StartingPose.getRotation()
+                    )
+                );
         }
         return baseTrajectory;
     }
@@ -64,10 +65,9 @@ public interface PathContainer {
         double startX = .5;
         double startY = 3.5;
 
-
         Trajectory trajectory = generateTrajectory();
         List<Pose2d> waypointsMeters = new ArrayList<>();
-        if(usingApp()){
+        if (usingApp()) {
             startX = 0;
             startY = 0;
         }

@@ -108,7 +108,6 @@ public abstract class Drive
         // SWERVE IMPUTS
         public SwerveModuleState[] actualModuleStates = new SwerveModuleState[4];
 
-
         // SWERVE OUTPUTS
         public SwerveModuleState[] desiredModuleStates = new SwerveModuleState[4];
 
@@ -228,7 +227,7 @@ public abstract class Drive
         mPeriodicIO.desired_heading = heading;
     }
 
-    public void setControlState(DriveControlState driveControlState){
+    public void setControlState(DriveControlState driveControlState) {
         mDriveControlState = driveControlState;
     }
 

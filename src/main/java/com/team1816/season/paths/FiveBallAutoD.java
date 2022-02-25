@@ -3,7 +3,6 @@ package com.team1816.season.paths;
 import com.team1816.lib.paths.PathContainer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-
 import java.util.List;
 
 public class FiveBallAutoD implements PathContainer {
@@ -18,10 +17,7 @@ public class FiveBallAutoD implements PathContainer {
 
     @Override
     public List<Rotation2d> buildHeadings() {
-        return List.of(
-            Rotation2d.fromDegrees(90),
-            Rotation2d.fromDegrees(0)
-        );
+        return List.of(Rotation2d.fromDegrees(90), Rotation2d.fromDegrees(0));
     }
 
     @Override

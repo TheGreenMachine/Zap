@@ -17,34 +17,27 @@ public class GhostRevMotorController implements IMotorControllerEnhanced {
     }
 
     @Override
-    public void set(ControlMode mode, double value) {
-
-    }
+    public void set(ControlMode mode, double value) {}
 
     @Override
-    public void set(ControlMode Mode, double demand0, DemandType demand1Type, double demand1) {
-
-    }
-
-    @Override
-    public void neutralOutput() {
-
-    }
+    public void set(
+        ControlMode Mode,
+        double demand0,
+        DemandType demand1Type,
+        double demand1
+    ) {}
 
     @Override
-    public void setNeutralMode(NeutralMode neutralMode) {
-
-    }
+    public void neutralOutput() {}
 
     @Override
-    public void setInverted(boolean isInverted) {
-
-    }
+    public void setNeutralMode(NeutralMode neutralMode) {}
 
     @Override
-    public void setInverted(InvertType invertType) {
+    public void setInverted(boolean isInverted) {}
 
-    }
+    @Override
+    public void setInverted(InvertType invertType) {}
 
     @Override
     public boolean getInverted() {
@@ -57,7 +50,10 @@ public class GhostRevMotorController implements IMotorControllerEnhanced {
     }
 
     @Override
-    public ErrorCode configClosedloopRamp(double secondsFromNeutralToFull, int timeoutMs) {
+    public ErrorCode configClosedloopRamp(
+        double secondsFromNeutralToFull,
+        int timeoutMs
+    ) {
         return null;
     }
 
@@ -92,14 +88,15 @@ public class GhostRevMotorController implements IMotorControllerEnhanced {
     }
 
     @Override
-    public ErrorCode configVoltageMeasurementFilter(int filterWindowSamples, int timeoutMs) {
+    public ErrorCode configVoltageMeasurementFilter(
+        int filterWindowSamples,
+        int timeoutMs
+    ) {
         return null;
     }
 
     @Override
-    public void enableVoltageCompensation(boolean enable) {
-
-    }
+    public void enableVoltageCompensation(boolean enable) {}
 
     @Override
     public double getBusVoltage() {
@@ -122,32 +119,57 @@ public class GhostRevMotorController implements IMotorControllerEnhanced {
     }
 
     @Override
-    public ErrorCode configSelectedFeedbackSensor(RemoteFeedbackDevice feedbackDevice, int pidIdx, int timeoutMs) {
+    public ErrorCode configSelectedFeedbackSensor(
+        RemoteFeedbackDevice feedbackDevice,
+        int pidIdx,
+        int timeoutMs
+    ) {
         return null;
     }
 
     @Override
-    public ErrorCode configSelectedFeedbackCoefficient(double coefficient, int pidIdx, int timeoutMs) {
+    public ErrorCode configSelectedFeedbackCoefficient(
+        double coefficient,
+        int pidIdx,
+        int timeoutMs
+    ) {
         return null;
     }
 
     @Override
-    public ErrorCode configRemoteFeedbackFilter(int deviceID, RemoteSensorSource remoteSensorSource, int remoteOrdinal, int timeoutMs) {
+    public ErrorCode configRemoteFeedbackFilter(
+        int deviceID,
+        RemoteSensorSource remoteSensorSource,
+        int remoteOrdinal,
+        int timeoutMs
+    ) {
         return null;
     }
 
     @Override
-    public ErrorCode configRemoteFeedbackFilter(CANCoder canCoderRef, int remoteOrdinal, int timeoutMs) {
+    public ErrorCode configRemoteFeedbackFilter(
+        CANCoder canCoderRef,
+        int remoteOrdinal,
+        int timeoutMs
+    ) {
         return null;
     }
 
     @Override
-    public ErrorCode configRemoteFeedbackFilter(BaseTalon talonRef, int remoteOrdinal, int timeoutMs) {
+    public ErrorCode configRemoteFeedbackFilter(
+        BaseTalon talonRef,
+        int remoteOrdinal,
+        int timeoutMs
+    ) {
         return null;
     }
 
     @Override
-    public ErrorCode configSensorTerm(SensorTerm sensorTerm, FeedbackDevice feedbackDevice, int timeoutMs) {
+    public ErrorCode configSensorTerm(
+        SensorTerm sensorTerm,
+        FeedbackDevice feedbackDevice,
+        int timeoutMs
+    ) {
         return null;
     }
 
@@ -162,7 +184,11 @@ public class GhostRevMotorController implements IMotorControllerEnhanced {
     }
 
     @Override
-    public ErrorCode setSelectedSensorPosition(double sensorPos, int pidIdx, int timeoutMs) {
+    public ErrorCode setSelectedSensorPosition(
+        double sensorPos,
+        int pidIdx,
+        int timeoutMs
+    ) {
         return null;
     }
 
@@ -172,7 +198,11 @@ public class GhostRevMotorController implements IMotorControllerEnhanced {
     }
 
     @Override
-    public ErrorCode setStatusFramePeriod(StatusFrame frame, int periodMs, int timeoutMs) {
+    public ErrorCode setStatusFramePeriod(
+        StatusFrame frame,
+        int periodMs,
+        int timeoutMs
+    ) {
         return null;
     }
 
@@ -182,27 +212,41 @@ public class GhostRevMotorController implements IMotorControllerEnhanced {
     }
 
     @Override
-    public ErrorCode configForwardLimitSwitchSource(RemoteLimitSwitchSource type, LimitSwitchNormal normalOpenOrClose, int deviceID, int timeoutMs) {
+    public ErrorCode configForwardLimitSwitchSource(
+        RemoteLimitSwitchSource type,
+        LimitSwitchNormal normalOpenOrClose,
+        int deviceID,
+        int timeoutMs
+    ) {
         return null;
     }
 
     @Override
-    public ErrorCode configReverseLimitSwitchSource(RemoteLimitSwitchSource type, LimitSwitchNormal normalOpenOrClose, int deviceID, int timeoutMs) {
+    public ErrorCode configReverseLimitSwitchSource(
+        RemoteLimitSwitchSource type,
+        LimitSwitchNormal normalOpenOrClose,
+        int deviceID,
+        int timeoutMs
+    ) {
         return null;
     }
 
     @Override
-    public void overrideLimitSwitchesEnable(boolean enable) {
-
-    }
+    public void overrideLimitSwitchesEnable(boolean enable) {}
 
     @Override
-    public ErrorCode configForwardSoftLimitThreshold(double forwardSensorLimit, int timeoutMs) {
+    public ErrorCode configForwardSoftLimitThreshold(
+        double forwardSensorLimit,
+        int timeoutMs
+    ) {
         return null;
     }
 
     @Override
-    public ErrorCode configReverseSoftLimitThreshold(double reverseSensorLimit, int timeoutMs) {
+    public ErrorCode configReverseSoftLimitThreshold(
+        double reverseSensorLimit,
+        int timeoutMs
+    ) {
         return null;
     }
 
@@ -217,9 +261,7 @@ public class GhostRevMotorController implements IMotorControllerEnhanced {
     }
 
     @Override
-    public void overrideSoftLimitsEnable(boolean enable) {
-
-    }
+    public void overrideSoftLimitsEnable(boolean enable) {}
 
     @Override
     public ErrorCode config_kP(int slotIdx, double value, int timeoutMs) {
@@ -247,17 +289,29 @@ public class GhostRevMotorController implements IMotorControllerEnhanced {
     }
 
     @Override
-    public ErrorCode configAllowableClosedloopError(int slotIdx, double allowableCloseLoopError, int timeoutMs) {
+    public ErrorCode configAllowableClosedloopError(
+        int slotIdx,
+        double allowableCloseLoopError,
+        int timeoutMs
+    ) {
         return null;
     }
 
     @Override
-    public ErrorCode configMaxIntegralAccumulator(int slotIdx, double iaccum, int timeoutMs) {
+    public ErrorCode configMaxIntegralAccumulator(
+        int slotIdx,
+        double iaccum,
+        int timeoutMs
+    ) {
         return null;
     }
 
     @Override
-    public ErrorCode configClosedLoopPeakOutput(int slotIdx, double percentOut, int timeoutMs) {
+    public ErrorCode configClosedLoopPeakOutput(
+        int slotIdx,
+        double percentOut,
+        int timeoutMs
+    ) {
         return null;
     }
 
@@ -292,9 +346,7 @@ public class GhostRevMotorController implements IMotorControllerEnhanced {
     }
 
     @Override
-    public void selectProfileSlot(int slotIdx, int pidIdx) {
-
-    }
+    public void selectProfileSlot(int slotIdx, int pidIdx) {}
 
     @Override
     public double getClosedLoopTarget(int pidIdx) {
@@ -312,12 +364,18 @@ public class GhostRevMotorController implements IMotorControllerEnhanced {
     }
 
     @Override
-    public ErrorCode configMotionCruiseVelocity(double sensorUnitsPer100ms, int timeoutMs) {
+    public ErrorCode configMotionCruiseVelocity(
+        double sensorUnitsPer100ms,
+        int timeoutMs
+    ) {
         return null;
     }
 
     @Override
-    public ErrorCode configMotionAcceleration(double sensorUnitsPer100msPerSec, int timeoutMs) {
+    public ErrorCode configMotionAcceleration(
+        double sensorUnitsPer100msPerSec,
+        int timeoutMs
+    ) {
         return null;
     }
 
@@ -327,7 +385,10 @@ public class GhostRevMotorController implements IMotorControllerEnhanced {
     }
 
     @Override
-    public ErrorCode configMotionProfileTrajectoryPeriod(int baseTrajDurationMs, int timeoutMs) {
+    public ErrorCode configMotionProfileTrajectoryPeriod(
+        int baseTrajDurationMs,
+        int timeoutMs
+    ) {
         return null;
     }
 
@@ -352,9 +413,7 @@ public class GhostRevMotorController implements IMotorControllerEnhanced {
     }
 
     @Override
-    public void processMotionProfileBuffer() {
-
-    }
+    public void processMotionProfileBuffer() {}
 
     @Override
     public ErrorCode getMotionProfileStatus(MotionProfileStatus statusToFill) {
@@ -412,12 +471,24 @@ public class GhostRevMotorController implements IMotorControllerEnhanced {
     }
 
     @Override
-    public ErrorCode configSetParameter(ParamEnum param, double value, int subValue, int ordinal, int timeoutMs) {
+    public ErrorCode configSetParameter(
+        ParamEnum param,
+        double value,
+        int subValue,
+        int ordinal,
+        int timeoutMs
+    ) {
         return null;
     }
 
     @Override
-    public ErrorCode configSetParameter(int param, double value, int subValue, int ordinal, int timeoutMs) {
+    public ErrorCode configSetParameter(
+        int param,
+        double value,
+        int subValue,
+        int ordinal,
+        int timeoutMs
+    ) {
         return null;
     }
 
@@ -437,9 +508,7 @@ public class GhostRevMotorController implements IMotorControllerEnhanced {
     }
 
     @Override
-    public void setSensorPhase(boolean isInverted) {
-
-    }
+    public void setSensorPhase(boolean isInverted) {}
 
     @Override
     public int getDeviceID() {
@@ -465,17 +534,28 @@ public class GhostRevMotorController implements IMotorControllerEnhanced {
     }
 
     @Override
-    public ErrorCode configSelectedFeedbackSensor(FeedbackDevice feedbackDevice, int pidIdx, int timeoutMs) {
+    public ErrorCode configSelectedFeedbackSensor(
+        FeedbackDevice feedbackDevice,
+        int pidIdx,
+        int timeoutMs
+    ) {
         return null;
     }
 
     @Override
-    public ErrorCode configSupplyCurrentLimit(SupplyCurrentLimitConfiguration currLimitCfg, int timeoutMs) {
+    public ErrorCode configSupplyCurrentLimit(
+        SupplyCurrentLimitConfiguration currLimitCfg,
+        int timeoutMs
+    ) {
         return null;
     }
 
     @Override
-    public ErrorCode setStatusFramePeriod(StatusFrameEnhanced frame, int periodMs, int timeoutMs) {
+    public ErrorCode setStatusFramePeriod(
+        StatusFrameEnhanced frame,
+        int periodMs,
+        int timeoutMs
+    ) {
         return null;
     }
 
@@ -490,12 +570,18 @@ public class GhostRevMotorController implements IMotorControllerEnhanced {
     }
 
     @Override
-    public ErrorCode configVelocityMeasurementPeriod(SensorVelocityMeasPeriod period, int timeoutMs) {
+    public ErrorCode configVelocityMeasurementPeriod(
+        SensorVelocityMeasPeriod period,
+        int timeoutMs
+    ) {
         return null;
     }
 
     @Override
-    public ErrorCode configVelocityMeasurementPeriod(VelocityMeasPeriod period, int timeoutMs) {
+    public ErrorCode configVelocityMeasurementPeriod(
+        VelocityMeasPeriod period,
+        int timeoutMs
+    ) {
         return null;
     }
 
@@ -505,22 +591,26 @@ public class GhostRevMotorController implements IMotorControllerEnhanced {
     }
 
     @Override
-    public ErrorCode configForwardLimitSwitchSource(LimitSwitchSource type, LimitSwitchNormal normalOpenOrClose, int timeoutMs) {
+    public ErrorCode configForwardLimitSwitchSource(
+        LimitSwitchSource type,
+        LimitSwitchNormal normalOpenOrClose,
+        int timeoutMs
+    ) {
         return null;
     }
 
     @Override
-    public ErrorCode configReverseLimitSwitchSource(LimitSwitchSource type, LimitSwitchNormal normalOpenOrClose, int timeoutMs) {
+    public ErrorCode configReverseLimitSwitchSource(
+        LimitSwitchSource type,
+        LimitSwitchNormal normalOpenOrClose,
+        int timeoutMs
+    ) {
         return null;
     }
 
     @Override
-    public void follow(IMotorController masterToFollow) {
-
-    }
+    public void follow(IMotorController masterToFollow) {}
 
     @Override
-    public void valueUpdated() {
-
-    }
+    public void valueUpdated() {}
 }

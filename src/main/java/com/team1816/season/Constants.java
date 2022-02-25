@@ -23,10 +23,12 @@ public class Constants {
 
     // Drivetrain characterization
     public static final double kDriveWheelTrackWidthInches = factory.getConstant(
-        "trackWidth", 22
+        "trackWidth",
+        22
     );
     public static final double kDriveWheelbaseLengthInches = factory.getConstant(
-        "wheelbaseLength", 22
+        "wheelbaseLength",
+        22
     );
     public static final double kDriveWheelDiameterInches = factory.getConstant(
         "wheelDiameter"
@@ -63,8 +65,10 @@ public class Constants {
         "openLoopRampRate"
     );
 
-    private static final double moduleDeltaX = Units.inches_to_meters(kDriveWheelbaseLengthInches) / 2.0;
-    private static final double moduleDeltaY = Units.inches_to_meters(kDriveWheelTrackWidthInches) / 2.0;
+    private static final double moduleDeltaX =
+        Units.inches_to_meters(kDriveWheelbaseLengthInches) / 2.0;
+    private static final double moduleDeltaY =
+        Units.inches_to_meters(kDriveWheelTrackWidthInches) / 2.0;
 
     public static final Translation2d kFrontLeftModulePosition = new Translation2d(
         moduleDeltaX,
@@ -132,8 +136,12 @@ public class Constants {
         // drive current/voltage -ginget  - removed these
         // drive measurement
 
-        private static final double moduleDeltaX = Units.inches_to_meters(kDriveWheelbaseLengthMeters / 2.0);
-        private static final double moduleDeltaY = Units.inches_to_meters(kDriveWheelTrackWidthMeters / 2.0);
+        private static final double moduleDeltaX = Units.inches_to_meters(
+            kDriveWheelbaseLengthMeters / 2.0
+        );
+        private static final double moduleDeltaY = Units.inches_to_meters(
+            kDriveWheelTrackWidthMeters / 2.0
+        );
 
         public static final Translation2d kFrontLeftModulePosition = new Translation2d(
             moduleDeltaX,
@@ -165,7 +173,6 @@ public class Constants {
         public static final int kBackLeft = 2;
         public static final int kBackRight = 3;
     }
-
 
     // Swerve Heading Controller -- CHEESY Constants
     public static final double kSwerveHeadingControllerErrorTolerance = 1.0; // degrees

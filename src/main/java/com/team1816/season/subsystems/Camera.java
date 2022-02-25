@@ -1,6 +1,5 @@
 package com.team1816.season.subsystems;
 
-import com.ctre.phoenix.led.CANdle;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.subsystems.Subsystem;

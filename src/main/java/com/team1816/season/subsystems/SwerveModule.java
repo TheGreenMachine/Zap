@@ -1,5 +1,7 @@
 package com.team1816.season.subsystems;
 
+import static com.team1816.season.subsystems.Drive.factory;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -7,13 +9,10 @@ import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.team1816.lib.math.DriveConversions;
 import com.team1816.lib.subsystems.ISwerveModule;
-import com.team1816.lib.util.ModuleState;
 import com.team1816.season.Constants;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-
-import static com.team1816.season.subsystems.Drive.factory;
 
 public class SwerveModule implements ISwerveModule {
 
@@ -45,7 +44,6 @@ public class SwerveModule implements ISwerveModule {
         Constants.Swerve constants,
         CANCoder canCoder
     ) {
-
         mConstants = constants;
 
         System.out.println(
@@ -94,22 +92,42 @@ public class SwerveModule implements ISwerveModule {
         mCanCoder = canCoder;
 
         System.out.println("  " + this);
-
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
         SwerveModuleState desired_state = desiredState; //  ModuleState.optimize(desiredState, getState().angle);
         if (!isOpenLoop) {
-            mDriveMotor.set(ControlMode.Velocity, DriveConversions.metersPerSecondToTicksPer100ms(desiredState.speedMetersPerSecond));
+            mDriveMotor.set(
+                ControlMode.Velocity,
+                DriveConversions.metersPerSecondToTicksPer100ms(
+                    desiredState.speedMetersPerSecond
+                )
+            );
         } else {
-            mDriveMotor.set(ControlMode.PercentOutput, desired_state.speedMetersPerSecond); // w/out conversion, would be lying to it - speed meters per second is percent output i
+            mDriveMotor.set(
+                ControlMode.PercentOutput,
+                desired_state.speedMetersPerSecond
+            ); // w/out conversion, would be lying to it - speed meters per second is percent output i
         }
-        mAzimuthMotor.set(ControlMode.Position, DriveConversions.convertDegreesToTicks(desired_state.angle.getDegrees()) + mConstants.kAzimuthEncoderHomeOffset);
+        mAzimuthMotor.set(
+            ControlMode.Position,
+            DriveConversions.convertDegreesToTicks(desired_state.angle.getDegrees()) +
+            mConstants.kAzimuthEncoderHomeOffset
+        );
     }
 
     public SwerveModuleState getState() {
-        double velocity = DriveConversions.convertTicksToMeters(mDriveMotor.getSelectedSensorVelocity(0)) * 10;
-        Rotation2d angle = Rotation2d.fromDegrees(DriveConversions.convertTicksToDegrees(mAzimuthMotor.getSelectedSensorPosition(0) - mConstants.kAzimuthEncoderHomeOffset));
+        double velocity =
+            DriveConversions.convertTicksToMeters(
+                mDriveMotor.getSelectedSensorVelocity(0)
+            ) *
+            10;
+        Rotation2d angle = Rotation2d.fromDegrees(
+            DriveConversions.convertTicksToDegrees(
+                mAzimuthMotor.getSelectedSensorPosition(0) -
+                mConstants.kAzimuthEncoderHomeOffset
+            )
+        );
         return new SwerveModuleState(velocity, angle);
     }
 

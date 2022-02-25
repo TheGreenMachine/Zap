@@ -41,7 +41,10 @@ public class GhostPigeonIMU implements IPigeonIMU {
     }
 
     @Override
-    public ErrorCode setStatusFramePeriod(PigeonIMU_StatusFrame statusFrame, int periodMs) {
+    public ErrorCode setStatusFramePeriod(
+        PigeonIMU_StatusFrame statusFrame,
+        int periodMs
+    ) {
         return ErrorCode.OK;
     }
 }

@@ -17,6 +17,7 @@ public class CompressorImpl extends Compressor implements ICompressor {
     public double getCompressorCurrent() {
         return super.getCurrent();
     }
+
     @Override
     public boolean getCompressorSwitchValue() {
         return super.getPressureSwitchValue();

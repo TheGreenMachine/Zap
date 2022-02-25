@@ -32,7 +32,7 @@ public class AutoModeSelector {
         DRIVE_STRAIGHT,
 
         // 2022
-        FIVE_BALL;
+        FIVE_BALL,
     }
 
     private DesiredMode mCachedDesiredMode = null;
@@ -70,7 +70,6 @@ public class AutoModeSelector {
         mModeChooser.addOption("Living Room", DesiredMode.LIVING_ROOM);
 
         mModeChooser.addOption("Five Ball", DesiredMode.FIVE_BALL);
-
 
         SmartDashboard.putData("Auto mode", mModeChooser);
         SmartDashboard.putData("Starting Position", mStartPositionChooser);

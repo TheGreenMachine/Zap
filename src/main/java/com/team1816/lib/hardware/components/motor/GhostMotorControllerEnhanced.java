@@ -9,14 +9,16 @@ import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 
-public class GhostMotorControllerEnhanced implements IMotorControllerEnhanced {
+public class GhostMotorControllerEnhanced
+    implements IMotorControllerEnhanced, IMotorSensor {
 
     private ControlMode mControlMode;
     private final int mMaxTicks;
     private final double[] mDemand = new double[] { 0, 0 };
+    private int mQuadPos = 0;
 
-    public GhostMotorControllerEnhanced(int maxTicks) {
-        mMaxTicks = maxTicks;
+    public GhostMotorControllerEnhanced(int maxTickVel) {
+        mMaxTicks = maxTickVel;
     }
 
     @Override
@@ -627,6 +629,22 @@ public class GhostMotorControllerEnhanced implements IMotorControllerEnhanced {
         LimitSwitchNormal normalOpenOrClose,
         int timeoutMs
     ) {
+        return ErrorCode.OK;
+    }
+
+    @Override
+    public int getQuadraturePosition() {
+        return mQuadPos;
+    }
+
+    @Override
+    public int getPulseWidthPosition() {
+        return 0;
+    }
+
+    @Override
+    public ErrorCode setQuadraturePosition(int newPosition) {
+        mQuadPos = newPosition;
         return ErrorCode.OK;
     }
 }

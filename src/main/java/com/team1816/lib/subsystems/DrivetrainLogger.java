@@ -1,7 +1,5 @@
 package com.team1816.lib.subsystems;
 
-import badlog.lib.BadLog;
-
 public class DrivetrainLogger {
 
     public static void init(TrackableDrivetrain drivetrain) {

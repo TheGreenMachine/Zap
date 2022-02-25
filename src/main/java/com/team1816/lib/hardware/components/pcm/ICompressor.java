@@ -12,5 +12,4 @@ public interface ICompressor extends Sendable, AutoCloseable {
     double getCompressorCurrent();
 
     boolean getCompressorSwitchValue();
-
 }

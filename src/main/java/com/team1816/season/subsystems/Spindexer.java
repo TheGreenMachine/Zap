@@ -2,12 +2,10 @@ package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.DigitalInput;
 
 @Singleton
 public class Spindexer extends Subsystem {
@@ -19,7 +17,6 @@ public class Spindexer extends Subsystem {
     private final IMotorControllerEnhanced spindexer;
 
     private SPIN_STATE state = SPIN_STATE.STOP;
-
 
     // State
     private boolean feederFlapOut = false; // leave for future addition if needed
@@ -33,7 +30,7 @@ public class Spindexer extends Subsystem {
         this.spindexer = factory.getMotor(NAME, "spindexer");
     }
 
-    public void setSpindexer(double spindexerPower){
+    public void setSpindexer(double spindexerPower) {
         distanceManaged = true;
         this.spindexerPower = spindexerPower;
     }
@@ -43,15 +40,15 @@ public class Spindexer extends Subsystem {
         outputsChanged = true;
     }
 
-    public void setState(SPIN_STATE state){
+    public void setState(SPIN_STATE state) {
         this.state = state;
         outputsChanged = true;
     }
 
     @Override
     public void writeToHardware() {
-        if(outputsChanged){
-            switch (state){
+        if (outputsChanged) {
+            switch (state) {
                 case STOP:
                     spindexerPower = 0;
                     break;
@@ -65,8 +62,7 @@ public class Spindexer extends Subsystem {
                     spindexerPower = -1;
                     break;
                 case FIRE:
-                    if(!distanceManaged)
-                    spindexerPower = 1;
+                    if (!distanceManaged) spindexerPower = 1;
                     break;
             }
             spindexer.set(ControlMode.PercentOutput, spindexerPower);
@@ -77,8 +73,7 @@ public class Spindexer extends Subsystem {
     }
 
     @Override
-    public void initSendable(SendableBuilder builder) {
-    }
+    public void initSendable(SendableBuilder builder) {}
 
     @Override
     public void stop() {}
@@ -93,6 +88,6 @@ public class Spindexer extends Subsystem {
         STOP,
         INDEX,
         FLUSH,
-        FIRE
+        FIRE,
     }
 }

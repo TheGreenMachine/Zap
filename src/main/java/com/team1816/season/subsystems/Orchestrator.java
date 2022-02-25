@@ -7,6 +7,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 
 @Singleton
 public class Orchestrator extends Subsystem {
+
     // from what I understand, we want to make the elevator use velocity control
     // and also be in tandem with the shooter (w/ distance manager) so that depending on the shot distance,
     // the elevator will be given a wee bit more or less umph
@@ -30,9 +31,9 @@ public class Orchestrator extends Subsystem {
     // for automatic value setting
     @Inject
     private static DistanceManager distanceManager;
+
     @Inject
     private static Camera camera;
-
 
     // State
     private boolean outputsChanged;
@@ -44,18 +45,15 @@ public class Orchestrator extends Subsystem {
     private boolean firing = false;
     private final boolean isAutoAim = factory.getConstant("useAutoAim") > 0;
 
-
     private double shooterVel; // band-aid fix
-
-
 
     public Orchestrator() {
         super(NAME);
     }
 
-    public void setStopped(boolean stopped){
+    public void setStopped(boolean stopped) {
         this.stopped = stopped;
-        if(stopped){
+        if (stopped) {
             collecting = false;
             flushing = false;
             revving = false;
@@ -63,15 +61,15 @@ public class Orchestrator extends Subsystem {
         }
     }
 
-    public void setStopped(){
+    public void setStopped() {
         setStopped(!stopped);
         outputsChanged = true;
         System.out.println("starting/stopping orchestrator");
     }
 
-    public void setFlushing(boolean flushing){
+    public void setFlushing(boolean flushing) {
         this.flushing = flushing;
-        if(flushing){
+        if (flushing) {
             stopped = false;
             collecting = false;
             revving = false;
@@ -80,27 +78,27 @@ public class Orchestrator extends Subsystem {
         outputsChanged = true;
     }
 
-    public void setCollecting(){
+    public void setCollecting() {
         setCollecting(!collecting);
     }
 
-    public void setCollecting(boolean collecting){
+    public void setCollecting(boolean collecting) {
         this.collecting = collecting;
         outputsChanged = true;
     }
 
-    public void setRevving(boolean revving, double shooterVel){
+    public void setRevving(boolean revving, double shooterVel) {
         this.revving = revving;
         this.shooterVel = shooterVel;
         outputsChanged = true;
     }
 
-    public void setFiring(boolean firing){
+    public void setFiring(boolean firing) {
         this.firing = firing;
         outputsChanged = true;
     }
 
-    public void stopAll(){
+    public void stopAll() {
         collector.setState(Collector.COLLECTOR_STATE.STOP); // stop states auto-set subsystems to stop moving
         spindexer.setState(Spindexer.SPIN_STATE.STOP);
         elevator.setState(Elevator.ELEVATOR_STATE.STOP);
@@ -108,7 +106,7 @@ public class Orchestrator extends Subsystem {
         shooter.setVelocity(0); // TODO make shooter use states as well
     }
 
-    public void flush(){
+    public void flush() {
         collector.setState(Collector.COLLECTOR_STATE.FLUSH);
         spindexer.setState(Spindexer.SPIN_STATE.FLUSH);
         elevator.setState(Elevator.ELEVATOR_STATE.FLUSH);
@@ -116,39 +114,39 @@ public class Orchestrator extends Subsystem {
         shooter.setVelocity(Shooter.COAST_VELOCIY);
     }
 
-    public void collect(){
+    public void collect() {
         collector.setState(Collector.COLLECTOR_STATE.COLLECTING);
-        if(!firing){
+        if (!firing) {
             spindexer.setState(Spindexer.SPIN_STATE.INTAKE);
         }
     }
 
-    public void revUp(){
+    public void revUp() {
         System.out.println("revving!");
         shooter.setState(Shooter.SHOOTER_STATE.REVVING);
-        if(isAutoAim){
+        if (isAutoAim) {
             shooter.setVelocity(getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
             shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) == 1);
         } else {
             shooter.setVelocity(shooterVel);
         }
-        if(!collecting){
+        if (!collecting) {
             collector.setState(Collector.COLLECTOR_STATE.REVVING);
-            if(!firing){
+            if (!firing) {
                 spindexer.setState(Spindexer.SPIN_STATE.STOP);
             }
         }
-        if(!firing){ // make the elevator flush unless firing
+        if (!firing) { // make the elevator flush unless firing
             elevator.setState(Elevator.ELEVATOR_STATE.FLUSH);
         }
     }
 
-    public void fire(){
-        if(!elevator.colorOfBall()){ // spit out ball if wrong color ? idk maybe make this into a flush command
+    public void fire() {
+        if (!elevator.colorOfBall()) { // spit out ball if wrong color ? idk maybe make this into a flush command
             shooter.setHood(false);
         }
-        if(shooter.isVelocityNearTarget()){ // only fire if
-            if(isAutoAim){
+        if (shooter.isVelocityNearTarget()) { // only fire if
+            if (isAutoAim) {
                 spindexer.setSpindexer(getDistance(DistanceManager.SUBSYSTEM.SPINDEXER));
                 elevator.autoElevator(getDistance(DistanceManager.SUBSYSTEM.ELEVATOR));
                 shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) > 0);
@@ -161,24 +159,24 @@ public class Orchestrator extends Subsystem {
         spindexer.setState(Spindexer.SPIN_STATE.FIRE);
     }
 
-    public double getDistance(DistanceManager.SUBSYSTEM subsystem){
+    public double getDistance(DistanceManager.SUBSYSTEM subsystem) {
         return distanceManager.getOutput(camera.getDistance(), subsystem);
     }
 
-    public void idle(){ // not rly efficient organization rn but easier to understand - each action has its own priority over idling
-        if(!collecting && !revving){
+    public void idle() { // not rly efficient organization rn but easier to understand - each action has its own priority over idling
+        if (!collecting && !revving) {
             collector.setState(Collector.COLLECTOR_STATE.STOP);
         }
 
-        if(!firing && ! collecting && !revving){
+        if (!firing && !collecting && !revving) {
             spindexer.setState(Spindexer.SPIN_STATE.STOP);
         }
 
-        if(!firing && !revving){
+        if (!firing && !revving) {
             elevator.setState(Elevator.ELEVATOR_STATE.STOP);
         }
 
-        if(!revving){
+        if (!revving) {
             shooter.setState(Shooter.SHOOTER_STATE.COASTING);
             shooter.setVelocity(Shooter.COAST_VELOCIY);
         }
@@ -187,18 +185,18 @@ public class Orchestrator extends Subsystem {
     @Override
     public void writeToHardware() {
         if (outputsChanged) { // boolean land!
-            if(stopped) {
+            if (stopped) {
                 stopAll();
-            } else if(flushing){
+            } else if (flushing) {
                 flush();
             } else {
-                if(firing){
+                if (firing) {
                     fire();
                 }
-                if(revving){
+                if (revving) {
                     revUp();
                 }
-                if(collecting){
+                if (collecting) {
                     collect();
                 }
                 idle(); // idle all subsystems not in use
@@ -208,8 +206,7 @@ public class Orchestrator extends Subsystem {
     }
 
     @Override
-    public void initSendable(SendableBuilder builder) {
-    }
+    public void initSendable(SendableBuilder builder) {}
 
     @Override
     public void stop() {}
