@@ -25,7 +25,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     public static final String NAME = "drivetrain";
 
     private final SwerveDriveHelper swerveDriveHelper = new SwerveDriveHelper();
-    private final double looperDt = Constants.kLooperDt * 50;
 
     public SwerveModule[] swerveModules;
 
@@ -91,7 +90,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             // simulates rotation by computing the rotational motion per interval - looperDt not enough for auto paths? Need to test on real robot
             mPeriodicIO.gyro_heading_no_offset =
                 mPeriodicIO.gyro_heading_no_offset.rotateBy(
-                    new Rotation2d(chassisSpeed.omegaRadiansPerSecond * looperDt)
+                    new Rotation2d(
+                        chassisSpeed.omegaRadiansPerSecond * Constants.kLooperDt * 0.01
+                    )
                 );
             // calculate rotation with gyro drift
             gyroDrift -= 0;
@@ -100,8 +101,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                     Rotation2d.fromDegrees(gyroDrift)
                 );
         } else {
-            mPeriodicIO.gyro_heading_no_offset =
-                Rotation2d.fromDegrees(mPigeon.getFusedHeading());
+            mPeriodicIO.gyro_heading_no_offset = Rotation2d.fromDegrees(mPigeon.getYaw());
         }
         mPeriodicIO.gyro_heading =
             mPeriodicIO.gyro_heading_no_offset.rotateBy(mGyroOffset);

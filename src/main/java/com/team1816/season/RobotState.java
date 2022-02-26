@@ -1,6 +1,7 @@
 package com.team1816.season;
 
 import com.google.inject.Singleton;
+import com.team1816.season.subsystems.Turret;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -49,5 +50,12 @@ public class RobotState {
     public synchronized void outputToSmartDashboard() {
         //shuffleboard periodic updates should be here
         field.setRobotPose(field_to_vehicle);
+        field
+            .getObject(Turret.NAME)
+            .setPose(
+                field_to_vehicle.getTranslation().getX() - .1,
+                field_to_vehicle.getTranslation().getY() + .1,
+                Rotation2d.fromDegrees(getLatestFieldToTurret())
+            );
     }
 }

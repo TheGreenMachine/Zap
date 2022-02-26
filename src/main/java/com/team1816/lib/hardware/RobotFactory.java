@@ -119,7 +119,8 @@ public class RobotFactory {
                         DriveConversions.inchesPerSecondToTicksPer100ms(
                             Constants.kOpenLoopMaxVelMeters / 0.0254 // this may not work if 2 diff velocities are used depending on if in auto or not
                         )
-                    )
+                    ),
+                    0
                 );
         } else {
             System.out.println(
@@ -146,8 +147,9 @@ public class RobotFactory {
                 motor.setSensorPhase(true);
             }
         }
-        setStatusFrame(motor); // make motor send one signal per second - FOR DEBUGGING!
-
+        if (factory.getConstant("configStatusFrames") == 1) {
+            setStatusFrame(motor); // make motor send one signal per second - FOR DEBUGGING!
+        }
         return motor;
     }
 
@@ -201,7 +203,8 @@ public class RobotFactory {
             if (subsystem.implemented) reportGhostWarning("Motor", subsystemName, name);
             followerMotor =
                 CtreMotorFactory.createGhostTalon(
-                    config.constants.get("maxTicks").intValue()
+                    config.constants.get("maxTicks").intValue(),
+                    0
                 );
         }
         if (master != null) {
@@ -269,7 +272,9 @@ public class RobotFactory {
                     subsystem.canCoders.get(subsystem.invertCanCoder) != null &&
                     subsystem.invertCanCoder.contains(module.canCoder)
                 ); //TODO: For now placeholder true is placed
-            setStatusFrame(canCoder); // make canCoder send one signal per second - FOR DEBUGGING!
+            if (factory.getConstant("configStatusFrames") == 1) {
+                setStatusFrame(canCoder); // make canCoder send one signal per second - FOR DEBUGGING!
+            }
         } else {
             // ghost. potentially implement this in the future
         }
@@ -328,7 +333,9 @@ public class RobotFactory {
         ICanifier canifier;
         if (subsystem.implemented && isHardwareValid(subsystem.canifier)) {
             canifier = new CanifierImpl(subsystem.canifier);
-            setStatusFrame((CANifier) canifier); // make signal time of 1 sec
+            if (factory.getConstant("configStatusFrames") == 1) {
+                setStatusFrame((CANifier) canifier); // make signal time of 1 sec
+            }
             return canifier;
         }
         reportGhostWarning("CANifier", subsystemName, "canifier");
@@ -341,11 +348,15 @@ public class RobotFactory {
         var subsystem = getSubsystem(subsystemName);
         if (subsystem.implemented && isHardwareValid((subsystem.candle))) {
             candle = new CANdle(subsystem.candle);
-            setStatusFrame(candle); // make CANdle send one signal per second - FOR DEBUGGING!
+            if (factory.getConstant("configStatusFrames") == 1) {
+                setStatusFrame(candle); // make CANdle send one signal per second - FOR DEBUGGING!
+            }
             return candle;
         } else if (defaultVal > -1) {
             candle = new CANdle(defaultVal);
-            setStatusFrame(candle); // make CANdle send one signal per second - FOR DEBUGGING!
+            if (factory.getConstant("configStatusFrames") == 1) {
+                setStatusFrame(candle); // make CANdle send one signal per second - FOR DEBUGGING!
+            }
             return candle;
         } else {
             //ghost
@@ -472,14 +483,6 @@ public class RobotFactory {
             pigeonIMU = new PigeonIMUImpl(id);
             setStatusFrame((BasePigeon) pigeonIMU);
             return new PigeonIMUImpl(id);
-        }
-    }
-
-    public IPigeonIMU getPigeon(IMotorControllerEnhanced motor) {
-        if ((int) factory.getConstant(Drive.NAME, "pigeonId", -1) < 0) {
-            return new GhostPigeonIMU(motor);
-        } else {
-            return new PigeonIMUImpl(motor);
         }
     }
 

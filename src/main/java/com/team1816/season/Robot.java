@@ -433,7 +433,7 @@ public class Robot extends TimedRobot {
             mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
             mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
             mOrchestrator.setStopped(false);
-            System.out.println(mTurret.getActualTurretPositionTicks() + "+++++++"); // for debugging whether or not getActTicks works. doesn't seem to - ginget
+            //System.out.println(mTurret.getActualTurretPositionTicks() + "+++++++"); // for debugging whether or not getActTicks works. doesn't seem to - ginget
 
             //            mInfrastructure.setIsManualControl(true);
             mControlBoard.reset();

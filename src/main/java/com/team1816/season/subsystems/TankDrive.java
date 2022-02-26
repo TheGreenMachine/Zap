@@ -123,30 +123,8 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
                 Constants.kLongCANTimeoutMs
             );
 
-        if (((int) factory.getConstant(NAME, "pigeonOnTalon")) == 1) {
-            var pigeonId = ((int) factory.getConstant(NAME, "pigeonId"));
-            System.out.println("Pigeon on Talon " + pigeonId);
-            IMotorController master = null;
-            if (pigeonId == mLeftSlaveA.getDeviceID()) {
-                master = mLeftSlaveA;
-            } else if (pigeonId == mLeftSlaveB.getDeviceID()) {
-                master = mLeftSlaveB;
-            } else if (pigeonId == mRightSlaveA.getDeviceID()) {
-                master = mRightSlaveA;
-            } else if (pigeonId == mRightSlaveB.getDeviceID()) {
-                master = mRightSlaveB;
-            }
-            if (master != null) {
-                mPigeon = factory.getPigeon((TalonSRX) master);
-            } else {
-                mPigeon =
-                    factory.getPigeon(
-                        new TalonSRX((int) factory.getConstant(NAME, "pigeonId"))
-                    );
-            }
-        } else {
-            mPigeon = factory.getPigeon((int) factory.getConstant(NAME, "pigeonId"));
-        }
+        mPigeon = factory.getPigeon((int) factory.getConstant(NAME, "pigeonId"));
+
         mPigeon.configFactoryDefault();
 
         setOpenLoop(DriveSignal.NEUTRAL);
@@ -196,8 +174,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
                 +mLeftMaster.getSelectedSensorVelocity(0);
             mPeriodicIO.right_velocity_ticks_per_100ms =
                 mRightMaster.getSelectedSensorVelocity(0);
-            mPeriodicIO.gyro_heading_no_offset =
-                Rotation2d.fromDegrees(mPigeon.getFusedHeading());
+            mPeriodicIO.gyro_heading_no_offset = Rotation2d.fromDegrees(mPigeon.getYaw());
         }
         mPeriodicIO.gyro_heading =
             mPeriodicIO.gyro_heading_no_offset.rotateBy(mGyroOffset);

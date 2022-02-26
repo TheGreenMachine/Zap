@@ -32,12 +32,6 @@ public class CtreMotorFactory {
         public boolean SENSOR_PHASE = false;
 
         public int CONTROL_FRAME_PERIOD_MS = 5;
-        public int MOTION_CONTROL_FRAME_PERIOD_MS = 100;
-        public int GENERAL_STATUS_FRAME_RATE_MS = 10;
-        public int FEEDBACK_STATUS_FRAME_RATE_MS = 20;
-        public int QUAD_ENCODER_STATUS_FRAME_RATE_MS = 160;
-        public int ANALOG_TEMP_VBAT_STATUS_FRAME_RATE_MS = 1000;
-        public int PULSE_WIDTH_STATUS_FRAME_RATE_MS = 160;
 
         public VelocityMeasPeriod VELOCITY_MEASUREMENT_PERIOD =
             VelocityMeasPeriod.Period_50Ms;
@@ -49,20 +43,6 @@ public class CtreMotorFactory {
 
     private static final Configuration kDefaultConfiguration = new Configuration();
     private static final Configuration kSlaveConfiguration = new Configuration();
-
-    static {
-        // This control frame value seems to need to be something reasonable to avoid the Talon's
-        // LEDs behaving erratically.  Potentially try to increase as much as possible.
-
-        // Slave Config edits
-        kSlaveConfiguration.CONTROL_FRAME_PERIOD_MS = 100;
-        kSlaveConfiguration.MOTION_CONTROL_FRAME_PERIOD_MS = 1000;
-        kSlaveConfiguration.GENERAL_STATUS_FRAME_RATE_MS = 255;
-        kSlaveConfiguration.FEEDBACK_STATUS_FRAME_RATE_MS = 255;
-        kSlaveConfiguration.QUAD_ENCODER_STATUS_FRAME_RATE_MS = 1000;
-        kSlaveConfiguration.ANALOG_TEMP_VBAT_STATUS_FRAME_RATE_MS = 1000;
-        kSlaveConfiguration.PULSE_WIDTH_STATUS_FRAME_RATE_MS = 1000;
-    }
 
     // Create a CANTalon with the default (out of the box) configuration.
     public static IMotorControllerEnhanced createDefaultTalon(
@@ -133,8 +113,11 @@ public class CtreMotorFactory {
         return talon;
     }
 
-    public static IMotorControllerEnhanced createGhostTalon(int maxTicks) {
-        return new GhostMotorControllerEnhanced(maxTicks);
+    public static IMotorControllerEnhanced createGhostTalon(
+        int maxTicks,
+        int absInitOffset
+    ) {
+        return new GhostMotorControllerEnhanced(maxTicks, absInitOffset);
     }
 
     public static IMotorController createDefaultVictor(int id) {
@@ -162,23 +145,6 @@ public class CtreMotorFactory {
             LimitSwitchNormal.NormallyOpen,
             kTimeoutMs
         );
-
-        victor.setStatusFramePeriod(
-            StatusFrame.Status_1_General,
-            config.GENERAL_STATUS_FRAME_RATE_MS,
-            kTimeoutMs
-        );
-        victor.setStatusFramePeriod(
-            StatusFrame.Status_2_Feedback0,
-            config.FEEDBACK_STATUS_FRAME_RATE_MS,
-            kTimeoutMs
-        );
-        victor.setStatusFramePeriod(
-            StatusFrame.Status_4_AinTempVbat,
-            config.ANALOG_TEMP_VBAT_STATUS_FRAME_RATE_MS,
-            kTimeoutMs
-        );
-
         return victor;
     }
 
@@ -204,8 +170,6 @@ public class CtreMotorFactory {
         CANCoder canCoder = new CANCoder(canCoderID);
         canCoder.configFactoryDefault();
         canCoder.configAllSettings(configureCanCoder(invertCanCoder));
-        canCoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 10);
-        canCoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 1000);
         return canCoder;
     }
 
@@ -305,33 +269,6 @@ public class CtreMotorFactory {
         motor.setControlFramePeriod(
             ControlFrame.Control_3_General,
             config.CONTROL_FRAME_PERIOD_MS
-        );
-
-        motor.setStatusFramePeriod(
-            StatusFrameEnhanced.Status_1_General,
-            config.GENERAL_STATUS_FRAME_RATE_MS,
-            kTimeoutMs
-        );
-        motor.setStatusFramePeriod(
-            StatusFrameEnhanced.Status_2_Feedback0,
-            config.FEEDBACK_STATUS_FRAME_RATE_MS,
-            kTimeoutMs
-        );
-
-        motor.setStatusFramePeriod(
-            StatusFrameEnhanced.Status_3_Quadrature,
-            config.QUAD_ENCODER_STATUS_FRAME_RATE_MS,
-            kTimeoutMs
-        );
-        motor.setStatusFramePeriod(
-            StatusFrameEnhanced.Status_4_AinTempVbat,
-            config.ANALOG_TEMP_VBAT_STATUS_FRAME_RATE_MS,
-            kTimeoutMs
-        );
-        motor.setStatusFramePeriod(
-            StatusFrameEnhanced.Status_8_PulseWidth,
-            config.PULSE_WIDTH_STATUS_FRAME_RATE_MS,
-            kTimeoutMs
         );
 
         motor.configAllSettings(talonConfiguration, kTimeoutMs);
