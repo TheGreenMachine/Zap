@@ -133,8 +133,11 @@ public class CtreMotorFactory {
         return talon;
     }
 
-    public static IMotorControllerEnhanced createGhostTalon(int maxTicks) {
-        return new GhostMotorControllerEnhanced(maxTicks);
+    public static IMotorControllerEnhanced createGhostTalon(
+        int maxTicks,
+        int absInitOffset
+    ) {
+        return new GhostMotorControllerEnhanced(maxTicks, absInitOffset);
     }
 
     public static IMotorController createDefaultVictor(int id) {

@@ -15,9 +15,10 @@ public class GhostMotorControllerEnhanced
     private ControlMode mControlMode;
     private final int mMaxTicks;
     private final double[] mDemand = new double[] { 0, 0 };
-    private int mQuadPos = 0;
+    private final int mAbsInitOffset;
 
-    public GhostMotorControllerEnhanced(int maxTickVel) {
+    public GhostMotorControllerEnhanced(int maxTickVel, int absInitOffset) {
+        mAbsInitOffset = absInitOffset;
         mMaxTicks = maxTickVel;
     }
 
@@ -634,17 +635,17 @@ public class GhostMotorControllerEnhanced
 
     @Override
     public int getQuadraturePosition() {
-        return mQuadPos;
+        return (int) mDemand[0];
     }
 
     @Override
     public int getPulseWidthPosition() {
-        return 0;
+        return mAbsInitOffset;
     }
 
     @Override
     public ErrorCode setQuadraturePosition(int newPosition) {
-        mQuadPos = newPosition;
+        mDemand[0] = newPosition;
         return ErrorCode.OK;
     }
 }

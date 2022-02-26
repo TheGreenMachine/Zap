@@ -119,7 +119,8 @@ public class RobotFactory {
                         DriveConversions.inchesPerSecondToTicksPer100ms(
                             Constants.kPathFollowingMaxVelMeters / 0.0254
                         )
-                    )
+                    ),
+                    0
                 );
         } else {
             System.out.println(
@@ -201,7 +202,8 @@ public class RobotFactory {
             if (subsystem.implemented) reportGhostWarning("Motor", subsystemName, name);
             followerMotor =
                 CtreMotorFactory.createGhostTalon(
-                    config.constants.get("maxTicks").intValue()
+                    config.constants.get("maxTicks").intValue(),
+                    0
                 );
         }
         if (master != null) {

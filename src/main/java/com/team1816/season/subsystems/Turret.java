@@ -11,7 +11,6 @@ import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
 import com.team1816.season.RobotState;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 
 @Singleton
@@ -23,6 +22,7 @@ public class Turret extends Subsystem implements PidProvider {
     public static final double CARDINAL_NORTH = 180; // deg
     public static final double CARDINAL_WEST = 270; // deg
     public static final String NAME = "turret";
+    private static int HALF_ENCPPR;
     public static int TURRET_LIMIT_REVERSE =
         ((int) factory.getConstant(NAME, "revLimit"));
     public static int TURRET_LIMIT_FORWARD =
@@ -35,7 +35,7 @@ public class Turret extends Subsystem implements PidProvider {
     private static final int kPIDGyroIDx = 0;
     private static final int kPIDVisionIDx = 0;
     private final int TURRET_ENCODER_PPR;
-    private final int TURRET_PPR;
+    public final int TURRET_PPR;
     private final int TURRET_ENCODER_MASK;
     private final double TURRET_ENC_RATIO;
     private static final int ALLOWABLE_ERROR_TICKS = 5;
@@ -73,7 +73,8 @@ public class Turret extends Subsystem implements PidProvider {
         TURRET_ENCODER_MASK = TURRET_PPR - 1;
         TURRET_ENC_RATIO = (double) TURRET_PPR / TURRET_ENCODER_PPR;
         ABS_TICKS_SOUTH = ((int) factory.getConstant(NAME, "absPosTicksSouth"));
-        ZERO_OFFSET = (TURRET_PPR - TURRET_LIMIT_FORWARD + TURRET_LIMIT_REVERSE) / 2;
+        HALF_ENCPPR = TURRET_ENCODER_PPR / 2;
+        ZERO_OFFSET = TURRET_PPR / 2 - HALF_ENCPPR;
         turret.setNeutralMode(NeutralMode.Brake);
 
         PIDSlotConfiguration pidConfig = factory.getPidSlotConfig(NAME, pidSlot);
@@ -139,26 +140,19 @@ public class Turret extends Subsystem implements PidProvider {
 
     @Override
     public synchronized void zeroSensors() {
-        if (RobotBase.isSimulation()) {
-            // populate sensor with offset
-            turret.setSelectedSensorPosition(ABS_TICKS_SOUTH, 0, 0);
-        }
         if (turret instanceof IMotorSensor) {
             var sensors = (IMotorSensor) turret;
             // If we have a sensorVal < turret ppr then it is safe to reset
             if (sensors.getQuadraturePosition() < TURRET_PPR) { // ABSOLUTE
                 //get absolute sensor value
                 var sensorVal = sensors.getPulseWidthPosition();
-
-                sensors.setQuadraturePosition(getOffset(sensorVal));
-                System.out.println("zeroing turret at " + sensorVal);
+                var offset = ZERO_OFFSET - (sensorVal - HALF_ENCPPR);
+                sensors.setQuadraturePosition(offset);
+                System.out.println(
+                    "zeroing turret at " + offset + "sensorVal" + sensorVal
+                );
             }
         }
-    }
-
-    public int getOffset(int curSensorVal) {
-        var offset = ZERO_OFFSET - (curSensorVal - TURRET_ENCODER_MASK / 2);
-        return offset;
     }
 
     public ControlMode getControlMode() {
