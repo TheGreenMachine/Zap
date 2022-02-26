@@ -145,7 +145,12 @@ public class LedManager extends Subsystem {
 
     private void writeLedHardware(int r, int g, int b) {
         if (candle != null) {
-            candle.setLEDs(r, g, b);
+            candle.setLEDs(r, g, b, 0 , 8, 42);
+            if(cameraLedOn){
+                candle.setLEDs(0, MAX, 0, 0, 0, 8);
+            } else {
+                candle.setLEDs(0,0,0,0,0,8);
+            }
         }
         if (canifier != null) {
             canifier.setLEDOutput(r / 255.0, CANifier.LEDChannel.LEDChannelB);
@@ -156,20 +161,6 @@ public class LedManager extends Subsystem {
 
     @Override
     public void writeToHardware() {
-        if (cameraCanifier != null || candle != null) {
-            if (outputsChanged) {
-                cameraCanifier.setLEDOutput(
-                    cameraLedOn ? 1 : 0,
-                    CANifier.LEDChannel.LEDChannelB
-                );
-                if (cameraLedOn) {
-                    candle.setLEDs(0, 255, 0, 0, 0, 8);
-                } else {
-                    candle.setLEDs(0, 0, 0, 0, 0, 8);
-                }
-                System.out.println("writing led state: " + outputsChanged);
-            }
-        }
         if (canifier != null || candle != null) {
             switch (controlState) {
                 case RAVE:
