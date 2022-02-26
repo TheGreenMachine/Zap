@@ -6,7 +6,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.Pigeon2;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
-public class PigeonIMUImpl extends Pigeon2 implements IPigeonIMU {
+public class PigeonIMUImpl extends PigeonIMU implements IPigeonIMU {
 
     public PigeonIMUImpl(int id) {
         super(id);

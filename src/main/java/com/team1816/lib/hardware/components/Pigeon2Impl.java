@@ -11,7 +11,7 @@ public class Pigeon2Impl extends Pigeon2 implements IPigeonIMU {
 
     // set Fused heading doesn't exist in pigeon 2. De we do compass calibration? If not then fused heading is about the same as yaw.
     @Override
-    public double getFusedHeading() {
+    public double getYaw() {
         return super.getYaw();
     }
 
