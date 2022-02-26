@@ -347,13 +347,13 @@ public class RobotFactory {
         CANdle candle;
         var subsystem = getSubsystem(subsystemName);
         if (subsystem.implemented && isHardwareValid((subsystem.candle))) {
-            candle = new CANdle(subsystem.candle);
+            candle = new CANdle(subsystem.candle, Constants.CANBusHighSpeed);
             if (factory.getConstant("configStatusFrames") == 1) {
                 setStatusFrame(candle); // make CANdle send one signal per second - FOR DEBUGGING!
             }
             return candle;
         } else if (defaultVal > -1) {
-            candle = new CANdle(defaultVal);
+            candle = new CANdle(defaultVal, Constants.CANBusHighSpeed);
             if (factory.getConstant("configStatusFrames") == 1) {
                 setStatusFrame(candle); // make CANdle send one signal per second - FOR DEBUGGING!
             }

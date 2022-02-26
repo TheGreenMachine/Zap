@@ -21,6 +21,9 @@ public class Constants {
 
     public static final double kLooperDt = factory.getConstant("kLooperDt", .020);
 
+    public static final String CANBusRio = "rio";
+    public static final String CANBusHighSpeed = "highSpeed";
+
     // Drivetrain characterization
     public static final double kDriveWheelTrackWidthInches = factory.getConstant(
         "trackWidth",

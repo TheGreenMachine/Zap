@@ -147,6 +147,7 @@ public class Turret extends Subsystem implements PidProvider {
                 var sensorVal = sensors.getPulseWidthPosition();
                 var offset = ZERO_OFFSET - (sensorVal - HALF_ENCPPR);
                 sensors.setQuadraturePosition(offset);
+                System.out.println("Zeroing turret! Offset: " + offset);
             }
         }
     }

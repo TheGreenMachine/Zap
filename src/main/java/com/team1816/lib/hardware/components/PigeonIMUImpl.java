@@ -5,11 +5,12 @@ import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.Pigeon2;
 import com.ctre.phoenix.sensors.PigeonIMU;
+import com.team1816.season.Constants;
 
 public class PigeonIMUImpl extends Pigeon2 implements IPigeonIMU {
 
     public PigeonIMUImpl(int id) {
-        super(id);
+        super(id, Constants.CANBusHighSpeed);
     }
 
     @Override

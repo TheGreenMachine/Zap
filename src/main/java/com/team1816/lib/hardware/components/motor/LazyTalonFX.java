@@ -4,6 +4,7 @@ import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.BaseTalonConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.team1816.season.Constants;
 
 public class LazyTalonFX extends TalonFX implements IConfigurableMotorController {
 
@@ -11,7 +12,7 @@ public class LazyTalonFX extends TalonFX implements IConfigurableMotorController
     protected ControlMode mLastControlMode = null;
 
     public LazyTalonFX(int deviceNumber) {
-        super(deviceNumber);
+        super(deviceNumber, Constants.CANBusHighSpeed);
     }
 
     @Override
