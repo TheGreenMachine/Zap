@@ -215,7 +215,8 @@ public class Constants {
         kMaxLookAheadSpeed - kMinLookAheadSpeed;
     public static double kCameraFrameRate = 30;
     public static final double kPathFollowingMaxAccel = factory.getConstant("maxAccel");
-    public static double kPathFollowingMaxVelMeters = factory.getConstant("maxVel");
+    public static double kPathFollowingMaxVelMeters = factory.getConstant("maxVelPathFollowing");
+    public static double kOpenLoopMaxVelMeters = factory.getConstant("maxVelOpenLoop");
     public static final double kTicksPerRevolution = 4096;
 
     // Trajectory Generator constants

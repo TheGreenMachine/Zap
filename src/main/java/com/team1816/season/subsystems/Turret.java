@@ -119,7 +119,7 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     /**
-     * converts 0-360 to 0-TURRET_ENCODER_PPR with zero  offset
+     * converts 0-360 to 0-TURRET_ENCODER_PPR with zero offset
      */
     public int convertTurretDegreesToTicks(double degrees) {
         // CCW is positive
@@ -173,9 +173,11 @@ public class Turret extends Subsystem implements PidProvider {
                     this.controlMode = controlMode;
                     camera.setEnabled(true);
                     led.indicateStatus(LedManager.RobotStatus.SEEN_TARGET);
+                } else {
+                    System.out.println("auto aim not enabled! Not aiming with camera!");
                 }
             } else {
-                turret.selectProfileSlot(kPIDGyroIDx, 0); // what are profile slots? - ginget
+                turret.selectProfileSlot(kPIDGyroIDx, 0);
                 this.controlMode = controlMode;
                 camera.setEnabled(false);
                 if (controlMode == ControlMode.MANUAL) {
@@ -230,6 +232,9 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     public synchronized void setFieldFollowingAngle(double angle) {
+//        if(angle < 0){
+//            angle = angle + 360; // if angle is negative, wrap around - we only deal with values from 0 to 360 --- this seems not to be needed
+//        }
         setTurretPosition(convertTurretDegreesToTicks(angle));
     }
 

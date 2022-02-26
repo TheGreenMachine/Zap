@@ -67,7 +67,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         if (mDriveControlState == DriveControlState.OPEN_LOOP) { // autonomous (Trajectory_Following) loop is in setModuleStates
             SwerveDriveKinematics.desaturateWheelSpeeds(
                 mPeriodicIO.desiredModuleStates,
-                Constants.kPathFollowingMaxVelMeters
+                Constants.kOpenLoopMaxVelMeters
             ); // TODO get swerve max speed in meters/s
             for (int i = 0; i < 4; i++) {
                 swerveModules[i].setDesiredState(

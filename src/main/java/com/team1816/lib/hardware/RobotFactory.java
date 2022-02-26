@@ -117,7 +117,7 @@ public class RobotFactory {
                     //                    config.constants.get("maxTicks").intValue()
                     (int) (
                         DriveConversions.inchesPerSecondToTicksPer100ms(
-                            Constants.kPathFollowingMaxVelMeters / 0.0254
+                            Constants.kOpenLoopMaxVelMeters / 0.0254 // this may not work if 2 diff velocities are used depending on if in auto or not
                         )
                     )
                 );
@@ -462,9 +462,15 @@ public class RobotFactory {
         IPigeonIMU pigeonIMU;
         if (id < 0) {
             return new GhostPigeonIMU(id);
-        } else {
+        } else if(factory.getConstant(Drive.NAME, "isPigeon2") > 0){
+            // TODO move pigeon to infrastructure and no longer define pigeon id in drive YAML constants
+            pigeonIMU = new Pigeon2Impl(id);
+            setStatusFrame((BasePigeon) pigeonIMU);
+            return pigeonIMU;
+        }
+        else {
             pigeonIMU = new PigeonIMUImpl(id);
-            setStatusFrame((PigeonIMU) pigeonIMU);
+            setStatusFrame((BasePigeon) pigeonIMU);
             return new PigeonIMUImpl(id);
         }
     }
@@ -531,7 +537,7 @@ public class RobotFactory {
         device.setStatusFramePeriod(StatusFrame.Status_17_Targets1, canMaxStatus, 100);
     }
 
-    private void setStatusFrame(PigeonIMU device) {
+    private void setStatusFrame(BasePigeon device) {
         device.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_1_General, 100);
         device.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_2_Gyro, 100);
         device.setStatusFramePeriod(

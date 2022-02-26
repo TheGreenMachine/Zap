@@ -12,7 +12,7 @@ public class SwerveDriveHelper implements DriveHelper {
 
     private final static double kHighAdjustmentPower = 1.75 + 0.4375;
     private final static double kLowAdjustmentPower = 1.50;
-    private final static double kMaxSpeed = (Constants.kPathFollowingMaxVelMeters);
+    private final static double kMaxSpeed = (Constants.kOpenLoopMaxVelMeters);
     private final static double kMaxRotation = Constants.kMaxAngularSpeed;
 
     private final static double kHighPowerRotationScalar = 0.8;

@@ -56,7 +56,7 @@ public class SwerveDriveSignal extends DriveSignal {
         return new SwerveDriveSignal(
             Arrays.stream(this.mWheelSpeeds)
                 .map(x ->
-                    x * inchesPerSecondToTicksPer100ms(Constants.kPathFollowingMaxVelMeters)
+                    x * inchesPerSecondToTicksPer100ms(Constants.kOpenLoopMaxVelMeters)
                 )
                 .toArray(),
             this.mWheelAzimuths,
