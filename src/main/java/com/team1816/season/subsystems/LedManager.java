@@ -144,6 +144,9 @@ public class LedManager extends Subsystem {
     }
 
     private void writeLedHardware(int r, int g, int b) {
+        if (candle != null) {
+            candle.setLEDs(r, g, b);
+        }
         if (canifier != null) {
             canifier.setLEDOutput(r / 255.0, CANifier.LEDChannel.LEDChannelB);
             canifier.setLEDOutput(g / 255.0, CANifier.LEDChannel.LEDChannelA);
@@ -155,14 +158,14 @@ public class LedManager extends Subsystem {
     public void writeToHardware() {
         if (cameraCanifier != null || candle != null) {
             if (outputsChanged) {
-                //                cameraCanifier.setLEDOutput(
-                //                    cameraLedOn ? 1 : 0,
-                //                    CANifier.LEDChannel.LEDChannelB
-                //                );
+                cameraCanifier.setLEDOutput(
+                    cameraLedOn ? 1 : 0,
+                    CANifier.LEDChannel.LEDChannelB
+                );
                 if (cameraLedOn) {
-                    candle.setLEDs(0, 255, 0);
+                    candle.setLEDs(0, 255, 0, 0, 0, 8);
                 } else {
-                    candle.setLEDs(0, 0, 0);
+                    candle.setLEDs(0, 0, 0, 0, 0, 8);
                 }
                 System.out.println("writing led state: " + outputsChanged);
             }
@@ -238,7 +241,7 @@ public class LedManager extends Subsystem {
     private static final boolean RAVE_ENABLED =
         factory.getConstant(NAME, "raveEnabled") > 0;
     private static final double RAVE_SPEED = factory.getConstant(NAME, "raveSpeed", 0.01);
-    private static final int MAX = (int) factory.getConstant(NAME, "maxLevel", 1);
+    private static final int MAX = (int) factory.getConstant(NAME, "maxLevel", 255);
 
     public enum RobotStatus {
         ENABLED(0, MAX, 0), // green

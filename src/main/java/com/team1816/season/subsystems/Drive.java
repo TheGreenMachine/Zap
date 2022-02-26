@@ -219,9 +219,7 @@ public abstract class Drive
         System.out.println("set heading: " + heading.getDegrees());
 
         mGyroOffset =
-            heading.rotateBy(
-                Rotation2d.fromDegrees(mPigeon.getFusedHeading()).unaryMinus()
-            );
+            heading.rotateBy(Rotation2d.fromDegrees(mPigeon.getYaw()).unaryMinus());
         System.out.println("gyro offset: " + mGyroOffset.getDegrees());
 
         mPeriodicIO.desired_heading = heading;

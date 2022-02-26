@@ -123,7 +123,6 @@ public class Turret extends Subsystem implements PidProvider {
      * converts 0-360 to 0-TURRET_ENCODER_PPR with zero  offset
      */
     public int convertTurretDegreesToTicks(double degrees) {
-        // CCW is positive
         return (
             (int) ((((degrees) / 360.0) * TURRET_PPR) + ABS_TICKS_SOUTH) &
             TURRET_ENCODER_MASK
@@ -148,9 +147,6 @@ public class Turret extends Subsystem implements PidProvider {
                 var sensorVal = sensors.getPulseWidthPosition();
                 var offset = ZERO_OFFSET - (sensorVal - HALF_ENCPPR);
                 sensors.setQuadraturePosition(offset);
-                System.out.println(
-                    "zeroing turret at " + offset + "sensorVal" + sensorVal
-                );
             }
         }
     }
@@ -251,14 +247,6 @@ public class Turret extends Subsystem implements PidProvider {
     public void readFromHardware() {
         robotState.vehicle_to_turret =
             Rotation2d.fromDegrees(getActualTurretPositionDegrees());
-        // show turret
-        var robotPose = robotState.field.getRobotPose();
-        var turret = robotState.field.getObject("turret");
-        turret.setPose(
-            robotPose.getX() - .1, // could be off because if the robot is rotated, the translation offset is different
-            robotPose.getY() + .1,
-            Rotation2d.fromDegrees(robotState.getLatestFieldToTurret())
-        );
     }
 
     @Override

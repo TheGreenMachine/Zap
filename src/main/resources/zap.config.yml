@@ -110,7 +110,7 @@ subsystems:
     shooter:
         implemented: false
         falcons:
-            shooterMain: 16
+            shooterMain: 21
             shooterFollower: 34
         solenoids:
             hood: 1
@@ -182,6 +182,7 @@ constants:
     logTeleOp: 1 # 0 or 1
     logAuto: 0 # 0 or 1
     badLogEnabled: 1 # 0 or 1
+    configStatusFrames: 0 # 0 or 1
     ## General ##
     teleopFieldCentric: 1 # 0 or 1
     compressorEnabled: 1 # 0 or 1

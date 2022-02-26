@@ -11,7 +11,7 @@ public class GhostPigeonIMU implements IPigeonIMU {
     public GhostPigeonIMU(IMotorControllerEnhanced motor) {}
 
     @Override
-    public double getFusedHeading() {
+    public double getYaw() {
         return 0;
     }
 
