@@ -65,6 +65,7 @@ subsystems:
                     kF: 0
         constants:
             pigeonId: 13
+            isPigeon2: 1
             pigeonOnTalon: -1
             kP: 0.1 # 0.18 # TODO: tune PID, these are temporary PID values from Zeta
             kI: 0.0001 # 0.018
@@ -168,7 +169,8 @@ constants:
     maxRotVel: 6.5
     trackWidth: 21 #inches
     wheelbaseLength: 21.5 #inches
-    maxVel: 3 # 160 # 240 # inches/s # 22560 native units ---30
+    maxVelOpenLoop: 3 # 160 # 240 # inches/s # 22560 native units ---30
+    maxVelPathFollowing: 1 # 160 # 240 # inches/s # 22560 native units ---30
     maxAccel: 100 # inches/s^2
     sensorPhase: 0
     kTrackScrubFactor: 1.0
