@@ -150,27 +150,34 @@ public class TurretTest {
 
     @Test
     public void zeroSensors0Test() {
-        zeroSensorsTest(0);
+        zeroSensorsTest(0, 53248.0);
     }
 
     @Test
     public void zeroSensors2048Test() {
-        zeroSensorsTest(2048);
+        zeroSensorsTest(2048, 53248.0);
+    }
+
+    @Test
+    public void zeroSensors2048SingleRotationTest() {
+        zeroSensorsTest(2048, 4096);
     }
 
     @Test
     public void zeroSensors4095Test() {
-        zeroSensorsTest(4095);
+        zeroSensorsTest(4095, 53248.0);
     }
 
-    public void zeroSensorsTest(int offset) {
-        when(mockFactory.getConstant(Turret.NAME, "turretPPR")).thenReturn(53248.0);
+    public void zeroSensorsTest(int absInit, double turretPPR) {
+        when(mockFactory.getConstant(Turret.NAME, "turretPPR")).thenReturn(turretPPR);
         when(mockFactory.getMotor(Turret.NAME, "turret"))
-            .thenReturn(new GhostMotorControllerEnhanced(0, offset));
+            .thenReturn(new GhostMotorControllerEnhanced(0, absInit));
         mTurret = new Turret();
         mTurret.zeroSensors();
         Assert.assertEquals(
-            mTurret.TURRET_PPR / 2.0 - offset,
+            mTurret.TURRET_PPR / 2.0 - mTurret.TURRET_PPR == mTurret.TURRET_ENCODER_PPR
+                ? 0
+                : absInit,
             mTurret.getActualTurretPositionTicks(),
             1
         );
