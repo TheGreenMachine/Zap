@@ -37,7 +37,7 @@ public class Turret extends Subsystem implements PidProvider {
     private static final int kPIDVisionIDx = 0;
     private final int TURRET_ENCODER_PPR;
     public final int TURRET_PPR;
-    private final int TURRET_ENCODER_MASK;
+    private final int TURRET_MASK;
     private final double TURRET_ENC_RATIO;
     private static final int ALLOWABLE_ERROR_TICKS = 5;
     private static Turret INSTANCE;
@@ -71,11 +71,11 @@ public class Turret extends Subsystem implements PidProvider {
         this.turret = factory.getMotor(NAME, "turret");
         TURRET_ENCODER_PPR = (int) factory.getConstant(NAME, "encPPR");
         TURRET_PPR = (int) factory.getConstant(NAME, "turretPPR");
-        TURRET_ENCODER_MASK = TURRET_PPR - 1;
+        TURRET_MASK = TURRET_PPR - 1;
         TURRET_ENC_RATIO = (double) TURRET_PPR / TURRET_ENCODER_PPR;
-        ABS_TICKS_SOUTH = ((int) factory.getConstant(NAME, "absPosTicksSouth"));
+        ABS_TICKS_SOUTH = ((int) factory.getConstant(NAME, "absPosTicksSouth")) + TURRET_ENCODER_PPR;
         HALF_ENCPPR = TURRET_ENCODER_PPR / 2;
-        ZERO_OFFSET = TURRET_PPR / 2 - HALF_ENCPPR;
+        ZERO_OFFSET = TURRET_PPR / 2 - HALF_ENCPPR - TURRET_ENCODER_PPR;
         turret.setNeutralMode(NeutralMode.Brake);
 
         PIDSlotConfiguration pidConfig = factory.getPidSlotConfig(NAME, pidSlot);
@@ -84,8 +84,6 @@ public class Turret extends Subsystem implements PidProvider {
         this.kD = pidConfig.kD;
         this.kF = pidConfig.kF;
         synchronized (this) {
-            this.zeroSensors();
-
             // Position Control
             double peakOutput = 0.75;
 
@@ -143,7 +141,7 @@ public class Turret extends Subsystem implements PidProvider {
         if (turret instanceof IMotorSensor) {
             var sensors = (IMotorSensor) turret;
             // If we have a sensorVal < turret ppr then it is safe to reset
-            if (sensors.getQuadraturePosition() < TURRET_PPR) { // ABSOLUTE
+            if (sensors.getQuadraturePosition() < TURRET_ENCODER_PPR) { // ABSOLUTE
                 //get absolute sensor value
                 var sensorVal = sensors.getPulseWidthPosition();
                 var offset = ZERO_OFFSET - (sensorVal - HALF_ENCPPR);
@@ -238,7 +236,7 @@ public class Turret extends Subsystem implements PidProvider {
     }
     // this is what is eventually referred to in readFromHardware so we're undoing conversions here
     public double getActualTurretPositionTicks() {
-        return (turret.getSelectedSensorPosition(kPrimaryCloseLoop) - ABS_TICKS_SOUTH - ZERO_OFFSET) % TURRET_ENCODER_MASK;
+        return (turret.getSelectedSensorPosition(kPrimaryCloseLoop) - ABS_TICKS_SOUTH - ZERO_OFFSET) % TURRET_MASK;
     }
 
     public double getTargetPosition() {
@@ -329,9 +327,9 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     private void positionControl(int rawPos) {
-        int adjPos = (rawPos + ABS_TICKS_SOUTH + ZERO_OFFSET) % TURRET_ENCODER_MASK;
+        int adjPos = (rawPos + ABS_TICKS_SOUTH + ZERO_OFFSET) % TURRET_MASK;
         if (outputsChanged) {
-            System.out.println(adjPos + " +++++");
+            //System.out.println(adjPos + " +++++");
             turret.set(com.ctre.phoenix.motorcontrol.ControlMode.Position, adjPos);
             outputsChanged = false;
         }

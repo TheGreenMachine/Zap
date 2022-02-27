@@ -50,7 +50,7 @@ public class TrajectoryAction implements Action {
             var thetaController = new ProfiledPIDController(
                 Constants.kPThetaController,
                 0,
-                0,
+                Constants.kDThetaController,
                 Constants.kThetaControllerConstraints
             );
             thetaController.enableContinuousInput(-Math.PI, Math.PI);

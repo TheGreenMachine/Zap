@@ -26,7 +26,7 @@ public class Constants {
 
     // Field characterization
     public static final double fieldCenterY = 8.23/2.0;
-    public static final double fieldCenterX = 14.46/2.0;
+    public static final double fieldCenterX = 16.46/2.0;
 
     // Drivetrain characterization
     public static final double kDriveWheelTrackWidthInches = factory.getConstant(
@@ -256,7 +256,8 @@ public class Constants {
 
     public static final double kPXController = 1;
     public static final double kPYController = 1;
-    public static final double kPThetaController = 1;
+    public static final double kPThetaController = 690;
+    public static final double kDThetaController = 0; // 2000;
     public static double kMaxAngularSpeed = factory.getConstant("maxRotVel"); // rad/sec
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 

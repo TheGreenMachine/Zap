@@ -94,21 +94,21 @@ subsystems:
         implemented: true
         pidConfig:
             slot0:
-                kP: 1.0
+                kP: 0.15
                 kI: 0.0
-                kD: 10
+                kD: 15
                 kF: 0 # Should be 0 for position control
                 allowableError: 100
         talons:
             turret: 33 # need to set to pdp port number
         constants:
-            revLimit: 21170 # NOT ABSOLUTE
+            revLimit: 17070 # NOT ABSOLUTE
             absPosTicksSouth: 0 # absolute - test
-            fwdLimit: 59000 # TEST -- NOT ABSOLUTE
+            fwdLimit: 54900 # TEST -- NOT ABSOLUTE
             encPPR: 4096
             turretPPR: 53248 # 4096 * 13
     shooter:
-        implemented: false
+        implemented: true
         falcons:
             shooterMain: 21
             shooterFollower: 34
@@ -129,7 +129,7 @@ subsystems:
             maxVel: 11500
             coast: 9000
     climber:
-        implemented: false
+        implemented: true
         sparkmaxes:
             elevator: 20
         solenoids:
