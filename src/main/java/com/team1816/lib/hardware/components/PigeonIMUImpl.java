@@ -10,7 +10,7 @@ import com.team1816.season.Constants;
 public class PigeonIMUImpl extends PigeonIMU implements IPigeonIMU {
 
     public PigeonIMUImpl(int id) {
-        super(id, Constants.CANBusHighSpeed);
+        super(id);
     }
 
     @Override

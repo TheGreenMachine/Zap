@@ -103,7 +103,7 @@ subsystems:
             turret: 33 # need to set to pdp port number
         constants:
             revLimit: 59000 # NOT ABSOLUTE
-            absPosTicksSouth: 25270 # absolute - test
+            absPosTicksSouth: 10 # absolute - test
             zeroOffset: 2048 # might not be necessary
             fwdLimit: 19300 # TEST -- NOT ABSOLUTE
             encPPR: 4096

@@ -124,7 +124,7 @@ public class Turret extends Subsystem implements PidProvider {
      */
     public int convertTurretDegreesToTicks(double degrees) {
         return (
-            (int) ((((degrees) / 360.0) * TURRET_PPR) + ABS_TICKS_SOUTH) &
+            (int) ((((degrees) / 360.0) * TURRET_PPR) + ABS_TICKS_SOUTH + ZERO_OFFSET) &
             TURRET_ENCODER_MASK
         );
     }
@@ -133,7 +133,7 @@ public class Turret extends Subsystem implements PidProvider {
      * converts 0-TURRET_ENCODER_PPR with zero offset
      */
     public double convertTurretTicksToDegrees(double ticks) {
-        double adjTicks = ((int) ticks - ABS_TICKS_SOUTH) & TURRET_ENCODER_MASK;
+        double adjTicks = ((int) ticks - ABS_TICKS_SOUTH - ZERO_OFFSET) & TURRET_ENCODER_MASK;
         return adjTicks / TURRET_PPR * 360;
     }
 

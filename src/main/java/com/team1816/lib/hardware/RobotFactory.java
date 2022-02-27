@@ -474,14 +474,14 @@ public class RobotFactory {
         if (id < 0) {
             return new GhostPigeonIMU(id);
         } else if(factory.getConstant(Drive.NAME, "isPigeon2") > 0){
+            System.out.println("Using Pigeon 2 for id: " + id);
             // TODO move pigeon to infrastructure and no longer define pigeon id in drive YAML constants
             pigeonIMU = new Pigeon2Impl(id);
-            setStatusFrame((BasePigeon) pigeonIMU);
             return pigeonIMU;
         }
         else {
+            System.out.println("Using old Pigeon for id: " + id);
             pigeonIMU = new PigeonIMUImpl(id);
-            setStatusFrame((BasePigeon) pigeonIMU);
             return new PigeonIMUImpl(id);
         }
     }
