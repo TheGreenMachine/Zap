@@ -7,6 +7,7 @@ public interface ISwerveModule {
     double getAzimuthPosition();
     //    double getAzimuthPositionDemand();
     double getAzimuthError();
+    double getAzimuthDemand();
 
     double getDriveVelocity();
     double getDriveVelocityDemand();

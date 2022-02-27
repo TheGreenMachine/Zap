@@ -20,6 +20,7 @@ public class SwerveModule implements ISwerveModule {
     private final IMotorControllerEnhanced mAzimuthMotor;
     public static CANCoder mCanCoder;
     public double mVelDemand;
+    public double mAzmDemand;
 
     // Module Indicies
     public static final int kFrontLeft = 0;
@@ -99,11 +100,9 @@ public class SwerveModule implements ISwerveModule {
                 desiredState.speedMetersPerSecond
             ); // w/out conversion, would be lying to it - speed meters per second is percent output i
         }
-        mAzimuthMotor.set(
-            ControlMode.Position,
-            DriveConversions.convertDegreesToTicks(desiredState.angle.getDegrees()) +
-            mConstants.kAzimuthEncoderHomeOffset
-        );
+        mAzmDemand = DriveConversions.convertDegreesToTicks(desiredState.angle.getDegrees()) +
+            mConstants.kAzimuthEncoderHomeOffset;
+        mAzimuthMotor.set(ControlMode.Position,mAzmDemand);
     }
 
     public SwerveModuleState getState() {
@@ -134,6 +133,11 @@ public class SwerveModule implements ISwerveModule {
     @Override
     public double getAzimuthError() {
         return mAzimuthMotor.getClosedLoopError(0);
+    }
+
+    @Override
+    public double getAzimuthDemand() {
+        return mAzmDemand;
     }
 
     @Override

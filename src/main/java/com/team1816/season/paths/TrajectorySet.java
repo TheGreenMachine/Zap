@@ -28,7 +28,7 @@ public class TrajectorySet {
     public TrajectorySet() {
         // Trajectories
         DRIVE_STRAIGHT = new DriveStraight(36).generateTrajectory();
-        TUNE_DRIVETRAIN = new DriveStraight(180, 40).generateTrajectory();
+        TUNE_DRIVETRAIN = new DriveStraight(264, 40).generateTrajectory();
         LIVING_ROOM = new LivingRoomPath().generateTrajectory();
         FIVE_BALL_A = new FiveBallAutoA().generateTrajectory();
         FIVE_BALL_B = new FiveBallAutoB().generateTrajectory();

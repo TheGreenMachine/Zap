@@ -18,6 +18,13 @@ public class DrivetrainLogger {
                 "join:Drivetrain/AzimuthPosition"
             );
             subsystem.CreateBadLogTopic(
+                prefix + "AzimuthDemand",
+                "ticks",
+                module::getAzimuthDemand,
+                "hide",
+                "join:Drivetrain/AzimuthPosition"
+            );
+            subsystem.CreateBadLogTopic(
                 prefix + "AzimuthError",
                 "ticks",
                 module::getAzimuthError,
