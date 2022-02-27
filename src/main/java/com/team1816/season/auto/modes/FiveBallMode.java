@@ -10,10 +10,12 @@ import com.team1816.season.auto.actions.TurretAction;
 import com.team1816.season.paths.TrajectorySet;
 import com.team1816.season.subsystems.Shooter;
 import com.team1816.season.subsystems.Turret;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 public class FiveBallMode extends AutoModeBase {
 
+    public Pose2d startingPose;
     private TrajectoryAction trajectory1;
     private TrajectoryAction trajectory2;
     private TrajectoryAction trajectory3;
@@ -24,6 +26,7 @@ public class FiveBallMode extends AutoModeBase {
                 TrajectorySet.FIVE_BALL_A,
                 TrajectorySet.FIVE_BALL_A_HEADINGS
             );
+        startingPose = trajectory.getTrajectory().getInitialPose();
         trajectory1 =
             new TrajectoryAction(
                 TrajectorySet.FIVE_BALL_B,
@@ -43,7 +46,7 @@ public class FiveBallMode extends AutoModeBase {
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        System.out.println("Running Living Room Mode");
+        System.out.println("Running Five Ball Mode");
         runAction(new WaitAction(.5));
         runAction(
             new SeriesAction(

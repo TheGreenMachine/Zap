@@ -24,8 +24,6 @@ public class DriveStraight implements PathContainer {
 
     @Override
     public List<Pose2d> buildWaypoints() {
-        List<Pose2d> waypoints = new ArrayList<>();
-        var heading = (driveDistance < 0 ? 180 : 0);
         return List.of(
             new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0)),
             new Pose2d((driveDistance), 0.0, Rotation2d.fromDegrees(0))

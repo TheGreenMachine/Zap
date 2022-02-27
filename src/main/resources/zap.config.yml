@@ -91,7 +91,7 @@ subsystems:
             raveSpeed: 0.05
             cameraLed: 1
     turret:
-        implemented: false
+        implemented: true
         pidConfig:
             slot0:
                 kP: 1.0

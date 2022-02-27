@@ -24,6 +24,10 @@ public class Constants {
     public static final String CANBusRio = "rio";
     public static final String CANBusHighSpeed = "highSpeed";
 
+    // Field characterization
+    public static final double fieldCenterY = 8.23/2.0;
+    public static final double fieldCenterX = 14.46/2.0;
+
     // Drivetrain characterization
     public static final double kDriveWheelTrackWidthInches = factory.getConstant(
         "trackWidth",
@@ -57,7 +61,7 @@ public class Constants {
     );
     public static double kTrackScrubFactor = factory.getConstant("kTrackScrubFactor");
 
-    public static final Pose2d StartingPose = new Pose2d(0.5, 3.5, new Rotation2d());
+    public static Pose2d StartingPose = new Pose2d(0.5, 3.5, new Rotation2d());
 
     // CAN Timeouts
     public static final int kCANTimeoutMs = 10; // use for important on the fly updates
