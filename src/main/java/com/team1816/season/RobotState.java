@@ -4,6 +4,8 @@ import com.google.inject.Singleton;
 import com.team1816.season.subsystems.Turret;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -43,8 +45,8 @@ public class RobotState {
         return field_to_vehicle;
     }
 
-    public Double getLatestFieldToTurret() {
-        return field_to_vehicle.getRotation().minus(vehicle_to_turret).getDegrees();
+    public double getLatestFieldToTurret() {
+        return field_to_vehicle.getRotation().plus(vehicle_to_turret).getDegrees(); // should this be plus (not minus) if the turret direction isn't negated?
     }
 
     public synchronized void outputToSmartDashboard() {
@@ -53,9 +55,25 @@ public class RobotState {
         field
             .getObject(Turret.NAME)
             .setPose(
-                field_to_vehicle.getTranslation().getX() - .1,
-                field_to_vehicle.getTranslation().getY() + .1,
-                Rotation2d.fromDegrees(getLatestFieldToTurret())
+                new Pose2d(field_to_vehicle.transformBy(
+                    new Transform2d(
+                        new Translation2d(- .1,.1),
+                        Constants.EmptyRotation
+                    )
+                ).getTranslation(),
+                    Rotation2d.fromDegrees(getLatestFieldToTurret())
+                )
             );
+//        field.getObject("target") // not sure what to do to get a representation of the goal as an object on the field
+//            .setPose(
+//                new Pose2d(field_to_vehicle.transformBy(
+//                    new Transform2d(
+//                        new Translation2d(- .1,.1),
+//                        Constants.EmptyRotation
+//                    )
+//                ).getTranslation(),
+//                    Rotation2d.fromDegrees(getLatestFieldToTurret())
+//                )
+//            );
     }
 }

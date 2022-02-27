@@ -42,7 +42,7 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
     // Turret teleop control - note that X VAL doesn't necessarily correspond to joystick X AXIS
     @Override
     public double getTurretXVal() {
-        return mController.getJoystick(Controller.Axis.LEFT_Y);
+        return -mController.getJoystick(Controller.Axis.LEFT_Y);
     }
 
     @Override

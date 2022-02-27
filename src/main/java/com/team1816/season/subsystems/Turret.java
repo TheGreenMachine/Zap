@@ -10,7 +10,10 @@ import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
 import com.team1816.season.RobotState;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 
 @Singleton
@@ -141,13 +144,16 @@ public class Turret extends Subsystem implements PidProvider {
     public synchronized void zeroSensors() {
         if (turret instanceof IMotorSensor) {
             var sensors = (IMotorSensor) turret;
-            // If we have a sensorVal < turret ppr then it is safe to reset
-            if (sensors.getQuadraturePosition() < TURRET_PPR) { // ABSOLUTE
+            // If we have a sensor position that resides within the same absolute encoder revolution as the abs_ticks_south position then it is safe to reset
+            if (Math.abs(sensors.getQuadraturePosition() - ZERO_OFFSET - ABS_TICKS_SOUTH) < TURRET_ENCODER_PPR) {
                 //get absolute sensor value
                 var sensorVal = sensors.getPulseWidthPosition();
                 var offset = ZERO_OFFSET - (sensorVal - HALF_ENCPPR);
                 sensors.setQuadraturePosition(offset);
                 System.out.println("Zeroing turret! Offset: " + offset);
+            } else {
+                System.out.println("unsafe to zero turret sensors! NOT ZEROING");
+                // should we directly make turret into manual control at this point?
             }
         }
     }
@@ -209,7 +215,6 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     private synchronized void setTurretPosition(double position) {
-        //Since we are using position we need ensure value stays in one rotation
         if (desiredTurretPos != (int) position) {
             desiredTurretPos = (int) position;
             outputsChanged = true;
@@ -235,9 +240,10 @@ public class Turret extends Subsystem implements PidProvider {
     public double getActualTurretPositionDegrees() {
         return convertTurretTicksToDegrees(getActualTurretPositionTicks());
     }
-    // this is what is eventually referred to in readFromHardware so we're undoing conversions here
+
+    // this is what is eventually referred to in readFromHardware, so we're undoing conversions here
     public double getActualTurretPositionTicks() {
-        return (turret.getSelectedSensorPosition(kPrimaryCloseLoop) - ABS_TICKS_SOUTH - ZERO_OFFSET) % TURRET_ENCODER_MASK;
+        return (turret.getSelectedSensorPosition(kPrimaryCloseLoop) - ABS_TICKS_SOUTH - ZERO_OFFSET);
     }
 
     public double getTargetPosition() {
@@ -286,12 +292,6 @@ public class Turret extends Subsystem implements PidProvider {
         }
     }
 
-    /* since rn our desiredTurretPos is being used as the point to which the turret should lock on to,
-    all we should need to do is create a method that's called in teleopPeriodic taking the operator's joystick (x,y) values
-    and making them into Rotation2Ds from which we'd draw degree values to put into setTurretAngle.
-    Since setTurretAngle currently can only change desiredTurretPos by also changing the ControlMode to position, we may
-    just have to create a new method that only sets the desiredTurretPos without changing the controlMode.
-     */
     private void trackGyro() {
         int fieldTickOffset = // currently negated because motor is running counterclockwise
             - convertTurretDegreesToTicks(
@@ -305,6 +305,8 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     private void positionControl(int rawPos) {
+        // is the turret encoder mask even needed here? is it needed anywhere?
+        // it also currently corresponds to the turret mask and not the absolute mask (which is referred to as the encoder value).
         int adjPos = (rawPos + ABS_TICKS_SOUTH + ZERO_OFFSET) % TURRET_ENCODER_MASK;
         if (outputsChanged) {
             System.out.println(adjPos + " +++++");

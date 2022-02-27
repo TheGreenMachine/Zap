@@ -220,17 +220,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             mDriveControlState = DriveControlState.OPEN_LOOP;
         }
         mPeriodicIO.use_heading_controller = use_heading_controller;
-        //
-        //        var speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-        //            forward *
-        //                Units.inchesToMeters(Constants.kPathFollowingMaxVel), // test this out  -
-        //            strafe * Units.inchesToMeters(Constants.kPathFollowingMaxVel),
-        //            rotation * (Constants.kMaxAngularSpeed),
-        //            mPeriodicIO.gyro_heading // ignore gyro
-        //        );
-        //        mPeriodicIO.desiredModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
-        //            speeds
-        //        );
 
         SwerveDriveSignal signal = swerveDriveHelper.calculateDriveSignal(
             forward,
