@@ -9,11 +9,9 @@ import java.util.List;
 public class DriveStraight implements PathContainer {
 
     private final int driveDistance;
-    private final double maxVel;
 
     public DriveStraight(int driveDistance, double maxVel) {
         this.driveDistance = driveDistance;
-        this.maxVel = maxVel;
     }
 
     public DriveStraight(int driveDistance) {

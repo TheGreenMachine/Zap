@@ -102,10 +102,9 @@ subsystems:
         talons:
             turret: 33 # need to set to pdp port number
         constants:
-            revLimit: 59000 # NOT ABSOLUTE
-            absPosTicksSouth: 10 # absolute - test
-            zeroOffset: 2048 # might not be necessary
-            fwdLimit: 19300 # TEST -- NOT ABSOLUTE
+            revLimit: 21170 # NOT ABSOLUTE
+            absPosTicksSouth: 0 # absolute - test
+            fwdLimit: 59000 # TEST -- NOT ABSOLUTE
             encPPR: 4096
             turretPPR: 53248 # 4096 * 13
     shooter:
