@@ -1,7 +1,5 @@
 package com.team1816.season.subsystems;
 
-import static com.team1816.season.subsystems.Drive.factory;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -10,9 +8,10 @@ import com.ctre.phoenix.sensors.CANCoder;
 import com.team1816.lib.math.DriveConversions;
 import com.team1816.lib.subsystems.ISwerveModule;
 import com.team1816.season.Constants;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+
+import static com.team1816.season.subsystems.Drive.factory;
 
 public class SwerveModule implements ISwerveModule {
 
@@ -20,6 +19,7 @@ public class SwerveModule implements ISwerveModule {
     private final IMotorControllerEnhanced mDriveMotor;
     private final IMotorControllerEnhanced mAzimuthMotor;
     public static CANCoder mCanCoder;
+    public double mVelDemand;
 
     // Module Indicies
     public static final int kFrontLeft = 0;
@@ -33,11 +33,6 @@ public class SwerveModule implements ISwerveModule {
     // Constants
     private final Constants.Swerve mConstants;
 
-    SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(
-        Constants.Swerve.driveKS,
-        Constants.Swerve.driveKV,
-        Constants.Swerve.driveKA
-    );
 
     public SwerveModule(
         String subsystemName,
@@ -95,23 +90,18 @@ public class SwerveModule implements ISwerveModule {
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
-        SwerveModuleState desired_state = desiredState; //  ModuleState.optimize(desiredState, getState().angle);
         if (!isOpenLoop) {
-            mDriveMotor.set(
-                ControlMode.Velocity,
-                DriveConversions.metersPerSecondToTicksPer100ms(
-                    desiredState.speedMetersPerSecond
-                )
-            );
+            mVelDemand = DriveConversions.metersPerSecondToTicksPer100ms(desiredState.speedMetersPerSecond);
+            mDriveMotor.set(ControlMode.Velocity, mVelDemand);
         } else {
             mDriveMotor.set(
                 ControlMode.PercentOutput,
-                desired_state.speedMetersPerSecond
+                desiredState.speedMetersPerSecond
             ); // w/out conversion, would be lying to it - speed meters per second is percent output i
         }
         mAzimuthMotor.set(
             ControlMode.Position,
-            DriveConversions.convertDegreesToTicks(desired_state.angle.getDegrees()) +
+            DriveConversions.convertDegreesToTicks(desiredState.angle.getDegrees()) +
             mConstants.kAzimuthEncoderHomeOffset
         );
     }
@@ -153,7 +143,7 @@ public class SwerveModule implements ISwerveModule {
 
     @Override
     public double getDriveVelocityDemand() {
-        return 0;
+        return mVelDemand;
     }
 
     @Override

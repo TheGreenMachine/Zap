@@ -6,51 +6,47 @@ public class DrivetrainLogger {
         var isSwerve = drivetrain instanceof SwerveDrivetrain;
         var subsystem = (Subsystem) drivetrain;
         if (isSwerve) {
-            for (ISwerveModule module : (
-                (SwerveDrivetrain) drivetrain
-            ).getSwerveModules()) {
-                var name = module.getSubsystemName();
-                var prefix = "Drivetrain/" + name;
+            var module = ((SwerveDrivetrain) drivetrain).getSwerveModules()[0];
+            var name = module.getSubsystemName();
+            var prefix = "Drivetrain/" + name;
+            // Azimuth
+            subsystem.CreateBadLogTopic(
+                prefix + "AzimuthPosition",
+                "ticks",
+                module::getAzimuthPosition,
+                "hide",
+                "join:Drivetrain/AzimuthPosition"
+            );
+            subsystem.CreateBadLogTopic(
+                prefix + "AzimuthError",
+                "ticks",
+                module::getAzimuthError,
+                "hide",
+                "join:Drivetrain/AzimuthError"
+            );
 
-                // Azimuth
-                subsystem.CreateBadLogTopic(
-                    prefix + "AzimuthPosition",
-                    "ticks",
-                    module::getAzimuthPosition,
-                    "hide",
-                    "join:Drivetrain/AzimuthPosition"
-                );
-                subsystem.CreateBadLogTopic(
-                    prefix + "AzimuthError",
-                    "ticks",
-                    module::getAzimuthError,
-                    "hide",
-                    "join:Drivetrain/AzimuthError"
-                );
-
-                // Drive
-                subsystem.CreateBadLogTopic(
-                    prefix + "DriveVelocity",
-                    "ticks",
-                    module::getDriveVelocity,
-                    "hide",
-                    "join:Drivetrain/DriveVelocity"
-                );
-                subsystem.CreateBadLogTopic(
-                    prefix + "DriveVelocityDemand",
-                    "ticks",
-                    module::getDriveVelocityDemand,
-                    "hide",
-                    "join:Drivetrain/DriveVelocity"
-                );
-                subsystem.CreateBadLogTopic(
-                    prefix + "DriveError",
-                    "ticks",
-                    module::getDriveError,
-                    "hide",
-                    "join:Drivetrain/DriveError"
-                );
-            }
+            // Drive
+            subsystem.CreateBadLogTopic(
+                prefix + "DriveVelocity",
+                "ticks",
+                module::getDriveVelocity,
+                "hide",
+                "join:Drivetrain/DriveVelocity"
+            );
+            subsystem.CreateBadLogTopic(
+                prefix + "DriveVelocityDemand",
+                "ticks",
+                module::getDriveVelocityDemand,
+                "hide",
+                "join:Drivetrain/DriveVelocity"
+            );
+            subsystem.CreateBadLogTopic(
+                prefix + "DriveError",
+                "ticks",
+                module::getDriveError,
+                "hide",
+                "join:Drivetrain/DriveError"
+            );
         } else {
             subsystem.CreateBadLogTopic(
                 "Drivetrain/LeftActVel",
