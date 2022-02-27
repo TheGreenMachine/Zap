@@ -124,17 +124,17 @@ public class Turret extends Subsystem implements PidProvider {
      */
     public int convertTurretDegreesToTicks(double degrees) {
         return (
-            (int) ((((degrees) / 360.0) * TURRET_PPR) + ABS_TICKS_SOUTH + ZERO_OFFSET) &
-            TURRET_ENCODER_MASK
+            (int) (((degrees) / 360.0) * TURRET_PPR)
         );
     }
+
+
 
     /**
      * converts 0-TURRET_ENCODER_PPR with zero offset
      */
     public double convertTurretTicksToDegrees(double ticks) {
-        double adjTicks = ((int) ticks - ABS_TICKS_SOUTH - ZERO_OFFSET) & TURRET_ENCODER_MASK;
-        return adjTicks / TURRET_PPR * 360;
+        return ticks / TURRET_PPR * 360;
     }
 
     @Override
@@ -210,9 +210,8 @@ public class Turret extends Subsystem implements PidProvider {
 
     private synchronized void setTurretPosition(double position) {
         //Since we are using position we need ensure value stays in one rotation
-        int adjPos = (int) position & TURRET_ENCODER_MASK;
-        if (desiredTurretPos != adjPos) {
-            desiredTurretPos = adjPos;
+        if (desiredTurretPos != (int) position) {
+            desiredTurretPos = (int) position;
             outputsChanged = true;
         }
     }
@@ -223,9 +222,9 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     public synchronized void setFieldFollowingAngle(double angle) {
-//        if(angle < 0){
-//            angle = angle + 360; // if angle is negative, wrap around - we only deal with values from 0 to 360 --- this seems not to be needed
-//        }
+        if(angle < 0){
+            angle = angle + 360; // if angle is negative, wrap around - we only deal with values from 0 to 360
+        }
         setTurretPosition(convertTurretDegreesToTicks(angle));
     }
 
@@ -236,9 +235,9 @@ public class Turret extends Subsystem implements PidProvider {
     public double getActualTurretPositionDegrees() {
         return convertTurretTicksToDegrees(getActualTurretPositionTicks());
     }
-
+    // this is what is eventually referred to in readFromHardware so we're undoing conversions here
     public double getActualTurretPositionTicks() {
-        return turret.getSelectedSensorPosition(kPrimaryCloseLoop);
+        return (turret.getSelectedSensorPosition(kPrimaryCloseLoop) - ABS_TICKS_SOUTH - ZERO_OFFSET) % TURRET_ENCODER_MASK;
     }
 
     public double getTargetPosition() {
@@ -294,23 +293,22 @@ public class Turret extends Subsystem implements PidProvider {
     just have to create a new method that only sets the desiredTurretPos without changing the controlMode.
      */
     private void trackGyro() {
-        // since convertTurretDegreesToTicks adjusts to zero we need to remove offset
-        int fieldTickOffset =
-            convertTurretDegreesToTicks(
+        int fieldTickOffset = // currently negated because motor is running counterclockwise
+            - convertTurretDegreesToTicks(
                 robotState.field_to_vehicle.getRotation().getDegrees()
-            ) -
-            ABS_TICKS_SOUTH;
-        int adj = (desiredTurretPos + fieldTickOffset) & TURRET_ENCODER_MASK;
+            );
+        int adj = (desiredTurretPos + fieldTickOffset);
         if (adj != followingTurretPos) {
             followingTurretPos = adj;
             outputsChanged = true;
         }
     }
 
-    private void positionControl(double rawPos) {
+    private void positionControl(int rawPos) {
+        int adjPos = (rawPos + ABS_TICKS_SOUTH + ZERO_OFFSET) % TURRET_ENCODER_MASK;
         if (outputsChanged) {
-            System.out.println(rawPos + " +++++");
-            turret.set(com.ctre.phoenix.motorcontrol.ControlMode.Position, rawPos);
+            System.out.println(adjPos + " +++++");
+            turret.set(com.ctre.phoenix.motorcontrol.ControlMode.Position, adjPos);
             outputsChanged = false;
         }
     }
