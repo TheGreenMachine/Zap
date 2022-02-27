@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.team1816.lib.math.DriveConversions;
 import com.team1816.lib.subsystems.ISwerveModule;
+import com.team1816.lib.util.ModuleState;
 import com.team1816.season.Constants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -91,16 +92,17 @@ public class SwerveModule implements ISwerveModule {
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
+        SwerveModuleState desired_state = ModuleState.optimize(desiredState, getState().angle); // desiredState; //
         if (!isOpenLoop) {
-            mVelDemand = DriveConversions.metersPerSecondToTicksPer100ms(desiredState.speedMetersPerSecond);
+            mVelDemand = DriveConversions.metersPerSecondToTicksPer100ms(desired_state.speedMetersPerSecond);
             mDriveMotor.set(ControlMode.Velocity, mVelDemand);
         } else {
             mDriveMotor.set(
                 ControlMode.PercentOutput,
-                desiredState.speedMetersPerSecond
+                desired_state.speedMetersPerSecond
             ); // w/out conversion, would be lying to it - speed meters per second is percent output i
         }
-        mAzmDemand = DriveConversions.convertDegreesToTicks(desiredState.angle.getDegrees()) +
+        mAzmDemand = DriveConversions.convertDegreesToTicks(desired_state.angle.getDegrees()) +
             mConstants.kAzimuthEncoderHomeOffset;
         mAzimuthMotor.set(ControlMode.Position,mAzmDemand);
     }
