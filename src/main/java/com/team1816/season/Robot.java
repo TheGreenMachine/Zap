@@ -229,6 +229,12 @@ public class Robot extends TimedRobot {
                     "hide",
                     "join:Tracking/Angles"
                 );
+                mCamera.CreateBadLogTopic(
+                    "Camera/CenterX",
+                    "Degrees",
+                    mCamera::getRawCenterX,
+                    "hide"
+                );
             }
 
             logger.finishInitialization();
