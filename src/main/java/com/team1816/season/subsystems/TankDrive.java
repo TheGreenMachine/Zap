@@ -4,7 +4,6 @@ import static com.team1816.lib.math.DriveConversions.metersPerSecondToTicksPer10
 import static com.team1816.lib.math.DriveConversions.rotationsToInches;
 
 import com.ctre.phoenix.motorcontrol.*;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.EnhancedMotorChecker;

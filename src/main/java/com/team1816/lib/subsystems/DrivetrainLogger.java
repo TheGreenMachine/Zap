@@ -6,7 +6,11 @@ public class DrivetrainLogger {
         var isSwerve = drivetrain instanceof SwerveDrivetrain;
         var subsystem = (Subsystem) drivetrain;
         if (isSwerve) {
-            for (int i = 0; i < ((SwerveDrivetrain) drivetrain).getSwerveModules().length; i++) {
+            for (
+                int i = 0;
+                i < ((SwerveDrivetrain) drivetrain).getSwerveModules().length;
+                i++
+            ) {
                 var module = ((SwerveDrivetrain) drivetrain).getSwerveModules()[i];
                 var name = module.getSubsystemName();
                 var prefix = "Drivetrain/" + name;

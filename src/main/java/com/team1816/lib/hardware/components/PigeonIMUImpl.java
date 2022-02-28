@@ -1,11 +1,7 @@
 package com.team1816.lib.hardware.components;
 
 import com.ctre.phoenix.ErrorCode;
-import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.sensors.Pigeon2;
 import com.ctre.phoenix.sensors.PigeonIMU;
-import com.team1816.season.Constants;
 
 public class PigeonIMUImpl extends PigeonIMU implements IPigeonIMU {
 

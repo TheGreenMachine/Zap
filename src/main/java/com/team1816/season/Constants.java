@@ -25,8 +25,8 @@ public class Constants {
     public static final String CANBusHighSpeed = "highSpeed";
 
     // Field characterization
-    public static final double fieldCenterY = 8.23/2.0;
-    public static final double fieldCenterX = 16.46/2.0;
+    public static final double fieldCenterY = 8.23 / 2.0;
+    public static final double fieldCenterX = 16.46 / 2.0;
 
     // Drivetrain characterization
     public static final double kDriveWheelTrackWidthInches = factory.getConstant(
@@ -222,7 +222,9 @@ public class Constants {
         kMaxLookAheadSpeed - kMinLookAheadSpeed;
     public static double kCameraFrameRate = 30;
     public static final double kPathFollowingMaxAccel = factory.getConstant("maxAccel");
-    public static double kPathFollowingMaxVelMeters = factory.getConstant("maxVelPathFollowing");
+    public static double kPathFollowingMaxVelMeters = factory.getConstant(
+        "maxVelPathFollowing"
+    );
     public static double kOpenLoopMaxVelMeters = factory.getConstant("maxVelOpenLoop");
     public static final double kTicksPerRevolution = 4096;
 

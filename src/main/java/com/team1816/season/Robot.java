@@ -493,7 +493,14 @@ public class Robot extends TimedRobot {
                 mDrive.zeroSensors();
                 mRobotState.reset();
                 mDrive.setHeading(new Rotation2d());
-                mDrive.setHeading(mAutoModeSelector.getAutoMode().get().getTrajectory().getInitialPose().getRotation());
+                mDrive.setHeading(
+                    mAutoModeSelector
+                        .getAutoMode()
+                        .get()
+                        .getTrajectory()
+                        .getInitialPose()
+                        .getRotation()
+                );
                 ledManager.indicateStatus(LedManager.RobotStatus.SEEN_TARGET);
             } else {
                 ledManager.indicateDefaultStatus();
@@ -569,6 +576,21 @@ public class Robot extends TimedRobot {
         actionManager.update();
 
         if (
+            mTurret.getControlMode() == Turret.ControlMode.CENTER_FOLLOWING &&
+            (
+                Math.abs(mControlBoard.getTurretXVal()) > .15 ||
+                Math.abs(mControlBoard.getTurretYVal()) > .15
+            )
+        ) {
+            mTurret.setCenterFollowingCorrection(
+                (
+                    new Rotation2d(
+                        mControlBoard.getTurretXVal(),
+                        mControlBoard.getTurretYVal()
+                    )
+                ).getDegrees()
+            );
+        } else if (
             Math.abs(mControlBoard.getTurretXVal()) > .15 ||
             Math.abs(mControlBoard.getTurretYVal()) > .15
         ) {
