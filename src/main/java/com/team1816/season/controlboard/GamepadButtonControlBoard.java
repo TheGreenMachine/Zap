@@ -63,7 +63,7 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
 
     @Override
     public boolean getFieldFollowing() {
-        return false;
+        return mController.getButton(Controller.Button.X);
     }
 
     // Feeder Flap

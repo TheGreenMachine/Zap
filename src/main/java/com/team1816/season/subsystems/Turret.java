@@ -40,7 +40,6 @@ public class Turret extends Subsystem implements PidProvider {
     private final int TURRET_MASK;
     private final double TURRET_ENC_RATIO;
     private static final int ALLOWABLE_ERROR_TICKS = 5;
-    private static double centerFollowingCorrection = 0;
     private static Turret INSTANCE;
 
     // Components
@@ -222,18 +221,11 @@ public class Turret extends Subsystem implements PidProvider {
         setTurretPosition(convertTurretDegreesToTicks(angle));
     }
 
-    public synchronized void setFieldFollowingAngle(double angle) {
+    public synchronized void setFollowingAngle(double angle) {
         if (angle < 0) {
             angle = angle + 360; // if angle is negative, wrap around - we only deal with values from 0 to 360
         }
         setTurretPosition(convertTurretDegreesToTicks(angle));
-    }
-
-    public synchronized void setCenterFollowingCorrection(double angle) {
-        if (angle < 0) {
-            angle = angle + 360;
-        }
-        centerFollowingCorrection = angle;
     }
 
     public synchronized void lockTurret() {
@@ -282,6 +274,7 @@ public class Turret extends Subsystem implements PidProvider {
                 positionControl(followingTurretPos);
                 break;
             case CENTER_FOLLOWING:
+                trackGyro();
                 trackCenter();
                 positionControl(followingTurretPos);
                 break;
@@ -318,9 +311,6 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     private void trackCenter() {
-        int fieldTickOffset = -convertTurretDegreesToTicks( // currently negated because motor is running counterclockwise
-            robotState.field_to_vehicle.getRotation().getDegrees()
-        );
         double opposite = Constants.fieldCenterY - robotState.field_to_vehicle.getY();
         double adjacent = Constants.fieldCenterX - robotState.field_to_vehicle.getX();
         double turretAngle = 0;
@@ -329,15 +319,10 @@ public class Turret extends Subsystem implements PidProvider {
         int centerOffset = convertTurretDegreesToTicks(
             Units.radiansToDegrees(turretAngle)
         );
-        int centerFollowingCorrectionTicks = convertTurretDegreesToTicks(
-            centerFollowingCorrection
-        );
         int adj =
             (
                 desiredTurretPos +
-                fieldTickOffset +
-                centerOffset +
-                centerFollowingCorrectionTicks
+                centerOffset
             );
         if (adj != followingTurretPos) {
             followingTurretPos = adj;

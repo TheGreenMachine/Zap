@@ -323,7 +323,13 @@ public class Robot extends TimedRobot {
                     ),
                     createAction(
                         mControlBoard::getFieldFollowing,
-                        () -> mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING)
+                        () -> {
+                            if (mTurret.getControlMode() == Turret.ControlMode.FIELD_FOLLOWING) {
+                                mTurret.setControlMode(Turret.ControlMode.CENTER_FOLLOWING);
+                            } else {
+                                mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
+                            }
+                        }
                     ),
                     createHoldAction(
                         mControlBoard::getTurretJogLeft,
@@ -438,8 +444,10 @@ public class Robot extends TimedRobot {
 
             mEnabledLooper.start();
             mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
-            mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
-            mOrchestrator.setStopped(false);
+            mTurret.setControlMode(Turret.ControlMode.CENTER_FOLLOWING);
+
+            mCamera.setEnabled(true);
+
             //System.out.println(mTurret.getActualTurretPositionTicks() + "+++++++"); // for debugging whether or not getActTicks works. doesn't seem to - ginget
 
             //            mInfrastructure.setIsManualControl(true);
@@ -582,28 +590,12 @@ public class Robot extends TimedRobot {
         // boolean arcadeDrive = false;
         actionManager.update();
 
+        
         if (
-            mTurret.getControlMode() == Turret.ControlMode.CENTER_FOLLOWING &&
-            (
-                Math.abs(mControlBoard.getTurretXVal()) > .15 ||
-                Math.abs(mControlBoard.getTurretYVal()) > .15
-            )
+            Math.abs(mControlBoard.getTurretXVal()) > 0.85 ||
+            Math.abs(mControlBoard.getTurretYVal()) > 0.85
         ) {
-            mTurret.setCenterFollowingCorrection(
-                (
-                    new Rotation2d(
-                        mControlBoard.getTurretXVal(),
-                        mControlBoard.getTurretYVal()
-                    )
-                ).getDegrees()
-            );
-        } else if (
-            Math.abs(mControlBoard.getTurretXVal()) > .15 ||
-            Math.abs(mControlBoard.getTurretYVal()) > .15
-        ) {
-            // currently only checking if not 0 - we want to make this check if not close to the turret's previous position
-            // so we don't end up with a bunch of Rotation2d values being made to move the turret .001 degrees
-            mTurret.setFieldFollowingAngle(
+            mTurret.setFollowingAngle(
                 (
                     new Rotation2d(
                         mControlBoard.getTurretXVal(),
