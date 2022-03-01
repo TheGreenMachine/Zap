@@ -5,24 +5,19 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import java.util.List;
 
-public class FiveBallAutoB implements PathContainer {
+public class FiveBallAutoC implements PathContainer {
 
     @Override
     public List<Pose2d> buildWaypoints() {
         return List.of(
-            new Pose2d(223, 265, Rotation2d.fromDegrees(220)),
-            new Pose2d(300, 4, Rotation2d.fromDegrees(0)),
-            new Pose2d(51, 54, Rotation2d.fromDegrees(180))
+            new Pose2d(51, 54, Rotation2d.fromDegrees(90)),
+            new Pose2d(140, 155, Rotation2d.fromDegrees(0))
         );
     }
 
     @Override
     public List<Rotation2d> buildHeadings() {
-        return List.of(
-            Rotation2d.fromDegrees(220),
-            Rotation2d.fromDegrees(360),
-            Rotation2d.fromDegrees(225)
-        );
+        return List.of(Rotation2d.fromDegrees(90), Rotation2d.fromDegrees(-10));
     }
 
     @Override

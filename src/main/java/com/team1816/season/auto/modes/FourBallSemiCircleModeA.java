@@ -13,13 +13,12 @@ import com.team1816.season.subsystems.Turret;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
-public class FiveBallMode extends AutoModeBase {
+public class FourBallSemiCircleModeA extends AutoModeBase {
 
     public Pose2d startingPose;
     private TrajectoryAction trajectory1;
-    private TrajectoryAction trajectory2;
 
-    public FiveBallMode() {
+    public FourBallSemiCircleModeA() {
         trajectory =
             new TrajectoryAction(
                 TrajectorySet.FIVE_BALL_A,
@@ -28,20 +27,16 @@ public class FiveBallMode extends AutoModeBase {
         startingPose = trajectory.getTrajectory().getInitialPose();
         trajectory1 =
             new TrajectoryAction(
-                TrajectorySet.FIVE_BALL_B,
-                TrajectorySet.FIVE_BALL_B_HEADINGS
-            );
-        trajectory2 =
-            new TrajectoryAction(
-                TrajectorySet.FIVE_BALL_C,
-                TrajectorySet.FIVE_BALL_C_HEADINGS
+                TrajectorySet.FOUR_BALL_SEMICIRCLE_A,
+                TrajectorySet.FOUR_BALL_SEMICIRCLE_A_HEADINGS
             );
     }
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        System.out.println("Running Five Ball Mode");
+        System.out.println("Running Four Ball Semicircle A Mode");
         runAction(new WaitAction(.5));
+        //still needs to be changed
         runAction(
             new SeriesAction(
                 new CollectAction(true),
@@ -69,10 +64,6 @@ public class FiveBallMode extends AutoModeBase {
                     trajectory1
                 ),
                 new RampUpShooterAction(Shooter.MID_FAR_VELOCITY),
-                trajectory2,
-                new WaitAction(.5),
-                new TurretAction(Turret.CARDINAL_SOUTH), // tune these two
-                new ShootAction(true, true),
                 new WaitAction(2),
                 new ParallelAction( // stop all at end - make a stop action in the future
                     new CollectAction(false),
