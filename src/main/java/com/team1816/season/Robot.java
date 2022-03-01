@@ -323,7 +323,13 @@ public class Robot extends TimedRobot {
                     ),
                     createAction(
                         mControlBoard::getFieldFollowing,
-                        () -> mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING)
+                        () -> {
+                            if (mTurret.getControlMode() == Turret.ControlMode.FIELD_FOLLOWING) {
+                                mTurret.setControlMode(Turret.ControlMode.CENTER_FOLLOWING);
+                            } else {
+                                mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
+                            }
+                        }
                     ),
                     createHoldAction(
                         mControlBoard::getTurretJogLeft,
