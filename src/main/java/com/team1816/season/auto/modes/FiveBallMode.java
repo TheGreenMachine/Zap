@@ -17,7 +17,6 @@ public class FiveBallMode extends AutoModeBase {
 
     public Pose2d startingPose;
     private TrajectoryAction trajectory1;
-    private TrajectoryAction trajectory2;
     private TrajectoryAction trajectory3;
 
     public FiveBallMode() {
@@ -31,11 +30,6 @@ public class FiveBallMode extends AutoModeBase {
             new TrajectoryAction(
                 TrajectorySet.FIVE_BALL_B,
                 TrajectorySet.FIVE_BALL_B_HEADINGS
-            );
-        trajectory2 =
-            new TrajectoryAction(
-                TrajectorySet.FIVE_BALL_C,
-                TrajectorySet.FIVE_BALL_C_HEADINGS
             );
         trajectory3 =
             new TrajectoryAction(
@@ -74,8 +68,6 @@ public class FiveBallMode extends AutoModeBase {
                     ),
                     trajectory1
                 ),
-                new ShootAction(false, true),
-                trajectory2,
                 new RampUpShooterAction(Shooter.MID_FAR_VELOCITY),
                 trajectory3,
                 new WaitAction(.5),
