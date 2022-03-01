@@ -144,12 +144,14 @@ public class LedManager extends Subsystem {
     }
 
     private void writeLedHardware(int r, int g, int b) {
+        // candle logic - all leds not on candle set to rgb state stuff (orange if disabled, etc...) -
+        // if the camera wants to turn on then candle = green, else IT ALSO MIMICS THE RGB STATE
         if (candle != null) {
             candle.setLEDs(r, g, b, 0, 8, 42);
             if (cameraLedOn) {
                 candle.setLEDs(0, MAX, 0, 0, 0, 8);
             } else {
-                candle.setLEDs(0, 0, 0, 0, 0, 8);
+                candle.setLEDs(r, g, b, 0, 0, 8);
             }
         }
         if (canifier != null) {
