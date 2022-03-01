@@ -15,6 +15,10 @@ public class TurretAction implements Action {
         this.turretAngle = turretAngle;
     }
 
+    public TurretAction(Turret.ControlMode mode){
+        turret.setControlMode(mode);
+    }
+
     @Override
     public void start() {
         turret.setTurretAngle(turretAngle);

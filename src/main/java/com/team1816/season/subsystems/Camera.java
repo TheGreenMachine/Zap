@@ -86,6 +86,7 @@ public class Camera extends Subsystem {
             }
             return Double.parseDouble(parts[1]);
         } catch (IOException e) {
+            //System.out.println("CAMERA EXCEPTION GET DISTANCE LINE 89: " + e);
             needsReconnect = System.currentTimeMillis();
             return 0;
         }

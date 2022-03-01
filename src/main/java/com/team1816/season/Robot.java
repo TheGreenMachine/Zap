@@ -415,7 +415,7 @@ public class Robot extends TimedRobot {
             if (!mDriveByCameraInAuto) {
                 mAutoModeExecutor.start();
             }
-
+            mDrive.setHeading(mAutoModeExecutor.getAutoMode().getTrajectory().getInitialPose().getRotation());
             mEnabledLooper.start();
         } catch (Throwable t) {
             throw t;
@@ -568,7 +568,7 @@ public class Robot extends TimedRobot {
         } catch (Throwable t) {
             throw t;
         }
-
+        //System.out.println("CAMERA DISTANCE LINE 571 Robot.java" +  mOrchestrator.getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
         if (Constants.kIsLoggingTeleOp) {
             logger.updateTopics();
             logger.log();

@@ -160,6 +160,7 @@ public class Orchestrator extends Subsystem {
     }
 
     public double getDistance(DistanceManager.SUBSYSTEM subsystem) {
+        System.out.println("CAMERA DISTANCE " + distanceManager.getOutput(camera.getDistance(), subsystem));
         return distanceManager.getOutput(camera.getDistance(), subsystem);
     }
 

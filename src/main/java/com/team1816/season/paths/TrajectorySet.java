@@ -14,28 +14,40 @@ public class TrajectorySet {
     public static Trajectory DRIVE_STRAIGHT;
     public static Trajectory TUNE_DRIVETRAIN;
     public static Trajectory LIVING_ROOM;
+    public static Trajectory TWO_BALL_A;
+    public static Trajectory TWO_BALL_B;
+    public static Trajectory TWO_BALL_C;
     public static Trajectory FIVE_BALL_A;
     public static Trajectory FIVE_BALL_B;
-    public static Trajectory FIVE_BALL_D;
+    public static Trajectory FIVE_BALL_C;
 
     public static List<Rotation2d> LIVING_ROOM_HEADINGS;
+    public static List<Rotation2d> TWO_BALL_A_HEADINGS;
+    public static List<Rotation2d> TWO_BALL_B_HEADINGS;
+    public static List<Rotation2d> TWO_BALL_C_HEADINGS;
     public static List<Rotation2d> FIVE_BALL_A_HEADINGS;
     public static List<Rotation2d> FIVE_BALL_B_HEADINGS;
-    public static List<Rotation2d> FIVE_BALL_D_HEADINGS;
+    public static List<Rotation2d> FIVE_BALL_C_HEADINGS;
 
     public TrajectorySet() {
         // Trajectories
         DRIVE_STRAIGHT = new DriveStraight(36).generateTrajectory();
         TUNE_DRIVETRAIN = new DriveStraight(264, 40).generateTrajectory();
         LIVING_ROOM = new LivingRoomPath().generateTrajectory();
+        TWO_BALL_A = new TwoBallAutoA().generateTrajectory();
+        TWO_BALL_B = new TwoBallAutoB().generateTrajectory();
+        TWO_BALL_C = new TwoBallAutoC().generateTrajectory();
         FIVE_BALL_A = new FiveBallAutoA().generateTrajectory();
         FIVE_BALL_B = new FiveBallAutoB().generateTrajectory();
-        FIVE_BALL_D = new FiveBallAutoD().generateTrajectory();
+        FIVE_BALL_C = new FiveBallAutoC().generateTrajectory();
 
         // Heading lists
         LIVING_ROOM_HEADINGS = new LivingRoomPath().generateHeadings();
+        TWO_BALL_A_HEADINGS = new TwoBallAutoA().generateHeadings();
+        TWO_BALL_B_HEADINGS = new TwoBallAutoB().generateHeadings();
+        TWO_BALL_C_HEADINGS = new TwoBallAutoC().generateHeadings();
         FIVE_BALL_A_HEADINGS = new FiveBallAutoA().generateHeadings();
         FIVE_BALL_B_HEADINGS = new FiveBallAutoB().generateHeadings();
-        FIVE_BALL_D_HEADINGS = new FiveBallAutoD().generateHeadings();
+        FIVE_BALL_C_HEADINGS = new FiveBallAutoC().generateHeadings();
     }
 }
