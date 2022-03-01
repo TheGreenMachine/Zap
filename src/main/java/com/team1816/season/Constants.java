@@ -24,6 +24,10 @@ public class Constants {
     public static final String CANBusRio = "rio";
     public static final String CANBusHighSpeed = "highSpeed";
 
+    // Field characterization
+    public static final double fieldCenterY = 8.23 / 2.0;
+    public static final double fieldCenterX = 16.46 / 2.0;
+
     // Drivetrain characterization
     public static final double kDriveWheelTrackWidthInches = factory.getConstant(
         "trackWidth",
@@ -57,7 +61,7 @@ public class Constants {
     );
     public static double kTrackScrubFactor = factory.getConstant("kTrackScrubFactor");
 
-    public static final Pose2d StartingPose = new Pose2d(0.5, 3.5, new Rotation2d());
+    public static Pose2d StartingPose = new Pose2d(0.5, 3.5, new Rotation2d());
 
     // CAN Timeouts
     public static final int kCANTimeoutMs = 10; // use for important on the fly updates
@@ -218,7 +222,9 @@ public class Constants {
         kMaxLookAheadSpeed - kMinLookAheadSpeed;
     public static double kCameraFrameRate = 30;
     public static final double kPathFollowingMaxAccel = factory.getConstant("maxAccel");
-    public static double kPathFollowingMaxVelMeters = factory.getConstant("maxVelPathFollowing");
+    public static double kPathFollowingMaxVelMeters = factory.getConstant(
+        "maxVelPathFollowing"
+    );
     public static double kOpenLoopMaxVelMeters = factory.getConstant("maxVelOpenLoop");
     public static final double kTicksPerRevolution = 4096;
 
@@ -252,7 +258,7 @@ public class Constants {
 
     public static final double kPXController = 1;
     public static final double kPYController = 1;
-    public static final double kPThetaController = 690; // haha funny number - figure out why kP needs to be so big
+    public static final double kPThetaController = 690;
     public static final double kDThetaController = 0; // 2000;
     public static double kMaxAngularSpeed = factory.getConstant("maxRotVel"); // rad/sec
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;

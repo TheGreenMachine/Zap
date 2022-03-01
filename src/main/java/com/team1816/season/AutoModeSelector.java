@@ -134,6 +134,7 @@ public class AutoModeSelector {
             case LIVING_ROOM:
                 return (Optional.of(new LivingRoomMode()));
             case FIVE_BALL:
+                Constants.StartingPose = new FiveBallMode().startingPose;
                 return (Optional.of(new FiveBallMode()));
             default:
                 break;

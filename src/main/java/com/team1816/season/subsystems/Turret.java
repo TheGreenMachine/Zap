@@ -11,6 +11,7 @@ import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
 import com.team1816.season.RobotState;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 
 @Singleton
@@ -39,6 +40,7 @@ public class Turret extends Subsystem implements PidProvider {
     private final int TURRET_MASK;
     private final double TURRET_ENC_RATIO;
     private static final int ALLOWABLE_ERROR_TICKS = 5;
+    private static double centerFollowingCorrection = 0;
     private static Turret INSTANCE;
 
     // Components
@@ -72,7 +74,8 @@ public class Turret extends Subsystem implements PidProvider {
         TURRET_PPR = (int) factory.getConstant(NAME, "turretPPR");
         TURRET_MASK = TURRET_PPR - 1;
         TURRET_ENC_RATIO = (double) TURRET_PPR / TURRET_ENCODER_PPR;
-        ABS_TICKS_SOUTH = ((int) factory.getConstant(NAME, "absPosTicksSouth")) + TURRET_ENCODER_PPR;
+        ABS_TICKS_SOUTH =
+            ((int) factory.getConstant(NAME, "absPosTicksSouth")) + TURRET_ENCODER_PPR;
         HALF_ENCPPR = TURRET_ENCODER_PPR / 2;
         ZERO_OFFSET = TURRET_PPR / 2 - HALF_ENCPPR - TURRET_ENCODER_PPR;
         turret.setNeutralMode(NeutralMode.Brake);
@@ -122,12 +125,8 @@ public class Turret extends Subsystem implements PidProvider {
      * converts 0-360 to 0-TURRET_ENCODER_PPR with zero offset
      */
     public int convertTurretDegreesToTicks(double degrees) {
-        return (
-            (int) (((degrees) / 360.0) * TURRET_PPR)
-        );
+        return ((int) (((degrees) / 360.0) * TURRET_PPR));
     }
-
-
 
     /**
      * converts 0-TURRET_ENCODER_PPR with zero offset
@@ -141,7 +140,7 @@ public class Turret extends Subsystem implements PidProvider {
         if (turret instanceof IMotorSensor) {
             var sensors = (IMotorSensor) turret;
             // If we have a sensor position that resides within the same absolute encoder revolution as the abs_ticks_south position then it is safe to reset
-            if (sensors.getQuadraturePosition() < TURRET_ENCODER_PPR) {
+            if (Math.abs(sensors.getQuadraturePosition() - ZERO_OFFSET - ABS_TICKS_SOUTH) < TURRET_ENCODER_PPR) {
                 //get absolute sensor value
                 var sensorVal = sensors.getPulseWidthPosition();
                 var offset = ZERO_OFFSET - (sensorVal - HALF_ENCPPR);
@@ -211,6 +210,7 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     private synchronized void setTurretPosition(double position) {
+        //Since we are using position we need ensure value stays in one rotation
         if (desiredTurretPos != (int) position) {
             desiredTurretPos = (int) position;
             outputsChanged = true;
@@ -223,10 +223,17 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     public synchronized void setFieldFollowingAngle(double angle) {
-        if(angle < 0){
+        if (angle < 0) {
             angle = angle + 360; // if angle is negative, wrap around - we only deal with values from 0 to 360
         }
         setTurretPosition(convertTurretDegreesToTicks(angle));
+    }
+
+    public synchronized void setCenterFollowingCorrection(double angle) {
+        if (angle < 0) {
+            angle = angle + 360;
+        }
+        centerFollowingCorrection = angle;
     }
 
     public synchronized void lockTurret() {
@@ -237,9 +244,16 @@ public class Turret extends Subsystem implements PidProvider {
         return convertTurretTicksToDegrees(getActualTurretPositionTicks());
     }
 
-    // this is what is eventually referred to in readFromHardware, so we're undoing conversions here
+    // this is what is eventually referred to in readFromHardware so we're undoing conversions here
     public double getActualTurretPositionTicks() {
-        return (turret.getSelectedSensorPosition(kPrimaryCloseLoop) - ABS_TICKS_SOUTH - ZERO_OFFSET);
+        return (
+            (
+                turret.getSelectedSensorPosition(kPrimaryCloseLoop) -
+                ABS_TICKS_SOUTH -
+                ZERO_OFFSET
+            ) %
+            TURRET_MASK
+        );
     }
 
     public double getTargetPosition() {
@@ -267,6 +281,10 @@ public class Turret extends Subsystem implements PidProvider {
                 trackGyro();
                 positionControl(followingTurretPos);
                 break;
+            case CENTER_FOLLOWING:
+                trackCenter();
+                positionControl(followingTurretPos);
+                break;
             case POSITION:
                 positionControl(desiredTurretPos);
                 break;
@@ -289,10 +307,9 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     private void trackGyro() {
-        int fieldTickOffset = // currently negated because motor is running counterclockwise
-            - convertTurretDegreesToTicks(
-                robotState.field_to_vehicle.getRotation().getDegrees()
-            );
+        int fieldTickOffset = -convertTurretDegreesToTicks( // currently negated because motor is running counterclockwise
+            robotState.field_to_vehicle.getRotation().getDegrees()
+        );
         int adj = (desiredTurretPos + fieldTickOffset);
         if (adj != followingTurretPos) {
             followingTurretPos = adj;
@@ -300,9 +317,35 @@ public class Turret extends Subsystem implements PidProvider {
         }
     }
 
+    private void trackCenter() {
+        int fieldTickOffset = -convertTurretDegreesToTicks( // currently negated because motor is running counterclockwise
+            robotState.field_to_vehicle.getRotation().getDegrees()
+        );
+        double opposite = Constants.fieldCenterY - robotState.field_to_vehicle.getY();
+        double adjacent = Constants.fieldCenterX - robotState.field_to_vehicle.getX();
+        double turretAngle = 0;
+        turretAngle = Math.atan(opposite / adjacent);
+        if (adjacent < 0) turretAngle += Math.PI;
+        int centerOffset = convertTurretDegreesToTicks(
+            Units.radiansToDegrees(turretAngle)
+        );
+        int centerFollowingCorrectionTicks = convertTurretDegreesToTicks(
+            centerFollowingCorrection
+        );
+        int adj =
+            (
+                desiredTurretPos +
+                fieldTickOffset +
+                centerOffset +
+                centerFollowingCorrectionTicks
+            );
+        if (adj != followingTurretPos) {
+            followingTurretPos = adj;
+            outputsChanged = true;
+        }
+    }
+
     private void positionControl(int rawPos) {
-        // is the turret encoder mask even needed here? is it needed anywhere?
-        // it also currently corresponds to the turret mask and not the absolute mask (which is referred to as the encoder value).
         int adjPos = (rawPos + ABS_TICKS_SOUTH + ZERO_OFFSET) % TURRET_MASK;
         if (outputsChanged) {
             System.out.println(adjPos + " +++++");
@@ -353,8 +396,9 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     public enum ControlMode {
-        FIELD_FOLLOWING,
         CAMERA_FOLLOWING,
+        FIELD_FOLLOWING,
+        CENTER_FOLLOWING,
         POSITION,
         MANUAL,
     }

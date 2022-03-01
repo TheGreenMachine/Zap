@@ -145,11 +145,11 @@ public class LedManager extends Subsystem {
 
     private void writeLedHardware(int r, int g, int b) {
         if (candle != null) {
-            candle.setLEDs(r, g, b, 0 , 8, 42);
-            if(cameraLedOn){
+            candle.setLEDs(r, g, b, 0, 8, 42);
+            if (cameraLedOn) {
                 candle.setLEDs(0, MAX, 0, 0, 0, 8);
             } else {
-                candle.setLEDs(0,0,0,0,0,8);
+                candle.setLEDs(0, 0, 0, 0, 0, 8);
             }
         }
         if (canifier != null) {

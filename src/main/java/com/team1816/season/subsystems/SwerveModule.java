@@ -1,5 +1,7 @@
 package com.team1816.season.subsystems;
 
+import static com.team1816.season.subsystems.Drive.factory;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -34,7 +36,6 @@ public class SwerveModule implements ISwerveModule {
 
     // Constants
     private final Constants.Swerve mConstants;
-
 
     public SwerveModule(
         String subsystemName,

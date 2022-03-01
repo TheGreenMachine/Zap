@@ -108,7 +108,7 @@ subsystems:
             encPPR: 4096
             turretPPR: 53248 # 4096 * 13
     shooter:
-        implemented: false
+        implemented: true
         falcons:
             shooterMain: 21
             shooterFollower: 34
@@ -129,7 +129,7 @@ subsystems:
             maxVel: 11500
             coast: 9000
     climber:
-        implemented: false
+        implemented: true
         sparkmaxes:
             elevator: 20
         solenoids:
