@@ -274,6 +274,7 @@ public class Turret extends Subsystem implements PidProvider {
                 positionControl(followingTurretPos);
                 break;
             case CENTER_FOLLOWING:
+                trackGyro();
                 trackCenter();
                 positionControl(followingTurretPos);
                 break;
@@ -310,9 +311,6 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     private void trackCenter() {
-        int fieldTickOffset = -convertTurretDegreesToTicks( // currently negated because motor is running counterclockwise
-            robotState.field_to_vehicle.getRotation().getDegrees()
-        );
         double opposite = Constants.fieldCenterY - robotState.field_to_vehicle.getY();
         double adjacent = Constants.fieldCenterX - robotState.field_to_vehicle.getX();
         double turretAngle = 0;
@@ -324,7 +322,6 @@ public class Turret extends Subsystem implements PidProvider {
         int adj =
             (
                 desiredTurretPos +
-                fieldTickOffset +
                 centerOffset
             );
         if (adj != followingTurretPos) {
