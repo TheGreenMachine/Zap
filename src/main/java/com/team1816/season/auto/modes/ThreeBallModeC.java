@@ -9,25 +9,24 @@ import com.team1816.season.auto.actions.ShootAction;
 import com.team1816.season.auto.actions.TurretAction;
 import com.team1816.season.paths.TrajectorySet;
 import com.team1816.season.subsystems.Shooter;
-import com.team1816.season.subsystems.Turret;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
-public class TwoBallModeA extends AutoModeBase {
+public class ThreeBallModeC extends AutoModeBase {
     public Pose2d startingPose;
 
-    public TwoBallModeA() {
+    public ThreeBallModeC() {
         trajectory =
             new TrajectoryAction(
-                TrajectorySet.TWO_BALL_A,
-                TrajectorySet.TWO_BALL_A_HEADINGS
+                TrajectorySet.THREE_BALL_C,
+                TrajectorySet.THREE_BALL_C_HEADINGS
             );
         startingPose = trajectory.getTrajectory().getInitialPose();
     }
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        System.out.println("Running Two Ball A Mode");
+        System.out.println("Running Three Ball A Mode");
         runAction(new WaitAction(.5));
         runAction(
             new SeriesAction(
@@ -36,6 +35,7 @@ public class TwoBallModeA extends AutoModeBase {
                 trajectory,
                 new ParallelAction(
                     new SeriesAction(
+                        // STUFF BELOW needs to be changed
                         new ParallelAction(
                             new WaitUntilInsideRegion(
                                 new Translation2d(0, 0), // make actual region to change hood

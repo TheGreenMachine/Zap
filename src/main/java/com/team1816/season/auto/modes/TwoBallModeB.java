@@ -27,7 +27,7 @@ public class TwoBallModeB extends AutoModeBase {
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        System.out.println("Running Five Ball Mode");
+        System.out.println("Running Two Ball B Mode");
         runAction(new WaitAction(.5));
         runAction(
             new SeriesAction(
