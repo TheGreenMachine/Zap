@@ -288,21 +288,22 @@ public class Robot extends TimedRobot {
                             }
                         }
                     ),
-                    createHoldAction(
-                        mControlBoard::getRevShooter,
-                        revving -> {
-                            mOrchestrator.setRevving(revving, Shooter.MAX_VELOCITY);
-                            if (!revving) {
-                                mTurret.setControlMode(
-                                    Turret.ControlMode.FIELD_FOLLOWING
-                                );
-                                mShooter.setHood(true);
-                            }
-                        }
-                    ),
+//                    createHoldAction(
+//                        mControlBoard::getRevShooter,
+//                        revving -> {
+//                            mOrchestrator.setRevving(revving, Shooter.MAX_VELOCITY);
+//                            if (!revving) {
+//                                mTurret.setControlMode(
+//                                    Turret.ControlMode.FIELD_FOLLOWING
+//                                );
+//                                mShooter.setHood(true);
+//                            }
+//                        }
+//                    ),
                     createHoldAction(
                         mControlBoard::getShoot,
                         shooting -> {
+                            mOrchestrator.setRevving(shooting, Shooter.MID_VELOCITY);
                             mOrchestrator.setFiring(shooting);
                         }
                     ),
