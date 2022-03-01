@@ -21,6 +21,11 @@ public class Climber extends Subsystem {
     private boolean isDeployed;
     private boolean outputsChanged = false;
 
+    private double climberMaxPosition = factory.getConstant("climberMaxPosition", -200);
+    private double climberMinPosition = factory.getConstant("climberMinPosition", -20);
+    private double climberMidPosition = (climberMaxPosition + climberMinPosition)/2;
+
+
     public Climber() {
         super(NAME);
         elevator = factory.getMotor(NAME, "elevator");
@@ -30,6 +35,22 @@ public class Climber extends Subsystem {
     public void setClimberPower(double power) {
         climberPow = power;
         outputsChanged = true;
+    }
+
+    public void setClimberPosition(double position) {
+        elevator.set(ControlMode.Position, position);
+    }
+
+    public void setClimberUp() {
+        elevator.set(ControlMode.Position, climberMaxPosition);
+    }
+
+    public void setClimberMid() {
+        elevator.set(ControlMode.Position, climberMidPosition);
+    }
+
+    public void setClimberDown() {
+        elevator.set(ControlMode.Position, climberMinPosition);
     }
 
     public boolean getDeployed() {

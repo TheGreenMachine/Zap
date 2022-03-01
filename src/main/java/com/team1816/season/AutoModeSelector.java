@@ -90,6 +90,7 @@ public class AutoModeSelector {
 
         mModeChooser.addOption("Four Ball Semicircle A", DesiredMode.FOUR_BALL_SEMI_A);
         mModeChooser.addOption("Four Ball Semicircle B", DesiredMode.FOUR_BALL_SEMI_B);
+        mModeChooser.addOption("Four Ball C", DesiredMode.FOUR_BALL_C);
 
         mModeChooser.addOption("Five Ball", DesiredMode.FIVE_BALL);
         mModeChooser.addOption("Random Testing Path", DesiredMode.RANDOM_TESTING_PATH);
@@ -172,6 +173,8 @@ public class AutoModeSelector {
                 return (Optional.of(new FourBallSemiCircleModeA()));
             case FOUR_BALL_SEMI_B:
                 return (Optional.of(new FourBallSemiCircleModeB()));
+            case FOUR_BALL_C:
+                return (Optional.of(new FourBallModeC()));
             case FIVE_BALL:
                 Constants.StartingPose = new FiveBallMode().startingPose;
                 return (Optional.of(new FiveBallMode()));

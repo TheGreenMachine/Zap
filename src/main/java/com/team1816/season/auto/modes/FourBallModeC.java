@@ -13,16 +13,14 @@ import com.team1816.season.subsystems.Turret;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
-public class FourBallSemiCircleModeB extends AutoModeBase {
-
+public class FourBallModeC extends AutoModeBase {
     public Pose2d startingPose;
-    private TrajectoryAction trajectory1;
 
-    public FourBallSemiCircleModeB() {
+    public FourBallModeC() {
         trajectory =
             new TrajectoryAction(
-                TrajectorySet.FOUR_BALL_SEMICIRCLE_B,
-                TrajectorySet.FOUR_BALL_SEMICIRCLE_B_HEADINGS
+                TrajectorySet.FOUR_BALL_C,
+                TrajectorySet.FOUR_BALL_C_HEADINGS
             );
         startingPose = trajectory.getTrajectory().getInitialPose();
     }
@@ -42,29 +40,16 @@ public class FourBallSemiCircleModeB extends AutoModeBase {
                     // stuff to change
                     new SeriesAction(
                         new WaitUntilInsideRegion(
-                            new Translation2d(241, 53), // make actual region to change hood
-                            new Translation2d(261, 16)
+                            new Translation2d(238, 61), // make actual region to change hood
+                            new Translation2d(265, 12)
                         ),
                         new ShootAction(true, true),
                         new WaitUntilInsideRegion(
-                            new Translation2d(0, 0), // make actual region to change hood
-                            new Translation2d(205, 130)
+                            new Translation2d(106, 178), // make actual region to change hood
+                            new Translation2d(158, 136)
                         ),
-                        new ShootAction(true, true),
-                        new CollectAction(false),
-                        new WaitUntilInsideRegion(
-                            new Translation2d(165, 182), // make actual region to change hood
-                            new Translation2d(199, 161)
-                        ),
-                        new CollectAction(true),
-                        new WaitUntilInsideRegion(
-                            new Translation2d(202, 271),
-                            new Translation2d(238, 239)
-                        ),
-                        //new turretAction(90),
                         new ShootAction(true, true)
-                    ),
-                    trajectory1
+                    )
                 ),
                 new RampUpShooterAction(Shooter.MID_FAR_VELOCITY),
                 new WaitAction(2),

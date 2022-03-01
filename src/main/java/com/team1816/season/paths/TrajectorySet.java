@@ -30,6 +30,7 @@ public class TrajectorySet {
     public static Trajectory FIVE_BALL_A;
     public static Trajectory FIVE_BALL_B;
     public static Trajectory FIVE_BALL_C;
+    public static Trajectory FIVE_BALL_D; // different
 
     public static List<Rotation2d> TWO_BALL_A_HEADINGS;
     public static List<Rotation2d> TWO_BALL_B_HEADINGS;
@@ -43,6 +44,7 @@ public class TrajectorySet {
     public static List<Rotation2d> FIVE_BALL_A_HEADINGS;
     public static List<Rotation2d> FIVE_BALL_B_HEADINGS;
     public static List<Rotation2d> FIVE_BALL_C_HEADINGS;
+    public static List<Rotation2d> FIVE_BALL_D_HEADINGS;
 
     public TrajectorySet() {
         // Trajectories
@@ -61,6 +63,7 @@ public class TrajectorySet {
         FIVE_BALL_A = new FiveBallAutoA().generateTrajectory();
         FIVE_BALL_B = new FiveBallAutoB().generateTrajectory();
         FIVE_BALL_C = new FiveBallAutoC().generateTrajectory();
+        FIVE_BALL_D = new FiveBallAutoE().generateTrajectory();
 
         // Heading lists
         LIVING_ROOM_HEADINGS = new LivingRoomPath().generateHeadings();
@@ -76,5 +79,6 @@ public class TrajectorySet {
         FIVE_BALL_A_HEADINGS = new FiveBallAutoA().generateHeadings();
         FIVE_BALL_B_HEADINGS = new FiveBallAutoB().generateHeadings();
         FIVE_BALL_C_HEADINGS = new FiveBallAutoC().generateHeadings();
+        FIVE_BALL_D_HEADINGS = new FiveBallAutoE().generateHeadings();
     }
 }

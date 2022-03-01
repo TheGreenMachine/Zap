@@ -134,6 +134,9 @@ subsystems:
             elevator: 20
         solenoids:
             deployer: 2
+        constants:
+            climberMinPosition: -5
+            climberMaxPosition: -280
     elevator:
         implemented: false
         talons:
@@ -165,7 +168,7 @@ subsystems:
 pcm: 28
 constants:
     maxTicks: 12275.7 # ticks per 100ms TODO make into constant unique to each subsystem
-    maxRotVel: 6.5
+    maxRotVel: 7.2
     trackWidth: 21 #inches
     wheelbaseLength: 21.5 #inches
     maxVelOpenLoop: 3 # 160 # 240 # inches/s # 22560 native units ---30
