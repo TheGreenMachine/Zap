@@ -38,10 +38,18 @@ public class ThreeBallModeB extends AutoModeBase {
                         // STUFF BELOW needs to be changed
                         new ParallelAction(
                             new WaitUntilInsideRegion(
-                                new Translation2d(0, 0), // make actual region to change hood
-                                new Translation2d(195, 240)
+                                new Translation2d(198, 23), // make actual region to change hood
+                                new Translation2d(234, 57)
                             ),
-                            new TurretAction(149.6) // to be changed
+                            new TurretAction(228.89) // to be changed
+                        ),
+                        new ShootAction(true, true),
+                        new ParallelAction(
+                            new WaitUntilInsideRegion(
+                                new Translation2d(285, 5), // make actual region to change hood
+                                new Translation2d(306, 21)
+                            ),
+                            new TurretAction(264.23) // to be changed
                         ),
                         new ShootAction(true, true),
                         new WaitAction(2),

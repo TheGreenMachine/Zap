@@ -26,7 +26,7 @@ public class ThreeBallModeC extends AutoModeBase {
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        System.out.println("Running Three Ball A Mode");
+        System.out.println("Running Three Ball C Mode");
         runAction(new WaitAction(.5));
         runAction(
             new SeriesAction(

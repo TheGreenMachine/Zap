@@ -11,9 +11,9 @@ public class ThreeBallAutoA implements PathContainer {
     @Override
     public List<Pose2d> buildWaypoints() {
         return List.of(
-            new Pose2d(256, 216, Rotation2d.fromDegrees(135)),
-            new Pose2d(193, 242, Rotation2d.fromDegrees(-120)),
-            new Pose2d(207, 62, Rotation2d.fromDegrees(-60))
+            new Pose2d(246, 216, Rotation2d.fromDegrees(135)),
+            new Pose2d(183, 242, Rotation2d.fromDegrees(-120)),
+            new Pose2d(210, 48, Rotation2d.fromDegrees(-60))
         );
     }
 
