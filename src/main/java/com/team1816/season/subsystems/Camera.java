@@ -37,6 +37,7 @@ public class Camera extends Subsystem {
     }
 
     private String query(String message) throws IOException {
+        socketOut = new PrintWriter(socket.getOutputStream(), true);
         if (usingVision) {
             socketOut.write(message + "\n");
             socketOut.flush();
@@ -70,7 +71,7 @@ public class Camera extends Subsystem {
             }
             double deltaXPixels = (x - (VIDEO_WIDTH / 2)); // Calculate deltaX from center of screen
             return Math.toDegrees(Math.atan2(deltaXPixels, CAMERA_FOCAL_LENGTH)) * 0.64;
-        } catch (IOException e) {
+        } catch (Exception e) {
             needsReconnect = System.currentTimeMillis();
             return 0;
         }

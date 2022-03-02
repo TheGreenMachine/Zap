@@ -256,9 +256,9 @@ public class Constants {
 
     public static final boolean kUseAutoAim = factory.getConstant("useAutoAim") > 0;
 
-    public static final double kPXController = 20;
-    public static final double kPYController = 20;
-    public static final double kPThetaController = 750;
+    public static final double kPXController = 1;
+    public static final double kPYController = 1;
+    public static final double kPThetaController = 700;
     public static final double kDThetaController = 0; // 2000;
     public static double kMaxAngularSpeed = factory.getConstant("maxRotVel"); // rad/sec
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI;

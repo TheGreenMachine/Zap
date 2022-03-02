@@ -91,7 +91,7 @@ subsystems:
             raveSpeed: 0.05
             cameraLed: 1
     turret:
-        implemented: true
+        implemented: false
         pidConfig:
             slot0:
                 kP: 0.15
@@ -129,7 +129,7 @@ subsystems:
             maxVel: 11500
             coast: 9000
     climber:
-        implemented: true
+        implemented: false
         sparkmaxes:
             elevator: 20
         solenoids:
@@ -164,7 +164,9 @@ subsystems:
             collecting: .35
             flush: -.75
     camera:
-        implemented: false #if false then also turn off useAutoAim
+        implemented: true #if false then also turn off useAutoAim
+        constants:
+            useAutoAim: 1
 pcm: 28
 constants:
     maxTicks: 12275.7 # ticks per 100ms TODO make into constant unique to each subsystem
