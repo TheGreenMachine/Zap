@@ -165,8 +165,11 @@ subsystems:
             flush: -.75
     camera:
         implemented: true #if false then also turn off useAutoAim
+<<<<<<< HEAD
         constants:
             useAutoAim: 1
+=======
+>>>>>>> c2f9e91fd98e0a81e0caa476cd7c04178f8b31e6
 pcm: 28
 constants:
     maxTicks: 12275.7 # ticks per 100ms TODO make into constant unique to each subsystem
@@ -179,7 +182,7 @@ constants:
     sensorPhase: 0
     kTrackScrubFactor: 1.0
     pathKs: 2
-    useAutoAim: 0
+    useAutoAim: 1
     verbose: 0 # 0 or 1
     heading_kI: 0
     heading_kD: 0

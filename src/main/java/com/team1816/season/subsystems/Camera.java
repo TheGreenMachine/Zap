@@ -28,7 +28,7 @@ public class Camera extends Subsystem {
     private Socket socket;
     private BufferedReader socketIn;
     private PrintWriter socketOut;
-    private Boolean usingVision = factory.getConstant("useAutoAim") > 0;
+    private Boolean usingVision = false;
     private long needsReconnect = 0;
 
     public Camera() {
@@ -37,9 +37,13 @@ public class Camera extends Subsystem {
     }
 
     private String query(String message) throws IOException {
+<<<<<<< HEAD
         socketOut = new PrintWriter(socket.getOutputStream(), true);
+=======
+        if (needsReconnect != 0) return "";
+>>>>>>> c2f9e91fd98e0a81e0caa476cd7c04178f8b31e6
         if (usingVision) {
-            socketOut.write(message + "\n");
+            socketOut.write(message);
             socketOut.flush();
             return socketIn.readLine();
         }
