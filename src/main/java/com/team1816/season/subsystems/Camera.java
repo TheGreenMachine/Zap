@@ -37,6 +37,7 @@ public class Camera extends Subsystem {
     }
 
     private String query(String message) throws IOException {
+        if (needsReconnect != 0) return "";
         if (usingVision) {
             socketOut.write(message);
             socketOut.flush();
