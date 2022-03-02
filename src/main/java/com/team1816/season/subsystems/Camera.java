@@ -41,15 +41,15 @@ public class Camera extends Subsystem {
         if (usingVision) {
             socketOut.write(message);
             socketOut.flush();
-            return socketIn.readLine();
+            return socketIn.readLine();   
         }
         return "";
     }
 
     private boolean socketConnect() {
         try {
-            socket = new Socket();
-            socket.connect(new InetSocketAddress(InetAddress.getLocalHost(), 5802), 10);
+            socket = new Socket("10.18.16.16", 5802);
+            //socket.connect(new InetSocketAddress(InetAddress.getLocalHost(), 5802), 10);
             socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             socketOut = new PrintWriter(socket.getOutputStream(), true);
         } catch (IOException e) {
