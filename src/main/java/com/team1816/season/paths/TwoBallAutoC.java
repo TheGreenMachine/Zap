@@ -12,7 +12,7 @@ public class TwoBallAutoC implements PathContainer {
     public List<Pose2d> buildWaypoints() {
         return List.of(
             new Pose2d(329, 71, Rotation2d.fromDegrees(270)),
-            new Pose2d(304, 26, Rotation2d.fromDegrees(180))
+            new Pose2d(304, 21, Rotation2d.fromDegrees(180))
         );
     }
 

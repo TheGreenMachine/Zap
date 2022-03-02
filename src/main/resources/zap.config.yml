@@ -164,12 +164,9 @@ subsystems:
             collecting: .35
             flush: -.75
     camera:
-        implemented: true #if false then also turn off useAutoAim
-<<<<<<< HEAD
+        implemented: false #if false then also turn off useAutoAim
         constants:
             useAutoAim: 1
-=======
->>>>>>> c2f9e91fd98e0a81e0caa476cd7c04178f8b31e6
 pcm: 28
 constants:
     maxTicks: 12275.7 # ticks per 100ms TODO make into constant unique to each subsystem

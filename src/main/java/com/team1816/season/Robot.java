@@ -415,7 +415,7 @@ public class Robot extends TimedRobot {
             mDrive.setControlState(Drive.DriveControlState.TRAJECTORY_FOLLOWING);
 
             mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
-            mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
+            mTurret.setControlMode(Turret.ControlMode.POSITION);
 
             System.out.println("Auto init - " + mDriveByCameraInAuto);
             if (!mDriveByCameraInAuto) {
