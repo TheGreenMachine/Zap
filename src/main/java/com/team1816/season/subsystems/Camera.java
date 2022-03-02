@@ -37,11 +37,7 @@ public class Camera extends Subsystem {
     }
 
     private String query(String message) throws IOException {
-<<<<<<< HEAD
-        socketOut = new PrintWriter(socket.getOutputStream(), true);
-=======
         if (needsReconnect != 0) return "";
->>>>>>> c2f9e91fd98e0a81e0caa476cd7c04178f8b31e6
         if (usingVision) {
             socketOut.write(message);
             socketOut.flush();
@@ -67,15 +63,18 @@ public class Camera extends Subsystem {
         if (!usingVision) return 0;
         try {
             String line = query("center_x");
-            String coord = line.split(PROTOCOL_LINE)[1];
-            double x = Double.parseDouble(coord);
+            String[] coords = line.split(PROTOCOL_LINE);
+            if (coords.length < 2) {
+                return 0;
+            }
+            double x = Double.parseDouble(coords[1]);
             if (x < 0) {
                 // Reset deltaX to 0 if contour not detected
                 return 0;
             }
             double deltaXPixels = (x - (VIDEO_WIDTH / 2)); // Calculate deltaX from center of screen
             return Math.toDegrees(Math.atan2(deltaXPixels, CAMERA_FOCAL_LENGTH)) * 0.64;
-        } catch (Exception e) {
+        } catch (IOException e) {
             needsReconnect = System.currentTimeMillis();
             return 0;
         }
@@ -101,8 +100,11 @@ public class Camera extends Subsystem {
         if (!usingVision) return 0;
         try {
             String line = query("center_x");
-            String coord = line.split(PROTOCOL_LINE)[1];
-            return Double.parseDouble(coord);
+            String[] coords = line.split(PROTOCOL_LINE);
+            if (coords.length < 2) {
+                return 0;
+            }
+            return Double.parseDouble(coords[1]);
         } catch (IOException e) {
             needsReconnect = System.currentTimeMillis();
             return 0;
