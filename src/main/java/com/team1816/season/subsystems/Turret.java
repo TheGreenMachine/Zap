@@ -74,9 +74,9 @@ public class Turret extends Subsystem implements PidProvider {
         TURRET_MASK = TURRET_PPR - 1;
         TURRET_ENC_RATIO = (double) TURRET_PPR / TURRET_ENCODER_PPR;
         ABS_TICKS_SOUTH =
-            ((int) factory.getConstant(NAME, "absPosTicksSouth")) + TURRET_ENCODER_PPR;
+            ((int) factory.getConstant(NAME, "absPosTicksSouth"));// + TURRET_ENCODER_PPR;
         HALF_ENCPPR = TURRET_ENCODER_PPR / 2;
-        ZERO_OFFSET = TURRET_PPR / 2 - HALF_ENCPPR - TURRET_ENCODER_PPR;
+        ZERO_OFFSET = TURRET_PPR / 2 - HALF_ENCPPR; // - TURRET_ENCODER_PPR;
         turret.setNeutralMode(NeutralMode.Brake);
 
         PIDSlotConfiguration pidConfig = factory.getPidSlotConfig(NAME, pidSlot);

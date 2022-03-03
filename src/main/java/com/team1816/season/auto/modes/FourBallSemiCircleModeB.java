@@ -16,7 +16,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 public class FourBallSemiCircleModeB extends AutoModeBase {
 
     public Pose2d startingPose;
-    private TrajectoryAction trajectory1;
 
     public FourBallSemiCircleModeB() {
         trajectory =
@@ -63,8 +62,7 @@ public class FourBallSemiCircleModeB extends AutoModeBase {
                         ),
                         //new turretAction(90),
                         new ShootAction(true, true)
-                    ),
-                    trajectory1
+                    )
                 ),
                 new RampUpShooterAction(Shooter.MID_FAR_VELOCITY),
                 new WaitAction(2),

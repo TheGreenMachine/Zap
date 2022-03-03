@@ -576,7 +576,7 @@ public class Robot extends TimedRobot {
         } catch (Throwable t) {
             throw t;
         }
-        //System.out.println("CAMERA DISTANCE LINE 571 Robot.java" +  mOrchestrator.getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
+        //System.out.println("CAMERA DISTANCE LINE 579 Robot.java" +  mCamera.getDistance());
         if (Constants.kIsLoggingTeleOp) {
             logger.updateTopics();
             logger.log();

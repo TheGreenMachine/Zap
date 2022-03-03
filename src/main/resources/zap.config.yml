@@ -108,7 +108,7 @@ subsystems:
             encPPR: 4096
             turretPPR: 53248 # 4096 * 13
     shooter:
-        implemented: false
+        implemented: true
         falcons:
             shooterMain: 21
             shooterFollower: 34
@@ -129,7 +129,7 @@ subsystems:
             maxVel: 11500
             coast: 9000
     climber:
-        implemented: false
+        implemented: true
         sparkmaxes:
             elevator: 20
         solenoids:
@@ -138,21 +138,21 @@ subsystems:
             climberMinPosition: -5
             climberMaxPosition: -280
     elevator:
-        implemented: false
+        implemented: true
         talons:
             elevator: 32
         constants:
             ballSensor: 0
     spindexer:
-        implemented: false
+        implemented: true
         talons:
             spindexer: 31
         solenoids:
             feederFlap: -1
     hopper:
-        implemented: false
+        implemented: true
     collector:
-        implemented: false
+        implemented: true
         sparkmaxes:
             intake: 23
         invertMotor:
@@ -164,7 +164,7 @@ subsystems:
             collecting: .35
             flush: -.75
     camera:
-        implemented: false #if false then also turn off useAutoAim
+        implemented: true #if false then also turn off useAutoAim
         constants:
             useAutoAim: 1
 pcm: 28

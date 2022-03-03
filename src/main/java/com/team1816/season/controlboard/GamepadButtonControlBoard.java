@@ -16,13 +16,13 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
     private final double kDPadDelay = 0.02;
     private DelayedBoolean mDPadValid;
 
+    private final Controller mController;
+
     @Inject
     private GamepadButtonControlBoard(Controller.Factory controller) {
         mController = controller.getControllerInstance(Constants.kButtonGamepadPort);
         reset();
     }
-
-    private final Controller mController;
 
     @Override
     public void setRumble(boolean on) {

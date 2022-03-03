@@ -28,7 +28,7 @@ public class Camera extends Subsystem {
     private Socket socket;
     private BufferedReader socketIn;
     private PrintWriter socketOut;
-    private Boolean usingVision = false;
+    private Boolean usingVision = true;
     private long needsReconnect = 0;
 
     public Camera() {
@@ -53,6 +53,7 @@ public class Camera extends Subsystem {
             socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             socketOut = new PrintWriter(socket.getOutputStream(), true);
         } catch (IOException e) {
+            System.out.println("socket Connect error: " + e.getMessage());
             needsReconnect = System.currentTimeMillis();
             return false;
         }
@@ -75,6 +76,7 @@ public class Camera extends Subsystem {
             double deltaXPixels = (x - (VIDEO_WIDTH / 2)); // Calculate deltaX from center of screen
             return Math.toDegrees(Math.atan2(deltaXPixels, CAMERA_FOCAL_LENGTH)) * 0.64;
         } catch (IOException e) {
+            System.out.println(e.getMessage());
             needsReconnect = System.currentTimeMillis();
             return 0;
         }
@@ -84,13 +86,16 @@ public class Camera extends Subsystem {
         if (!usingVision) return 0;
         try {
             String line = query("distance");
+            System.out.println(line);
             String[] parts = line.split(PROTOCOL_LINE);
             if (parts.length < 2) {
+                System.out.println(parts);
                 return 0;
             }
+            System.out.println("CAMERA LINE 91: getDistance() " + Double.parseDouble(parts[1]));
             return Double.parseDouble(parts[1]);
         } catch (IOException e) {
-            //System.out.println("CAMERA EXCEPTION GET DISTANCE LINE 89: " + e);
+            System.out.println("CAMERA EXCEPTION GET DISTANCE LINE 94 " + e.getMessage());
             needsReconnect = System.currentTimeMillis();
             return 0;
         }
