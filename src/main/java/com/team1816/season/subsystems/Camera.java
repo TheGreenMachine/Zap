@@ -37,20 +37,19 @@ public class Camera extends Subsystem {
     }
 
     private String query(String message) throws IOException {
-        socketOut = new PrintWriter(socket.getOutputStream(), true);
         if (needsReconnect != 0) return "";
         if (usingVision) {
             socketOut.write(message);
             socketOut.flush();
-            return socketIn.readLine();
+            return socketIn.readLine();   
         }
         return "";
     }
 
     private boolean socketConnect() {
         try {
-            socket = new Socket();
-            socket.connect(new InetSocketAddress(InetAddress.getLocalHost(), 5802), 10);
+            socket = new Socket("10.18.16.16", 5802);
+            //socket.connect(new InetSocketAddress(InetAddress.getLocalHost(), 5802), 10);
             socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             socketOut = new PrintWriter(socket.getOutputStream(), true);
         } catch (IOException e) {
@@ -64,15 +63,18 @@ public class Camera extends Subsystem {
         if (!usingVision) return 0;
         try {
             String line = query("center_x");
-            String coord = line.split(PROTOCOL_LINE)[1];
-            double x = Double.parseDouble(coord);
+            String[] coords = line.split(PROTOCOL_LINE);
+            if (coords.length < 2) {
+                return 0;
+            }
+            double x = Double.parseDouble(coords[1]);
             if (x < 0) {
                 // Reset deltaX to 0 if contour not detected
                 return 0;
             }
             double deltaXPixels = (x - (VIDEO_WIDTH / 2)); // Calculate deltaX from center of screen
             return Math.toDegrees(Math.atan2(deltaXPixels, CAMERA_FOCAL_LENGTH)) * 0.64;
-        } catch (Exception e) {
+        } catch (IOException e) {
             needsReconnect = System.currentTimeMillis();
             return 0;
         }
@@ -98,8 +100,11 @@ public class Camera extends Subsystem {
         if (!usingVision) return 0;
         try {
             String line = query("center_x");
-            String coord = line.split(PROTOCOL_LINE)[1];
-            return Double.parseDouble(coord);
+            String[] coords = line.split(PROTOCOL_LINE);
+            if (coords.length < 2) {
+                return 0;
+            }
+            return Double.parseDouble(coords[1]);
         } catch (IOException e) {
             needsReconnect = System.currentTimeMillis();
             return 0;
