@@ -164,6 +164,10 @@ public class Shooter extends Subsystem implements PidProvider {
         );
     }
 
+    public boolean isVelocityNearTargetFake() { //faking it out bc we don't have vision atm
+        return mPeriodicIO.velocityDemand == MID_VELOCITY;
+    }
+
     @Override
     public void readFromHardware() {
         mPeriodicIO.actualShooterVelocity = shooterMain.getSelectedSensorVelocity(0);

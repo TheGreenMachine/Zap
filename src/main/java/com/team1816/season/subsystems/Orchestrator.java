@@ -130,6 +130,7 @@ public class Orchestrator extends Subsystem {
         } else {
             shooter.setVelocity(shooterVel);
         }
+
         if (!collecting) {
             collector.setState(Collector.COLLECTOR_STATE.REVVING);
             if (!firing) {
