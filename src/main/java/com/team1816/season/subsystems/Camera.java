@@ -28,12 +28,12 @@ public class Camera extends Subsystem {
     private Socket socket;
     private BufferedReader socketIn;
     private PrintWriter socketOut;
-    private Boolean usingVision = true;
+    private Boolean usingVision = false;
     private long needsReconnect = 0;
 
     public Camera() {
         super(NAME);
-        socketConnect();
+
     }
 
     private String query(String message) throws IOException {
@@ -142,6 +142,8 @@ public class Camera extends Subsystem {
                     socket.close();
                 } catch (Exception e) {}
             }
+        } else {
+            socketConnect();
         }
     }
 

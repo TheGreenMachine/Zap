@@ -145,19 +145,16 @@ public class Orchestrator extends Subsystem {
         if (!elevator.colorOfBall()) { // spit out ball if wrong color ? idk maybe make this into a flush command
             shooter.setHood(false);
         }
-        //if (shooter.isVelocityNearTarget()) { // only fire if
+        if (true) { // only fire if
             if (isAutoAim) {
                 spindexer.setSpindexer(getDistance(DistanceManager.SUBSYSTEM.SPINDEXER));
                 elevator.autoElevator(getDistance(DistanceManager.SUBSYSTEM.ELEVATOR));
                 shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) > 0);
-                //   }
+            }
         } else {
             return; // do not switch states to firing if not close to desired velocity
         }
-
         shooter.setState(Shooter.SHOOTER_STATE.REVVING);
-        elevator.setState(Elevator.ELEVATOR_STATE.FIRING);
-        spindexer.setState(Spindexer.SPIN_STATE.FIRE);
     }
 
     public double getDistance(DistanceManager.SUBSYSTEM subsystem) {
@@ -197,6 +194,8 @@ public class Orchestrator extends Subsystem {
                 flush();
             } else {
                 if (firing) {
+                    elevator.setState(Elevator.ELEVATOR_STATE.FIRING);
+                    spindexer.setState(Spindexer.SPIN_STATE.FIRE);
                     fire();
                 }
                 if (revving) {

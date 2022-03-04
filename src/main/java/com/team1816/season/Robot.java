@@ -301,17 +301,23 @@ public class Robot extends TimedRobot {
 //                        }
 //                    ),
                     createHoldAction(
+                        mControlBoard::getRevShooter,
+                        revving -> {
+                            mOrchestrator.setRevving(revving, Shooter.MID_VELOCITY);
+                        }
+                    ),
+                    createHoldAction(
                         mControlBoard::getShoot,
                         shooting -> {
                             mOrchestrator.setElevatorFiring();
-                            mOrchestrator.setRevving(shooting, Shooter.MID_VELOCITY);
                             mOrchestrator.setFiring(shooting);
                         }
                     ),
                     createAction( // make this an actual toggle?
                         mControlBoard::getCollectorToggle,
                         () -> {
-                            mOrchestrator.setCollecting();
+                            mCollector.setState(Collector.COLLECTOR_STATE.COLLECTING);
+                            mSpindexer.setSpindexer(0.5);
                         }
                     ),
 //                    createAction(
@@ -385,7 +391,8 @@ public class Robot extends TimedRobot {
             mAutoModeSelector.updateModeCreator();
             mAutoModeExecutor = new AutoModeExecutor();
 
-            //            mInfrastructure.setIsManualControl(false);
+            //            mInfrastructure.setIs
+            //       Control(false);
 
             mDisabledLooper.start();
 

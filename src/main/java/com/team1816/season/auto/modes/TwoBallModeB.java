@@ -40,8 +40,8 @@ public class TwoBallModeB extends AutoModeBase {
                             new WaitUntilInsideRegion(
                                 new Translation2d(0, 0), // make actual region to change hood
                                 new Translation2d(199, 274)
-                            ),
-                            new TurretAction(215.02) // to be changed
+                            )//,
+                            //new TurretAction(215.02) // to be changed
                         ),
                         new ShootAction(true, true),
                         new WaitAction(2),

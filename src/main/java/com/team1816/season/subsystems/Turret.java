@@ -337,7 +337,6 @@ public class Turret extends Subsystem implements PidProvider {
     private void positionControl(int rawPos) {
         int adjPos = (rawPos + ABS_TICKS_SOUTH + ZERO_OFFSET) % TURRET_MASK;
         if (outputsChanged) {
-            System.out.println("Positional Control (rawPos) " + adjPos);
             turret.set(com.ctre.phoenix.motorcontrol.ControlMode.Position, adjPos);
             outputsChanged = false;
         }

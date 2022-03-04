@@ -84,7 +84,6 @@ public class Collector extends Subsystem {
                 case COLLECTING:
                     intakePow = COLLECTING;
                     armDown = true;
-                    System.out.println("COLLECTOR LINE 87 collector power: " + intakePow);
                     break;
                 case FLUSH:
                     intakePow = FLUSH;

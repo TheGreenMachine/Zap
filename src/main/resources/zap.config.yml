@@ -160,13 +160,11 @@ subsystems:
         solenoids:
             arm: 2
         constants:
-            revving: .02
+            revving: .05
             collecting: .05
-            flush: -.75
+            flush: -.35
     camera:
-        implemented: true #if false then also turn off useAutoAim
-        constants:
-            useAutoAim: 0
+        implemented: false #if false then also turn off useA
 pcm: 28
 constants:
     maxTicks: 12275.7 # ticks per 100ms TODO make into constant unique to each subsystem
@@ -176,11 +174,11 @@ constants:
     maxVelOpenLoop: 3 # 160 # 240 # inches/s # 22560 native units ---30
     maxVelPathFollowing: 3 # 160 # 240 # inches/s # 22560 native units ---30
     maxVel: 3
-    maxAccel: 100 # inches/s^2
+    maxAccel: 100 # inches/s^ 2
     sensorPhase: 0
     kTrackScrubFactor: 1.0
     pathKs: 2
-    useAutoAim: 1
+    useAutoAim: 0
     verbose: 0 # 0 or 1
     heading_kI: 0
     heading_kD: 0
