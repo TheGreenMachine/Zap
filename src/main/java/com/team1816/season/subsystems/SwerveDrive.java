@@ -310,7 +310,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     public void zeroSensors(Pose2d pose) {
         System.out.println("Zeroing drive sensors!");
         resetPigeon();
-        setHeading(pose.getRotation());
+//        setHeading(pose.getRotation());
         resetOdometry(pose);
         for (SwerveModule module : swerveModules) {
             module.setDesiredState(new SwerveModuleState(), true);

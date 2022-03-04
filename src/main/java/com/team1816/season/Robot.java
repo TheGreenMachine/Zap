@@ -410,18 +410,16 @@ public class Robot extends TimedRobot {
         try {
             mDisabledLooper.stop();
             ledManager.setDefaultStatus(LedManager.RobotStatus.AUTONOMOUS);
+            Constants.StartingPose = mAutoModeExecutor.getAutoMode().getTrajectory().getInitialPose();
 
-            // Robot starts forwards.
+            // Robot starts where it's told for auto path
             mRobotState.reset();
-            mDrive.setHeading(new Rotation2d());
 
             mHasBeenEnabled = true;
 
-            //            mInfrastructure.setIsManualControl(false); // turn on compressor when superstructure is not moving
-
             mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
 
-            mDrive.zeroSensors();
+            mDrive.zeroSensors(Constants.StartingPose);
             //mTurret.zeroSensors();
             mClimber.zeroSensors();
             mOrchestrator.setStopped(false);
@@ -434,7 +432,7 @@ public class Robot extends TimedRobot {
             if (!mDriveByCameraInAuto) {
                 mAutoModeExecutor.start();
             }
-            mDrive.setHeading(mAutoModeExecutor.getAutoMode().getTrajectory().getInitialPose().getRotation());
+            // setHeading called already in both startTrajectory and zeroSensors
             mEnabledLooper.start();
         } catch (Throwable t) {
             throw t;
