@@ -33,6 +33,7 @@ public class AutoModeSelector {
         DRIVE_STRAIGHT,
 
         // 2022
+        DRIVE_STRAIGHT_SHOOT,
         TWO_BALL_A,
         TWO_BALL_B,
         TWO_BALL_C,
@@ -77,6 +78,7 @@ public class AutoModeSelector {
         //        mModeChooser.addOption("Shop", DesiredMode.SHOP);
         //        mModeChooser.addOption("PID", DesiredMode.PID);
         mModeChooser.setDefaultOption("Drive Straight", DesiredMode.DRIVE_STRAIGHT);
+        mModeChooser.addOption("Drive Staight Shoot", DesiredMode.DRIVE_STRAIGHT_SHOOT);
         mModeChooser.addOption("Turret Tuning", DesiredMode.TURRET_TEST);
         mModeChooser.addOption("Living Room", DesiredMode.LIVING_ROOM);
 
@@ -147,6 +149,8 @@ public class AutoModeSelector {
         }
         switch (mode) {
             // 2020
+            case DRIVE_STRAIGHT_SHOOT:
+                return Optional.of(new DriveStraightShootMode());
             case DO_NOTHING:
                 return Optional.of(new DoNothingMode());
             case TUNE_DRIVETRAIN:

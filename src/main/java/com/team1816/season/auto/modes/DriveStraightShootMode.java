@@ -10,9 +10,9 @@ import com.team1816.season.paths.TrajectorySet;
 import com.team1816.season.subsystems.Shooter;
 import edu.wpi.first.math.geometry.Translation2d;
 
-public class DriveStraightMode extends AutoModeBase {
+public class DriveStraightShootMode extends AutoModeBase {
 
-    public DriveStraightMode() {
+    public DriveStraightShootMode() {
         trajectory = new TrajectoryAction(TrajectorySet.DRIVE_STRAIGHT);
     }
 
