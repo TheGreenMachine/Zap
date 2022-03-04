@@ -23,7 +23,7 @@ public class ShootAction implements Action {
 
     @Override
     public void start() {
-        orchestrator.setFiring(isShooting);
+        shooter.setVelocity(5300);
         shooter.setHood(hoodOut);
     }
 

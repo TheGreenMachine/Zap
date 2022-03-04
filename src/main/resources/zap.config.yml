@@ -130,7 +130,7 @@ subsystems:
             midVel: 9900
             farVel: 11200
             maxVel: 11500
-            coast: 9300
+            coast: 5300
     climber:
         implemented: true
         sparkmaxes:
