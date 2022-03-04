@@ -155,6 +155,8 @@ public class Orchestrator extends Subsystem {
             return; // do not switch states to firing if not close to desired velocity
         }
         shooter.setState(Shooter.SHOOTER_STATE.REVVING);
+        spindexer.setState(Spindexer.SPIN_STATE.FIRE);
+        elevator.setState(Elevator.ELEVATOR_STATE.FIRING);
     }
 
     public double getDistance(DistanceManager.SUBSYSTEM subsystem) {

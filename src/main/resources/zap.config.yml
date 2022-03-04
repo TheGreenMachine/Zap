@@ -126,6 +126,9 @@ subsystems:
             rpmFloorCheck: 2000
             rpmEpsilonCheck: 60
             velocityThreshold: 500
+            nearVel: 11000
+            midVel: 9900
+            farVel: 11200
             maxVel: 11500
             coast: 9000
     climber:

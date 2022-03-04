@@ -127,6 +127,21 @@ public class TankDemoModeControlBoard implements IControlBoard {
     }
 
     @Override
+    public boolean getLowShoot() {
+        return false;
+    }
+
+    @Override
+    public boolean getMidShoot() {
+        return false;
+    }
+
+    @Override
+    public boolean getFarShoot() {
+        return false;
+    }
+
+    @Override
     public boolean getFieldFollowing() {
         return false;
     }

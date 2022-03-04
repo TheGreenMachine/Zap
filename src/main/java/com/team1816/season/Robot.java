@@ -255,7 +255,7 @@ public class Robot extends TimedRobot {
             );
 
             mDrive.zeroSensors(Constants.StartingPose);
-            mTurret.zeroSensors();
+            //mTurret.zeroSensors();
             mClimber.zeroSensors();
             mOrchestrator.setStopped(true);
 
@@ -318,6 +318,24 @@ public class Robot extends TimedRobot {
                         () -> {
                             mCollector.setState(Collector.COLLECTOR_STATE.COLLECTING);
                             mSpindexer.setSpindexer(0.5);
+                        }
+                    ),
+                    createAction(
+                        mControlBoard::getLowShoot,
+                        () -> {
+                            mShooter.setShooterNearVel();
+                        }
+                    ),
+                    createAction(
+                        mControlBoard::getMidShoot,
+                        () -> {
+                            mShooter.setShooterMidVel();
+                        }
+                    ),
+                    createAction(
+                        mControlBoard::getFarShoot,
+                        () -> {
+                            mShooter.setShooterFarVel();
                         }
                     ),
 //                    createAction(

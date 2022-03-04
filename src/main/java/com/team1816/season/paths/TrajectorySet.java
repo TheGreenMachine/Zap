@@ -15,6 +15,7 @@ public class TrajectorySet {
     public static Trajectory TUNE_DRIVETRAIN;
     public static Trajectory LIVING_ROOM;
 
+    public static List<Rotation2d> DRIVE_STRAIGHT_HEADINGS;
     public static List<Rotation2d> LIVING_ROOM_HEADINGS;
 
     //2022
@@ -49,6 +50,7 @@ public class TrajectorySet {
     public TrajectorySet() {
         // Trajectories
         DRIVE_STRAIGHT = new DriveStraight(36).generateTrajectory();
+        DRIVE_STRAIGHT = new DriveStraightModified().generateTrajectory();
         TUNE_DRIVETRAIN = new DriveStraight(264, 40).generateTrajectory();
         LIVING_ROOM = new LivingRoomPath().generateTrajectory();
         TWO_BALL_A = new TwoBallAutoA().generateTrajectory();
@@ -66,6 +68,8 @@ public class TrajectorySet {
         FIVE_BALL_D = new FiveBallAutoE().generateTrajectory();
 
         // Heading lists
+
+        DRIVE_STRAIGHT_HEADINGS = new DriveStraightModified().generateHeadings();
         LIVING_ROOM_HEADINGS = new LivingRoomPath().generateHeadings();
         TWO_BALL_A_HEADINGS = new TwoBallAutoA().generateHeadings();
         TWO_BALL_B_HEADINGS = new TwoBallAutoB().generateHeadings();
