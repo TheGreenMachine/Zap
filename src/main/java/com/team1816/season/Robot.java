@@ -280,9 +280,9 @@ public class Robot extends TimedRobot {
                         pressed -> {
                             if (pressed) {
                                 prevTurretControlMode = mTurret.getControlMode();
-                                mTurret.setControlMode(
-                                    Turret.ControlMode.CAMERA_FOLLOWING
-                                );
+//                                mTurret.setControlMode(
+//                                    Turret.ControlMode.CAMERA_FOLLOWING
+//                                );
                             } else {
                                 mTurret.setControlMode(prevTurretControlMode);
                             }
@@ -428,8 +428,7 @@ public class Robot extends TimedRobot {
 
             mDrive.setControlState(Drive.DriveControlState.TRAJECTORY_FOLLOWING);
 
-            mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
-            mTurret.setControlMode(Turret.ControlMode.POSITION);
+            mTurret.setControlMode(Turret.ControlMode.MANUAL);
 
             System.out.println("Auto init - " + mDriveByCameraInAuto);
             if (!mDriveByCameraInAuto) {
@@ -457,8 +456,7 @@ public class Robot extends TimedRobot {
             mHasBeenEnabled = true;
 
             mEnabledLooper.start();
-            mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
-            mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
+            mTurret.setControlMode(Turret.ControlMode.MANUAL);
 
             mCamera.setEnabled(getFactory().getConstant("useAutoAim") > 0);
 

@@ -33,10 +33,10 @@ public class Camera extends Subsystem {
 
     public Camera() {
         super(NAME);
-
     }
 
     private String query(String message) throws IOException {
+        if (!usingVision) return "";
         if (socketOut == null || socketIn == null || socket == null || !socket.isConnected()) {
             if (socket == null || !socket.isConnected()) {
                 System.out.println("Socket does not exist, reconnecting");
@@ -62,6 +62,7 @@ public class Camera extends Subsystem {
     }
 
     private boolean socketConnect() {
+        if (!usingVision) return true;
         try {
             socket = new Socket("10.18.16.16", 5802);
             //socket.connect(new InetSocketAddress(InetAddress.getLocalHost(), 5802), 10);
@@ -137,10 +138,6 @@ public class Camera extends Subsystem {
         if (!enabled) {
             if (needsReconnect != 0) {
                 needsReconnect = 0;
-            } else {
-                try {
-                    socket.close();
-                } catch (Exception e) {}
             }
         } else {
             socketConnect();
@@ -158,6 +155,7 @@ public class Camera extends Subsystem {
     }
 
     public void readFromHardware() {
+        if (!usingVision) return;
         // if more than 200ms, reconnect
         if (needsReconnect != 0 && (System.currentTimeMillis() - needsReconnect) >= 200) {
             //            System.out.println("Reconnect attempt at " + System.currentTimeMillis());
