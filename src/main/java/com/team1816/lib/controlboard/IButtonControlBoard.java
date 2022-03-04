@@ -29,5 +29,11 @@ public interface IButtonControlBoard {
 
     boolean getShoot();
 
+    boolean getLowShoot();
+
+    boolean getMidShoot();
+
+    boolean getFarShoot();
+
     boolean getFieldFollowing();
 }

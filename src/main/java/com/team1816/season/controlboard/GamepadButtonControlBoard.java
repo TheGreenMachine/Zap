@@ -93,6 +93,21 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
     }
 
     @Override
+    public boolean getLowShoot() {
+        return mController.getButton(Controller.Button.Y);
+    }
+
+    @Override
+    public boolean getMidShoot() {
+        return mController.getButton(Controller.Button.B);
+    }
+
+    @Override
+    public boolean getFarShoot() {
+        return mController.getButton(Controller.Button.A);
+    }
+
+    @Override
     public boolean getAutoAim() {
         return mController.getButton(Controller.Button.LEFT_BUMPER);
     }

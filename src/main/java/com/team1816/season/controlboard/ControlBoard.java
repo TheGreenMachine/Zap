@@ -155,6 +155,21 @@ public class ControlBoard implements IControlBoard {
     }
 
     @Override
+    public boolean getLowShoot() {
+        return mButtonControlBoard.getLowShoot();
+    }
+
+    @Override
+    public boolean getMidShoot() {
+        return mButtonControlBoard.getMidShoot();
+    }
+
+    @Override
+    public boolean getFarShoot() {
+        return mButtonControlBoard.getFarShoot();
+    }
+
+    @Override
     public double getDPad() {
         return mDriveControlBoard.getDPad();
     }

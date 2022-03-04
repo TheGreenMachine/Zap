@@ -255,7 +255,7 @@ public class Robot extends TimedRobot {
             );
 
             mDrive.zeroSensors(Constants.StartingPose);
-            mTurret.zeroSensors();
+            //mTurret.zeroSensors();
             mClimber.zeroSensors();
             mOrchestrator.setStopped(true);
 
@@ -318,6 +318,24 @@ public class Robot extends TimedRobot {
                         () -> {
                             mCollector.setState(Collector.COLLECTOR_STATE.COLLECTING);
                             mSpindexer.setSpindexer(0.5);
+                        }
+                    ),
+                    createAction(
+                        mControlBoard::getLowShoot,
+                        () -> {
+                            mShooter.setShooterNearVel();
+                        }
+                    ),
+                    createAction(
+                        mControlBoard::getMidShoot,
+                        () -> {
+                            mShooter.setShooterMidVel();
+                        }
+                    ),
+                    createAction(
+                        mControlBoard::getFarShoot,
+                        () -> {
+                            mShooter.setShooterFarVel();
                         }
                     ),
 //                    createAction(
@@ -410,18 +428,16 @@ public class Robot extends TimedRobot {
         try {
             mDisabledLooper.stop();
             ledManager.setDefaultStatus(LedManager.RobotStatus.AUTONOMOUS);
+            Constants.StartingPose = mAutoModeExecutor.getAutoMode().getTrajectory().getInitialPose();
 
-            // Robot starts forwards.
+            // Robot starts where it's told for auto path
             mRobotState.reset();
-            mDrive.setHeading(new Rotation2d());
 
             mHasBeenEnabled = true;
 
-            //            mInfrastructure.setIsManualControl(false); // turn on compressor when superstructure is not moving
-
             mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
 
-            mDrive.zeroSensors();
+            mDrive.zeroSensors(Constants.StartingPose);
             //mTurret.zeroSensors();
             mClimber.zeroSensors();
             mOrchestrator.setStopped(false);
@@ -434,7 +450,7 @@ public class Robot extends TimedRobot {
             if (!mDriveByCameraInAuto) {
                 mAutoModeExecutor.start();
             }
-            mDrive.setHeading(mAutoModeExecutor.getAutoMode().getTrajectory().getInitialPose().getRotation());
+            // setHeading called already in both startTrajectory and zeroSensors
             mEnabledLooper.start();
         } catch (Throwable t) {
             throw t;
