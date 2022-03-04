@@ -42,6 +42,7 @@ public class Spindexer extends Subsystem {
 
     public void setState(SPIN_STATE state) {
         this.state = state;
+        System.out.println("SOINDEXER STATE IS CHANGED TO " + state);
         outputsChanged = true;
     }
 
@@ -53,7 +54,7 @@ public class Spindexer extends Subsystem {
                     spindexerPower = 0;
                     break;
                 case INTAKE:
-                    spindexerPower = 0.75;
+                    spindexerPower = 0.375;
                     break;
                 case INDEX:
                     spindexerPower = -0.25;

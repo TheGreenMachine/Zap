@@ -91,7 +91,7 @@ subsystems:
             raveSpeed: 0.05
             cameraLed: 1
     turret:
-        implemented: false
+        implemented: true
         pidConfig:
             slot0:
                 kP: 0.15
@@ -102,9 +102,9 @@ subsystems:
         talons:
             turret: 33 # need to set to pdp port number
         constants:
-            revLimit: 17070 # NOT ABSOLUTE
+            revLimit: 8566 # NOT ABSOLUTE
             absPosTicksSouth: 0 # absolute - test
-            fwdLimit: 54900 # TEST -- NOT ABSOLUTE
+            fwdLimit: 46488 # TEST -- NOT ABSOLUTE
             encPPR: 4096
             turretPPR: 53248 # 4096 * 13
     shooter:
@@ -160,13 +160,13 @@ subsystems:
         solenoids:
             arm: 2
         constants:
-            revving: .25
-            collecting: .35
+            revving: .02
+            collecting: .05
             flush: -.75
     camera:
         implemented: true #if false then also turn off useAutoAim
         constants:
-            useAutoAim: 1
+            useAutoAim: 0
 pcm: 28
 constants:
     maxTicks: 12275.7 # ticks per 100ms TODO make into constant unique to each subsystem
@@ -175,6 +175,7 @@ constants:
     wheelbaseLength: 21.5 #inches
     maxVelOpenLoop: 3 # 160 # 240 # inches/s # 22560 native units ---30
     maxVelPathFollowing: 3 # 160 # 240 # inches/s # 22560 native units ---30
+    maxVel: 3
     maxAccel: 100 # inches/s^2
     sensorPhase: 0
     kTrackScrubFactor: 1.0

@@ -35,6 +35,7 @@ public class Elevator extends Subsystem {
 
     public void setState(ELEVATOR_STATE state) {
         this.state = state;
+        System.out.println("ELEVATOR STATE IS CHANGED TO " + state);
         outputsChanged = true;
     }
 
@@ -56,7 +57,7 @@ public class Elevator extends Subsystem {
                     elevatorPower = 0;
                     break;
                 case FIRING:
-                    if (!distanceManaged) elevatorPower = 1;
+                    if (!distanceManaged) elevatorPower = 0.5;
                     break;
                 case FLUSH:
                     elevatorPower = -0.5;

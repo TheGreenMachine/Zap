@@ -40,9 +40,9 @@ public class Shooter extends Subsystem implements PidProvider {
     private final double kD;
     private final double kF;
     public static final int MAX_VELOCITY = (int) factory.getConstant(NAME, "maxVel");
-    public static final int NEAR_VELOCITY = 11_100; // Initiation line
-    public static final int MID_VELOCITY = 9_900; // Trench this also worked from initiation
-    public static final int MID_FAR_VELOCITY = 11_200;
+    public static final int NEAR_VELOCITY = 11_100*2; // Initiation line
+    public static final int MID_VELOCITY = 9_900*2; // Trench this also worked from initiation
+    public static final int MID_FAR_VELOCITY = 11_200*2;
     public static final int COAST_VELOCIY = (int) factory.getConstant(NAME, "coast");
 
     // tune this and make changeable with a button in shooter itself
@@ -128,7 +128,9 @@ public class Shooter extends Subsystem implements PidProvider {
     }
 
     public void setState(SHOOTER_STATE state) {
+        System.out.println("SHOOTER STATE IS CHANGED TO " + state);
         this.state = state;
+        outputsChanged = true;
     }
 
     public double getActualVelocity() {

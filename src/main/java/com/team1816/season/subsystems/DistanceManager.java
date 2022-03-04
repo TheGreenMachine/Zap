@@ -38,7 +38,7 @@ public class DistanceManager {
     }
 
     private final Entry[] distance_buckets = new Entry[] {
-        new Entry(180, 1.7, 2, 9900, 0),
+        new Entry(180, .85, 2, 10700, 0),
         new Entry(250, 1.7, 1, 10100, 0),
         new Entry(280, 1.6, 1, 10300, 0),
         new Entry(340, 1.5, 1, 10700, 0),

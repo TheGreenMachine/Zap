@@ -303,6 +303,7 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         mControlBoard::getShoot,
                         shooting -> {
+                            mOrchestrator.setElevatorFiring();
                             mOrchestrator.setRevving(shooting, Shooter.MID_VELOCITY);
                             mOrchestrator.setFiring(shooting);
                         }
@@ -313,6 +314,12 @@ public class Robot extends TimedRobot {
                             mOrchestrator.setCollecting();
                         }
                     ),
+//                    createAction(
+//                        mControlBoard::getLowPowerShoot,
+//                        () -> {
+//                            mShooter.setVelocity(2000);
+//                        }
+//                    ),
                     createHoldAction(
                         mControlBoard::getCollectorBackspin,
                         mOrchestrator::setFlushing
@@ -408,7 +415,7 @@ public class Robot extends TimedRobot {
             mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
 
             mDrive.zeroSensors();
-            mTurret.zeroSensors();
+            //mTurret.zeroSensors();
             mClimber.zeroSensors();
             mOrchestrator.setStopped(false);
 
@@ -439,12 +446,12 @@ public class Robot extends TimedRobot {
             }
 
             mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
-            mTurret.zeroSensors();
+            //mTurret.zeroSensors();
             mHasBeenEnabled = true;
 
             mEnabledLooper.start();
             mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
-            mTurret.setControlMode(Turret.ControlMode.CENTER_FOLLOWING);
+            mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
 
             mCamera.setEnabled(getFactory().getConstant("useAutoAim") > 0);
 
@@ -470,7 +477,7 @@ public class Robot extends TimedRobot {
 
             mEnabledLooper.stop();
             mDisabledLooper.start();
-            mTurret.zeroSensors();
+            //mTurret.zeroSensors();
             mDrive.zeroSensors();
             blinkTimer.reset();
 
@@ -495,7 +502,7 @@ public class Robot extends TimedRobot {
             mRobotState.outputToSmartDashboard();
             mAutoModeSelector.outputToSmartDashboard();
         } catch (Throwable t) {
-            throw t;
+            System.out.println(t.getMessage());
         }
     }
 
@@ -532,9 +539,8 @@ public class Robot extends TimedRobot {
                 var auto = autoMode.get();
                 System.out.println("Set auto mode to: " + auto.getClass().toString());
                 mRobotState.field
-                    .getObject("Trajectory")
-                    .setTrajectory(auto.getTrajectory());
-                mAutoModeExecutor.setAutoMode(auto);
+                    .getObject("Trajectory");
+                 mAutoModeExecutor.setAutoMode(auto);
             }
         } catch (Throwable t) {
             throw t;

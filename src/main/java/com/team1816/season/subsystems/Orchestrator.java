@@ -145,22 +145,23 @@ public class Orchestrator extends Subsystem {
         if (!elevator.colorOfBall()) { // spit out ball if wrong color ? idk maybe make this into a flush command
             shooter.setHood(false);
         }
-        if (shooter.isVelocityNearTarget()) { // only fire if
+        //if (shooter.isVelocityNearTarget()) { // only fire if
             if (isAutoAim) {
                 spindexer.setSpindexer(getDistance(DistanceManager.SUBSYSTEM.SPINDEXER));
                 elevator.autoElevator(getDistance(DistanceManager.SUBSYSTEM.ELEVATOR));
                 shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) > 0);
-            }
+                //   }
         } else {
             return; // do not switch states to firing if not close to desired velocity
         }
 
+        shooter.setState(Shooter.SHOOTER_STATE.REVVING);
         elevator.setState(Elevator.ELEVATOR_STATE.FIRING);
         spindexer.setState(Spindexer.SPIN_STATE.FIRE);
     }
 
     public double getDistance(DistanceManager.SUBSYSTEM subsystem) {
-        System.out.println("CAMERA DISTANCE Line 163" + distanceManager.getOutput(camera.getDistance(), subsystem));
+        System.out.println("CAMERA DISTANCE Line 163 " + distanceManager.getOutput(camera.getDistance(), subsystem));
         return distanceManager.getOutput(camera.getDistance(), subsystem);
     }
 
@@ -183,8 +184,12 @@ public class Orchestrator extends Subsystem {
         }
     }
 
+    public void setElevatorFiring() {
+        elevator.setState(Elevator.ELEVATOR_STATE.FIRING);
+    }
+
     @Override
-    public void writeToHardware() {
+    public void writeToHardware(){
         if (outputsChanged) { // boolean land!
             if (stopped) {
                 stopAll();

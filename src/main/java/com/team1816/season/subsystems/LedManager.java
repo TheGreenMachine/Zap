@@ -147,6 +147,7 @@ public class LedManager extends Subsystem {
             candle.setLEDs(r, g, b, 0, 8, 66);
             // back to back writes cancel the first output, so we need to give candle time to write
             if (cameraLedChanged) {
+                Timer.delay(.1);
                 candle.setLEDs(0, cameraLedOn ? 255 : 0, 0, 0, 0, 8);
             }
         }

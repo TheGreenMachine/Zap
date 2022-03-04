@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.Timer;
 @Singleton
 public class Turret extends Subsystem implements PidProvider {
 
-    public static final double TURRET_JOG_SPEED = 0.25;
+    public static final double TURRET_JOG_SPEED = 0.05;
     public static final double CARDINAL_SOUTH = 0; // deg
     public static final double CARDINAL_EAST = 90; // deg
     public static final double CARDINAL_NORTH = 180; // deg
@@ -35,7 +35,7 @@ public class Turret extends Subsystem implements PidProvider {
     private static final int kPrimaryCloseLoop = 0;
     private static final int kPIDGyroIDx = 0;
     private static final int kPIDVisionIDx = 0;
-    private final int TURRET_ENCODER_PPR;
+    private static int TURRET_ENCODER_PPR = 4096;
     public final int TURRET_PPR;
     private final int TURRET_MASK;
     private final double TURRET_ENC_RATIO;
@@ -63,7 +63,7 @@ public class Turret extends Subsystem implements PidProvider {
     private int desiredTurretPos = 0;
     private int followingTurretPos = 0;
     private double turretSpeed;
-    private boolean outputsChanged;
+    private boolean outputsChanged = true;
     private ControlMode controlMode = ControlMode.MANUAL;
 
     public Turret() {
@@ -74,9 +74,9 @@ public class Turret extends Subsystem implements PidProvider {
         TURRET_MASK = TURRET_PPR - 1;
         TURRET_ENC_RATIO = (double) TURRET_PPR / TURRET_ENCODER_PPR;
         ABS_TICKS_SOUTH =
-            ((int) factory.getConstant(NAME, "absPosTicksSouth"));// + TURRET_ENCODER_PPR;
+            ((int) factory.getConstant(NAME, "absPosTicksSouth"));
         HALF_ENCPPR = TURRET_ENCODER_PPR / 2;
-        ZERO_OFFSET = TURRET_PPR / 2 - HALF_ENCPPR; // - TURRET_ENCODER_PPR;
+        ZERO_OFFSET = TURRET_PPR / 2 - HALF_ENCPPR - 13000; //add offset to keep turret in positive range
         turret.setNeutralMode(NeutralMode.Brake);
 
         PIDSlotConfiguration pidConfig = factory.getPidSlotConfig(NAME, pidSlot);
@@ -139,7 +139,7 @@ public class Turret extends Subsystem implements PidProvider {
         if (turret instanceof IMotorSensor) {
             var sensors = (IMotorSensor) turret;
             // If we have a sensor position that resides within the same absolute encoder revolution as the abs_ticks_south position then it is safe to reset
-            if (Math.abs(sensors.getQuadraturePosition() - ZERO_OFFSET - ABS_TICKS_SOUTH) < TURRET_ENCODER_PPR) {
+            if (Math.abs(sensors.getQuadraturePosition()) < TURRET_ENCODER_PPR) {
                 //get absolute sensor value
                 var sensorVal = sensors.getPulseWidthPosition();
                 var offset = ZERO_OFFSET - (sensorVal - HALF_ENCPPR);
@@ -177,6 +177,7 @@ public class Turret extends Subsystem implements PidProvider {
                     led.indicateDefaultStatus();
                 }
             }
+            System.out.println("TURRET CONTROL MODE IS " + controlMode);
         }
     }
 
@@ -336,7 +337,7 @@ public class Turret extends Subsystem implements PidProvider {
     private void positionControl(int rawPos) {
         int adjPos = (rawPos + ABS_TICKS_SOUTH + ZERO_OFFSET) % TURRET_MASK;
         if (outputsChanged) {
-            //System.out.println(adjPos + " +++++");
+            System.out.println("Positional Control (rawPos) " + adjPos);
             turret.set(com.ctre.phoenix.motorcontrol.ControlMode.Position, adjPos);
             outputsChanged = false;
         }

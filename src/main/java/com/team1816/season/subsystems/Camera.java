@@ -37,11 +37,26 @@ public class Camera extends Subsystem {
     }
 
     private String query(String message) throws IOException {
-        if (needsReconnect != 0) return "";
+        if (socketOut == null || socketIn == null || socket == null || !socket.isConnected()) {
+            if (socket == null || !socket.isConnected()) {
+                System.out.println("Socket does not exist, reconnecting");
+                needsReconnect = System.currentTimeMillis();
+                return "";
+            }
+            System.out.println("Socket exists but streams do not, creating then");
+            socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            socketOut = new PrintWriter(socket.getOutputStream(), true);
+        }
+        if (needsReconnect != 0) {
+            System.out.println("CONNECTION LOST: ATTEMPTING TO RECONNECT LINE 41 ");
+            return "";
+        }
         if (usingVision) {
-            socketOut.write(message);
+            socketOut.write(message + "\n");
             socketOut.flush();
-            return socketIn.readLine();   
+            String out = socketIn.readLine();
+            if (out == null) return "";
+            return out;
         }
         return "";
     }
@@ -119,6 +134,15 @@ public class Camera extends Subsystem {
     public void setEnabled(boolean enabled) {
         led.setCameraLed(enabled);
         usingVision = enabled;
+        if (!enabled) {
+            if (needsReconnect != 0) {
+                needsReconnect = 0;
+            } else {
+                try {
+                    socket.close();
+                } catch (Exception e) {}
+            }
+        }
     }
 
     public boolean checkSystem() {

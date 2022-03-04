@@ -60,6 +60,7 @@ public class Collector extends Subsystem {
 
     public void setState(COLLECTOR_STATE state) {
         this.state = state;
+        System.out.println("COLLECTOR STATE IS CHANGED TO " + state);
         outputsChanged = true;
     }
 
