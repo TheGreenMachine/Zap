@@ -19,6 +19,8 @@ public class TrajectorySet {
     public static List<Rotation2d> LIVING_ROOM_HEADINGS;
 
     //2022
+    public static Trajectory ONE_BALL_A;
+    public static Trajectory ONE_BALL_B;
     public static Trajectory TWO_BALL_A;
     public static Trajectory TWO_BALL_B;
     public static Trajectory TWO_BALL_C;
@@ -33,6 +35,8 @@ public class TrajectorySet {
     public static Trajectory FIVE_BALL_C;
     public static Trajectory FIVE_BALL_D; // different
 
+    public static List<Rotation2d> ONE_BALL_A_HEADINGS;
+    public static List<Rotation2d> ONE_BALL_B_HEADINGS;
     public static List<Rotation2d> TWO_BALL_A_HEADINGS;
     public static List<Rotation2d> TWO_BALL_B_HEADINGS;
     public static List<Rotation2d> TWO_BALL_C_HEADINGS;
@@ -49,10 +53,12 @@ public class TrajectorySet {
 
     public TrajectorySet() {
         // Trajectories
-        DRIVE_STRAIGHT = new DriveStraight(36).generateTrajectory();
+        //DRIVE_STRAIGHT = new DriveStraight(36).generateTrajectory();
         DRIVE_STRAIGHT = new DriveStraightModified().generateTrajectory();
         TUNE_DRIVETRAIN = new DriveStraight(264, 40).generateTrajectory();
         LIVING_ROOM = new LivingRoomPath().generateTrajectory();
+        ONE_BALL_A = new OneBallAutoA().generateTrajectory();
+        ONE_BALL_B = new OneBallAutoB().generateTrajectory();
         TWO_BALL_A = new TwoBallAutoA().generateTrajectory();
         TWO_BALL_B = new TwoBallAutoB().generateTrajectory();
         TWO_BALL_C = new TwoBallAutoC().generateTrajectory();
@@ -71,6 +77,8 @@ public class TrajectorySet {
 
         DRIVE_STRAIGHT_HEADINGS = new DriveStraightModified().generateHeadings();
         LIVING_ROOM_HEADINGS = new LivingRoomPath().generateHeadings();
+        ONE_BALL_A_HEADINGS = new OneBallAutoA().generateHeadings();
+        ONE_BALL_B_HEADINGS = new OneBallAutoB().generateHeadings();
         TWO_BALL_A_HEADINGS = new TwoBallAutoA().generateHeadings();
         TWO_BALL_B_HEADINGS = new TwoBallAutoB().generateHeadings();
         TWO_BALL_C_HEADINGS = new TwoBallAutoC().generateHeadings();

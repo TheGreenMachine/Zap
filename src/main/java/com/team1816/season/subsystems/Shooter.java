@@ -40,9 +40,9 @@ public class Shooter extends Subsystem implements PidProvider {
     private final double kD;
     private final double kF;
     public static final int MAX_VELOCITY = (int) factory.getConstant(NAME, "maxVel");
-    public static final int NEAR_VELOCITY = (int) factory.getConstant(NAME, "nearVel")*2; // Initiation line
-    public static final int MID_VELOCITY = (int) factory.getConstant(NAME, "midVel")*2; // Trench this also worked from initiation
-    public static final int MID_FAR_VELOCITY = (int) factory.getConstant(NAME, "farVel")*2;
+    public static final int NEAR_VELOCITY = (int) factory.getConstant(NAME, "nearVel"); // Initiation line
+    public static final int MID_VELOCITY = (int) factory.getConstant(NAME, "midVel"); // Trench this also worked from initiation
+    public static final int MID_FAR_VELOCITY = (int) factory.getConstant(NAME, "farVel");
     public static final int COAST_VELOCIY = (int) factory.getConstant(NAME, "coast");
 
     // tune this and make changeable with a button in shooter itself
@@ -128,6 +128,7 @@ public class Shooter extends Subsystem implements PidProvider {
     }
 
     public void setShooterNearVel() {
+        hoodOut = false;
         setVelocity(NEAR_VELOCITY);
     }
 

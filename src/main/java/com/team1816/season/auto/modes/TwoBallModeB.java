@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 
 public class TwoBallModeB extends AutoModeBase {
     public Pose2d startingPose;
+    TrajectoryAction trajectory1;
 
     public TwoBallModeB() {
         trajectory =
@@ -22,35 +23,35 @@ public class TwoBallModeB extends AutoModeBase {
                 TrajectorySet.TWO_BALL_B,
                 TrajectorySet.TWO_BALL_B_HEADINGS
             );
+        trajectory1 = new TrajectoryAction(
+            TrajectorySet.ONE_BALL_B,
+            TrajectorySet.ONE_BALL_B_HEADINGS
+        );
         startingPose = trajectory.getTrajectory().getInitialPose();
     }
 
     @Override
     protected void routine() throws AutoModeEndedException {
         System.out.println("Running Two Ball B Mode");
-        runAction(new WaitAction(.5));
+        System.out.println("Running Two Ball A Mode");
         runAction(
             new SeriesAction(
                 new CollectAction(true),
-                new RampUpShooterAction(Shooter.MID_VELOCITY), // make actual shooting vel
+                new RampUpShooterAction(Shooter.NEAR_VELOCITY), // make actual shooting vel
+                new WaitAction(1),
+                new ShootAction(true, false),
                 trajectory,
                 new ParallelAction(
                     new SeriesAction(
-                        new ParallelAction(
-                            new WaitUntilInsideRegion(
-                                new Translation2d(0, 0), // make actual region to change hood
-                                new Translation2d(199, 274)
-                            )//,
-                            //new TurretAction(215.02) // to be changed
+                        new WaitAction(0.5),
+                        new WaitUntilInsideRegion(
+                            new Translation2d(290, 113), // make actual region to change hood
+                            new Translation2d(315, 82)
                         ),
-                        new ShootAction(true, true),
-                        new WaitAction(2),
-                        new ParallelAction( // stop all at end - make a stop action in the future
-                            new CollectAction(false),
-                            new RampUpShooterAction(Shooter.COAST_VELOCIY),
-                            new ShootAction(false, false)
-                        )
-                    )
+                        new ShootAction(true, false),
+                        new WaitAction(2)
+                    ),
+                    trajectory1
                 )
             )
         );

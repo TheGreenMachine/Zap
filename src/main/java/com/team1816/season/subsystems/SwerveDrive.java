@@ -116,7 +116,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             System.out.println("headings are empty!");
             return Constants.EmptyRotation;
         } else if (mTrajectoryIndex > mHeadings.size() - 1) {
-            System.out.println("heck the headings aren't long enough");
+            //System.out.println("heck the headings aren't long enough");
             return Constants.EmptyRotation;
         }
         if (

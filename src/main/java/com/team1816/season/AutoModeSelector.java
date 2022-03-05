@@ -3,6 +3,7 @@ package com.team1816.season;
 import com.team1816.lib.auto.modes.AutoModeBase;
 import com.team1816.lib.auto.modes.DoNothingMode;
 import com.team1816.season.auto.modes.*;
+import com.team1816.season.paths.OneBallAutoB;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -34,6 +35,8 @@ public class AutoModeSelector {
 
         // 2022
         DRIVE_STRAIGHT_SHOOT,
+        ONE_BALL_A,
+        ONE_BALL_B,
         TWO_BALL_A,
         TWO_BALL_B,
         TWO_BALL_C,
@@ -81,6 +84,9 @@ public class AutoModeSelector {
         mModeChooser.addOption("Drive Staight Shoot", DesiredMode.DRIVE_STRAIGHT_SHOOT);
         mModeChooser.addOption("Turret Tuning", DesiredMode.TURRET_TEST);
         mModeChooser.addOption("Living Room", DesiredMode.LIVING_ROOM);
+
+        mModeChooser.addOption("One Ball A", DesiredMode.ONE_BALL_A);
+        mModeChooser.addOption("One Ball B", DesiredMode.ONE_BALL_B);
 
         mModeChooser.addOption("Two Ball A", DesiredMode.TWO_BALL_A);
         mModeChooser.addOption("Two Ball B", DesiredMode.TWO_BALL_B);
@@ -161,6 +167,10 @@ public class AutoModeSelector {
                 return (Optional.of(new DriveStraightMode()));
             case LIVING_ROOM:
                 return (Optional.of(new LivingRoomMode()));
+            case ONE_BALL_A:
+                return (Optional.of(new OneBallModeA()));
+            case ONE_BALL_B:
+                return (Optional.of(new OneBallModeB()));
             case TWO_BALL_A:
                 return (Optional.of(new TwoBallModeA()));
             case TWO_BALL_B:

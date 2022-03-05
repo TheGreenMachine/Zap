@@ -28,7 +28,7 @@ public class Camera extends Subsystem {
     private Socket socket;
     private BufferedReader socketIn;
     private PrintWriter socketOut;
-    private Boolean usingVision = false;
+    private Boolean usingVision = true;
     private long needsReconnect = 0;
 
     public Camera() {

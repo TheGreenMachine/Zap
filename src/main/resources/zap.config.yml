@@ -116,7 +116,7 @@ subsystems:
             hood: 1
         pidConfig:
             slot0:
-                kP: 0.15
+                kP: 0.2
                 kI: 0.0
                 kD: 2.5 #4.5
                 kF: 0.05671 #0.00953253
@@ -126,11 +126,11 @@ subsystems:
             rpmFloorCheck: 2000
             rpmEpsilonCheck: 60
             velocityThreshold: 500
-            nearVel: 11000
+            nearVel: 9500
             midVel: 9900
             farVel: 11200
             maxVel: 11500
-            coast: 5300
+            coast: 6300
     climber:
         implemented: true
         sparkmaxes:
@@ -167,21 +167,21 @@ subsystems:
             collecting: .05
             flush: -.35
     camera:
-        implemented: false #if false then also turn off useA
+        implemented: true #if false then also turn off useA
 pcm: 28
 constants:
     maxTicks: 12275.7 # ticks per 100ms TODO make into constant unique to each subsystem
-    maxRotVel: 7.2
+    maxRotVel: 7.4
     trackWidth: 21 #inches
     wheelbaseLength: 21.5 #inches
     maxVelOpenLoop: 3 # 160 # 240 # inches/s # 22560 native units ---30
-    maxVelPathFollowing: 3 # 160 # 240 # inches/s # 22560 native units ---30
+    maxVelPathFollowing: 2.5 # 160 # 240 # inches/s # 22560 native units ---30
     maxVel: 3
     maxAccel: 100 # inches/s^ 2
     sensorPhase: 0
     kTrackScrubFactor: 1.0
     pathKs: 2
-    useAutoAim: 0
+    useAutoAim: 1
     verbose: 0 # 0 or 1
     heading_kI: 0
     heading_kD: 0

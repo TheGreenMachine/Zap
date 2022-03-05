@@ -320,10 +320,18 @@ public class Robot extends TimedRobot {
                             mSpindexer.setSpindexer(0.5);
                         }
                     ),
-                    createAction(
+                    createHoldAction(
                         mControlBoard::getLowShoot,
-                        () -> {
-                            mShooter.setShooterNearVel();
+                        lowShoot -> {
+                            if (lowShoot) {
+                                mSpindexer.setState(Spindexer.SPIN_STATE.FIRE);
+                                mElevator.setState(Elevator.ELEVATOR_STATE.FIRING);
+                                mShooter.setShooterNearVel();
+                            } else {
+                                mShooter.setVelocity(Shooter.COAST_VELOCIY);
+                                mElevator.setState(Elevator.ELEVATOR_STATE.STOP);
+                                mSpindexer.setState(Spindexer.SPIN_STATE.STOP);
+                            }
                         }
                     ),
                     createAction(
