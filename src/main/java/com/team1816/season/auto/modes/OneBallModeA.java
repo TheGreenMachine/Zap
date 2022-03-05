@@ -30,8 +30,9 @@ public class OneBallModeA extends AutoModeBase {
             new SeriesAction(
                 new WaitAction(.5),
                 new RampUpShooterAction(Shooter.NEAR_VELOCITY),
-                new WaitAction(.5),
+                new WaitAction(2),
                 new ShootAction(true, false),
+                new WaitAction(1),
                 trajectory,
                 new ParallelAction( // stop all at end - make a stop action in the future
                     new CollectAction(false),

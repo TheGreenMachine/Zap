@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.Timer;
 @Singleton
 public class Turret extends Subsystem implements PidProvider {
 
-    public static final double TURRET_JOG_SPEED = 0.05;
+    public static final double TURRET_JOG_SPEED = 0.04;
     public static final double CARDINAL_SOUTH = 0; // deg
     public static final double CARDINAL_EAST = 90; // deg
     public static final double CARDINAL_NORTH = 180; // deg

@@ -62,9 +62,6 @@ public class TrajectorySet {
         TWO_BALL_A = new TwoBallAutoA().generateTrajectory();
         TWO_BALL_B = new TwoBallAutoB().generateTrajectory();
         TWO_BALL_C = new TwoBallAutoC().generateTrajectory();
-        THREE_BALL_A = new ThreeBallAutoA().generateTrajectory();
-        THREE_BALL_B = new ThreeBallAutoB().generateTrajectory();
-        THREE_BALL_C = new ThreeBallAutoC().generateTrajectory();
         FOUR_BALL_SEMICIRCLE_A = new FourBallSemiCircleAutoA().generateTrajectory();
         FOUR_BALL_SEMICIRCLE_B = new FourBallSemiCircleAutoB().generateTrajectory();
         FOUR_BALL_C = new FourBallAutoC().generateTrajectory();
@@ -82,9 +79,6 @@ public class TrajectorySet {
         TWO_BALL_A_HEADINGS = new TwoBallAutoA().generateHeadings();
         TWO_BALL_B_HEADINGS = new TwoBallAutoB().generateHeadings();
         TWO_BALL_C_HEADINGS = new TwoBallAutoC().generateHeadings();
-        THREE_BALL_A_HEADINGS = new ThreeBallAutoA().generateHeadings();
-        THREE_BALL_B_HEADINGS = new ThreeBallAutoB().generateHeadings();
-        THREE_BALL_C_HEADINGS = new ThreeBallAutoC().generateHeadings();
         FOUR_BALL_SEMICIRCLE_A_HEADINGS = new FourBallSemiCircleAutoA().generateHeadings();
         FOUR_BALL_SEMICIRCLE_B_HEADINGS = new FourBallSemiCircleAutoB().generateHeadings();
         FOUR_BALL_C_HEADINGS = new FourBallAutoC().generateHeadings();

@@ -14,14 +14,16 @@ public class OneBallAutoB implements PathContainer {
             new Pose2d(300, 97, Rotation2d.fromDegrees(66)),
             new Pose2d(274, 30, Rotation2d.fromDegrees(180)),
             new Pose2d(179, 29, Rotation2d.fromDegrees(160)),
-            new Pose2d(89, 138, Rotation2d.fromDegrees(70)),
-            new Pose2d(152, 158, Rotation2d.fromDegrees(-20))
+            new Pose2d(54, 143, Rotation2d.fromDegrees(70)),
+            new Pose2d(175, 166, Rotation2d.fromDegrees(-30))//,
+            //new Pose2d(188, 175, Rotation2d.fromDegrees(-30))
+
         );
     }
 
     @Override
     public List<Rotation2d> buildHeadings() {
-        return List.of(Rotation2d.fromDegrees(66), Rotation2d.fromDegrees(180), Rotation2d.fromDegrees(160), Rotation2d.fromDegrees(70), Rotation2d.fromDegrees(-20));
+        return List.of(Rotation2d.fromDegrees(66), Rotation2d.fromDegrees(180), Rotation2d.fromDegrees(160), Rotation2d.fromDegrees(70), Rotation2d.fromDegrees(-50)/*, Rotation2d.fromDegrees(-30)*/);
     }
 
     @Override
