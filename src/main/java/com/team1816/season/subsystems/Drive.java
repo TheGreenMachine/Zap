@@ -356,6 +356,11 @@ public abstract class Drive
         mPigeon.setAccumZAngle(0);
     }
 
+    @Override
+    public void zeroSensors(){
+        zeroSensors(Constants.StartingPose);
+    }
+
     public abstract void zeroSensors(Pose2d pose);
 
     @Override

@@ -21,11 +21,18 @@ public class Elevator extends Subsystem {
     private ELEVATOR_STATE state = ELEVATOR_STATE.STOP;
     private boolean distanceManaged = false;
 
+    // Constants
+    private final double FLUSH;
+    private final double FIRE;
+
     public Elevator() {
         super(NAME);
         this.elevator = factory.getMotor(NAME, "elevator");
         //        this.ballSensor =
         //            new DigitalInput((int) factory.getConstant(NAME, "ballSensor", 0));
+
+        FLUSH = factory.getConstant(NAME, "flushPow", -0.5);
+        FIRE = factory.getConstant(NAME, "firePow", 0.5);
     }
 
     public void autoElevator(double elevatorOutput) {
@@ -34,9 +41,11 @@ public class Elevator extends Subsystem {
     }
 
     public void setState(ELEVATOR_STATE state) {
-        this.state = state;
-        System.out.println("ELEVATOR STATE IS CHANGED TO " + state);
-        outputsChanged = true;
+        if(this.state != state){
+            this.state = state;
+            System.out.println("ELEVATOR STATE IS CHANGED TO " + state);
+            outputsChanged = true;
+        }
     }
 
     public boolean hasBallInElevator() {
@@ -56,11 +65,11 @@ public class Elevator extends Subsystem {
                 case STOP:
                     elevatorPower = 0;
                     break;
-                case FIRING:
-                    if (!distanceManaged) elevatorPower = 0.5;
+                case FIRE:
+                    if (!distanceManaged) elevatorPower = FIRE;
                     break;
                 case FLUSH:
-                    elevatorPower = -0.5;
+                    elevatorPower = FLUSH;
                     break;
             }
             this.elevator.set(ControlMode.PercentOutput, elevatorPower);
@@ -85,7 +94,7 @@ public class Elevator extends Subsystem {
 
     public enum ELEVATOR_STATE {
         STOP,
-        FIRING,
+        FIRE,
         FLUSH,
     }
 }

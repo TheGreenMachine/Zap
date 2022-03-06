@@ -6,10 +6,8 @@ import com.team1816.lib.auto.modes.AutoModeBase;
 import com.team1816.season.auto.actions.CollectAction;
 import com.team1816.season.auto.actions.RampUpShooterAction;
 import com.team1816.season.auto.actions.ShootAction;
-import com.team1816.season.auto.actions.TurretAction;
 import com.team1816.season.paths.TrajectorySet;
 import com.team1816.season.subsystems.Shooter;
-import com.team1816.season.subsystems.Turret;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
@@ -47,7 +45,7 @@ public class TwoBallModeB extends AutoModeBase {
                         new WaitAction(2),
                         new ParallelAction( // stop all at end - make a stop action in the future
                             new CollectAction(false),
-                            new RampUpShooterAction(Shooter.COAST_VELOCIY),
+                            new RampUpShooterAction(Shooter.COAST_VELOCITY),
                             new ShootAction(false, false)
                         )
                     )

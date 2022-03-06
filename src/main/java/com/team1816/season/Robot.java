@@ -254,8 +254,8 @@ public class Robot extends TimedRobot {
                 mCamera
             );
 
-            mDrive.zeroSensors(Constants.StartingPose);
-            //mTurret.zeroSensors();
+            mDrive.zeroSensors();
+            mTurret.zeroSensors();
             mClimber.zeroSensors();
             mOrchestrator.setStopped(true);
 
@@ -280,30 +280,18 @@ public class Robot extends TimedRobot {
                         pressed -> {
                             if (pressed) {
                                 prevTurretControlMode = mTurret.getControlMode();
-//                                mTurret.setControlMode(
-//                                    Turret.ControlMode.CAMERA_FOLLOWING
-//                                );
+                                mTurret.setControlMode(
+                                    Turret.ControlMode.CAMERA_FOLLOWING // we still gotta fix camera stuff
+                                );
                             } else {
                                 mTurret.setControlMode(prevTurretControlMode);
                             }
                         }
                     ),
-//                    createHoldAction(
-//                        mControlBoard::getRevShooter,
-//                        revving -> {
-//                            mOrchestrator.setRevving(revving, Shooter.MAX_VELOCITY);
-//                            if (!revving) {
-//                                mTurret.setControlMode(
-//                                    Turret.ControlMode.FIELD_FOLLOWING
-//                                );
-//                                mShooter.setHood(true);
-//                            }
-//                        }
-//                    ),
                     createHoldAction(
                         mControlBoard::getRevShooter,
                         revving -> {
-                            mOrchestrator.setRevving(revving, Shooter.MID_VELOCITY);
+                            mOrchestrator.setRevving(revving, Shooter.MID_VELOCITY); // fyi if using camera then this velocity is ignored
                         }
                     ),
                     createHoldAction(
@@ -313,34 +301,30 @@ public class Robot extends TimedRobot {
                     createAction( // make this an actual toggle?
                         mControlBoard::getCollectorToggle,
                         () -> {
-                            mCollector.setState(Collector.COLLECTOR_STATE.COLLECTING);
-                            mSpindexer.setSpindexer(0.5);
+                            mOrchestrator.setCollecting();
                         }
                     ),
-                    createAction(
+                    // did these three work during the tournament? Rn if the orchestrator is not directly called then
+                    // there's a high chance that the shooter will only change target velocity for one loop then go back to idling
+                    // if they didn't work either keep this - or just gut these
+                    createHoldAction(
                         mControlBoard::getLowShoot,
-                        () -> {
-                            mShooter.setShooterNearVel();
+                        shooting -> {
+                            mOrchestrator.setRevving(shooting, Shooter.NEAR_VELOCITY);
                         }
                     ),
-                    createAction(
+                    createHoldAction(
                         mControlBoard::getMidShoot,
-                        () -> {
-                            mShooter.setShooterMidVel();
+                        shooting -> {
+                            mOrchestrator.setRevving(shooting, Shooter.MID_VELOCITY);
                         }
                     ),
-                    createAction(
+                    createHoldAction(
                         mControlBoard::getFarShoot,
-                        () -> {
-                            mShooter.setShooterFarVel();
+                        shooting -> {
+                            mOrchestrator.setRevving(shooting, Shooter.FAR_VELOCITY);
                         }
                     ),
-//                    createAction(
-//                        mControlBoard::getLowPowerShoot,
-//                        () -> {
-//                            mShooter.setVelocity(2000);
-//                        }
-//                    ),
                     createHoldAction(
                         mControlBoard::getCollectorBackspin,
                         mOrchestrator::setFlushing
@@ -434,8 +418,10 @@ public class Robot extends TimedRobot {
 
             mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
 
-            mDrive.zeroSensors(Constants.StartingPose);
-            //mTurret.zeroSensors();
+            mDrive.zeroSensors();
+            mTurret.zeroSensors();
+            // doesn't this only need to be used on robot init just like mTurret.zeroSensors?
+            // (we first need to config SparkMaxes to use position in LazySpark but that's a diff story)
             mClimber.zeroSensors();
             mOrchestrator.setStopped(false);
 
@@ -465,7 +451,7 @@ public class Robot extends TimedRobot {
             }
 
             mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
-            //mTurret.zeroSensors();
+            mTurret.zeroSensors();
             mHasBeenEnabled = true;
 
             mEnabledLooper.start();
@@ -495,7 +481,8 @@ public class Robot extends TimedRobot {
 
             mEnabledLooper.stop();
             mDisabledLooper.start();
-            //mTurret.zeroSensors();
+
+            mTurret.zeroSensors();
             mDrive.zeroSensors();
             blinkTimer.reset();
 

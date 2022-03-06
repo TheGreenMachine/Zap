@@ -14,7 +14,7 @@ public class Orchestrator extends Subsystem {
 
     // this class will now deal with organizing the collector, spindexer, elevator, and shooter -- heck this might as well just be a SUPERSTRUCTURE
 
-    private static final String NAME = "hopper";
+    private static final String NAME = "orchestrator";
 
     @Inject
     private static Collector collector;
@@ -111,13 +111,13 @@ public class Orchestrator extends Subsystem {
         spindexer.setState(Spindexer.SPIN_STATE.FLUSH);
         elevator.setState(Elevator.ELEVATOR_STATE.FLUSH);
         shooter.setState(Shooter.SHOOTER_STATE.COASTING);
-        shooter.setVelocity(Shooter.COAST_VELOCIY);
+        shooter.setVelocity(Shooter.COAST_VELOCITY);
     }
 
     public void collect() {
         collector.setState(Collector.COLLECTOR_STATE.COLLECTING);
         if (!firing) {
-            spindexer.setState(Spindexer.SPIN_STATE.INTAKE);
+            spindexer.setState(Spindexer.SPIN_STATE.COLLECT);
         }
     }
 
@@ -157,7 +157,7 @@ public class Orchestrator extends Subsystem {
         }
         shooter.setState(Shooter.SHOOTER_STATE.REVVING);
         spindexer.setState(Spindexer.SPIN_STATE.FIRE);
-        elevator.setState(Elevator.ELEVATOR_STATE.FIRING);
+        elevator.setState(Elevator.ELEVATOR_STATE.FIRE);
     }
 
     public double getDistance(DistanceManager.SUBSYSTEM subsystem) {
@@ -180,7 +180,7 @@ public class Orchestrator extends Subsystem {
 
         if (!revving) {
             shooter.setState(Shooter.SHOOTER_STATE.COASTING);
-            shooter.setVelocity(Shooter.COAST_VELOCIY);
+            shooter.setVelocity(Shooter.COAST_VELOCITY);
         }
     }
 
@@ -193,7 +193,7 @@ public class Orchestrator extends Subsystem {
                 flush();
             } else {
                 if (firing) {
-                    elevator.setState(Elevator.ELEVATOR_STATE.FIRING);
+                    elevator.setState(Elevator.ELEVATOR_STATE.FIRE);
                     spindexer.setState(Spindexer.SPIN_STATE.FIRE);
                     fire();
                 }

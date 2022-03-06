@@ -54,7 +54,7 @@ public class ThreeBallModeC extends AutoModeBase {
                         new WaitAction(2),
                         new ParallelAction( // stop all at end - make a stop action in the future
                             new CollectAction(false),
-                            new RampUpShooterAction(Shooter.COAST_VELOCIY),
+                            new RampUpShooterAction(Shooter.COAST_VELOCITY),
                             new ShootAction(false, false)
                         )
                     )

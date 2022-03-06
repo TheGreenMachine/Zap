@@ -2,6 +2,7 @@ package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
@@ -16,18 +17,30 @@ public class Spindexer extends Subsystem {
     private final ISolenoid feederFlap;
     private final IMotorControllerEnhanced spindexer;
 
-    private SPIN_STATE state = SPIN_STATE.STOP;
 
     // State
+    private SPIN_STATE state = SPIN_STATE.STOP;
     private boolean feederFlapOut = false; // leave for future addition if needed
     private boolean distanceManaged = false;
     private double spindexerPower;
     private boolean outputsChanged;
 
+    // Constants
+    private final double COLLECT;
+    private final double INDEX;
+    private final double FLUSH;
+    private final double FIRE;
+
+
     public Spindexer() {
         super(NAME);
         this.feederFlap = factory.getSolenoid(NAME, "feederFlap");
         this.spindexer = factory.getMotor(NAME, "spindexer");
+
+        COLLECT = factory.getConstant(NAME, "collectPow", 0.5);
+        INDEX = factory.getConstant(NAME, "indexPow", -0.25);
+        FLUSH = factory.getConstant(NAME, "flushPow", -1);
+        FIRE = factory.getConstant(NAME, "firePow", 1);
     }
 
     public void setSpindexer(double spindexerPower) {
@@ -41,9 +54,11 @@ public class Spindexer extends Subsystem {
     }
 
     public void setState(SPIN_STATE state) {
-        this.state = state;
-        System.out.println("SOINDEXER STATE IS CHANGED TO " + state);
-        outputsChanged = true;
+        if(this.state != state){
+            this.state = state;
+            System.out.println("SPINDEXER STATE IS CHANGED TO " + state);
+            outputsChanged = true;
+        }
     }
 
     @Override
@@ -53,17 +68,17 @@ public class Spindexer extends Subsystem {
                 case STOP:
                     spindexerPower = 0;
                     break;
-                case INTAKE:
-                    spindexerPower = 0.375;
+                case COLLECT:
+                    spindexerPower = COLLECT;
                     break;
                 case INDEX:
-                    spindexerPower = -0.25;
+                    spindexerPower = INDEX;
                     break;
                 case FLUSH:
-                    spindexerPower = -1;
+                    spindexerPower = FLUSH;
                     break;
                 case FIRE:
-                    if (!distanceManaged) spindexerPower = 1;
+                    if (!distanceManaged) spindexerPower = FIRE;
                     break;
             }
             spindexer.set(ControlMode.PercentOutput, spindexerPower);
@@ -85,8 +100,8 @@ public class Spindexer extends Subsystem {
     }
 
     public enum SPIN_STATE {
-        INTAKE,
         STOP,
+        COLLECT,
         INDEX,
         FLUSH,
         FIRE,
