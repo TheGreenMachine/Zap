@@ -3,6 +3,8 @@ package com.team1816.season.subsystems;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.subsystems.Subsystem;
+import com.team1816.season.Constants;
+
 import java.io.*;
 import java.net.*;
 
@@ -22,7 +24,7 @@ public class Camera extends Subsystem {
     // private static final double CAMERA_FOV = 87.0; // deg
     private static final double CAMERA_FOCAL_LENGTH = 350; // px
     private static final double VIDEO_WIDTH = 672.0; // px
-    public static final double ALLOWABLE_AIM_ERROR = 1; // deg
+    public static final double ALLOWABLE_AIM_ERROR = 0.2; // deg
 
     // Sockets!
     private Socket socket;
@@ -157,7 +159,7 @@ public class Camera extends Subsystem {
     public void readFromHardware() {
         if (!usingVision) return;
         // if more than 200ms, reconnect
-        if (needsReconnect != 0 && (System.currentTimeMillis() - needsReconnect) >= 200) {
+        if (needsReconnect != 0 && (System.currentTimeMillis() - needsReconnect) >= 2*Constants.kLooperDt) {
             //            System.out.println("Reconnect attempt at " + System.currentTimeMillis());
             if (socketConnect()) {
                 needsReconnect = 0;
