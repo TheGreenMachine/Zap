@@ -354,7 +354,10 @@ public class Robot extends TimedRobot {
 //                    ),
                     createHoldAction(
                         mControlBoard::getCollectorBackspin,
-                        mOrchestrator::setFlushing
+                        backspin -> {
+                            mOrchestrator.setFlushing(true);
+                            mSpindexer.setSpindexer(0.5);
+                        }
                     ),
                     createAction( // to turn the shooter on and off from its idle state - use at start of match
                         mControlBoard::getOrchestrator,
