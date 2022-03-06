@@ -17,6 +17,7 @@ import com.team1816.season.RobotState;
 import com.team254.lib.util.DriveSignal;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
@@ -106,7 +107,7 @@ public abstract class Drive
         double right_error;
 
         // SWERVE IMPUTS
-        public SwerveModuleState[] actualModuleStates = new SwerveModuleState[4];
+        public ChassisSpeeds chassisSpeed = new ChassisSpeeds();
 
         // SWERVE OUTPUTS
         public SwerveModuleState[] desiredModuleStates = new SwerveModuleState[4];
@@ -353,6 +354,11 @@ public abstract class Drive
         mPigeon.setYaw(0);
         mPigeon.setFusedHeading(0);
         mPigeon.setAccumZAngle(0);
+    }
+
+    @Override
+    public void zeroSensors(){
+        zeroSensors(Constants.StartingPose);
     }
 
     public abstract void zeroSensors(Pose2d pose);

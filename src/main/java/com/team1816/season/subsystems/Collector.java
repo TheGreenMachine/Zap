@@ -9,15 +9,11 @@ import com.team1816.lib.subsystems.Subsystem;
 @Singleton
 public class Collector extends Subsystem {
 
-    // the main reason we're messing with spark motors in the factory is to use a neo motor on our collector.
-    // this means we'll be making a spark controller here (which probably means calling IMotorControllerEnhanced?)
-
     private static final String NAME = "collector";
 
     // Components
     private final ISolenoid armPiston;
     private final IMotorControllerEnhanced intake;
-    //private final CANSparkMax intake;
 
     // State
     private double intakePow;
@@ -25,9 +21,9 @@ public class Collector extends Subsystem {
     private boolean outputsChanged = false;
     private COLLECTOR_STATE state = COLLECTOR_STATE.STOP;
 
-    private double REVVING = factory.getConstant(NAME, "revving");
-    private double COLLECTING = factory.getConstant(NAME, "collecting");
-    private double FLUSH = factory.getConstant(NAME, "flush");
+    private final double REVVING;
+    private final double COLLECTING;
+    private final double FLUSH;
 
     private double actualVelocity;
 
@@ -35,33 +31,18 @@ public class Collector extends Subsystem {
         super(NAME);
         armPiston = factory.getSolenoid(NAME, "arm");
         intake = factory.getMotor(NAME, "intake");
-        //        intake.configSupplyCurrentLimit(
-        //            new SupplyCurrentLimitConfiguration(true, 25, 0, 0),
-        //            Constants.kCANTimeoutMs
-        //        );
-    }
 
-    public boolean isArmDown() {
-        return this.armDown;
-    }
-
-    public double getIntakePow() {
-        return this.intakePow;
-    }
-
-    public double getActualVelocity() {
-        return this.actualVelocity;
-    }
-
-    private void setArm(boolean down) {
-        this.armDown = down;
-        this.outputsChanged = true;
+        REVVING = factory.getConstant(NAME, "revving");
+        COLLECTING = factory.getConstant(NAME, "collecting");
+        FLUSH = factory.getConstant(NAME, "flush");
     }
 
     public void setState(COLLECTOR_STATE state) {
-        this.state = state;
-        System.out.println("COLLECTOR STATE IS CHANGED TO " + state);
-        outputsChanged = true;
+        if(this.state != state){
+            this.state = state;
+            System.out.println("COLLECTOR STATE IS CHANGED TO " + state);
+            outputsChanged = true;
+        }
     }
 
     @Override
@@ -87,7 +68,7 @@ public class Collector extends Subsystem {
                     break;
                 case FLUSH:
                     intakePow = FLUSH;
-                    armDown = true; // NOT SURE IF WE WANT COLLECTOR DOWN HERE
+                    armDown = true; // do we want arm down for this? pending for build team opinion...
                     break;
             }
             intake.set(ControlMode.PercentOutput, intakePow);

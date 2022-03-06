@@ -308,10 +308,7 @@ public class Robot extends TimedRobot {
                     ),
                     createHoldAction(
                         mControlBoard::getShoot,
-                        shooting -> {
-                            mOrchestrator.setElevatorFiring();
-                            mOrchestrator.setFiring(shooting);
-                        }
+                        mOrchestrator::setFiring
                     ),
                     createAction( // make this an actual toggle?
                         mControlBoard::getCollectorToggle,
@@ -325,7 +322,7 @@ public class Robot extends TimedRobot {
                         lowShoot -> {
                             if (lowShoot) {
                                 mSpindexer.setState(Spindexer.SPIN_STATE.FIRE);
-                                mElevator.setState(Elevator.ELEVATOR_STATE.FIRING);
+                                mElevator.setState(Elevator.ELEVATOR_STATE.FIRE);
                                 mShooter.setShooterNearVel();
                             } else {
                                 mShooter.setVelocity(Shooter.COAST_VELOCIY);
@@ -354,10 +351,7 @@ public class Robot extends TimedRobot {
 //                    ),
                     createHoldAction(
                         mControlBoard::getCollectorBackspin,
-                        backspin -> {
-                            mOrchestrator.setFlushing(true);
-                            mSpindexer.setSpindexer(0.5);
-                        }
+                        mOrchestrator::setFlushing
                     ),
                     createAction( // to turn the shooter on and off from its idle state - use at start of match
                         mControlBoard::getOrchestrator,
@@ -455,7 +449,7 @@ public class Robot extends TimedRobot {
 
             mDrive.setControlState(Drive.DriveControlState.TRAJECTORY_FOLLOWING);
 
-            mTurret.setControlMode(Turret.ControlMode.MANUAL);
+            mTurret.setControlMode(Turret.ControlMode.CENTER_FOLLOWING);
 
             System.out.println("Auto init - " + mDriveByCameraInAuto);
             if (!mDriveByCameraInAuto) {
@@ -483,7 +477,7 @@ public class Robot extends TimedRobot {
             mHasBeenEnabled = true;
 
             mEnabledLooper.start();
-            mTurret.setControlMode(Turret.ControlMode.MANUAL);
+            mTurret.setControlMode(Turret.ControlMode.CENTER_FOLLOWING);
 
             mCamera.setEnabled(getFactory().getConstant("useAutoAim") > 0);
 
