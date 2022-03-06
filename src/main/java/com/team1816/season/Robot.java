@@ -308,10 +308,7 @@ public class Robot extends TimedRobot {
                     ),
                     createHoldAction(
                         mControlBoard::getShoot,
-                        shooting -> {
-                            mOrchestrator.setElevatorFiring();
-                            mOrchestrator.setFiring(shooting);
-                        }
+                        mOrchestrator::setFiring
                     ),
                     createAction( // make this an actual toggle?
                         mControlBoard::getCollectorToggle,
@@ -444,7 +441,7 @@ public class Robot extends TimedRobot {
 
             mDrive.setControlState(Drive.DriveControlState.TRAJECTORY_FOLLOWING);
 
-            mTurret.setControlMode(Turret.ControlMode.MANUAL);
+            mTurret.setControlMode(Turret.ControlMode.CENTER_FOLLOWING);
 
             System.out.println("Auto init - " + mDriveByCameraInAuto);
             if (!mDriveByCameraInAuto) {
@@ -472,7 +469,7 @@ public class Robot extends TimedRobot {
             mHasBeenEnabled = true;
 
             mEnabledLooper.start();
-            mTurret.setControlMode(Turret.ControlMode.MANUAL);
+            mTurret.setControlMode(Turret.ControlMode.CENTER_FOLLOWING);
 
             mCamera.setEnabled(getFactory().getConstant("useAutoAim") > 0);
 

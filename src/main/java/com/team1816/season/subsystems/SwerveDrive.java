@@ -9,8 +9,8 @@ import com.team1816.season.Constants;
 import com.team254.lib.util.DriveSignal;
 import com.team254.lib.util.SwerveDriveHelper;
 import com.team254.lib.util.SwerveDriveSignal;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -83,15 +83,13 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         for (int i = 0; i < 4; i++) {
             states[i] = swerveModules[i].getState();
         }
-        mPeriodicIO.actualModuleStates = states;
-
+        mPeriodicIO.chassisSpeed = Constants.Swerve.swerveKinematics.toChassisSpeeds(states);
         if (RobotBase.isSimulation()) { // calculate rotation based on actualModeStates
-            var chassisSpeed = Constants.Swerve.swerveKinematics.toChassisSpeeds(states);
             // simulates rotation by computing the rotational motion per interval - looperDt not enough for auto paths? Need to test on real robot
             mPeriodicIO.gyro_heading_no_offset =
                 mPeriodicIO.gyro_heading_no_offset.rotateBy(
                     new Rotation2d(
-                        chassisSpeed.omegaRadiansPerSecond * Constants.kLooperDt * 0.01
+                        mPeriodicIO.chassisSpeed.omegaRadiansPerSecond * Constants.kLooperDt * 0.01
                     )
                 );
             // calculate rotation with gyro drift
@@ -185,6 +183,13 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     private void updateRobotPose() {
         mRobotState.field_to_vehicle = swerveOdometry.getPoseMeters();
+        mRobotState.delta_field_to_vehicle = new Twist2d(
+            // these three may be missing conversions from velocity to change in pose? (meters/s to x-y-theta/updateTime)
+            // not sure because field_to_vehicle is also being plugged directly into field as a value in meters
+            mPeriodicIO.chassisSpeed.vxMetersPerSecond,
+            mPeriodicIO.chassisSpeed.vyMetersPerSecond,
+            mPeriodicIO.chassisSpeed.omegaRadiansPerSecond
+        );
     }
 
     @Override
@@ -203,7 +208,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             for (int i = 0; i < 4; i++) {
                 swerveModules[i].setDesiredState(new SwerveModuleState(), true);
                 mPeriodicIO.desiredModuleStates[i] = new SwerveModuleState();
-                mPeriodicIO.actualModuleStates[i] = new SwerveModuleState();
+                mPeriodicIO.chassisSpeed = new ChassisSpeeds();
             }
         }
     }
@@ -256,7 +261,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     public SwerveModuleState[] getStates() {
-        return mPeriodicIO.actualModuleStates;
+        return Constants.Swerve.swerveKinematics.toSwerveModuleStates(mPeriodicIO.chassisSpeed);
     }
 
     @Override

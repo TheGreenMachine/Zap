@@ -184,10 +184,6 @@ public class Orchestrator extends Subsystem {
         }
     }
 
-    public void setElevatorFiring() {
-        elevator.setState(Elevator.ELEVATOR_STATE.FIRING);
-    }
-
     @Override
     public void writeToHardware(){
         if (outputsChanged) { // boolean land!

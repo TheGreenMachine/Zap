@@ -141,7 +141,7 @@ public class Turret extends Subsystem implements PidProvider {
             // If we have a sensor position that resides within the same absolute encoder revolution as the abs_ticks_south position then it is safe to reset
             if (Math.abs(sensors.getQuadraturePosition()) < TURRET_ENCODER_PPR) {
                 //get absolute sensor value
-                var sensorVal = sensors.getPulseWidthPosition();
+                var sensorVal = sensors.getPulseWidthPosition(); // absolute
                 var offset = ZERO_OFFSET - (sensorVal - HALF_ENCPPR);
                 sensors.setQuadraturePosition(offset);
                 System.out.println("Zeroing turret! Offset: " + offset);
@@ -311,9 +311,12 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     private void trackCenter() {
+        // conversion to field relative
         int fieldTickOffset = -convertTurretDegreesToTicks( // currently negated because motor is running counterclockwise
             robotState.field_to_vehicle.getRotation().getDegrees()
         );
+
+        // conversion to target (center) relative
         double opposite = Constants.fieldCenterY - robotState.field_to_vehicle.getY();
         double adjacent = Constants.fieldCenterX - robotState.field_to_vehicle.getX();
         double turretAngle = 0;
@@ -322,6 +325,10 @@ public class Turret extends Subsystem implements PidProvider {
         int centerOffset = convertTurretDegreesToTicks(
             Units.radiansToDegrees(turretAngle)
         );
+
+        // final angle adjustment to account for robot's rate of change in pose on the field (delta_field_to_vehicle)
+        // I don't know how to math - looks like a Keerthi big brain moment
+
         int adj =
             (
                 fieldTickOffset +
