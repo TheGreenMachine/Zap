@@ -254,8 +254,8 @@ public class Robot extends TimedRobot {
                 mCamera
             );
 
-            mDrive.zeroSensors(Constants.StartingPose);
-            //mTurret.zeroSensors();
+            mDrive.zeroSensors();
+            mTurret.zeroSensors();
             mClimber.zeroSensors();
             mOrchestrator.setStopped(true);
 
@@ -288,18 +288,6 @@ public class Robot extends TimedRobot {
                             }
                         }
                     ),
-//                    createHoldAction(
-//                        mControlBoard::getRevShooter,
-//                        revving -> {
-//                            mOrchestrator.setRevving(revving, Shooter.MAX_VELOCITY);
-//                            if (!revving) {
-//                                mTurret.setControlMode(
-//                                    Turret.ControlMode.FIELD_FOLLOWING
-//                                );
-//                                mShooter.setHood(true);
-//                            }
-//                        }
-//                    ),
                     createHoldAction(
                         mControlBoard::getRevShooter,
                         revving -> {
@@ -312,50 +300,21 @@ public class Robot extends TimedRobot {
                     ),
                     createAction( // make this an actual toggle?
                         mControlBoard::getCollectorToggle,
-                        () -> {
-                            mCollector.setState(Collector.COLLECTOR_STATE.COLLECTING);
-                            mSpindexer.setSpindexer(0.5);
-                        }
+                        mOrchestrator::setCollecting
                     ),
                     createHoldAction(
                         mControlBoard::getLowShoot,
                         lowShoot -> {
-                            if (lowShoot) {
-                                mSpindexer.setState(Spindexer.SPIN_STATE.FIRE);
-                                mElevator.setState(Elevator.ELEVATOR_STATE.FIRE);
-                                mShooter.setShooterNearVel();
-                            } else {
-                                mShooter.setVelocity(Shooter.COAST_VELOCIY);
-                                mElevator.setState(Elevator.ELEVATOR_STATE.STOP);
-                                mSpindexer.setState(Spindexer.SPIN_STATE.STOP);
-                            }
+                            mOrchestrator.setRevving(lowShoot, Shooter.NEAR_VELOCITY);
                         }
                     ),
-                    createAction(
-                        mControlBoard::getMidShoot,
-                        () -> {
-                            mShooter.setShooterMidVel();
-                        }
-                    ),
-                    createAction(
-                        mControlBoard::getFarShoot,
-                        () -> {
-                            mShooter.setShooterFarVel();
-                        }
-                    ),
-//                    createAction(
-//                        mControlBoard::getLowPowerShoot,
-//                        () -> {
-//                            mShooter.setVelocity(2000);
-//                        }
-//                    ),
                     createHoldAction(
                         mControlBoard::getCollectorBackspin,
                         mOrchestrator::setFlushing
                     ),
                     createAction( // to turn the shooter on and off from its idle state - use at start of match
                         mControlBoard::getOrchestrator,
-                        () -> mOrchestrator.setStopped()
+                        mOrchestrator::setStopped
                     ),
                     createAction(
                         mControlBoard::getFieldFollowing,
@@ -442,8 +401,8 @@ public class Robot extends TimedRobot {
 
             mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
 
-            mDrive.zeroSensors(Constants.StartingPose);
-            //mTurret.zeroSensors();
+            mDrive.zeroSensors();
+            mTurret.zeroSensors();
             mClimber.zeroSensors();
             mOrchestrator.setStopped(false);
 
@@ -473,7 +432,7 @@ public class Robot extends TimedRobot {
             }
 
             mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
-            //mTurret.zeroSensors();
+            mTurret.zeroSensors();
             mHasBeenEnabled = true;
 
             mEnabledLooper.start();
@@ -503,7 +462,7 @@ public class Robot extends TimedRobot {
 
             mEnabledLooper.stop();
             mDisabledLooper.start();
-            //mTurret.zeroSensors();
+            mTurret.zeroSensors();
             mDrive.zeroSensors();
             blinkTimer.reset();
 

@@ -44,11 +44,19 @@ public class FiveBallMode extends AutoModeBase {
         runAction(new WaitAction(.5));
         runAction(
             new SeriesAction(
+                // starting actions before paths run
                 new CollectAction(true),
                 new RampUpShooterAction(Shooter.MID_VELOCITY), // make actual shooting vel
                 new TurretAction(Turret.CARDINAL_WEST), // setting this doesn't seem to work right in simulator - magically relative to field and not the robot
-                trajectory,
+
                 new ParallelAction(
+                    // paths
+                    new SeriesAction(
+                        trajectory,
+                        trajectory1,
+                        trajectory2
+                    ),
+                    // actions to take during the path
                     new SeriesAction(
                         new WaitUntilInsideRegion(
                             new Translation2d(0, 0), // make actual region to change hood
@@ -64,17 +72,16 @@ public class FiveBallMode extends AutoModeBase {
                             new Translation2d(0, 0), // make actual region to change hood
                             new Translation2d(220, 80)
                         ),
-                        new ShootAction(true, true)
-                    ),
-                    trajectory1
+                        new ShootAction(true, true),
+                        new RampUpShooterAction(Shooter.FAR_VELOCITY),
+                        new WaitAction(.5),
+                        new TurretAction(Turret.CARDINAL_SOUTH), // tune these two
+                        new ShootAction(true, true),
+                        new WaitAction(2)
+                    )
                 ),
-                new RampUpShooterAction(Shooter.FAR_VELOCITY),
-                trajectory2,
-                new WaitAction(.5),
-                new TurretAction(Turret.CARDINAL_SOUTH), // tune these two
-                new ShootAction(true, true),
-                new WaitAction(2),
-                new ParallelAction( // stop all at end - make a stop action in the future
+                // stop all at end - make a stop action in the future
+                new ParallelAction(
                     new CollectAction(false),
                     new RampUpShooterAction(Shooter.COAST_VELOCITY),
                     new ShootAction(false, false)

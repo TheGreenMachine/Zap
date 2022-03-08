@@ -9,7 +9,6 @@ import com.team1816.season.auto.actions.ShootAction;
 import com.team1816.season.paths.TrajectorySet;
 import com.team1816.season.subsystems.Shooter;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 
 public class OneBallModeA extends AutoModeBase {
     public Pose2d startingPose;
@@ -36,7 +35,7 @@ public class OneBallModeA extends AutoModeBase {
                 trajectory,
                 new ParallelAction( // stop all at end - make a stop action in the future
                     new CollectAction(false),
-                    new RampUpShooterAction(Shooter.COAST_VELOCIY),
+                    new RampUpShooterAction(Shooter.COAST_VELOCITY),
                     new ShootAction(false, false)
                 )
             )

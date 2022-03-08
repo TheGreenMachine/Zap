@@ -309,7 +309,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     public void resetOdometry(Pose2d pose) {
         swerveOdometry.resetPosition(pose, getHeading());
-    }
+    } // resetPosition says we don't need to account for offset here so getHeading() should work
 
     @Override
     public void zeroSensors(Pose2d pose) {

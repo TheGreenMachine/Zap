@@ -177,10 +177,8 @@ public class AutoModeSelector {
             case FOUR_BALL_C:
                 return (Optional.of(new FourBallModeC()));
             case FIVE_BALL:
-                Constants.StartingPose = new FiveBallMode().startingPose;
                 return (Optional.of(new FiveBallMode()));
             case RANDOM_TESTING_PATH:
-                Constants.StartingPose = new FiveBallMode().startingPose;
                 return (Optional.of(new RandomTestingMode()));
             default:
                 break;
