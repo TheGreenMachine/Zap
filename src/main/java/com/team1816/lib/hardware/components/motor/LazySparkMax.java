@@ -24,6 +24,8 @@ public class LazySparkMax implements IMotorControllerEnhanced {
 
     public LazySparkMax(int deviceNumber) {
         mMotor = new CANSparkMax(deviceNumber, CANSparkMaxLowLevel.MotorType.kBrushless);
+        mPidController = mMotor.getPIDController();
+        mEncoder = mMotor.getEncoder();
     }
 
     @Override
@@ -46,7 +48,8 @@ public class LazySparkMax implements IMotorControllerEnhanced {
         if (demand != mLastSet || controlType != mLastControlMode) {
             mLastSet = demand;
             mLastControlMode = controlType;
-            mMotor.set(demand);
+            mPidController.setReference(demand, controlType); // note that this uses rpm for velocity!
+//            mMotor.set(demand);
         }
     }
 
@@ -293,22 +296,26 @@ public class LazySparkMax implements IMotorControllerEnhanced {
 
     @Override
     public ErrorCode config_kP(int slotIdx, double value, int timeoutMs) {
-        return null;
+        mPidController.setP(value, slotIdx);
+        return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode config_kI(int slotIdx, double value, int timeoutMs) {
-        return null;
+        mPidController.setI(value, slotIdx);
+        return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode config_kD(int slotIdx, double value, int timeoutMs) {
-        return null;
+        mPidController.setD(value, slotIdx);
+        return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode config_kF(int slotIdx, double value, int timeoutMs) {
-        return null;
+        mPidController.setFF(value, slotIdx); // is FF the same as F? This may be wrong!
+        return ErrorCode.OK;
     }
 
     @Override

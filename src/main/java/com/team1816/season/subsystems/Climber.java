@@ -2,6 +2,7 @@ package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
+import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 
 public class Climber extends Subsystem {
@@ -13,55 +14,65 @@ public class Climber extends Subsystem {
     private static final String NAME = "climber";
 
     // Components
-    //    private final IMotorControllerEnhanced elevator;
     private final IMotorControllerEnhanced elevator;
+    private final ISolenoid topClamp;
+    private final ISolenoid bottomClamp;
+
 
     // State
-    private double climberPow;
+    private STATE state = STATE.MANUAL;
+    private double climberPower;
+    private double climberPosition;
     private boolean isDeployed;
     private boolean outputsChanged = false;
 
-//    private double climberMaxPosition = factory.getConstant("climberMaxPosition", -200);
-//    private double climberMinPosition = factory.getConstant("climberMinPosition", -20);
-//    private double climberMidPosition = (climberMaxPosition + climberMinPosition)/2;
+    private final double MAX_POSITION = factory.getConstant("climberMaxPosition", -200);
+    private final double MIN_POSITION = factory.getConstant("climberMinPosition", 0);
+    private final double MID_POSITTION = (MAX_POSITION + MIN_POSITION)/2;
 
 
     public Climber() {
         super(NAME);
         elevator = factory.getMotor(NAME, "elevator");
-        //elevator = new CANSparkMax( 20, CANSparkMaxLowLevel.MotorType.kBrushless);
+        topClamp = factory.getSolenoid(NAME, "topClamp");
+        bottomClamp = factory.getSolenoid(NAME, "bottomClamp");
     }
 
     public void setClimberPower(double power) {
-        climberPow = power;
+        if(state != STATE.MANUAL){
+            state = STATE.MANUAL;
+        }
+        climberPower = power;
         outputsChanged = true;
     }
 
-//    public void setClimberPosition(double position) {
-//        elevator.set(ControlMode.Position, position);
-//    }
-//
-//    public void setClimberUp() {
-//        elevator.set(ControlMode.Position, climberMaxPosition);
-//    }
-//
-//    public void setClimberMid() {
-//        elevator.set(ControlMode.Position, climberMidPosition);
-//    }
-//
-//    public void setClimberDown() {
-//        elevator.set(ControlMode.Position, climberMinPosition);
-//    }
-
-    public boolean getDeployed() {
-        return isDeployed;
+    public void setClimberUp() {
+        if(state != STATE.POSITION){
+            state = STATE.POSITION;
+        }
+        climberPosition = MAX_POSITION;
     }
+
+    public void setClimberMid() {
+        if(state != STATE.POSITION){
+            state = STATE.POSITION;
+        }
+        climberPosition = MID_POSITTION;    }
+
+    public void setClimberDown() {
+        if(state != STATE.POSITION){
+            state = STATE.POSITION;
+        }
+        climberPosition = MIN_POSITION;    }
 
     @Override
     public void writeToHardware() {
         if (outputsChanged) {
-            //            elevator.set(ControlMode.PercentOutput, climberPow);
-            elevator.set(ControlMode.PercentOutput, climberPow);
+            if(state == STATE.POSITION){
+                elevator.set(ControlMode.Position, climberPosition);
+            } else {
+                elevator.set(ControlMode.PercentOutput, climberPower);
+            }
             outputsChanged = false;
         }
     }
@@ -72,5 +83,10 @@ public class Climber extends Subsystem {
     @Override
     public boolean checkSystem() {
         return true;
+    }
+
+    public enum STATE{
+        MANUAL,
+        POSITION
     }
 }
