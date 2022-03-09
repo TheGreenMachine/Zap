@@ -335,6 +335,7 @@ public class Turret extends Subsystem implements PidProvider {
                 desiredTurretPos +
                 centerOffset
             );
+        // adj += convertTurretDegreesToTicks(camera.getDeltaXAngle()*0.10); //vision based adjustment
         if (adj != followingTurretPos) {
             followingTurretPos = adj;
             outputsChanged = true;
