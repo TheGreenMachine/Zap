@@ -116,7 +116,7 @@ subsystems:
             hood: 1
         pidConfig:
             slot0:
-                kP: 0.2
+                kP: 0.15
                 kI: 0.0
                 kD: 2.5 #4.5
                 kF: 0.05671 #0.00953253
@@ -126,11 +126,12 @@ subsystems:
             rpmFloorCheck: 2000
             rpmEpsilonCheck: 60
             velocityThreshold: 500
-            nearVel: 9500
+            nearVel: 11000
             midVel: 9900
             farVel: 11200
             maxVel: 11500
-            coast: 6300
+            coast: 5300
+            defaultRevVel: 9900
     climber:
         implemented: true
         sparkmaxes:
@@ -140,20 +141,27 @@ subsystems:
         constants:
             climberMinPosition: -5
             climberMaxPosition: -280
+    orchestrator: # we'll have to decide what to do with this - it's not rly a subsystem, but it has a periodic call we want to loop through
+        implemented: true
     elevator:
         implemented: true
         talons:
             elevator: 32
         constants:
             ballSensor: 0
+            firePow: 0.5
+            flushPow: -0.5
     spindexer:
         implemented: true
         talons:
             spindexer: 31
         solenoids:
             feederFlap: -1
-    hopper:
-        implemented: true
+        constants:
+            collectPow: 0.5
+            indexPow: -0.25
+            flushPow: -1
+            firePow: 1
     collector:
         implemented: true
         sparkmaxes:
@@ -167,15 +175,15 @@ subsystems:
             collecting: .05
             flush: -.35
     camera:
-        implemented: false #if false then also turn off useA
+        implemented: false #if false then also turn off useAutoAim
 pcm: 28
 constants:
     maxTicks: 12275.7 # ticks per 100ms TODO make into constant unique to each subsystem
-    maxRotVel: 7.4
+    maxRotVel: 7.2
     trackWidth: 21 #inches
     wheelbaseLength: 21.5 #inches
     maxVelOpenLoop: 3 # 160 # 240 # inches/s # 22560 native units ---30
-    maxVelPathFollowing: 2.5 # 160 # 240 # inches/s # 22560 native units ---30
+    maxVelPathFollowing: 3 # 160 # 240 # inches/s # 22560 native units ---30
     maxVel: 3
     maxAccel: 100 # inches/s^ 2
     sensorPhase: 0
