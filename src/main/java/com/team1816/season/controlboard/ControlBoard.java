@@ -69,8 +69,8 @@ public class ControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getTrenchToFeederSpline() {
-        return mDriveControlBoard.getTrenchToFeederSpline();
+    public boolean getZeroPose() {
+        return mDriveControlBoard.getZeroPose();
     }
 
     @Override

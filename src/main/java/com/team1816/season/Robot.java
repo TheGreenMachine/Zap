@@ -21,7 +21,9 @@ import com.team1816.season.subsystems.*;
 import com.team254.lib.util.LatchedBoolean;
 import com.team254.lib.util.SwerveDriveSignal;
 import com.team254.lib.util.TimeDelayedBoolean;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,7 +45,6 @@ public class Robot extends TimedRobot {
     private final SubsystemManager mSubsystemManager;
 
     // subsystems
-    private final Superstructure mSuperstructure;
     private final Infrastructure mInfrastructure;
     private final RobotState mRobotState;
     private final Drive mDrive;
@@ -92,7 +93,6 @@ public class Robot extends TimedRobot {
         mOrchestrator = injector.getInstance(Orchestrator.class);
         mShooter = injector.getInstance(Shooter.class);
         mRobotState = injector.getInstance(RobotState.class);
-        mSuperstructure = injector.getInstance(Superstructure.class);
         mInfrastructure = injector.getInstance(Infrastructure.class);
         ledManager = injector.getInstance(LedManager.class);
         mSubsystemManager = injector.getInstance(SubsystemManager.class);
@@ -242,23 +242,20 @@ public class Robot extends TimedRobot {
 
             mSubsystemManager.setSubsystems(
                 mDrive,
-                mSuperstructure,
                 mElevator,
                 mSpindexer,
                 //                mInfrastructure,
                 mShooter,
-                // spinner,
                 mCollector,
-                mOrchestrator,
                 mTurret,
                 mClimber,
                 mCamera
             );
 
-            mDrive.zeroSensors(Constants.StartingPose);
-            //mTurret.zeroSensors();
+            mDrive.zeroSensors();
+            mTurret.zeroSensors();
             mClimber.zeroSensors();
-            mOrchestrator.setStopped(true);
+            mOrchestrator.setStopped();
 
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mSubsystemManager.registerDisabledLoops(mDisabledLooper);
@@ -281,26 +278,14 @@ public class Robot extends TimedRobot {
                         pressed -> {
                             if (pressed) {
                                 prevTurretControlMode = mTurret.getControlMode();
-//                                mTurret.setControlMode(
-//                                    Turret.ControlMode.CAMERA_FOLLOWING
-//                                );
+                                mTurret.setControlMode(
+                                    Turret.ControlMode.CAMERA_FOLLOWING
+                                );
                             } else {
                                 mTurret.setControlMode(prevTurretControlMode);
                             }
                         }
                     ),
-//                    createHoldAction(
-//                        mControlBoard::getRevShooter,
-//                        revving -> {
-//                            mOrchestrator.setRevving(revving, Shooter.MAX_VELOCITY);
-//                            if (!revving) {
-//                                mTurret.setControlMode(
-//                                    Turret.ControlMode.FIELD_FOLLOWING
-//                                );
-//                                mShooter.setHood(true);
-//                            }
-//                        }
-//                    ),
                     createHoldAction(
                         mControlBoard::getRevShooter,
                         revving -> {
@@ -313,50 +298,24 @@ public class Robot extends TimedRobot {
                     ),
                     createAction( // make this an actual toggle?
                         mControlBoard::getCollectorToggle,
-                        () -> {
-                            mCollector.setState(Collector.COLLECTOR_STATE.COLLECTING);
-                            mSpindexer.setSpindexer(0.5);
-                        }
+                        mOrchestrator::setCollecting
                     ),
                     createHoldAction(
                         mControlBoard::getLowShoot,
                         lowShoot -> {
-                            if (lowShoot) {
-                                mSpindexer.setState(Spindexer.SPIN_STATE.FIRE);
-                                mElevator.setState(Elevator.ELEVATOR_STATE.FIRE);
-                                //mShooter.setShooterNearVel();
-                            } else {
-                                mShooter.setVelocity(Shooter.COAST_VELOCITY);
-                                mElevator.setState(Elevator.ELEVATOR_STATE.STOP);
-                                mSpindexer.setState(Spindexer.SPIN_STATE.STOP);
-                            }
+                            mOrchestrator.setRevving(lowShoot, Shooter.NEAR_VELOCITY);
                         }
                     ),
-                    createAction(
-                        mControlBoard::getMidShoot,
-                        () -> {
-                            //mShooter.setShooterMidVel();
-                        }
-                    ),
-                    createAction(
-                        mControlBoard::getFarShoot,
-                        () -> {
-                            //mShooter.setShooterFarVel();
-                        }
-                    ),
-//                    createAction(
-//                        mControlBoard::getLowPowerShoot,
-//                        () -> {
-//                            mShooter.setVelocity(2000);
-//                        }
+//                    createHoldAction(
+//                        mControlBoard::getCollectorBackspin,
+//                        mOrchestrator::setFlushing
 //                    ),
-                    createHoldAction(
-                        mControlBoard::getCollectorBackspin,
-                        mOrchestrator::setFlushing
-                    ),
-                    createAction( // to turn the shooter on and off from its idle state - use at start of match
-                        mControlBoard::getOrchestrator,
-                        () -> mOrchestrator.setStopped()
+                    createAction(
+                        mControlBoard::getZeroPose,
+                        () -> {
+                            mDrive.zeroSensors(new Pose2d(new Translation2d(.5, 3.5), Constants.EmptyRotation));
+                            mRobotState.reset(new Pose2d(new Translation2d(.5, 3.5), Constants.EmptyRotation));
+                        }
                     ),
                     createAction(
                         mControlBoard::getFieldFollowing,
@@ -417,7 +376,7 @@ public class Robot extends TimedRobot {
             mDrive.stop();
             mDrive.setBrakeMode(false);
 
-            mOrchestrator.setStopped(true);
+            mOrchestrator.setStopped();
         } catch (Throwable t) {
             faulted = true;
             throw t;
@@ -429,19 +388,18 @@ public class Robot extends TimedRobot {
         try {
             mDisabledLooper.stop();
             ledManager.setDefaultStatus(LedManager.RobotStatus.AUTONOMOUS);
-            Constants.StartingPose = mAutoModeExecutor.getAutoMode().getTrajectory().getInitialPose();
 
             // Robot starts where it's told for auto path
             mRobotState.reset();
 
             mHasBeenEnabled = true;
 
-            mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
-
-            mDrive.zeroSensors(Constants.StartingPose);
-            //mTurret.zeroSensors();
+            mDrive.zeroSensors();
+            mTurret.zeroSensors();
             mClimber.zeroSensors();
-            mOrchestrator.setStopped(false);
+
+            // coast vel is ignored here because we aren't actually revving, which makes the shooter start its default coast state regardless
+            mOrchestrator.setRevving(false, Shooter.COAST_VELOCITY);
 
             mDrive.setControlState(Drive.DriveControlState.TRAJECTORY_FOLLOWING);
 
@@ -451,7 +409,6 @@ public class Robot extends TimedRobot {
             if (!mDriveByCameraInAuto) {
                 mAutoModeExecutor.start();
             }
-            // setHeading called already in both startTrajectory and zeroSensors
             mEnabledLooper.start();
         } catch (Throwable t) {
             throw t;
@@ -469,7 +426,7 @@ public class Robot extends TimedRobot {
             }
 
             mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
-            //mTurret.zeroSensors();
+            mTurret.zeroSensors();
             mHasBeenEnabled = true;
 
             mEnabledLooper.start();
@@ -500,7 +457,7 @@ public class Robot extends TimedRobot {
 
             mEnabledLooper.stop();
             mDisabledLooper.start();
-            //mTurret.zeroSensors();
+            mTurret.zeroSensors();
             mDrive.zeroSensors();
             blinkTimer.reset();
 
@@ -569,7 +526,10 @@ public class Robot extends TimedRobot {
                 System.out.println("Set auto mode to: " + auto.getClass().toString());
                 mRobotState.field
                     .getObject("Trajectory");
-                 mAutoModeExecutor.setAutoMode(auto);
+                mAutoModeExecutor.setAutoMode(auto);
+                Constants.StartingPose = auto.getTrajectory().getInitialPose();
+                mRobotState.reset();
+                mDrive.zeroSensors();
             }
         } catch (Throwable t) {
             faulted = true;
