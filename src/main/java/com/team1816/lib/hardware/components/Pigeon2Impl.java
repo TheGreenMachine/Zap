@@ -6,8 +6,8 @@ import com.team1816.season.Constants;
 
 public class Pigeon2Impl extends Pigeon2 implements IPigeonIMU {
 
-    public Pigeon2Impl(int id) {
-        super(id, Constants.CANBusHighSpeed);
+    public Pigeon2Impl(int id, String canBus) {
+        super(id, canBus);
     }
 
     // set Fused heading doesn't exist in pigeon 2. De we do compass calibration? If not then fused heading is about the same as yaw.

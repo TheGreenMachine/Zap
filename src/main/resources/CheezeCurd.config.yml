@@ -1,6 +1,6 @@
 subsystems:
     drivetrain:
-        implemented: true
+        implemented: false
         talons:
             leftMain: 2
             leftSlaveOne: -1
@@ -18,7 +18,6 @@ subsystems:
                 kF: 0.5383998
                 iZone: 30
         constants:
-            isSwerve: 0
             pigeonId: 13
             pigeonOnTalon: 0
             encPPR: 4096 # CTRE mag encoder
@@ -31,10 +30,11 @@ subsystems:
     ledmanager:
         implemented: true
         canifier: 12
+        candle: 10
         constants:
             maxLevel: 25
-            raveEnabled: 0
-            raveSpeed: .05
+            raveEnabled: 1
+            raveSpeed: .3
     turret:
         implemented: true
         talons:
@@ -53,19 +53,20 @@ subsystems:
                 kF: 0 # Should be 0 for position control
                 iZone: 200
         constants:
-            turretPPR: 4096
             encPPR: 4096
-            revLimit: 960
-            fwdLimit: 2990
+            turretPPR: 4096
+            revLimit: 760 # CCW
+            fwdLimit: 3190 # CW
             currentFloorCheck: 0
             currentEpsilonCheck: .2
             rpmFloorCheck: 0
-            absPosTicksSouth: 4035
+            absPosTicksSouth: 1980
             invert_sensor_phase: 0
             rpmEpsilonCheck: 60
-pcm: -1
+    camera:
+        implemented: false
+canivoreBusName: rio
 constants:
-    pdIsRev: 0
     wheelDiameter: 4.058
     trackWidth: 15.75
     maxVel: 30
@@ -80,7 +81,11 @@ constants:
     logAuto: 1
     logTeleOp: 1
     badLogEnabled: 1
-    useAutoAim: 1
+    useAutoAim: 0
     compressorEnabled: 0
-    wheelbaseLength: .3
+    wheelbaseLength: 20
+    maxVelPathFollowing: 3
+    maxVelOpenLoop: 3
     maxRotVel: 1
+    configStatusFrames: 0
+    pdIsRev: 0

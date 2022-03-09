@@ -177,6 +177,7 @@ subsystems:
     camera:
         implemented: false #if false then also turn off useAutoAim
 pcm: 28
+canivoreBusName: highSpeed
 constants:
     maxTicks: 12275.7 # ticks per 100ms TODO make into constant unique to each subsystem
     maxRotVel: 7.2
@@ -205,3 +206,4 @@ constants:
     wheelDiameter: 4
     kLooperDt: .020 # seconds
     pdIsRev: 1
+

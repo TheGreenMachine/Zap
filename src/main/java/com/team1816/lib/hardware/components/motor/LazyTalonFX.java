@@ -11,8 +11,8 @@ public class LazyTalonFX extends TalonFX implements IConfigurableMotorController
     protected double mLastSet = Double.NaN;
     protected ControlMode mLastControlMode = null;
 
-    public LazyTalonFX(int deviceNumber) {
-        super(deviceNumber, Constants.CANBusHighSpeed);
+    public LazyTalonFX(int deviceNumber, String canBus) {
+        super(deviceNumber, canBus);
     }
 
     @Override
