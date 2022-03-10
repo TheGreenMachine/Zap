@@ -4,6 +4,8 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.season.Constants;
 import com.team1816.season.RobotState;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 
 @Singleton
 public class Orchestrator {
@@ -118,5 +120,12 @@ public class Orchestrator {
     public double getDistance(DistanceManager.SUBSYSTEM subsystem) {
         System.out.println("GETTING DISTANCE FROM CAMERA / DISTANCE MANAGER " + distanceManager.getOutput(camera.getDistance(), subsystem));
         return distanceManager.getOutput(camera.getDistance(), subsystem);
+    }
+
+
+    public double getPredictedDistance(DistanceManager.SUBSYSTEM subsystem) {
+        Translation2d shooterDist = new Translation2d(distanceManager.getOutput(camera.getDistance(), subsystem), Rotation2d.fromDegrees(robotState.getLatestFieldToTurret()));
+        Translation2d motionBuffer = new Translation2d(robotState.delta_field_to_vehicle.dx, robotState.delta_field_to_vehicle.dy);
+        return (motionBuffer.plus(shooterDist)).getNorm();
     }
 }
