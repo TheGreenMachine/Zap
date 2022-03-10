@@ -21,9 +21,7 @@ import com.team1816.season.subsystems.*;
 import com.team254.lib.util.LatchedBoolean;
 import com.team254.lib.util.SwerveDriveSignal;
 import com.team254.lib.util.TimeDelayedBoolean;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -255,7 +253,7 @@ public class Robot extends TimedRobot {
             mDrive.zeroSensors();
             mTurret.zeroSensors();
             mClimber.zeroSensors();
-            mOrchestrator.setStopped();
+            mOrchestrator.setStopped(true); // bool statement is for shooter state
 
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mSubsystemManager.registerDisabledLoops(mDisabledLooper);
@@ -264,7 +262,7 @@ public class Robot extends TimedRobot {
             ledManager.registerEnabledLoops(mDisabledLooper);
 
             // Robot starts forwards.
-            mRobotState.reset();
+            mRobotState.resetToStart();
             mDrive.setHeading(new Rotation2d());
 
             mAutoModeSelector.updateModeCreator();
@@ -282,7 +280,7 @@ public class Robot extends TimedRobot {
                                     Turret.ControlMode.CAMERA_FOLLOWING
                                 );
                             } else {
-                                mTurret.setControlMode(prevTurretControlMode);
+                                mTurret.setControlMode(prevTurretControlMode); // this gets called when the robot inits - this could be bad?
                             }
                         }
                     ),
@@ -313,8 +311,8 @@ public class Robot extends TimedRobot {
                     createAction(
                         mControlBoard::getZeroPose,
                         () -> {
-                            mDrive.zeroSensors(new Pose2d(new Translation2d(.5, 3.5), Constants.EmptyRotation));
-                            mRobotState.reset(new Pose2d(new Translation2d(.5, 3.5), Constants.EmptyRotation));
+                            mDrive.zeroSensors(Constants.ZeroPose);
+                            mRobotState.reset(Constants.ZeroPose, Constants.EmptyRotation);
                         }
                     ),
                     createAction(
@@ -360,6 +358,8 @@ public class Robot extends TimedRobot {
             ledManager.setDefaultStatus(LedManager.RobotStatus.DISABLED);
             ledManager.setCameraLed(false);
 
+            mOrchestrator.setStopped(true);
+
             // Reset all auto mode state.
             if (mAutoModeExecutor != null) {
                 mAutoModeExecutor.stop();
@@ -368,15 +368,11 @@ public class Robot extends TimedRobot {
             mAutoModeSelector.updateModeCreator();
             mAutoModeExecutor = new AutoModeExecutor();
 
-            //            mInfrastructure.setIs
-            //       Control(false);
-
             mDisabledLooper.start();
 
             mDrive.stop();
             mDrive.setBrakeMode(false);
 
-            mOrchestrator.setStopped();
         } catch (Throwable t) {
             faulted = true;
             throw t;
@@ -390,7 +386,7 @@ public class Robot extends TimedRobot {
             ledManager.setDefaultStatus(LedManager.RobotStatus.AUTONOMOUS);
 
             // Robot starts where it's told for auto path
-            mRobotState.reset();
+            mRobotState.resetToStart();
 
             mHasBeenEnabled = true;
 
@@ -398,8 +394,7 @@ public class Robot extends TimedRobot {
             mTurret.zeroSensors();
             mClimber.zeroSensors();
 
-            // coast vel is ignored here because we aren't actually revving, which makes the shooter start its default coast state regardless
-            mOrchestrator.setRevving(false, Shooter.COAST_VELOCITY);
+            mOrchestrator.setStopped(false);
 
             mDrive.setControlState(Drive.DriveControlState.TRAJECTORY_FOLLOWING);
 
@@ -432,11 +427,10 @@ public class Robot extends TimedRobot {
             mEnabledLooper.start();
             mTurret.setControlMode(Turret.ControlMode.CENTER_FOLLOWING);
 
-            mCamera.setEnabled(getFactory().getConstant("useAutoAim") > 0);
+            mCamera.setEnabled(Constants.kUseVision);
 
-            //System.out.println(mTurret.getActualTurretPositionTicks() + "+++++++"); // for debugging whether or not getActTicks works. doesn't seem to - ginget
+            mOrchestrator.setStopped(false);
 
-            //            mInfrastructure.setIsManualControl(true);
             mControlBoard.reset();
         } catch (Throwable t) {
             faulted = true;
@@ -455,10 +449,13 @@ public class Robot extends TimedRobot {
                 ledManager.writeToHardware();
             }
 
+            mOrchestrator.setStopped(false);
+
             mEnabledLooper.stop();
             mDisabledLooper.start();
             mTurret.zeroSensors();
             mDrive.zeroSensors();
+
             blinkTimer.reset();
 
             ledManager.blinkStatus(LedManager.RobotStatus.DISABLED);
@@ -495,7 +492,7 @@ public class Robot extends TimedRobot {
             if (RobotController.getUserButton() && !mHasBeenEnabled) {
                 System.out.println("Zeroing Robot!");
                 mDrive.zeroSensors();
-                mRobotState.reset();
+                mRobotState.resetToStart();
                 mDrive.setHeading(new Rotation2d());
                 mDrive.setHeading(
                     mAutoModeSelector
@@ -528,7 +525,7 @@ public class Robot extends TimedRobot {
                     .getObject("Trajectory");
                 mAutoModeExecutor.setAutoMode(auto);
                 Constants.StartingPose = auto.getTrajectory().getInitialPose();
-                mRobotState.reset();
+                mRobotState.resetToStart();
                 mDrive.zeroSensors();
             }
         } catch (Throwable t) {
@@ -572,7 +569,6 @@ public class Robot extends TimedRobot {
         } catch (Throwable t) {
             throw t;
         }
-        //System.out.println("CAMERA DISTANCE LINE 579 Robot.java" +  mCamera.getDistance());
         if (Constants.kIsLoggingTeleOp) {
             logger.updateTopics();
             logger.log();

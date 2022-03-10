@@ -35,7 +35,7 @@ public class Turret extends Subsystem implements PidProvider {
     private static final int kPrimaryCloseLoop = 0;
     private static final int kPIDGyroIDx = 0;
     private static final int kPIDVisionIDx = 0;
-    private static int TURRET_ENCODER_PPR = 4096;
+    public static int TURRET_ENCODER_PPR = 4096;
     public final int TURRET_PPR;
     private final int TURRET_MASK;
     private final double TURRET_ENC_RATIO;
@@ -159,7 +159,7 @@ public class Turret extends Subsystem implements PidProvider {
     public void setControlMode(ControlMode controlMode) {
         if (this.controlMode != controlMode) {
             if (controlMode == ControlMode.CAMERA_FOLLOWING) {
-                if (Constants.kUseAutoAim) {
+                if (Constants.kUseVision) {
                     turret.selectProfileSlot(kPIDVisionIDx, 0);
                     this.controlMode = controlMode;
                     camera.setEnabled(true);

@@ -69,7 +69,6 @@ public class DistanceManager {
             }
         }
         return 0;
-        //return Shooter.MAX_VELOCITY;
     }
 
     private double getHoodRetracted(double distance) {

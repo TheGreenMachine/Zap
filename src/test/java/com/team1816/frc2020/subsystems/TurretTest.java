@@ -50,7 +50,7 @@ public class TurretTest {
     public void setUp() {
         mTurret = new Turret();
         mTurret.zeroSensors();
-        state.reset();
+        state.resetToStart();
     }
 
     @Test
@@ -145,7 +145,7 @@ public class TurretTest {
         when(mockFactory.getConstant(Turret.NAME, "turretPPR")).thenReturn(encPPR * 2);
         mTurret = new Turret();
         mTurret.zeroSensors();
-        state.reset();
+        state.resetToStart();
     }
 
     @Test

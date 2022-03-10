@@ -306,7 +306,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         mRobotState.field.setRobotPose(Constants.StartingPose);
         odometry =
             new DifferentialDriveOdometry(
-                Constants.StartingPose.getRotation(),
+                Constants.StartingPose.getRotation(), // shouldn't this be the actual gyro angle
                 Constants.StartingPose
             );
     }

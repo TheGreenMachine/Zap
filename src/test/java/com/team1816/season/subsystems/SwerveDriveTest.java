@@ -40,7 +40,7 @@ public class SwerveDriveTest {
     public void setUp() {
         mDrive = new SwerveDrive();
         mDrive.zeroSensors();
-        state.reset();
+        state.resetToStart();
     }
 
     private SwerveModuleState[] getExpectedState(

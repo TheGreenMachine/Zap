@@ -90,6 +90,7 @@ subsystems:
             raveEnabled: 0
             raveSpeed: 0.05
             cameraLed: 1
+            maxLevel: 255
     turret:
         implemented: true
         pidConfig:
@@ -131,7 +132,6 @@ subsystems:
             farVel: 11200
             maxVel: 11500
             coast: 5300
-            defaultRevVel: 9900
     climber:
         implemented: true
         sparkmaxes:
@@ -139,10 +139,8 @@ subsystems:
         solenoids:
             deployer: 2
         constants:
-            climberMinPosition: -5
-            climberMaxPosition: -280
-    orchestrator: # we'll have to decide what to do with this - it's not rly a subsystem, but it has a periodic call we want to loop through
-        implemented: true
+            climberMinPos: -5
+            climberMaxPos: -280
     elevator:
         implemented: true
         talons:
@@ -175,7 +173,7 @@ subsystems:
             collecting: .05
             flush: -.35
     camera:
-        implemented: false #if false then also turn off useAutoAim
+        implemented: false
 pcm: 28
 canivoreBusName: highSpeed
 constants:
@@ -190,7 +188,6 @@ constants:
     sensorPhase: 0
     kTrackScrubFactor: 1.0
     pathKs: 2
-    useAutoAim: 0
     verbose: 0 # 0 or 1
     heading_kI: 0
     heading_kD: 0

@@ -7,10 +7,6 @@ import com.team1816.lib.subsystems.Subsystem;
 
 public class Climber extends Subsystem {
 
-    // climber this year has 2 motors: one for going up/down, and one for making the ferris wheel "spin". 4? pistons,
-    // one for each claw, (two will be fired at once) - If you have no idea what the climber does or looks like,
-    // ask max or nico or, even better, bully (ask) the build team because they better know about what they're building!
-
     private static final String NAME = "climber";
 
     // Components
@@ -25,8 +21,10 @@ public class Climber extends Subsystem {
     private boolean isDeployed;
     private boolean outputsChanged = false;
 
-    private final double MAX_POSITION = factory.getConstant("climberMaxPosition", -200);
-    private final double MIN_POSITION = factory.getConstant("climberMinPosition", 0);
+    // maybe make the climber positions into an array that you go up as you traverse each rung - each array index corresponds to a diff behavior
+    // (aka index 0 = unclamped bottom clamps + set motor to position 0, index 1 = clamped top + set motor to 1st position, etc...)
+    private final double MAX_POSITION = factory.getConstant(NAME, "climberMaxPos", -200);
+    private final double MIN_POSITION = factory.getConstant(NAME, "climberMinPos", 0);
     private final double MID_POSITTION = (MAX_POSITION + MIN_POSITION)/2;
 
 
@@ -45,24 +43,12 @@ public class Climber extends Subsystem {
         outputsChanged = true;
     }
 
-    public void setClimberUp() {
+    public void setClimberUp() { // make this into method traversing the index?
         if(state != STATE.POSITION){
             state = STATE.POSITION;
         }
         climberPosition = MAX_POSITION;
     }
-
-    public void setClimberMid() {
-        if(state != STATE.POSITION){
-            state = STATE.POSITION;
-        }
-        climberPosition = MID_POSITTION;    }
-
-    public void setClimberDown() {
-        if(state != STATE.POSITION){
-            state = STATE.POSITION;
-        }
-        climberPosition = MIN_POSITION;    }
 
     @Override
     public void writeToHardware() {

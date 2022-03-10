@@ -61,18 +61,23 @@ public class Elevator extends Subsystem {
     @Override
     public void writeToHardware() {
         if (outputsChanged) {
+            double pow = 0;
             switch (state) {
                 case STOP:
-                    elevatorPower = 0;
+                    pow = 0;
                     break;
                 case FIRE:
-                    if (!distanceManaged) elevatorPower = FIRE;
+                    if (!distanceManaged){
+                        pow = FIRE;
+                    } else {
+                        pow = elevatorPower;
+                    }
                     break;
                 case FLUSH:
-                    elevatorPower = FLUSH;
+                    pow = FLUSH;
                     break;
             }
-            this.elevator.set(ControlMode.PercentOutput, elevatorPower);
+            this.elevator.set(ControlMode.PercentOutput, pow);
             // create ball color updating here once sensor created
             distanceManaged = false;
             outputsChanged = false;

@@ -59,6 +59,7 @@ public class Constants {
     public static double kTrackScrubFactor = factory.getConstant("kTrackScrubFactor");
 
     public static Pose2d StartingPose = new Pose2d(0.5, 3.5, new Rotation2d());
+    public static final Pose2d ZeroPose = StartingPose;
 
     // CAN Timeouts
     public static final int kCANTimeoutMs = 10; // use for important on the fly updates
@@ -251,11 +252,11 @@ public class Constants {
     public static final boolean kIsLoggingTeleOp = factory.getConstant("logTeleOp") > 0;
     public static final boolean kIsLoggingAutonomous = factory.getConstant("logAuto") > 0;
 
-    public static final boolean kUseAutoAim = factory.getConstant("useAutoAim") > 0;
+    public static final boolean kUseVision = factory.getSubsystem("camera").implemented;
 
     public static final double kPXController = 10;
     public static final double kPYController = 10;
-    public static final double kPThetaController = 700;
+    public static final double kPThetaController = 700; // find why this is so big
     public static final double kDThetaController = 0; // 2000;
     public static double kMaxAngularSpeed = factory.getConstant("maxRotVel"); // rad/sec
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI;

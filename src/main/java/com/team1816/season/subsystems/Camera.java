@@ -12,7 +12,6 @@ import java.net.*;
 public class Camera extends Subsystem {
 
     private static final String NAME = "camera";
-    private static Camera INSTANCE;
 
     private final String PROTOCOL_LINE = "\\|";
 
@@ -30,7 +29,7 @@ public class Camera extends Subsystem {
     private Socket socket;
     private BufferedReader socketIn;
     private PrintWriter socketOut;
-    private Boolean usingVision = true;
+    private Boolean cameraOn = false; // does this need to be a Boolean object?
     private long needsReconnect = 0;
 
     public Camera() {
@@ -38,7 +37,7 @@ public class Camera extends Subsystem {
     }
 
     private String query(String message) throws IOException {
-        if (!usingVision) return "";
+        if (!cameraOn) return "";
         if (socketOut == null || socketIn == null || socket == null || !socket.isConnected()) {
             if (socket == null || !socket.isConnected()) {
                 System.out.println("Socket does not exist, reconnecting");
@@ -53,7 +52,7 @@ public class Camera extends Subsystem {
             System.out.println("CONNECTION LOST: ATTEMPTING TO RECONNECT LINE 41 ");
             return "";
         }
-        if (usingVision) {
+        if (cameraOn) {
             socketOut.write(message + "\n");
             socketOut.flush();
             String out = socketIn.readLine();
@@ -64,7 +63,7 @@ public class Camera extends Subsystem {
     }
 
     private boolean socketConnect() {
-        if (!usingVision) return true;
+        if (!cameraOn) return true;
         try {
             socket = new Socket("10.18.16.16", 5802);
             //socket.connect(new InetSocketAddress(InetAddress.getLocalHost(), 5802), 10);
@@ -79,7 +78,7 @@ public class Camera extends Subsystem {
     }
 
     public double getDeltaXAngle() {
-        if (!usingVision) return 0;
+        if (!cameraOn) return 0;
         try {
             String line = query("center_x");
             String[] coords = line.split(PROTOCOL_LINE);
@@ -101,7 +100,7 @@ public class Camera extends Subsystem {
     }
 
     public double getDistance() {
-        if (!usingVision) return 0;
+        if (!cameraOn) return 0;
         try {
             String line = query("distance");
             System.out.println(line);
@@ -120,7 +119,7 @@ public class Camera extends Subsystem {
     }
 
     public double getRawCenterX() {
-        if (!usingVision) return 0;
+        if (!cameraOn) return 0;
         try {
             String line = query("center_x");
             String[] coords = line.split(PROTOCOL_LINE);
@@ -136,7 +135,7 @@ public class Camera extends Subsystem {
 
     public void setEnabled(boolean enabled) {
         led.setCameraLed(enabled);
-        usingVision = enabled;
+        cameraOn = enabled;
         if (!enabled) {
             if (needsReconnect != 0) {
                 needsReconnect = 0;
@@ -157,7 +156,7 @@ public class Camera extends Subsystem {
     }
 
     public void readFromHardware() {
-        if (!usingVision) return;
+        if (!cameraOn) return;
         // if more than 200ms, reconnect
         if (needsReconnect != 0 && (System.currentTimeMillis() - needsReconnect) >= 2*Constants.kLooperDt) {
             //            System.out.println("Reconnect attempt at " + System.currentTimeMillis());

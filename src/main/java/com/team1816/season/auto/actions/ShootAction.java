@@ -13,8 +13,8 @@ public class ShootAction implements Action {
     @Inject
     private static Shooter shooter;
 
-    private boolean isShooting;
-    private boolean hoodOut;
+    private final boolean isShooting;
+    private final boolean hoodOut;
 
     public ShootAction(boolean isShooting, boolean hoodOut) {
         this.isShooting = isShooting;
@@ -23,8 +23,8 @@ public class ShootAction implements Action {
 
     @Override
     public void start() {
-        shooter.setVelocity(9500);
         shooter.setHood(hoodOut);
+        orchestrator.setRevving(isShooting, Shooter.MID_VELOCITY); // if using camera, setHood is overridden
     }
 
     @Override

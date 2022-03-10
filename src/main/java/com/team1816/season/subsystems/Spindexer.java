@@ -2,7 +2,6 @@ package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
@@ -64,24 +63,29 @@ public class Spindexer extends Subsystem {
     @Override
     public void writeToHardware() {
         if (outputsChanged) {
+            double pow = 0;
             switch (state) {
                 case STOP:
-                    spindexerPower = 0;
+                    pow = 0;
                     break;
                 case COLLECT:
-                    spindexerPower = COLLECT;
+                    pow = COLLECT;
                     break;
                 case INDEX:
-                    spindexerPower = INDEX;
+                    pow = INDEX;
                     break;
                 case FLUSH:
-                    spindexerPower = FLUSH;
+                    pow = FLUSH;
                     break;
                 case FIRE:
-                    if (!distanceManaged) spindexerPower = FIRE;
+                    if (!distanceManaged){
+                        pow = FIRE;
+                    } else {
+                        pow = spindexerPower;
+                    }
                     break;
             }
-            spindexer.set(ControlMode.PercentOutput, spindexerPower);
+            spindexer.set(ControlMode.PercentOutput, pow);
             this.feederFlap.set(feederFlapOut);
             distanceManaged = false;
             outputsChanged = false;

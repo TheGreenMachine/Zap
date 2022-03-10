@@ -21,7 +21,6 @@ public class Collector extends Subsystem {
     private boolean outputsChanged = false;
     private COLLECTOR_STATE state = COLLECTOR_STATE.STOP;
 
-    private final double REVVING;
     private final double COLLECTING;
     private final double FLUSH;
 
@@ -32,7 +31,6 @@ public class Collector extends Subsystem {
         armPiston = factory.getSolenoid(NAME, "arm");
         intake = factory.getMotor(NAME, "intake");
 
-        REVVING = factory.getConstant(NAME, "revving");
         COLLECTING = factory.getConstant(NAME, "collecting");
         FLUSH = factory.getConstant(NAME, "flush");
     }
@@ -56,10 +54,6 @@ public class Collector extends Subsystem {
             switch (state) {
                 case STOP:
                     intakePow = 0;
-                    armDown = false;
-                    break;
-                case REVVING:
-                    intakePow = REVVING;
                     armDown = false;
                     break;
                 case COLLECTING:
@@ -88,7 +82,6 @@ public class Collector extends Subsystem {
 
     public enum COLLECTOR_STATE {
         STOP,
-        REVVING,
         COLLECTING,
         FLUSH,
     }

@@ -45,7 +45,6 @@ public class Shooter extends Subsystem implements PidProvider {
     public static final int MAX_VELOCITY = (int) factory.getConstant(NAME, "maxVel");
 
     public static final int COAST_VELOCITY = (int) factory.getConstant(NAME, "coast");
-    private static final int DEFAULT_REV_VELOCITY = (int) factory.getConstant(NAME, "defaultRevVel", MID_VELOCITY);
 
 
     // tune this and make changeable with a button in shooter itself
@@ -132,8 +131,10 @@ public class Shooter extends Subsystem implements PidProvider {
     }
 
     public void setState(SHOOTER_STATE state) {
-        this.state = state;
-        this.outputsChanged = true;
+        if(state != this.state){
+            this.state = state;
+            this.outputsChanged = true;
+        }
     }
 
     public boolean isVelocityNearTarget() {
@@ -152,19 +153,20 @@ public class Shooter extends Subsystem implements PidProvider {
     @Override
     public void writeToHardware() {
         if (outputsChanged) {
+            double vel = 0;
             switch (state){
                 case STOP:
-                    velocityDemand = 0;
+                    vel = 0;
                     break;
                 case REVVING:
-                    if (!distanceManaged) velocityDemand = DEFAULT_REV_VELOCITY;
+                    vel = velocityDemand;
                     break;
                 case COASTING:
-                    velocityDemand = COAST_VELOCITY;
+                    vel = COAST_VELOCITY;
                     break;
             }
             hood.set(hoodOut);
-            shooterMain.set(ControlMode.Velocity, velocityDemand);
+            shooterMain.set(ControlMode.Velocity, vel);
 
             System.out.println("velocity shooter demand = " + velocityDemand);
             outputsChanged = false;

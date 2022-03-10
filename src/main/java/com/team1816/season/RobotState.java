@@ -16,7 +16,7 @@ public class RobotState {
 
     public RobotState() {
         SmartDashboard.putData("Field", field);
-        reset();
+        resetToStart();
     }
 
     /**
@@ -26,15 +26,11 @@ public class RobotState {
         Pose2d initial_field_to_vehicle,
         Rotation2d initial_vehicle_to_turret
     ) {
-        reset(initial_field_to_vehicle);
+        field_to_vehicle = initial_field_to_vehicle;
         vehicle_to_turret = initial_vehicle_to_turret;
     }
 
-    public synchronized void reset(Pose2d initial_field_to_vehicle) {
-        field_to_vehicle = initial_field_to_vehicle;
-    }
-
-    public synchronized void reset() {
+    public synchronized void resetToStart() {
         reset(Constants.StartingPose, Constants.EmptyRotation);
     }
 
@@ -44,7 +40,14 @@ public class RobotState {
     }
 
     public double getLatestFieldToTurret() {
-        return field_to_vehicle.getRotation().plus(vehicle_to_turret).getDegrees(); // should this be plus (not minus) if the turret direction isn't negated?
+        return field_to_vehicle.getRotation().plus(vehicle_to_turret).getDegrees();
+    }
+
+    public boolean isStationary(){
+        return
+            delta_field_to_vehicle.dx == 0 &&
+            delta_field_to_vehicle.dy == 0 &&
+            delta_field_to_vehicle.dtheta == 0;
     }
 
     public synchronized void outputToSmartDashboard() {
@@ -65,16 +68,5 @@ public class RobotState {
                     Rotation2d.fromDegrees(getLatestFieldToTurret())
                 )
             );
-        //        field.getObject("target") // not sure what to do to get a representation of the goal as an object on the field
-        //            .setPose(
-        //                new Pose2d(field_to_vehicle.transformBy(
-        //                    new Transform2d(
-        //                        new Translation2d(- .1,.1),
-        //                        Constants.EmptyRotation
-        //                    )
-        //                ).getTranslation(),
-        //                    Rotation2d.fromDegrees(getLatestFieldToTurret())
-        //                )
-        //            );
     }
 }
