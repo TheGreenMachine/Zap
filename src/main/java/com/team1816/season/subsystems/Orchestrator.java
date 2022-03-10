@@ -3,6 +3,9 @@ package com.team1816.season.subsystems;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.subsystems.Subsystem;
+import com.team1816.season.RobotState;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.SendableBuilder;
 
 @Singleton
@@ -15,6 +18,9 @@ public class Orchestrator extends Subsystem {
     // this class will now deal with organizing the collector, spindexer, elevator, and shooter -- heck this might as well just be a SUPERSTRUCTURE
 
     private static final String NAME = "orchestrator";
+
+    @Inject
+    private static RobotState robotState;
 
     @Inject
     private static Collector collector;
@@ -163,6 +169,12 @@ public class Orchestrator extends Subsystem {
     public double getDistance(DistanceManager.SUBSYSTEM subsystem) {
         System.out.println("CAMERA DISTANCE Line 163 " + distanceManager.getOutput(camera.getDistance(), subsystem));
         return distanceManager.getOutput(camera.getDistance(), subsystem);
+    }
+
+    public double getPredictedDistance(DistanceManager.SUBSYSTEM subsystem) {
+        Translation2d shooterDist = new Translation2d(distanceManager.getOutput(camera.getDistance(), subsystem), Rotation2d.fromDegrees(robotState.getLatestFieldToTurret()));
+        Translation2d motionBuffer = new Translation2d(robotState.delta_field_to_vehicle.dx, robotState.delta_field_to_vehicle.dy);
+        return (motionBuffer.plus(shooterDist)).getNorm();
     }
 
     public void idle() { // not rly efficient organization rn but easier to understand - each action has its own priority over idling
