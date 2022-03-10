@@ -199,9 +199,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     // general setters
     @Override
-    public void setOpenLoop(DriveSignal signal) {
+    public void setOpenLoop(DriveSignal signal) { // currently just sets azimuths to forward and stops drivetrain
         if (mDriveControlState != DriveControlState.OPEN_LOOP) {
-            setBrakeMode(false);
             System.out.println("switching to open loop");
             System.out.println(signal);
             mDriveControlState = DriveControlState.OPEN_LOOP;
@@ -314,13 +313,16 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     @Override
     public void zeroSensors(Pose2d pose) {
         System.out.println("Zeroing drive sensors!");
+        setBrakeMode(false);
         resetPigeon();
-//        setHeading(pose.getRotation());
         resetOdometry(pose);
-        for (SwerveModule module : swerveModules) {
-            module.setDesiredState(new SwerveModuleState(), true);
+        for (int i = 0; i < 4; i++) {
+            swerveModules[i].setDesiredState(new SwerveModuleState(), true);
+            mPeriodicIO.desiredModuleStates[i] = new SwerveModuleState();
+            mPeriodicIO.chassisSpeed = new ChassisSpeeds();
         }
         mRobotState.field.setRobotPose(Constants.StartingPose);
+        autoModeSelector.setHardwareFailure(false);
         //        if (mPigeon.getLastError() != ErrorCode.OK) {
         //            // BadLog.createValue("PigeonErrorDetected", "true");
         //            System.out.println(
@@ -329,7 +331,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         //            System.out.println("Defaulting to drive straight mode");
         //            AutoModeSelector.getInstance().setHardwareFailure(true);
         //        } else {
-        autoModeSelector.setHardwareFailure(false);
         //        }
     }
 

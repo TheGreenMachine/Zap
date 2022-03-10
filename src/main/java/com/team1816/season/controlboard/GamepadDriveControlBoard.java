@@ -64,8 +64,8 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
     }
 
     @Override
-    public boolean getTrenchToFeederSpline() {
-        return mController.getButton(Controller.Button.B);
+    public boolean getZeroPose() {
+        return mController.getButton(Controller.Button.START);
     }
 
     @Override

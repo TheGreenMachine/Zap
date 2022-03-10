@@ -21,9 +21,6 @@ public class Constants {
 
     public static final double kLooperDt = factory.getConstant("kLooperDt", .020);
 
-    public static final String CANBusRio = "rio";
-    public static final String CANBusHighSpeed = "highSpeed";
-
     // Field characterization
     public static final double fieldCenterY = 8.23 / 2.0;
     public static final double fieldCenterX = 16.46 / 2.0;

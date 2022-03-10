@@ -51,7 +51,8 @@ public class CtreMotorFactory {
         boolean isFalcon,
         SubsystemConfig subsystems,
         Map<String, PIDSlotConfiguration> pidConfigList,
-        int remoteSensorId
+        int remoteSensorId,
+        String canBus
     ) {
         return createTalon(
             id,
@@ -60,7 +61,8 @@ public class CtreMotorFactory {
             isFalcon,
             subsystems,
             pidConfigList,
-            remoteSensorId
+            remoteSensorId,
+            canBus
         );
     }
 
@@ -70,7 +72,8 @@ public class CtreMotorFactory {
         boolean isFalcon,
         IMotorController master,
         SubsystemConfig subsystem,
-        Map<String, PIDSlotConfiguration> pidConfigList
+        Map<String, PIDSlotConfiguration> pidConfigList,
+        String canBus
     ) {
         final IMotorControllerEnhanced talon = createTalon(
             id,
@@ -79,7 +82,8 @@ public class CtreMotorFactory {
             isFalcon,
             subsystem,
             pidConfigList,
-            -1 // never can have a remote sensor on slave
+            -1, // never can have a remote sensor on slave,
+            canBus
         );
         System.out.println(
             "Slaving talon on " + id + " to talon on " + master.getDeviceID()
@@ -95,10 +99,11 @@ public class CtreMotorFactory {
         boolean isFalcon,
         SubsystemConfig subsystem,
         Map<String, PIDSlotConfiguration> pidConfigList,
-        int remoteSensorId
+        int remoteSensorId,
+        String canBus
     ) {
         IConfigurableMotorController talon = isFalcon
-            ? new LazyTalonFX(id)
+            ? new LazyTalonFX(id, canBus)
             : new LazyTalonSRX(id);
         configureMotorController(
             talon,

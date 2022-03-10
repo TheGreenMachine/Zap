@@ -3,7 +3,6 @@
     "$id": "http://edinarobotics.com/robotconfig.json",
     "type": "object",
     "title": "Robot Configuration",
-    "additionalProperties": true,
     "properties": {
         "subsystems": {
             "type": "object",
@@ -14,12 +13,15 @@
         },
         "constants": {
             "$ref": "double.map.schema.json"
+        },
+        "canivoreBusName": {
+            "type": "string"
         }
     },
     "additionalProperties": false,
     "anyOf": [
         {
-            "required": ["subsystems", "pcm", "constants"]
+            "required": ["subsystems", "pcm", "constants", "canivoreBusName"]
         }
     ]
 }

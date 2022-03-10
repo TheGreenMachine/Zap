@@ -19,7 +19,7 @@ public interface IDriveControlBoard {
 
     boolean getFeederToTrenchSpline();
 
-    boolean getTrenchToFeederSpline();
+    boolean getZeroPose();
 
     boolean getBrakeMode();
 

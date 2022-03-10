@@ -18,7 +18,6 @@ public class Climber extends Subsystem {
     private final ISolenoid topClamp;
     private final ISolenoid bottomClamp;
 
-
     // State
     private STATE state = STATE.MANUAL;
     private double climberPower;

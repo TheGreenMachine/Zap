@@ -81,7 +81,8 @@ public class RobotFactory {
                         false,
                         subsystem,
                         pidConfigs,
-                        remoteSensorId
+                        remoteSensorId,
+                        config.canivoreBusName
                     );
             } else if (
                 subsystem.falcons != null && isHardwareValid(subsystem.falcons.get(name))
@@ -93,7 +94,8 @@ public class RobotFactory {
                         true,
                         subsystem,
                         pidConfigs,
-                        remoteSensorId
+                        remoteSensorId,
+                        config.canivoreBusName
                     );
             } else if (
                 subsystem.sparkmaxes != null &&
@@ -174,7 +176,8 @@ public class RobotFactory {
                         false,
                         master,
                         subsystem,
-                        subsystem.pidConfig
+                        subsystem.pidConfig,
+                        config.canivoreBusName
                     );
             } else if (
                 subsystem.falcons != null && isHardwareValid(subsystem.falcons.get(name))
@@ -186,7 +189,8 @@ public class RobotFactory {
                         true,
                         master,
                         subsystem,
-                        subsystem.pidConfig
+                        subsystem.pidConfig,
+                        config.canivoreBusName
                     );
             } else if (
                 subsystem.victors != null && isHardwareValid(subsystem.victors.get(name))
@@ -343,25 +347,23 @@ public class RobotFactory {
         return new GhostCanifier();
     }
 
-    public CANdle getCandle(String subsystemName, int defaultVal) {
-        CANdle candle;
+    public ICANdle getCandle(String subsystemName) {
+        ICANdle candle;
         var subsystem = getSubsystem(subsystemName);
         if (subsystem.implemented && isHardwareValid((subsystem.candle))) {
-            candle = new CANdle(subsystem.candle, Constants.CANBusHighSpeed);
+            candle = new CANdleImpl(subsystem.candle, config.canivoreBusName);
+            candle.configFactoryDefault();
+            candle.configStatusLedState(true);
+            candle.configLOSBehavior(true);
+            candle.configLEDType(CANdle.LEDStripType.BRG);
+            candle.configBrightnessScalar(1);
             if (factory.getConstant("configStatusFrames") == 1) {
-                setStatusFrame(candle); // make CANdle send one signal per second - FOR DEBUGGING!
+                setStatusFrame(candle);
             }
             return candle;
-        } else if (defaultVal > -1) {
-            candle = new CANdle(defaultVal, Constants.CANBusHighSpeed);
-            if (factory.getConstant("configStatusFrames") == 1) {
-                setStatusFrame(candle); // make CANdle send one signal per second - FOR DEBUGGING!
-            }
-            return candle;
-        } else {
-            //ghost
         }
-        return null;
+        reportGhostWarning(CANdle.class.getSimpleName(), subsystemName, "candle");
+        return new GhostCANdle();
     }
 
     public ICompressor getCompressor(boolean isREV) {
@@ -411,10 +413,10 @@ public class RobotFactory {
     }
 
     public double getConstant(String subsystemName, String name, double defaultVal) {
-        if (getConstants() == null || !getSubsystem(subsystemName).implemented) {
+        if (!getSubsystem(subsystemName).implemented) {
             return defaultVal;
         }
-        if (!getSubsystem(subsystemName).constants.containsKey(name)) {
+        if (getSubsystem(subsystemName).constants == null || !getSubsystem(subsystemName).constants.containsKey(name)) {
             DriverStation.reportError(
                 "Yaml " + subsystemName + " constants:" + name + " missing",
                 defaultVal == 0
@@ -471,12 +473,12 @@ public class RobotFactory {
 
     public IPigeonIMU getPigeon(int id) {
         IPigeonIMU pigeonIMU;
-        if (id < 0) {
+        if (!isHardwareValid(id)) {
             return new GhostPigeonIMU(id);
         } else if (factory.getConstant(Drive.NAME, "isPigeon2") > 0) {
             System.out.println("Using Pigeon 2 for id: " + id);
             // TODO move pigeon to infrastructure and no longer define pigeon id in drive YAML constants
-            pigeonIMU = new Pigeon2Impl(id);
+            pigeonIMU = new Pigeon2Impl(id, config.canivoreBusName);
             return pigeonIMU;
         } else {
             System.out.println("Using old Pigeon for id: " + id);
@@ -595,7 +597,7 @@ public class RobotFactory {
         device.setStatusFramePeriod(CANifierStatusFrame.Status_8_Misc, canMaxStatus, 100);
     }
 
-    private void setStatusFrame(CANdle device) {
+    private void setStatusFrame(ICANdle device) {
         device.setStatusFramePeriod(
             CANdleStatusFrame.CANdleStatusFrame_Status_1_General,
             canMaxStatus,

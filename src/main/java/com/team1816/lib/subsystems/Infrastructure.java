@@ -12,11 +12,6 @@ import edu.wpi.first.util.sendable.SendableBuilder;
  */
 public class Infrastructure extends Subsystem {
 
-    private static Infrastructure mInstance;
-
-    @Inject
-    private Superstructure mSuperstructure;
-
     private ICompressor mCompressor;
 
     private boolean mIsManualControl = false;
@@ -44,7 +39,7 @@ public class Infrastructure extends Subsystem {
                 @Override
                 public void onLoop(double timestamp) {
                     synchronized (Infrastructure.this) {
-                        boolean superstructureMoving = !mSuperstructure.isAtDesiredState();
+                        boolean superstructureMoving = false; // make this check orchestrator?
                         if (!(factory.getConstant("compressorEnabled") > 0)) {
                             if (superstructureMoving || !mIsManualControl) {
                                 if (lastCompressorOn) {

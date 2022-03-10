@@ -21,7 +21,9 @@ import com.team1816.season.subsystems.*;
 import com.team254.lib.util.LatchedBoolean;
 import com.team254.lib.util.SwerveDriveSignal;
 import com.team254.lib.util.TimeDelayedBoolean;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,7 +45,6 @@ public class Robot extends TimedRobot {
     private final SubsystemManager mSubsystemManager;
 
     // subsystems
-    private final Superstructure mSuperstructure;
     private final Infrastructure mInfrastructure;
     private final RobotState mRobotState;
     private final Drive mDrive;
@@ -76,6 +77,7 @@ public class Robot extends TimedRobot {
 
     // private PowerDistributionPanel pdp = new PowerDistributionPanel();
     private Turret.ControlMode prevTurretControlMode = Turret.ControlMode.FIELD_FOLLOWING;
+    private boolean faulted;
 
     Robot() {
         super();
@@ -91,7 +93,6 @@ public class Robot extends TimedRobot {
         mOrchestrator = injector.getInstance(Orchestrator.class);
         mShooter = injector.getInstance(Shooter.class);
         mRobotState = injector.getInstance(RobotState.class);
-        mSuperstructure = injector.getInstance(Superstructure.class);
         mInfrastructure = injector.getInstance(Infrastructure.class);
         ledManager = injector.getInstance(LedManager.class);
         mSubsystemManager = injector.getInstance(SubsystemManager.class);
@@ -241,14 +242,11 @@ public class Robot extends TimedRobot {
 
             mSubsystemManager.setSubsystems(
                 mDrive,
-                mSuperstructure,
                 mElevator,
                 mSpindexer,
                 //                mInfrastructure,
                 mShooter,
-                // spinner,
                 mCollector,
-                mOrchestrator,
                 mTurret,
                 mClimber,
                 mCamera
@@ -257,7 +255,7 @@ public class Robot extends TimedRobot {
             mDrive.zeroSensors();
             mTurret.zeroSensors();
             mClimber.zeroSensors();
-            mOrchestrator.setStopped(true);
+            mOrchestrator.setStopped();
 
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mSubsystemManager.registerDisabledLoops(mDisabledLooper);
@@ -280,9 +278,9 @@ public class Robot extends TimedRobot {
                         pressed -> {
                             if (pressed) {
                                 prevTurretControlMode = mTurret.getControlMode();
-//                                mTurret.setControlMode(
-//                                    Turret.ControlMode.CAMERA_FOLLOWING
-//                                );
+                                mTurret.setControlMode(
+                                    Turret.ControlMode.CAMERA_FOLLOWING
+                                );
                             } else {
                                 mTurret.setControlMode(prevTurretControlMode);
                             }
@@ -308,13 +306,16 @@ public class Robot extends TimedRobot {
                             mOrchestrator.setRevving(lowShoot, Shooter.NEAR_VELOCITY);
                         }
                     ),
-                    createHoldAction(
-                        mControlBoard::getCollectorBackspin,
-                        mOrchestrator::setFlushing
-                    ),
-                    createAction( // to turn the shooter on and off from its idle state - use at start of match
-                        mControlBoard::getOrchestrator,
-                        mOrchestrator::setStopped
+//                    createHoldAction(
+//                        mControlBoard::getCollectorBackspin,
+//                        mOrchestrator::setFlushing
+//                    ),
+                    createAction(
+                        mControlBoard::getZeroPose,
+                        () -> {
+                            mDrive.zeroSensors(new Pose2d(new Translation2d(.5, 3.5), Constants.EmptyRotation));
+                            mRobotState.reset(new Pose2d(new Translation2d(.5, 3.5), Constants.EmptyRotation));
+                        }
                     ),
                     createAction(
                         mControlBoard::getFieldFollowing,
@@ -345,14 +346,8 @@ public class Robot extends TimedRobot {
                         moving -> mClimber.setClimberPower(moving ? .7 : 0)
                     )
                 );
-
-            blinkTimer =
-                new AsyncTimer(
-                    3, // (3 s)
-                    () -> ledManager.blinkStatus(LedManager.RobotStatus.ERROR),
-                    () -> ledManager.indicateStatus(LedManager.RobotStatus.OFF)
-                );
         } catch (Throwable t) {
+            faulted = true;
             throw t;
         }
     }
@@ -381,8 +376,9 @@ public class Robot extends TimedRobot {
             mDrive.stop();
             mDrive.setBrakeMode(false);
 
-            mOrchestrator.setStopped(true);
+            mOrchestrator.setStopped();
         } catch (Throwable t) {
+            faulted = true;
             throw t;
         }
     }
@@ -392,19 +388,18 @@ public class Robot extends TimedRobot {
         try {
             mDisabledLooper.stop();
             ledManager.setDefaultStatus(LedManager.RobotStatus.AUTONOMOUS);
-            Constants.StartingPose = mAutoModeExecutor.getAutoMode().getTrajectory().getInitialPose();
 
             // Robot starts where it's told for auto path
             mRobotState.reset();
 
             mHasBeenEnabled = true;
 
-            mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
-
             mDrive.zeroSensors();
             mTurret.zeroSensors();
             mClimber.zeroSensors();
-            mOrchestrator.setStopped(false);
+
+            // coast vel is ignored here because we aren't actually revving, which makes the shooter start its default coast state regardless
+            mOrchestrator.setRevving(false, Shooter.COAST_VELOCITY);
 
             mDrive.setControlState(Drive.DriveControlState.TRAJECTORY_FOLLOWING);
 
@@ -414,7 +409,6 @@ public class Robot extends TimedRobot {
             if (!mDriveByCameraInAuto) {
                 mAutoModeExecutor.start();
             }
-            // setHeading called already in both startTrajectory and zeroSensors
             mEnabledLooper.start();
         } catch (Throwable t) {
             throw t;
@@ -445,6 +439,7 @@ public class Robot extends TimedRobot {
             //            mInfrastructure.setIsManualControl(true);
             mControlBoard.reset();
         } catch (Throwable t) {
+            faulted = true;
             throw t;
         }
     }
@@ -476,6 +471,7 @@ public class Robot extends TimedRobot {
                 ledManager.indicateStatus(LedManager.RobotStatus.ERROR);
             }
         } catch (Throwable t) {
+            faulted = true;
             throw t;
         }
     }
@@ -487,6 +483,7 @@ public class Robot extends TimedRobot {
             mRobotState.outputToSmartDashboard();
             mAutoModeSelector.outputToSmartDashboard();
         } catch (Throwable t) {
+            faulted = true;
             System.out.println(t.getMessage());
         }
     }
@@ -510,7 +507,11 @@ public class Robot extends TimedRobot {
                 );
                 ledManager.indicateStatus(LedManager.RobotStatus.SEEN_TARGET);
             } else {
-                ledManager.indicateDefaultStatus();
+                if (faulted) {
+                    ledManager.blinkStatus(LedManager.RobotStatus.ERROR);
+                } else {
+                    ledManager.indicateStatus(LedManager.RobotStatus.DISABLED);
+                }
             }
 
             // Update auto modes
@@ -525,9 +526,13 @@ public class Robot extends TimedRobot {
                 System.out.println("Set auto mode to: " + auto.getClass().toString());
                 mRobotState.field
                     .getObject("Trajectory");
-                 mAutoModeExecutor.setAutoMode(auto);
+                mAutoModeExecutor.setAutoMode(auto);
+                Constants.StartingPose = auto.getTrajectory().getInitialPose();
+                mRobotState.reset();
+                mDrive.zeroSensors();
             }
         } catch (Throwable t) {
+            faulted = true;
             throw t;
         }
     }

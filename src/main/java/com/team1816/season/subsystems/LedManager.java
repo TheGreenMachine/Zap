@@ -4,6 +4,7 @@ import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifierStatusFrame;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.RainbowAnimation;
+import com.team1816.lib.hardware.components.ICANdle;
 import com.team1816.lib.hardware.components.ICanifier;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.lib.loops.Loop;
@@ -22,7 +23,7 @@ public class LedManager extends Subsystem {
 
     // Components
     private final ICanifier canifier;
-    private final CANdle candle;
+    private final ICANdle candle;
 
     // State
     private boolean blinkLedOn = false;
@@ -48,7 +49,7 @@ public class LedManager extends Subsystem {
     public LedManager() {
         super(NAME);
         canifier = factory.getCanifier(NAME);
-        candle =  factory.getCandle(NAME,22);
+        candle =  factory.getCandle(NAME);
 
         configureCanifier(canifier);
         configureCandle();
@@ -147,7 +148,7 @@ public class LedManager extends Subsystem {
             candle.setLEDs(r, g, b, 0, 8, 66);
             // back to back writes cancel the first output, so we need to give candle time to write
             if (cameraLedChanged) {
-                Timer.delay(.1);
+                //Timer.delay(.1);
                 candle.setLEDs(0, cameraLedOn ? 255 : 0, 0, 0, 0, 8);
             }
         }
@@ -161,6 +162,8 @@ public class LedManager extends Subsystem {
     @Override
     public void writeToHardware() {
         if (outputsChanged || cameraLedChanged) {
+            outputsChanged = false;
+            cameraLedChanged = false;
             if (canifier != null || candle != null) {
                 switch (controlState) {
                     case RAVE:
