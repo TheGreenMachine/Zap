@@ -2,6 +2,7 @@ package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
+import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 
@@ -33,6 +34,12 @@ public class Climber extends Subsystem {
         elevator = factory.getMotor(NAME, "elevator");
         topClamp = factory.getSolenoid(NAME, "topClamp");
         bottomClamp = factory.getSolenoid(NAME, "bottomClamp");
+        
+        PIDSlotConfiguration config = factory.getPidSlotConfig(NAME, "0");
+        elevator.config_kD(0, config.kD, 100);
+        elevator.config_kP(0, config.kP, 100);
+        elevator.config_kI(0, config.kI, 100);
+        elevator.config_kF(0, config.kF, 100);
     }
 
     public void setClimberPower(double power) {
