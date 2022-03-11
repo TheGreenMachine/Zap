@@ -123,8 +123,10 @@ public class Orchestrator {
     }
 
 
-    public double getPredictedDistance(DistanceManager.SUBSYSTEM subsystem) {
-        Translation2d shooterDist = new Translation2d(distanceManager.getOutput(camera.getDistance(), subsystem), Rotation2d.fromDegrees(robotState.getLatestFieldToTurret()));
+    public double getPredictedDistance() {
+        Translation2d shooterDist = new Translation2d(
+            distanceManager.getOutput(camera.getDistance(), DistanceManager.SUBSYSTEM.SHOOTER),
+            Rotation2d.fromDegrees(robotState.getLatestFieldToTurret()));
         Translation2d motionBuffer = new Translation2d(robotState.delta_field_to_vehicle.dx, robotState.delta_field_to_vehicle.dy);
         return (motionBuffer.plus(shooterDist)).getNorm();
     }
