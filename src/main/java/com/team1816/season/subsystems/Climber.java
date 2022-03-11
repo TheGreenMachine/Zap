@@ -27,6 +27,7 @@ public class Climber extends Subsystem {
     private final double MAX_POSITION = factory.getConstant(NAME, "climberMaxPos", -200);
     private final double MIN_POSITION = factory.getConstant(NAME, "climberMinPos", 0);
     private final double MID_POSITTION = (MAX_POSITION + MIN_POSITION)/2;
+    private final String pidSlot = "slot0";
 
 
     public Climber() {
@@ -35,12 +36,12 @@ public class Climber extends Subsystem {
         topClamp = factory.getSolenoid(NAME, "topClamp");
         bottomClamp = factory.getSolenoid(NAME, "bottomClamp");
         
-        PIDSlotConfiguration config = factory.getPidSlotConfig(NAME, "0");
+        PIDSlotConfiguration config = factory.getPidSlotConfig(NAME, pidSlot);
 
-//        elevator.config_kP(0, config.kP, 100);
-//        elevator.config_kI(0, config.kI, 100);
-//        elevator.config_kD(0, config.kD, 100);
-//        elevator.config_kF(0, config.kF, 100);
+        elevator.config_kP(0, config.kP, 100);
+        elevator.config_kI(0, config.kI, 100);
+        elevator.config_kD(0, config.kD, 100);
+        elevator.config_kF(0, config.kF, 100);
     }
 
     public void setClimberPower(double power) {
