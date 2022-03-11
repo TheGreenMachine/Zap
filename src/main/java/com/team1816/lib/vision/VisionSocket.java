@@ -19,7 +19,7 @@ public class VisionSocket {
         if (!enabled) return false;
         try {
             socket = new Socket();
-            socket.connect(new InetSocketAddress(InetAddress.getLocalHost(), 5802), 10);
+            socket.connect(new InetSocketAddress("10.18.16.16", 5802), 10);
             socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             socketOut = new PrintWriter(socket.getOutputStream(), true);
         } catch (Throwable t) {
