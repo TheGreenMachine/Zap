@@ -296,7 +296,7 @@ public class Robot extends TimedRobot {
                     ),
                     createAction( // make this an actual toggle?
                         mControlBoard::getCollectorToggle,
-                        mOrchestrator::setCollecting
+                        () -> mOrchestrator.setCollecting(true)
                     ),
                     createHoldAction(
                         mControlBoard::getLowShoot,
@@ -304,10 +304,10 @@ public class Robot extends TimedRobot {
                             mOrchestrator.setRevving(lowShoot, Shooter.NEAR_VELOCITY);
                         }
                     ),
-//                    createHoldAction(
-//                        mControlBoard::getCollectorBackspin,
-//                        mOrchestrator::setFlushing
-//                    ),
+                    createAction(
+                        mControlBoard::getCollectorBackspin,
+                        () -> mOrchestrator.setCollecting(false)
+                    ),
                     createAction(
                         mControlBoard::getZeroPose,
                         () -> {

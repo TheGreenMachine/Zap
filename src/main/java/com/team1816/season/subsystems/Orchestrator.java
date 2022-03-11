@@ -56,14 +56,18 @@ public class Orchestrator {
         System.out.println("stopping/starting orchestrator");
     }
 
-    public void setCollecting() {
-        setCollecting(!collecting);
+    public void setCollecting(boolean backSpin) {
+        setCollecting(!collecting, backSpin);
     }
 
-    public void setCollecting(boolean collecting) {
+    public void setCollecting(boolean collecting, boolean backSpin) {
         this.collecting = collecting;
         if(collecting){
-            collector.setState(Collector.COLLECTOR_STATE.COLLECTING);
+            if(backSpin){
+                collector.setState(Collector.COLLECTOR_STATE.FLUSH);
+            } else {
+                collector.setState(Collector.COLLECTOR_STATE.COLLECTING);
+            }
             if(!firing){ // TODO set up logic to minimize / remove all ifs
                 spindexer.setState(Spindexer.SPIN_STATE.COLLECT);
             }

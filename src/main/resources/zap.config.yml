@@ -103,13 +103,14 @@ subsystems:
         talons:
             turret: 33 # need to set to pdp port number
         constants:
-            revLimit: 8566 # NOT ABSOLUTE
-            absPosTicksSouth: 0 # absolute - test
-            fwdLimit: 46488 # TEST -- NOT ABSOLUTE
+            revLimit: 6456 # adjusted for zero-offset
+            fwdLimit: 41000 # adjusted for zero-offset
+            absPosTicksSouth: 0 # absolute
+            zeroOffset: 12639 # (turretPPR - non-adjusted fwdLimit - non-adjusted revlimit) / 2
             encPPR: 4096
             turretPPR: 53248 # 4096 * 13
     shooter:
-        implemented: true
+        implemented: false
         falcons:
             shooterMain: 21
             shooterFollower: 34
@@ -176,8 +177,8 @@ subsystems:
             arm: 2
         constants:
             revving: .05
-            collecting: .05
-            flush: -.35
+            collecting: -0.35
+            flush: .35
     camera:
         implemented: false
 pcm: 28

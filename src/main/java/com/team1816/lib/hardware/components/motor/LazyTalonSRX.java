@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.BaseTalonConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.team1816.season.Constants;
+import edu.wpi.first.wpilibj.DriverStation;
 
 /**
  * This class is a thin wrapper around the CANTalon that reduces CAN bus / CPU overhead by skipping duplicate set
@@ -30,11 +31,15 @@ public class LazyTalonSRX
     }
 
     @Override
-    public synchronized void set(ControlMode mode, double value) {
+    public void set(ControlMode mode, double value) {
         if (value != mLastSet || mode != mLastControlMode) {
-            mLastSet = value;
-            mLastControlMode = mode;
-            super.set(mode, value);
+            if(!super.hasResetOccurred()){
+                mLastSet = value;
+                mLastControlMode = mode;
+                super.set(mode, value);
+            } else {
+                DriverStation.reportError( "MOTOR " + getDeviceID() + " HAS RESET", false);
+            }
         }
     }
 
