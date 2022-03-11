@@ -26,13 +26,13 @@ class ThreadedVisionServer(object):
             client.settimeout(300)
             threading.Thread(target=self.listenToClient, args=(client, address)).start()
 
-    def listenToClient(self, client, address):
+    def listenToClient(self, client: socket.socket, address):
         size = 14
         while True:
             try:
                 data = client.recv(size)
                 if data:
-                    print(data)
+                    # print(data)
                     # Set the response to echo back the recieved data
                     response = data
                     self.dispatchResponse(client, response)
@@ -41,19 +41,25 @@ class ThreadedVisionServer(object):
                 client.close()
                 return False
 
-    def dispatchResponse(self, client, msg):
+    def dispatchResponse(self, client: socket.socket, msg: str):
+        msg = msg.rstrip()
+        print(msg.decode())
+        out = b''
         if msg == b'distance':
-            client.send(b"distance|" + self.distance)
+            out = b"distance|" + self.distance
         elif msg == b'center_x':
-            client.send(b"center_x|" + self.cx)
+            out = b"center_x|" + self.cx
         elif msg == b'center_y':
-            client.send(b"center_y|" + self.cy)
+            out = b"center_y|" + self.cy
         elif msg == b'point':
-            client.send(self.cx+b'|'+self.cy+b'|' + self.distance)
+            out = self.cx+b'|'+self.cy+b'|' + self.distance
         elif b'calib' in msg:
             print(str(msg))
             msg = str(msg).replace("'", "").split('|')
-            self.calibChange(msg[1], msg[2])
+            return self.calibChange(msg[1], msg[2])
+
+        print("out: " + out.decode())
+        client.send(out + b"\n")
 
     def updateSavedCenter(self, cx, cy):
         self.cx = bytes(str(cx), 'utf-8')
