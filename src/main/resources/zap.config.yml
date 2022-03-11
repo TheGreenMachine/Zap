@@ -138,6 +138,12 @@ subsystems:
             elevator: 20
         solenoids:
             deployer: 2
+        pidConfig: # DUMMY VALUES ! NEED TO TEST REAL VALUES
+            slot0:
+                kP: 0.15
+                kI: 0.0
+                kD: 2.5 #4.5
+                kF: 0.05671 #0.00953253
         constants:
             climberMinPos: -5
             climberMaxPos: -280
