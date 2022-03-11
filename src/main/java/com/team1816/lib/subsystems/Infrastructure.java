@@ -1,16 +1,23 @@
 package com.team1816.lib.subsystems;
 
+import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
+import com.google.inject.Singleton;
+import com.team1816.lib.hardware.components.IPigeonIMU;
 import com.team1816.lib.hardware.components.pcm.ICompressor;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.lib.loops.Loop;
 import edu.wpi.first.util.sendable.SendableBuilder;
 
 /**
- * Subsystem to ensure the compressor never runs while the superstructure moves
+ * Subsystem housing compressor and pigeon - should we add pcm/pdh here?
  */
+
+@Singleton
 public class Infrastructure extends Subsystem {
 
     private ICompressor mCompressor;
+    private IPigeonIMU mPigeon;
 
     private boolean mIsManualControl = false;
     private static final boolean COMPRESSOR_ENABLED =
@@ -20,6 +27,10 @@ public class Infrastructure extends Subsystem {
     public Infrastructure() {
         super("Infrastructure");
         mCompressor = factory.getCompressor(true);
+        mPigeon = factory.getPigeon();
+        mPigeon.configFactoryDefault();
+        mPigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_1_General, 200);
+        mPigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_6_Accel, 1000);
     }
 
     @Override
@@ -90,6 +101,10 @@ public class Infrastructure extends Subsystem {
         if (COMPRESSOR_ENABLED) {
             mCompressor.disable();
         }
+    }
+
+    public IPigeonIMU getPigeon(){
+        return mPigeon;
     }
 
     @Override

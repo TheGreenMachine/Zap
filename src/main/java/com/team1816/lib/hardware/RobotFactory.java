@@ -471,19 +471,19 @@ public class RobotFactory {
         }
     }
 
-    public IPigeonIMU getPigeon(int id) {
+    public IPigeonIMU getPigeon() {
+        int id = (int) factory.getConstant("pigeonId", -1);
         IPigeonIMU pigeonIMU;
         if (!isHardwareValid(id)) {
             return new GhostPigeonIMU(id);
         } else if (factory.getConstant("isPigeon2") > 0) {
             System.out.println("Using Pigeon 2 for id: " + id);
-            // TODO move pigeon to infrastructure and no longer define pigeon id in drive YAML constants
             pigeonIMU = new Pigeon2Impl(id, config.canivoreBusName);
             return pigeonIMU;
         } else {
             System.out.println("Using old Pigeon for id: " + id);
             pigeonIMU = new PigeonIMUImpl(id);
-            return new PigeonIMUImpl(id);
+            return pigeonIMU;
         }
     }
 

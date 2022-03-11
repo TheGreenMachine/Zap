@@ -9,6 +9,7 @@ import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.IPigeonIMU;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.lib.loops.Loop;
+import com.team1816.lib.subsystems.Infrastructure;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.subsystems.TrackableDrivetrain;
@@ -39,8 +40,10 @@ public abstract class Drive
     // Components
     @Inject
     protected static LedManager ledManager;
+    @Inject
+    protected static Infrastructure mInfrastructure;
 
-    protected IPigeonIMU mPigeon; // need to make a ghost of this!
+    protected IPigeonIMU mPigeon;
 
     // control states
     protected DriveControlState mDriveControlState = DriveControlState.OPEN_LOOP;
@@ -77,10 +80,7 @@ public abstract class Drive
     protected Drive() {
         super(NAME);
         mPeriodicIO = new PeriodicIO();
-        mPigeon = factory.getPigeon((int) factory.getConstant("pigeonId", -1));
-        mPigeon.configFactoryDefault();
-        mPigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_1_General, 200);
-        mPigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_6_Accel, 1000);
+        mPigeon = mInfrastructure.getPigeon();
     }
 
     public enum DriveControlState {
