@@ -69,7 +69,6 @@ constants:
     sensorPhase: 0
     kLooperDt: .010
     kTrackScrubFactor: 1.0
-    pathKs: 2
     isSwerve: 0
     verbose: 0 # 0 or 1
     compressorEnabled: 0 # 0 or 1

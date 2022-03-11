@@ -21,6 +21,7 @@ public class Camera extends Subsystem {
     private static final double CAMERA_FOCAL_LENGTH = 350; // px
     private static final double VIDEO_WIDTH = 672.0; // px
     public static final double ALLOWABLE_AIM_ERROR = 0.2; // deg
+
     public Camera() {
         super(NAME);
         socket.setDebug(factory.getConstant(NAME, "debug") > 0);
@@ -46,7 +47,7 @@ public class Camera extends Subsystem {
             System.out.println(parts);
             return 0;
         }
-        System.out.println("CAMERA LINE 91: getDistance() " + Double.parseDouble(parts[1]));
+        System.out.println("CAMERA: getDistance() " + Double.parseDouble(parts[1]));
         return Double.parseDouble(parts[1]);
     }
 

@@ -122,10 +122,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
                 Constants.kLongCANTimeoutMs
             );
 
-        mPigeon = factory.getPigeon((int) factory.getConstant(NAME, "pigeonId"));
-
-        mPigeon.configFactoryDefault();
-
         setOpenLoop(DriveSignal.NEUTRAL);
 
         // force a CAN message across

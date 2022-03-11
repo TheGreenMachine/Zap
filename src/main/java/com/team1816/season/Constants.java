@@ -179,19 +179,6 @@ public class Constants {
         public static final int kBackRight = 3;
     }
 
-    // Swerve Heading Controller -- CHEESY Constants
-    public static final double kSwerveHeadingControllerErrorTolerance = 1.0; // degrees
-
-    // good for snapping (dpad)
-    public static final double kSnapSwerveHeadingKp = 0.015;
-    public static final double kSnapSwerveHeadingKi = 0.0;
-    public static final double kSnapSwerveHeadingKd = 0.000;
-
-    // good for maintaining heading
-    public static final double kMaintainSwerveHeadingKp = 0.020;
-    public static final double kMaintainSwerveHeadingKi = 0.0;
-    public static final double kMaintainSwerveHeadingKd = 0.002;
-
     // reset button
     public static final int kResetButtonChannel = 4;
 
@@ -203,56 +190,15 @@ public class Constants {
     public static final int kMainTurnJoystickPort = 0;
     public static final double kJoystickThreshold = 0.04; // deadband
 
-    public static final double kMaxTrackerDistance = 9.0;
-    public static final double kMaxGoalTrackAge = 2.5;
-    public static final double kMaxGoalTrackAgeNotTracking = 0.1;
-    public static final double kMaxGoalTrackSmoothingTime = 0.5;
-    public static final double kTrackStabilityWeight = 0.0;
-    public static final double kTrackAgeWeight = 10.0;
-    public static final double kTrackSwitchingWeight = 100.0;
-
-    public static final double kMinLookAhead = 12.0; // inches
-    public static final double kMinLookAheadSpeed = 12.0; // inches per second
-    public static final double kMaxLookAhead = 48.0; // inches
-    public static final double kMaxLookAheadSpeed = factory.getConstant("maxVel", 48); // inches per second
-    public static final double kDeltaLookAhead = kMaxLookAhead - kMinLookAhead;
-    public static final double kDeltaLookAheadSpeed =
-        kMaxLookAheadSpeed - kMinLookAheadSpeed;
     public static double kCameraFrameRate = 30;
+
+    // Drive speed
     public static final double kPathFollowingMaxAccel = factory.getConstant("maxAccel", 4);
     public static double kPathFollowingMaxVelMeters = factory.getConstant(
         "maxVelPathFollowing"
     );
     public static double kOpenLoopMaxVelMeters = factory.getConstant("maxVelOpenLoop");
-    public static final double kTicksPerRevolution = 4096;
-
-    // Trajectory Generator constants
-
-    // Tuned dynamics
-    public static final double kRobotLinearInertia = 10.0; // kg TODO tune
-    public static final double kRobotAngularInertia = 10.0; // kg m^2 TODO tune
-    public static final double kRobotAngularDrag = 12.0; // N*m / (rad/sec) TODO tune
-    public static final double kDriveVIntercept = 1.055; // V
-    public static final double kDriveKv = 0.135; // V per rad/s
-    public static final double kDriveKa = 0.012; // V per rad/s^2
-
-    /* CONTROL LOOP GAINS */
-
-    public static final double kPathKX = 4.0; // units/s per unit of error
-    public static final double kPathLookaheadTime = 0.4; // seconds to look ahead along the path for steering
-    public static final double kPathMinLookaheadDistance = 24.0; //    public static final double kPathFollowingProfileKv = 0;  // % throttle per inch/s of error
-    public static final double kPathFollowingProfileKv = 0; // % throttle per inch/s of error
-    public static final double kPathFollowingProfileKffv = 1.0; // % throttle per inch/s
-    public static final double kPathFollowingProfileKffa = 0; // % throttle per inch/s^2
-    public static final double kPathFollowingProfileKs = factory.getConstant("pathKs");
-
-    // % throttle required to break static friction
-    public static final boolean kIsBadlogEnabled =
-        factory.getConstant("badLogEnabled") > 0;
-    public static final boolean kIsLoggingTeleOp = factory.getConstant("logTeleOp") > 0;
-    public static final boolean kIsLoggingAutonomous = factory.getConstant("logAuto") > 0;
-
-    public static final boolean kUseVision = factory.getSubsystem("camera").implemented;
+    public static final double kTicksPerRevolution = 4096; // make into yaml constant
 
     public static final double kPXController = 10;
     public static final double kPYController = 10;
@@ -266,6 +212,14 @@ public class Constants {
         kMaxAngularSpeed,
         kMaxAngularAccelerationRadiansPerSecondSquared
     );
+
+    //Badlog
+    public static final boolean kIsBadlogEnabled =
+        factory.getConstant("badLogEnabled") > 0;
+    public static final boolean kIsLoggingTeleOp = factory.getConstant("logTeleOp") > 0;
+    public static final boolean kIsLoggingAutonomous = factory.getConstant("logAuto") > 0;
+
+    public static final boolean kUseVision = factory.getSubsystem("camera").implemented;
     // Do not change anything after this line unless you rewire the robot and
     // update the spreadsheet!
     // Port assignments should match up with the spreadsheet here:

@@ -71,13 +71,13 @@ public abstract class Drive
         inchesPerSecondToTicksPer100ms(Constants.kDriveWheelTrackWidthInches) * Math.PI;
 
     // Constants
-    public static final double maxVelTicksPer100ms = factory.getConstant("maxTicks");
+    public static final double maxVelTicksPer100ms = factory.getConstant(NAME, "maxTicks");
     public static final double DRIVE_ENCODER_PPR = factory.getConstant(NAME, "encPPR");
 
     protected Drive() {
         super(NAME);
         mPeriodicIO = new PeriodicIO();
-        mPigeon = factory.getPigeon((int) factory.getConstant(NAME, "pigeonId", -1)); // factory.getPigeon((int) factory.getConstant(NAME, "pigeonId", -1));
+        mPigeon = factory.getPigeon((int) factory.getConstant("pigeonId", -1));
         mPigeon.configFactoryDefault();
         mPigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_1_General, 200);
         mPigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_6_Accel, 1000);

@@ -6,7 +6,7 @@ import com.team1816.season.subsystems.Orchestrator;
 
 public class CollectAction implements Action {
 
-    private boolean isCollecting;
+    private final boolean isCollecting;
 
     @Inject
     private static Orchestrator orchestrator;
@@ -18,7 +18,7 @@ public class CollectAction implements Action {
     @Override
     public void start() {
         System.out.println("Modifying collector!");
-        orchestrator.setCollecting(isCollecting);
+        orchestrator.setCollecting(isCollecting, false); // hard coded false because we shouldn't ever backSpin
     }
 
     @Override

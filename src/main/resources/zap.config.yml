@@ -64,9 +64,7 @@ subsystems:
                     kD: 30
                     kF: 0
         constants:
-            pigeonId: 13
-            isPigeon2: 1
-            pigeonOnTalon: -1
+            maxTicks: 12275.7 # ticks per 100ms
             kP: 0.1 # 0.18 # TODO: tune PID, these are temporary PID values from Zeta
             kI: 0.0001 # 0.018
             kD: 4.0 # 3.6
@@ -181,10 +179,14 @@ subsystems:
             flush: .35
     camera:
         implemented: false
+        contants:
+            debug: 0
 pcm: 28
 canivoreBusName: highSpeed
 constants:
-    maxTicks: 12275.7 # ticks per 100ms TODO make into constant unique to each subsystem
+    pigeonId: 13
+    isPigeon2: 1
+    pigeonOnTalon: -1
     maxRotVel: 7.2
     trackWidth: 21 #inches
     wheelbaseLength: 21.5 #inches
@@ -194,11 +196,7 @@ constants:
     maxAccel: 100 # inches/s^ 2
     sensorPhase: 0
     kTrackScrubFactor: 1.0
-    pathKs: 2
     verbose: 0 # 0 or 1
-    heading_kI: 0
-    heading_kD: 0
-    heading_kF: 0
     ## Logging ##
     logTeleOp: 0 # 0 or 1
     logAuto: 1 # 0 or 1

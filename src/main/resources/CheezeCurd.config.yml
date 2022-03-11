@@ -76,7 +76,6 @@ constants:
     kLooperDt: .020
     kTrackScrubFactor: 2
     kPCMId: 0
-    pathKs: .0125
     verbose: 0
     logAuto: 1
     logTeleOp: 1

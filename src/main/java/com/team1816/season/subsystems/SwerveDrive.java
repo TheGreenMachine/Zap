@@ -48,9 +48,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         swerveModules[Constants.Swerve.kBackRight] =
             factory.getSwerveModule(NAME, "backRight");
 
-        //        mPigeon = new PigeonIMU((int) factory.getConstant(NAME, "pigeonId", -1));
-        //        mPigeon.configFactoryDefault();
-
         setOpenLoop(SwerveDriveSignal.NEUTRAL);
 
         // force a CAN message across

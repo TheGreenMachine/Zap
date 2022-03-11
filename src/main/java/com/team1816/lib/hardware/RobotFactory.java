@@ -207,7 +207,7 @@ public class RobotFactory {
             if (subsystem.implemented) reportGhostWarning("Motor", subsystemName, name);
             followerMotor =
                 CtreMotorFactory.createGhostTalon(
-                    config.constants.get("maxTicks").intValue(),
+                    (int) factory.getConstant(subsystemName, "maxTicks"),
                     0
                 );
         }
@@ -400,7 +400,7 @@ public class RobotFactory {
         return subsystem;
     }
 
-    public Double getConstant(String name, double defaultVal) {
+    public double getConstant(String name, double defaultVal) {
         if (getConstants() == null || !getConstants().containsKey(name)) {
             DriverStation.reportError("Yaml constants:" + name + " missing", true);
             return defaultVal;
@@ -475,7 +475,7 @@ public class RobotFactory {
         IPigeonIMU pigeonIMU;
         if (!isHardwareValid(id)) {
             return new GhostPigeonIMU(id);
-        } else if (factory.getConstant(Drive.NAME, "isPigeon2") > 0) {
+        } else if (factory.getConstant("isPigeon2") > 0) {
             System.out.println("Using Pigeon 2 for id: " + id);
             // TODO move pigeon to infrastructure and no longer define pigeon id in drive YAML constants
             pigeonIMU = new Pigeon2Impl(id, config.canivoreBusName);

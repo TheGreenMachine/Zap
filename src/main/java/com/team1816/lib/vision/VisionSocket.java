@@ -29,11 +29,13 @@ public class VisionSocket {
         }
         return true;
     }
+
     // todo make this configurable
     private void debug(String message) {
         if (!useDebug) return;
         System.out.println("CAMERA DEBUG: " + message);
     }
+
     public void close() {
         try {
             if (socket != null) socket.close();
@@ -44,6 +46,7 @@ public class VisionSocket {
            return;
         }
     }
+
     private void cleanup() {
         try {
             if (!socket.isClosed()) socket.close();
@@ -56,16 +59,20 @@ public class VisionSocket {
             return;
         }
     }
+
     public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-        debug("enabled: " + enabled);
-        if (!enabled) {
-            // close and cleanup
-            close();
-        } else {
-            connect();
+        if(this.enabled != enabled){
+            this.enabled = enabled;
+            debug("enabled: " + enabled);
+            if (!enabled) {
+                // close and cleanup
+                close();
+            } else {
+                connect();
+            }
         }
     }
+
     public boolean isConnected() {
         if (!enabled || needsReconnect != 0) return false;
         boolean connected = socket != null && socket.isConnected();
@@ -74,6 +81,7 @@ public class VisionSocket {
         }
         return connected;
     }
+
     public String[] request(String message) {
         // we can safely return new String[0] because
         // all the code already checks for length > 1 as a safety measure
@@ -95,6 +103,7 @@ public class VisionSocket {
             return null;
         }
     }
+
     public boolean shouldReconnect() {
         if (!enabled) return false;
         if (needsReconnect == 0) return false;

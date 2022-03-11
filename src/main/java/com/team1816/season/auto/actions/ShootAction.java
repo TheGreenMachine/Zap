@@ -24,7 +24,7 @@ public class ShootAction implements Action {
     @Override
     public void start() {
         shooter.setHood(hoodOut);
-        orchestrator.setRevving(isShooting, Shooter.MID_VELOCITY); // if using camera, setHood is overridden
+        orchestrator.setFiring(isShooting); // if using camera, setHood is overridden
     }
 
     @Override
