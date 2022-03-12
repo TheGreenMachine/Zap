@@ -43,6 +43,10 @@ public class RobotState {
         return field_to_vehicle.getRotation().plus(vehicle_to_turret).getDegrees();
     }
 
+    public Twist2d getDeltaPoseToCenter(){
+        return delta_field_to_vehicle; // make conversion from field relative deltaPose to center relative deltaPose
+    }
+
     public boolean isStationary(){
         return
             delta_field_to_vehicle.dx == 0 &&

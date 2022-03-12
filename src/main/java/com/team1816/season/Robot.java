@@ -518,7 +518,6 @@ public class Robot extends TimedRobot {
             mAutoModeSelector.updateModeCreator();
 
             Optional<AutoModeBase> autoMode = mAutoModeSelector.getAutoMode();
-            mDriveByCameraInAuto = mAutoModeSelector.isDriveByCamera();
             if (
                 autoMode.isPresent() && autoMode.get() != mAutoModeExecutor.getAutoMode()
             ) {

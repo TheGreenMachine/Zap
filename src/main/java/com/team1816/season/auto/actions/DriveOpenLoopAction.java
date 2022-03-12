@@ -14,7 +14,6 @@ public class DriveOpenLoopAction implements Action {
 
     private static Drive drive;
 
-
     private final AsyncTimer driveTimer;
 
     public DriveOpenLoopAction(double driveTime, double percentOutput) {

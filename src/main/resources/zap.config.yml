@@ -90,7 +90,7 @@ subsystems:
             cameraLed: 1
             maxLevel: 255
     turret:
-        implemented: false
+        implemented: true
         pidConfig:
             slot0:
                 kP: 0.15
@@ -108,7 +108,7 @@ subsystems:
             encPPR: 4096
             turretPPR: 53248 # 4096 * 13
     shooter:
-        implemented: false
+        implemented: true
         falcons:
             shooterMain: 21
             shooterFollower: 34

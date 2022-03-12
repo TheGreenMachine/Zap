@@ -26,26 +26,17 @@ public class AutoModeSelector {
 
     enum DesiredMode {
         // 2020
-        DRIVE_BY_CAMERA,
         DO_NOTHING,
         TUNE_DRIVETRAIN,
-        TURRET_TEST,
         LIVING_ROOM,
         DRIVE_STRAIGHT,
 
         // 2022
         DRIVE_STRAIGHT_SHOOT,
-        ONE_BALL_A,
-        ONE_BALL_B,
         TWO_BALL_A,
         TWO_BALL_B,
         TWO_BALL_C,
-        FOUR_BALL_SEMI_A,
-        FOUR_BALL_SEMI_B,
-        FOUR_BALL_C,
         FIVE_BALL,
-        RANDOM_TESTING_PATH,
-        DRIVE_STRAIGHT_OPEN_LOOP
     }
 
     private DesiredMode mCachedDesiredMode = null;
@@ -67,36 +58,22 @@ public class AutoModeSelector {
         SmartDashboard.putData("Starting Position", mStartPositionChooser);
 
         mModeChooser = new SendableChooser<>();
-
-        // 2020
-
-        mModeChooser.addOption("Drive By Camera", DesiredMode.DRIVE_BY_CAMERA);
-        mModeChooser.addOption("Tune Drivetrain", DesiredMode.TUNE_DRIVETRAIN);
-        mModeChooser.addOption("Do Nothing", DesiredMode.DO_NOTHING);
         SmartDashboard.putData("Auto mode", mModeChooser);
 
-        // CheezeCurd
-        //        mModeChooser.addOption("Shop", DesiredMode.SHOP);
-        //        mModeChooser.addOption("PID", DesiredMode.PID);
-        mModeChooser.setDefaultOption("Drive Straight", DesiredMode.DRIVE_STRAIGHT);
-        mModeChooser.addOption("Drive Staight Shoot", DesiredMode.DRIVE_STRAIGHT_SHOOT);
-        mModeChooser.addOption("Turret Tuning", DesiredMode.TURRET_TEST);
+        // Debugging / Tuning
+        mModeChooser.addOption("Tune Drivetrain", DesiredMode.TUNE_DRIVETRAIN);
+        mModeChooser.addOption("Do Nothing", DesiredMode.DO_NOTHING);
         mModeChooser.addOption("Living Room", DesiredMode.LIVING_ROOM);
 
-        mModeChooser.addOption("One Ball A", DesiredMode.ONE_BALL_A);
-        mModeChooser.addOption("One Ball B", DesiredMode.ONE_BALL_B);
+        // Safety Nets
+        mModeChooser.setDefaultOption("Drive Straight", DesiredMode.DRIVE_STRAIGHT);
+        mModeChooser.addOption("Drive Staight Shoot", DesiredMode.DRIVE_STRAIGHT_SHOOT);
 
+        // General autos
         mModeChooser.addOption("Two Ball A", DesiredMode.TWO_BALL_A);
         mModeChooser.addOption("Two Ball B", DesiredMode.TWO_BALL_B);
         mModeChooser.addOption("Two Ball C", DesiredMode.TWO_BALL_C);
-
-        mModeChooser.addOption("Four Ball Semicircle A", DesiredMode.FOUR_BALL_SEMI_A);
-        mModeChooser.addOption("Four Ball Semicircle B", DesiredMode.FOUR_BALL_SEMI_B);
-        mModeChooser.addOption("Four Ball C", DesiredMode.FOUR_BALL_C);
-
         mModeChooser.addOption("Five Ball", DesiredMode.FIVE_BALL);
-        mModeChooser.addOption("Random Testing Path", DesiredMode.RANDOM_TESTING_PATH);
-        mModeChooser.addOption("Drive Straight OPEN LOOP", DesiredMode.DRIVE_STRAIGHT_OPEN_LOOP);
 
         SmartDashboard.putData("Auto mode", mModeChooser);
         SmartDashboard.putData("Starting Position", mStartPositionChooser);
@@ -150,38 +127,24 @@ public class AutoModeSelector {
         }
         switch (mode) {
             // 2020
+            case DRIVE_STRAIGHT:
+                return (Optional.of(new DriveStraightMode()));
             case DRIVE_STRAIGHT_SHOOT:
                 return Optional.of(new DriveStraightShootMode());
             case DO_NOTHING:
                 return Optional.of(new DoNothingMode());
             case TUNE_DRIVETRAIN:
                 return Optional.of(new TuneDrivetrainMode());
-            case DRIVE_STRAIGHT:
-                return (Optional.of(new DriveStraightMode()));
             case LIVING_ROOM:
                 return (Optional.of(new LivingRoomMode()));
-            case ONE_BALL_A:
-                return (Optional.of(new OneBallModeA()));
-            case ONE_BALL_B:
-                return (Optional.of(new OneBallModeB()));
             case TWO_BALL_A:
                 return (Optional.of(new TwoBallModeA()));
             case TWO_BALL_B:
                 return (Optional.of(new TwoBallModeB()));
             case TWO_BALL_C:
                 return (Optional.of(new TwoBallModeC()));
-            case FOUR_BALL_SEMI_A:
-                return (Optional.of(new FourBallSemiCircleModeA()));
-            case FOUR_BALL_SEMI_B:
-                return (Optional.of(new FourBallSemiCircleModeB()));
-            case FOUR_BALL_C:
-                return (Optional.of(new FourBallModeC()));
             case FIVE_BALL:
                 return (Optional.of(new FiveBallMode()));
-            case RANDOM_TESTING_PATH:
-                return (Optional.of(new RandomTestingMode()));
-            case DRIVE_STRAIGHT_OPEN_LOOP:
-                return  (Optional.of(new DriveStraightOpenLoopMode()));
             default:
                 break;
         }
@@ -207,9 +170,4 @@ public class AutoModeSelector {
         return mAutoMode;
     }
 
-    public boolean isDriveByCamera() {
-        return mCachedDesiredMode == DesiredMode.DRIVE_BY_CAMERA;
-    }
-
-    private static AutoModeSelector INSTANCE;
 }

@@ -25,8 +25,8 @@ public class TwoBallModeA extends AutoModeBase {
             );
         trajectory1 =
             new TrajectoryAction(
-                TrajectorySet.ONE_BALL_A,
-                TrajectorySet.ONE_BALL_A_HEADINGS
+                TrajectorySet.TWO_BALL_A,
+                TrajectorySet.TWO_BALL_A_HEADINGS
             );
         startingPose = trajectory.getTrajectory().getInitialPose();
     }
