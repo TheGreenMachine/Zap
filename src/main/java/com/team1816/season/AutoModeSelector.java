@@ -44,7 +44,8 @@ public class AutoModeSelector {
         FOUR_BALL_SEMI_B,
         FOUR_BALL_C,
         FIVE_BALL,
-        RANDOM_TESTING_PATH
+        RANDOM_TESTING_PATH,
+        DRIVE_STRAIGHT_OPEN_LOOP
     }
 
     private DesiredMode mCachedDesiredMode = null;
@@ -95,6 +96,7 @@ public class AutoModeSelector {
 
         mModeChooser.addOption("Five Ball", DesiredMode.FIVE_BALL);
         mModeChooser.addOption("Random Testing Path", DesiredMode.RANDOM_TESTING_PATH);
+        mModeChooser.addOption("Drive Straight OPEN LOOP", DesiredMode.DRIVE_STRAIGHT_OPEN_LOOP);
 
         SmartDashboard.putData("Auto mode", mModeChooser);
         SmartDashboard.putData("Starting Position", mStartPositionChooser);
@@ -154,8 +156,6 @@ public class AutoModeSelector {
                 return Optional.of(new DoNothingMode());
             case TUNE_DRIVETRAIN:
                 return Optional.of(new TuneDrivetrainMode());
-            case TURRET_TEST:
-                return Optional.of(new TurretTestMode());
             case DRIVE_STRAIGHT:
                 return (Optional.of(new DriveStraightMode()));
             case LIVING_ROOM:
@@ -180,6 +180,8 @@ public class AutoModeSelector {
                 return (Optional.of(new FiveBallMode()));
             case RANDOM_TESTING_PATH:
                 return (Optional.of(new RandomTestingMode()));
+            case DRIVE_STRAIGHT_OPEN_LOOP:
+                return  (Optional.of(new DriveStraightOpenLoopMode()));
             default:
                 break;
         }

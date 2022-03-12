@@ -42,9 +42,12 @@ public class Robot extends TimedRobot {
 
     private final SubsystemManager mSubsystemManager;
 
-    // subsystems
+    //State managers
+    private final Orchestrator mOrchestrator;
     private final Infrastructure mInfrastructure;
     private final RobotState mRobotState;
+
+    // subsystems
     private final Drive mDrive;
     private final PowerDistribution pdh;
     private final PneumaticHub ph = new PneumaticHub(1); //use fatory.getPcm later
@@ -54,7 +57,6 @@ public class Robot extends TimedRobot {
     // private final Spinner spinner = Spinner.getInstance();
     private final Spindexer mSpindexer;
     private final Elevator mElevator;
-    private final Orchestrator mOrchestrator;
     private final Climber mClimber;
     private final Camera mCamera;
     private final LedManager ledManager; //    private final Compressor compressor;
@@ -603,10 +605,8 @@ public class Robot extends TimedRobot {
             mControlBoard.getStrafe(),
             mControlBoard.getTurn(),
             mControlBoard.getSlowMode(),
-            /*mControlBoard.getFieldRelative()*/// Field Relative override button conflicts with collector
             false
         );
-        //        }
     }
 
     @Override

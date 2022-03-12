@@ -178,9 +178,9 @@ subsystems:
             collecting: -0.35
             flush: .35
     camera:
-        implemented: true
+        implemented: false
         constants:
-            debug: 1
+            debug: 0
 pcm: 28
 canivoreBusName: highSpeed
 constants:

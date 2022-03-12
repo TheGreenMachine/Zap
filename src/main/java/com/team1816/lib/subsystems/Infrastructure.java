@@ -4,9 +4,6 @@ import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.components.IPigeonIMU;
 import com.team1816.lib.hardware.components.pcm.ICompressor;
-import com.team1816.lib.loops.ILooper;
-import com.team1816.lib.loops.Loop;
-import edu.wpi.first.util.sendable.SendableBuilder;
 
 import static com.team1816.lib.subsystems.Subsystem.factory;
 
