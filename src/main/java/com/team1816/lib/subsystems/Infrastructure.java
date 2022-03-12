@@ -1,6 +1,5 @@
 package com.team1816.lib.subsystems;
 
-import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.components.IPigeonIMU;
@@ -9,23 +8,23 @@ import com.team1816.lib.loops.ILooper;
 import com.team1816.lib.loops.Loop;
 import edu.wpi.first.util.sendable.SendableBuilder;
 
+import static com.team1816.lib.subsystems.Subsystem.factory;
+
 /**
  * Subsystem housing compressor and pigeon - should we add pcm/pdh here?
  */
 
 @Singleton
-public class Infrastructure extends Subsystem {
+public class Infrastructure {
 
     private ICompressor mCompressor;
     private IPigeonIMU mPigeon;
 
-    private boolean mIsManualControl = false;
-    private static final boolean COMPRESSOR_ENABLED =
+    private static final boolean compressorEnabled =
         factory.getConstant("compressorEnabled") > 0;
-    private boolean lastCompressorOn = true;
+    private boolean lastCompressorOn = false;
 
     public Infrastructure() {
-        super("Infrastructure");
         mCompressor = factory.getCompressor(true);
         mPigeon = factory.getPigeon();
         mPigeon.configFactoryDefault();
@@ -33,88 +32,21 @@ public class Infrastructure extends Subsystem {
         mPigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_6_Accel, 1000);
     }
 
-    @Override
-    public boolean isImplemented() {
-        return true;
-    } // TODO make logic for YAML implementation
-
-    @Override
-    public void registerEnabledLoops(ILooper mEnabledLooper) {
-        mEnabledLooper.register(
-            new Loop() {
-                @Override
-                public void onStart(double timestamp) {}
-
-                @Override
-                public void onLoop(double timestamp) {
-                    synchronized (Infrastructure.this) {
-                        boolean superstructureMoving = false; // make this check orchestrator?
-                        if (!(factory.getConstant("compressorEnabled") > 0)) {
-                            if (superstructureMoving || !mIsManualControl) {
-                                if (lastCompressorOn) {
-                                    stopCompressor();
-                                    lastCompressorOn = false;
-                                }
-                            } else {
-                                if (!lastCompressorOn) {
-                                    startCompressor();
-                                    lastCompressorOn = true;
-                                }
-                            }
-                        } else {
-                            stopCompressor();
-                        }
-                    }
-                }
-
-                @Override
-                public void onStop(double timestamp) {}
-            }
-        );
-    }
-
-    public synchronized void setIsManualControl(boolean isManualControl) {
-        mIsManualControl = isManualControl;
-
-        if (mIsManualControl) {
-            startCompressor();
-            System.out.println(
-                "current value " +
-                mCompressor.getCompressorCurrent() +
-                " enabled: " +
-                mCompressor.enabled()
-            );
-        }
-    }
-
-    public synchronized boolean isManualControl() {
-        return mIsManualControl;
-    }
-
-    private void startCompressor() {
-        if (COMPRESSOR_ENABLED) {
+    private void startCompressor() { // not used because compressor currently turns on by default once robot is enabled
+        if (compressorEnabled && !lastCompressorOn) {
             mCompressor.enableDigital();
+            lastCompressorOn = true;
         }
     }
 
     private void stopCompressor() {
-        if (COMPRESSOR_ENABLED) {
+        if (compressorEnabled && lastCompressorOn) {
             mCompressor.disable();
+            lastCompressorOn = false;
         }
     }
 
     public IPigeonIMU getPigeon(){
         return mPigeon;
     }
-
-    @Override
-    public void stop() {}
-
-    @Override
-    public boolean checkSystem() {
-        return true;
-    }
-
-    @Override
-    public void initSendable(SendableBuilder builder) {}
 }

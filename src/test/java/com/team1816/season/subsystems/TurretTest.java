@@ -1,4 +1,4 @@
-package com.team1816.frc2020.subsystems;
+package com.team1816.season.subsystems;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
@@ -12,7 +12,6 @@ import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
 import com.team1816.season.RobotState;
 import com.team1816.season.SeasonModule;
-import com.team1816.season.subsystems.Turret;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import org.junit.Assert;
@@ -50,7 +49,7 @@ public class TurretTest {
     public void setUp() {
         mTurret = new Turret();
         mTurret.zeroSensors();
-        state.resetToStart();
+        state.reset();
     }
 
     @Test
@@ -145,7 +144,7 @@ public class TurretTest {
         when(mockFactory.getConstant(Turret.NAME, "turretPPR")).thenReturn(encPPR * 2);
         mTurret = new Turret();
         mTurret.zeroSensors();
-        state.resetToStart();
+        state.reset();
     }
 
     @Test

@@ -22,6 +22,7 @@ public class VisionSocket {
             socket.connect(new InetSocketAddress("10.18.16.16", 5802), 10);
             socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             socketOut = new PrintWriter(socket.getOutputStream(), true);
+            debug("connect succeeded");
         } catch (Throwable t) {
             debug("connect failed: " + t.getMessage());
             needsReconnect = System.currentTimeMillis();
@@ -32,7 +33,7 @@ public class VisionSocket {
 
     // todo make this configurable
     private void debug(String message) {
-        if (!useDebug) return;
+        // if (!useDebug) return;
         System.out.println("CAMERA DEBUG: " + message);
     }
 
@@ -86,7 +87,10 @@ public class VisionSocket {
         // we can safely return new String[0] because
         // all the code already checks for length > 1 as a safety measure
         // against, like, `distance|` being returned.
-        if (!enabled || needsReconnect != 0) return new String[0];
+        if (!enabled || needsReconnect != 0) {
+            debug("not connected for line: " + message);
+            return new String[0];
+        }
         debug("enabled, sending request: " + message);
         try {
             socketOut.write(message + "\n");

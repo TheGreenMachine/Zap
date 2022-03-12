@@ -1,0 +1,56 @@
+package com.team1816.season.subsystems;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.team1816.lib.LibModule;
+import com.team1816.lib.hardware.RobotFactory;
+import com.team1816.lib.subsystems.Subsystem;
+import com.team1816.season.Constants;
+import com.team1816.season.RobotState;
+import com.team1816.season.SeasonModule;
+import junit.framework.TestCase;
+import org.junit.Before;
+import org.mockito.Mockito;
+import org.mockito.Spy;
+
+public class OrchestratorTest extends TestCase {
+
+    private final RobotState state;
+    private final RobotFactory mockFactory;
+    private Orchestrator mOrchestrator;
+
+    @Spy
+    private Constants constants;
+
+    public OrchestratorTest(){
+        mockFactory = Mockito.spy(RobotFactory.class);
+//        when(mockFactory.getConstant(Turret.NAME, "encPPR")).thenReturn(encPPR);
+        Subsystem.factory = mockFactory;
+        Injector injector = Guice.createInjector(new LibModule(), new SeasonModule());
+        state = injector.getInstance(RobotState.class);
+    }
+
+    @Before
+    public void setUp() {
+        mOrchestrator = new Orchestrator();
+        state.reset();
+    }
+
+    public void testSetStopped() {
+    }
+
+    public void testSetCollecting() {
+    }
+
+    public void testSetRevving() {
+    }
+
+    public void testSetFiring() {
+    }
+
+    public void testGetDistance() {
+    }
+
+    public void testGetPredictedDistance() {
+    }
+}

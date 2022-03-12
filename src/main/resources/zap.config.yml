@@ -90,7 +90,7 @@ subsystems:
             cameraLed: 1
             maxLevel: 255
     turret:
-        implemented: true
+        implemented: false
         pidConfig:
             slot0:
                 kP: 0.15
@@ -132,7 +132,7 @@ subsystems:
             maxVel: 11500
             coast: 5300
     climber:
-        implemented: true
+        implemented: false
         sparkmaxes:
             elevator: 20
         solenoids:
@@ -178,9 +178,9 @@ subsystems:
             collecting: -0.35
             flush: .35
     camera:
-        implemented: false
-        contants:
-            debug: 0
+        implemented: true
+        constants:
+            debug: 1
 pcm: 28
 canivoreBusName: highSpeed
 constants:

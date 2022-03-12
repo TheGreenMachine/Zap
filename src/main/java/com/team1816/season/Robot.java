@@ -242,7 +242,6 @@ public class Robot extends TimedRobot {
                 mDrive,
                 mElevator,
                 mSpindexer,
-                //                mInfrastructure,
                 mShooter,
                 mCollector,
                 mTurret,
@@ -253,7 +252,7 @@ public class Robot extends TimedRobot {
             mDrive.zeroSensors();
             mTurret.zeroSensors();
             mClimber.zeroSensors();
-            mOrchestrator.setStopped(true); // bool statement is for shooter state
+            mOrchestrator.setStopped(true); // bool statement is for shooter state (stop or coast)
 
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mSubsystemManager.registerDisabledLoops(mDisabledLooper);
@@ -262,7 +261,7 @@ public class Robot extends TimedRobot {
             ledManager.registerEnabledLoops(mDisabledLooper);
 
             // Robot starts forwards.
-            mRobotState.resetToStart();
+            mRobotState.reset();
             mDrive.setHeading(new Rotation2d());
 
             mAutoModeSelector.updateModeCreator();
@@ -294,7 +293,7 @@ public class Robot extends TimedRobot {
                         mControlBoard::getShoot,
                         mOrchestrator::setFiring
                     ),
-                    createAction( // make this an actual toggle?
+                    createAction(
                         mControlBoard::getCollectorToggle,
                         () -> mOrchestrator.setCollecting(true)
                     ),
@@ -386,7 +385,7 @@ public class Robot extends TimedRobot {
             ledManager.setDefaultStatus(LedManager.RobotStatus.AUTONOMOUS);
 
             // Robot starts where it's told for auto path
-            mRobotState.resetToStart();
+            mRobotState.reset();
 
             mHasBeenEnabled = true;
 
@@ -428,6 +427,8 @@ public class Robot extends TimedRobot {
             mTurret.setControlMode(Turret.ControlMode.CENTER_FOLLOWING);
 
             mCamera.setEnabled(Constants.kUseVision); // do we enable here or only when we use vision? - this may cause an error b/c we enable more than once
+            System.out.println("CAMERA DIST: " + mCamera.getDistance());
+            System.out.println("CAMERA X:" + mCamera.getRawCenterX() + "-" + mCamera.getDeltaXAngle());
 
             mOrchestrator.setStopped(false);
 
@@ -492,7 +493,7 @@ public class Robot extends TimedRobot {
             if (RobotController.getUserButton() && !mHasBeenEnabled) {
                 System.out.println("Zeroing Robot!");
                 mDrive.zeroSensors();
-                mRobotState.resetToStart();
+                mRobotState.reset();
                 mDrive.setHeading(new Rotation2d());
                 mDrive.setHeading(
                     mAutoModeSelector
@@ -525,7 +526,7 @@ public class Robot extends TimedRobot {
                     .getObject("Trajectory");
                 mAutoModeExecutor.setAutoMode(auto);
                 Constants.StartingPose = auto.getTrajectory().getInitialPose();
-                mRobotState.resetToStart();
+                mRobotState.reset();
                 mDrive.zeroSensors();
             }
         } catch (Throwable t) {

@@ -10,7 +10,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 @Singleton
 public class Orchestrator {
 
-    // this class will now deal with organizing the collector, spindexer, elevator, and shooter into set actions
+    // this class deals with organizing subsystems into actions
 
     @Inject
     private static RobotState robotState;
@@ -34,12 +34,17 @@ public class Orchestrator {
     @Inject
     private static Camera camera;
     
-    private boolean collecting = false;
-    private boolean revving = false;
-    private boolean firing = false;
-    private final boolean useVision = Constants.kUseVision;
+    private boolean collecting;
+    private boolean revving;
+    private boolean firing;
+    private final boolean useVision;
 
-    public Orchestrator() {}
+    public Orchestrator() {
+        collecting = false;
+        revving = false;
+        firing = false;
+        useVision = Constants.kUseVision;
+    }
 
     public void setStopped(boolean notCoasting) {
         collector.setState(Collector.COLLECTOR_STATE.STOP); // stop states auto-set subsystems to stop moving

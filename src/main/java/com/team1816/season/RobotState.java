@@ -16,7 +16,7 @@ public class RobotState {
 
     public RobotState() {
         SmartDashboard.putData("Field", field);
-        resetToStart();
+        reset();
     }
 
     /**
@@ -30,7 +30,7 @@ public class RobotState {
         vehicle_to_turret = initial_vehicle_to_turret;
     }
 
-    public synchronized void resetToStart() {
+    public synchronized void reset() {
         reset(Constants.StartingPose, Constants.EmptyRotation);
     }
 
