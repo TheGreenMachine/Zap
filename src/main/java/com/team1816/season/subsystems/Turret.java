@@ -12,6 +12,7 @@ import com.team1816.season.Constants;
 import com.team1816.season.RobotState;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 
 @Singleton
@@ -139,12 +140,16 @@ public class Turret extends Subsystem implements PidProvider {
         if (turret instanceof IMotorSensor) {
             var sensors = (IMotorSensor) turret;
             // If we have a sensor position that resides within the same absolute encoder revolution as the abs_ticks_south position then it is safe to reset
-            if (Math.abs(sensors.getQuadraturePosition()) < TURRET_ENCODER_PPR) {
+            if (sensors.getQuadraturePosition() < TURRET_ENCODER_PPR && sensors.getQuadraturePosition() > -1) {
                 //get absolute sensor value
                 var sensorVal = sensors.getPulseWidthPosition(); // absolute
-                var offset = ZERO_OFFSET - sensorVal + HALF_ENCPPR;
-                sensors.setQuadraturePosition(offset);
-                System.out.println("Zeroing turret! Offset: " + offset);
+                if(sensorVal > -1 && sensorVal < TURRET_ENCODER_PPR){
+                    var offset = ZERO_OFFSET - sensorVal + HALF_ENCPPR;
+                    sensors.setQuadraturePosition(offset);
+                    System.out.println("Zeroing turret! Offset: " + offset);
+                } else {
+                    DriverStation.reportError("ABSOLUTE ENCODER INVALID RANGE - not zeroing", false);
+                }
             } else {
                 System.out.println("unsafe to zero turret sensors! NOT ZEROING");
                 // should we directly make turret into manual control at this point?

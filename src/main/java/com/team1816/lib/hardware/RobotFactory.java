@@ -149,7 +149,7 @@ public class RobotFactory {
                 motor.setSensorPhase(true);
             }
         }
-        if (factory.getConstant("configStatusFrames") == 1) {
+        if (factory.getConstant("configStatusFrames", 0) > 0) {
             setStatusFrame(motor); // make motor send one signal per second - FOR DEBUGGING!
         }
         return motor;

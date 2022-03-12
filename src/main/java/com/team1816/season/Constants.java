@@ -202,7 +202,7 @@ public class Constants {
 
     public static final double kPXController = 10;
     public static final double kPYController = 10;
-    public static final double kPThetaController = 700; // find why this is so big
+    public static final double kPThetaController = 700; // find why this is so big (700)
     public static final double kDThetaController = 0; // 2000;
     public static double kMaxAngularSpeed = factory.getConstant("maxRotVel"); // rad/sec
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI;

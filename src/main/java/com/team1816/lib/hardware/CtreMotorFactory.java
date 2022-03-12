@@ -8,6 +8,8 @@ import com.team1816.lib.hardware.components.motor.*;
 import edu.wpi.first.wpilibj.RobotBase;
 import java.util.*;
 
+import static com.team1816.lib.subsystems.Subsystem.factory;
+
 /**
  * A class to create Falcon (TalonFX), TalonSRX, VictorSPX, and GhostTalonSRX objects.
  * Based on FRC Team 254 The Cheesy Poof's 2018 TalonSRXFactory
@@ -264,7 +266,11 @@ public class CtreMotorFactory {
 
         talonConfiguration.enableOptimizations = true;
 
-        motor.configFactoryDefault(kTimeoutMs);
+        if(factory.getConstant("resetFactoryDefaults", 0) > 0){
+            motor.configFactoryDefault(kTimeoutMs);
+        } else {
+            System.out.println("NOT RESETTING DEFAULTS");
+        }
 
         motor.overrideLimitSwitchesEnable(config.ENABLE_LIMIT_SWITCH);
 

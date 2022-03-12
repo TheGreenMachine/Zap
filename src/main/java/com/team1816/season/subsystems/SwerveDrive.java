@@ -82,7 +82,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
         mPeriodicIO.chassisSpeed = Constants.Swerve.swerveKinematics.toChassisSpeeds(states);
         if (RobotBase.isSimulation()) { // calculate rotation based on actualModeStates
-            // simulates rotation by computing the rotational motion per interval - looperDt not enough for auto paths? Need to test on real robot
+            // simulates rotation by computing the rotational motion per interval
             mPeriodicIO.gyro_heading_no_offset =
                 mPeriodicIO.gyro_heading_no_offset.rotateBy(
                     new Rotation2d(

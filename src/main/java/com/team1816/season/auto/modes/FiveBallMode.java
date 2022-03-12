@@ -15,7 +15,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 
 public class FiveBallMode extends AutoModeBase {
 
-    public Pose2d startingPose;
     private TrajectoryAction trajectory1;
     private TrajectoryAction trajectory2;
 
@@ -25,7 +24,6 @@ public class FiveBallMode extends AutoModeBase {
                 TrajectorySet.FIVE_BALL_A,
                 TrajectorySet.FIVE_BALL_A_HEADINGS
             );
-        startingPose = trajectory.getTrajectory().getInitialPose();
         trajectory1 =
             new TrajectoryAction(
                 TrajectorySet.FIVE_BALL_B,

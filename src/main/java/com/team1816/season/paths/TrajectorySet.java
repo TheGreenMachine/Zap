@@ -35,7 +35,7 @@ public class TrajectorySet {
         // Trajectories
         // DRIVE_STRAIGHT = THIS USES OPEN LOOP - NOT TRAJECTORY
         DRIVE_STRAIGHT_MODIFIED = new DriveStraightModified().generateTrajectory();
-        TUNE_DRIVETRAIN = new DriveStraight(264, 40).generateTrajectory();
+        TUNE_DRIVETRAIN = new DriveStraight(120, 40).generateTrajectory();
         LIVING_ROOM = new LivingRoomPath().generateTrajectory();
 
         TWO_BALL_A = new TwoBallAutoA().generateTrajectory();

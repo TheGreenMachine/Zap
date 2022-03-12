@@ -28,28 +28,28 @@ subsystems:
                     azimuth: FLAz
                     canCoder: FLEnc
                     constants:
-                        encoderOffset: 2074
+                        encoderOffset: 2097
                         invertSensorPhase: 1
                 frontRight:
                     drive: FRDr
                     azimuth: FRAz
                     canCoder: FREnc
                     constants:
-                        encoderOffset: 1715
+                        encoderOffset: 1716
                         invertSensorPhase: 1
                 backLeft:
                     drive: RLDr
                     azimuth: RLAz
                     canCoder: RLEnc
                     constants:
-                        encoderOffset: 3141
+                        encoderOffset: 3126
                         invertSensorPhase: 1
                 backRight:
                     drive: RRDr
                     azimuth: RRAz
                     canCoder: RREnc
                     constants:
-                        encoderOffset: 2863
+                        encoderOffset: 2861
                         invertSensorPhase: 1
             drivePID:
                 slot0:
@@ -59,10 +59,11 @@ subsystems:
                     kF: 0.0499
             azimuthPID:
                 slot0:
-                    kP: 2.0 # 6.0
+                    kP: 4.0 # 6.0
                     kI: 0.0005
                     kD: 30
                     kF: 0
+                    allowableError: 5
         constants:
             maxTicks: 12275.7 # ticks per 100ms
             kP: 0.1 # 0.18 # TODO: tune PID, these are temporary PID values from Zeta
@@ -78,7 +79,7 @@ subsystems:
             isSwerve: 1
             encPPR: 14255
             azimuthEncPPR: 4096
-            azimuthAllowableErrorTicks: 20
+            azimuthAllowableErrorTicks: 5
             azimuthHomeAdjustmentDegrees: 1
     ledmanager:
         implemented: true
@@ -93,7 +94,7 @@ subsystems:
         implemented: true
         pidConfig:
             slot0:
-                kP: 0.15
+                kP: 0.35
                 kI: 0.0
                 kD: 15
                 kF: 0 # Should be 0 for position control
@@ -111,7 +112,7 @@ subsystems:
         implemented: true
         falcons:
             shooterMain: 21
-            shooterFollower: 34
+            shooterFollower: -1
         solenoids:
             hood: 1
         pidConfig:
@@ -121,6 +122,7 @@ subsystems:
                 kD: 2.5 #4.5
                 kF: 0.05671 #0.00953253
         constants:
+            maxTicks: 12275.7 # TEST VALUE from drive
             currentFloorCheck: .12
             currentEpsilonCheck: .2
             rpmFloorCheck: 2000
@@ -198,7 +200,7 @@ constants:
     maxVelPathFollowing: 3 # 160 # 240 # inches/s # 22560 native units ---30
     maxAccel: 100 # inches/s^ 2
     ## Logging ##
-    logTeleOp: 0 # 0 or 1
+    logTeleOp: 1 # 0 or 1
     logAuto: 1 # 0 or 1
     badLogEnabled: 1 # 0 or 1
     configStatusFrames: 0 # 0 or 1
@@ -206,6 +208,7 @@ constants:
     ## General ##
     teleopFieldCentric: 1 # 0 or 1
     compressorEnabled: 1 # 0 or 1
-    kLooperDt: .020 # seconds
+    kLooperDt: .050 # seconds
     pdIsRev: 1
+    resetFactoryDefaults: 0 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret
 
