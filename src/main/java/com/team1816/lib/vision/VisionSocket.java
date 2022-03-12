@@ -33,7 +33,7 @@ public class VisionSocket {
 
     // todo make this configurable
     private void debug(String message) {
-        // if (!useDebug) return;
+        if (!useDebug) return;
         System.out.println("CAMERA DEBUG: " + message);
     }
 

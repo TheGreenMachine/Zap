@@ -429,8 +429,6 @@ public class Robot extends TimedRobot {
             mTurret.setControlMode(Turret.ControlMode.CENTER_FOLLOWING);
 
             mCamera.setEnabled(Constants.kUseVision); // do we enable here or only when we use vision? - this may cause an error b/c we enable more than once
-            System.out.println("CAMERA DIST: " + mCamera.getDistance());
-            System.out.println("CAMERA X:" + mCamera.getRawCenterX() + "-" + mCamera.getDeltaXAngle());
 
             mOrchestrator.setStopped(false);
 
