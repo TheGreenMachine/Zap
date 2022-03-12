@@ -3,7 +3,7 @@ camera:
   fps: 100
 color:
   lower:
-    H: 60
+    H: 36.0
     S: 80
     V: 150
   upper:

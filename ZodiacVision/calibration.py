@@ -24,30 +24,30 @@ if __name__ == '__main__':
 
 
     def updateHmin(value):
-        s.send(b'calib|HMIN|' + str(value).zfill(3).encode())
+        s.send(b'calib|HMIN|' + str(value).zfill(3).encode() + b'\n')
 
 
     def updateSmin(value):
-        s.send(b'calib|SMIN|' + str(value).zfill(3).encode())
+        s.send(b'calib|SMIN|' + str(value).zfill(3).encode() + b'\n')
 
 
     def updateVmin(value):
-        s.send(b'calib|VMIN|' +  str(value).zfill(3).encode())
+        s.send(b'calib|VMIN|' +  str(value).zfill(3).encode() + b'\n')
 
     def updateHmax(value):
-        s.send(b'calib|HMAX|' +  str(value).zfill(3).encode())
+        s.send(b'calib|HMAX|' +  str(value).zfill(3).encode() + b'\n')
 
 
     def updateSmax(value):
-        s.send(b'calib|SMAX|' +  str(value).zfill(3).encode())
+        s.send(b'calib|SMAX|' +  str(value).zfill(3).encode() + b'\n')
 
 
     def updateVmax(value):
-        s.send(b'calib|VMAX|' +  str(value).zfill(3).encode())
+        s.send(b'calib|VMAX|' +  str(value).zfill(3).encode() + b'\n')
 
 
     def updateExposure(value):
-        s.send(b'calib|EXPS|' +  str(value).zfill(3).encode())
+        s.send(b'calib|EXPS|' +  str(value).zfill(3).encode() + b'\n')
 
 
     s.connect(address)

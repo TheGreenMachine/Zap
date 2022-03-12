@@ -11,9 +11,9 @@ class ThreadedVisionServer(object):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((self.host, self.port))
-        self.cx = bytes('-1', 'utf-8')
-        self.cy = bytes('-1', 'utf-8')
-        self.distance = bytes('-1', 'utf-8')
+        self.cx = '-1'
+        self.cy = '-1'
+        self.distance = '-1'
         self.yml_data = yaml_data
         self.yml_path = yml_path
         self.update_exposure = False
@@ -26,47 +26,47 @@ class ThreadedVisionServer(object):
             client.settimeout(300)
             threading.Thread(target=self.listenToClient, args=(client, address)).start()
 
-    def listenToClient(self, client: socket.socket, address):
-        size = 14
-        while True:
-            try:
-                data = client.recv(size)
-                if data:
-                    # print(data)
-                    # Set the response to echo back the recieved data
-                    response = data
-                    self.dispatchResponse(client, response)
-            except Exception as e:
-                print(e)
-                client.close()
-                return False
+    def listenToClient(self, client, address):
+        read = client.makefile('r')
+        write = client.makefile('w')
+        with client, read, write:
+            while True:
+                try:
+                    data = read.readline()
+                    if data:
+                        # Set the response to echo back the recieved data
+                        response = data.strip()
+                        print(response)
+                        self.dispatchResponse(write, response)
+                except Exception as e:
+                    print(e)
+                    client.close()
+                    return False
 
-    def dispatchResponse(self, client: socket.socket, msg: str):
-        msg = msg.rstrip()
-        print(msg.decode())
-        out = b''
-        if msg == b'distance':
-            out = b"distance|" + self.distance
-        elif msg == b'center_x':
-            out = b"center_x|" + self.cx
-        elif msg == b'center_y':
-            out = b"center_y|" + self.cy
-        elif msg == b'point':
-            out = self.cx+b'|'+self.cy+b'|' + self.distance
-        elif b'calib' in msg:
+    def dispatchResponse(self, writer, msg):
+        if msg == 'distance':
+            writer.write("distance|" + self.distance + "\n")
+            writer.flush()
+        elif msg == 'center_x':
+            writer.write("center_x|" + self.cx + "\n")
+            writer.flush()
+        elif msg == 'center_y':
+            writer.write("center_y|" + self.cy + "\n")
+            writer.flush()
+        elif msg == 'point':
+            writer.write(self.cx+'|'+self.cy+'|' + self.distance + "\n")
+            writer.flush()
+        elif 'calib' in msg:
             print(str(msg))
             msg = str(msg).replace("'", "").split('|')
-            return self.calibChange(msg[1], msg[2])
-
-        print("out: " + out.decode())
-        client.send(out + b"\n")
+            self.calibChange(msg[1], msg[2])
 
     def updateSavedCenter(self, cx, cy):
-        self.cx = bytes(str(cx), 'utf-8')
-        self.cy = bytes(str(cy), 'utf-8')
+        self.cx = cx
+        self.cy = cy
 
     def updateSavedDistance(self, d):
-        self.distance = bytes(str(d), 'utf-8')
+        self.distance = d
     def calibChange(self, key, value):
         print(value)
         def dumpYML():
