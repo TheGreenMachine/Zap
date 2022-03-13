@@ -1,9 +1,11 @@
 package com.team1816.lib.subsystems;
 
 import badlog.lib.BadLog;
+import com.google.inject.Inject;
 import com.team1816.lib.hardware.RobotFactory;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.season.Robot;
+import com.team1816.season.RobotState;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;
@@ -23,6 +25,8 @@ public abstract class Subsystem implements Sendable {
 
     private final String name;
     public static RobotFactory factory = Robot.getFactory();
+    @Inject
+    public static RobotState robotState;
 
     protected Subsystem(String name) {
         this.name = name;

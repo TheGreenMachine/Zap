@@ -43,8 +43,8 @@ public class Spindexer extends Subsystem {
     }
 
     public void setSpindexer(double spindexerPower) {
-        distanceManaged = true;
         this.spindexerPower = spindexerPower;
+        outputsChanged = true;
     }
 
     public void setFeederFlap(boolean feederFlapOut) {
@@ -52,43 +52,52 @@ public class Spindexer extends Subsystem {
         outputsChanged = true;
     }
 
-    public void setState(SPIN_STATE state) {
+    public void setDesiredState(SPIN_STATE state) {
         if(this.state != state){
             this.state = state;
-            System.out.println("SPINDEXER STATE IS CHANGED TO " + state);
-            outputsChanged = true;
+            switch (state) {
+                case STOP:
+                    setSpindexer(0);
+                    robotState.spinState = SPIN_STATE.STOP;
+                    break;
+                case COLLECT:
+                    robotState.spinState = SPIN_STATE.COLLECT;
+                    setSpindexer(COLLECT);
+                    break;
+                case INDEX:
+                    robotState.spinState = SPIN_STATE.INDEX;
+                    setSpindexer(INDEX);
+                    break;
+                case FLUSH:
+                    robotState.spinState = SPIN_STATE.FLUSH;
+                    setSpindexer(FLUSH);
+                    break;
+                case FIRE:
+                    break;
+            }
+            System.out.println("DESIRED SPINDEXER STATE = " + state);
+        }
+    }
+
+    @Override
+    public void readFromHardware() {
+        if(robotState.shooterState == Shooter.SHOOTER_STATE.REVVING && state != robotState.spinState){
+            if(spindexerPower != FIRE){
+                System.out.println("ACTUAL SPINDEXER STATE = FIRE");
+            }
+            robotState.spinState = SPIN_STATE.FIRE;
+            setSpindexer(FIRE);
         }
     }
 
     @Override
     public void writeToHardware() {
         if (outputsChanged) {
-            double pow = 0;
-            switch (state) {
-                case STOP:
-                    pow = 0;
-                    break;
-                case COLLECT:
-                    pow = COLLECT;
-                    break;
-                case INDEX:
-                    pow = INDEX;
-                    break;
-                case FLUSH:
-                    pow = FLUSH;
-                    break;
-                case FIRE:
-                    if (!distanceManaged){
-                        pow = FIRE;
-                    } else {
-                        pow = spindexerPower;
-                    }
-                    break;
-            }
-            spindexer.set(ControlMode.PercentOutput, pow);
+            outputsChanged = false;
+            System.out.println(spindexerPower + " = spindexer pow");
+            spindexer.set(ControlMode.PercentOutput, spindexerPower);
             this.feederFlap.set(feederFlapOut);
             distanceManaged = false;
-            outputsChanged = false;
         }
     }
 

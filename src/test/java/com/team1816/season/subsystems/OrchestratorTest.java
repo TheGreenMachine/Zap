@@ -8,6 +8,7 @@ import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
 import com.team1816.season.RobotState;
 import com.team1816.season.SeasonModule;
+import com.team1816.season.Superstructure;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.mockito.Mockito;
@@ -17,7 +18,7 @@ public class OrchestratorTest extends TestCase {
 
     private final RobotState state;
     private final RobotFactory mockFactory;
-    private Orchestrator mOrchestrator;
+    private Superstructure mSuperstructure;
 
     @Spy
     private Constants constants;
@@ -32,7 +33,7 @@ public class OrchestratorTest extends TestCase {
 
     @Before
     public void setUp() {
-        mOrchestrator = new Orchestrator();
+        mSuperstructure = new Superstructure();
         state.reset();
     }
 

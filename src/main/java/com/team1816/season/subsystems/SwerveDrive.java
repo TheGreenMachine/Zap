@@ -175,12 +175,12 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     public Pose2d getPose() {
-        return mRobotState.field_to_vehicle; // swerveOdometry.getPoseMeters();
+        return robotState.field_to_vehicle; // swerveOdometry.getPoseMeters();
     }
 
     private void updateRobotPose() {
-        mRobotState.field_to_vehicle = swerveOdometry.getPoseMeters();
-        mRobotState.delta_field_to_vehicle = new Twist2d(
+        robotState.field_to_vehicle = swerveOdometry.getPoseMeters();
+        robotState.delta_field_to_vehicle = new Twist2d(
             // these three may be missing conversions from velocity to change in pose? (meters/s to x-y-theta/updateTime)
             // not sure because field_to_vehicle is also being plugged directly into field as a value in meters
             mPeriodicIO.chassisSpeed.vxMetersPerSecond,
@@ -318,7 +318,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             mPeriodicIO.desiredModuleStates[i] = new SwerveModuleState();
             mPeriodicIO.chassisSpeed = new ChassisSpeeds();
         }
-        mRobotState.field.setRobotPose(Constants.StartingPose);
+        robotState.field.setRobotPose(Constants.StartingPose);
         autoModeSelector.setHardwareFailure(false);
         //        if (mPigeon.getLastError() != ErrorCode.OK) {
         //            // BadLog.createValue("PigeonErrorDetected", "true");

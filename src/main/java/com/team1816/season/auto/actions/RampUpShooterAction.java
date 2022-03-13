@@ -2,7 +2,7 @@ package com.team1816.season.auto.actions;
 
 import com.google.inject.Inject;
 import com.team1816.lib.auto.actions.Action;
-import com.team1816.season.subsystems.Orchestrator;
+import com.team1816.season.Superstructure;
 import com.team1816.season.subsystems.Shooter;
 
 public class RampUpShooterAction implements Action {
@@ -11,7 +11,7 @@ public class RampUpShooterAction implements Action {
     private static Shooter shooter;
 
     @Inject
-    private static Orchestrator orchestrator;
+    private static Superstructure superstructure;
 
     private final int shooterVel;
 
@@ -21,7 +21,7 @@ public class RampUpShooterAction implements Action {
 
     @Override
     public void start() {
-        orchestrator.setRevving(shooterVel > 0, shooterVel);
+        superstructure.setRevving(shooterVel > 0, shooterVel);
     }
 
     @Override

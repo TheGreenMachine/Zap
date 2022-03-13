@@ -44,10 +44,10 @@ public class Collector extends Subsystem {
         FLUSH = factory.getConstant(NAME, "flush");
     }
 
-    public void setState(COLLECTOR_STATE state) {
+    public void setDesiredState(COLLECTOR_STATE state) {
         if(this.state != state){
             this.state = state;
-            System.out.println("COLLECTOR STATE IS CHANGED TO " + state);
+            System.out.println("DESIRED COLLECTOR STATE = " + state);
             outputsChanged = true;
         }
     }

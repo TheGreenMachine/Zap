@@ -28,6 +28,7 @@ public class Elevator extends Subsystem {
     public Elevator() {
         super(NAME);
         this.elevator = factory.getMotor(NAME, "elevator");
+
         //        this.ballSensor =
         //            new DigitalInput((int) factory.getConstant(NAME, "ballSensor", 0));
 
@@ -35,16 +36,27 @@ public class Elevator extends Subsystem {
         FIRE = factory.getConstant(NAME, "firePow", 0.5);
     }
 
-    public void autoElevator(double elevatorOutput) {
-        distanceManaged = true;
+    public void setElevator(double elevatorOutput) {
         this.elevatorPower = elevatorOutput;
+        outputsChanged = true;
     }
 
-    public void setState(ELEVATOR_STATE state) {
+    public void setDesiredState(ELEVATOR_STATE state) {
         if(this.state != state){
             this.state = state;
-            System.out.println("ELEVATOR STATE IS CHANGED TO " + state);
-            outputsChanged = true;
+            switch (state) {
+                case STOP:
+                    setElevator(0);
+                    robotState.elevatorState = ELEVATOR_STATE.STOP;
+                    break;
+                case FIRE: // dealt with in read - waiting for shooter state
+                    break;
+                case FLUSH:
+                    setElevator(FLUSH);
+                    robotState.elevatorState = ELEVATOR_STATE.FLUSH;
+                    break;
+            }
+            System.out.println("DESIRED ELEVATOR STATE = " + state);
         }
     }
 
@@ -59,28 +71,25 @@ public class Elevator extends Subsystem {
     }
 
     @Override
+    public void readFromHardware() {
+        if(robotState.shooterState == Shooter.SHOOTER_STATE.REVVING && state != robotState.elevatorState) {
+            robotState.elevatorState = ELEVATOR_STATE.FIRE;
+            setElevator(FIRE);
+            if(elevatorPower != FIRE){
+                System.out.println("ACTUAL ELEVATOR STATE = FIRE");
+            }
+        }
+    }
+
+    @Override
     public void writeToHardware() {
         if (outputsChanged) {
-            double pow = 0;
-            switch (state) {
-                case STOP:
-                    pow = 0;
-                    break;
-                case FIRE:
-                    if (!distanceManaged){
-                        pow = FIRE;
-                    } else {
-                        pow = elevatorPower;
-                    }
-                    break;
-                case FLUSH:
-                    pow = FLUSH;
-                    break;
-            }
-            this.elevator.set(ControlMode.PercentOutput, pow);
+            outputsChanged = false;
+
+            System.out.println(elevatorPower + " = elevator power");
+            this.elevator.set(ControlMode.PercentOutput, elevatorPower);
             // create ball color updating here once sensor created
             distanceManaged = false;
-            outputsChanged = false;
         }
     }
 

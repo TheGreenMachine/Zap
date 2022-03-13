@@ -48,9 +48,6 @@ public abstract class Drive
     // control states
     protected DriveControlState mDriveControlState = DriveControlState.OPEN_LOOP;
 
-    @Inject
-    protected static RobotState mRobotState;
-
     // Odometry variables
     protected double lastUpdateTimestamp = 0;
     protected double mTrajectoryStart = 0;

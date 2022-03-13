@@ -1,7 +1,8 @@
 package com.team1816.season;
 
 import com.google.inject.Singleton;
-import com.team1816.season.subsystems.Turret;
+import com.team1816.lib.subsystems.Subsystem;
+import com.team1816.season.subsystems.*;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -13,6 +14,12 @@ public class RobotState {
     public Pose2d field_to_vehicle = Constants.EmptyPose;
     public Rotation2d vehicle_to_turret = Constants.EmptyRotation;
     public Twist2d delta_field_to_vehicle = new Twist2d();
+
+    // Superstructure ACTUAL states
+    public Collector.COLLECTOR_STATE collectorState = Collector.COLLECTOR_STATE.STOP;
+    public Shooter.SHOOTER_STATE shooterState = Shooter.SHOOTER_STATE.STOP;
+    public Spindexer.SPIN_STATE spinState = Spindexer.SPIN_STATE.STOP;
+    public Elevator.ELEVATOR_STATE elevatorState = Elevator.ELEVATOR_STATE.STOP;
 
     public RobotState() {
         SmartDashboard.putData("Field", field);

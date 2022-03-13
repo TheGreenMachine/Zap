@@ -3,10 +3,7 @@ package com.team1816.season.auto.modes;
 import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.actions.*;
 import com.team1816.lib.auto.modes.AutoModeBase;
-import com.team1816.season.auto.actions.CollectAction;
-import com.team1816.season.auto.actions.RampUpShooterAction;
-import com.team1816.season.auto.actions.ShootAction;
-import com.team1816.season.auto.actions.TurretAction;
+import com.team1816.season.auto.actions.*;
 import com.team1816.season.paths.TrajectorySet;
 import com.team1816.season.subsystems.Shooter;
 import com.team1816.season.subsystems.Turret;
@@ -44,46 +41,47 @@ public class FiveBallMode extends AutoModeBase {
             new SeriesAction(
                 // starting actions before paths run
                 new CollectAction(true),
-                new RampUpShooterAction(Shooter.MID_VELOCITY), // make actual shooting vel
+                new RampUpShooterAction(13000), // make actual shooting vel
                 new TurretAction(Turret.CARDINAL_WEST), // setting this doesn't seem to work right in simulator - magically relative to field and not the robot
 
                 new ParallelAction(
                     // paths
                     new SeriesAction(
-                        trajectory,
-                        trajectory1,
-                        trajectory2
+//                        trajectory,
+                        trajectory1
+//                        trajectory2
                     ),
+
                     // actions to take during the path
                     new SeriesAction(
+//                        new ShootAction(true, true),
                         new WaitUntilInsideRegion(
                             new Translation2d(0, 0), // make actual region to change hood
-                            new Translation2d(210, 180)
+                            new Translation2d(210, 180),
+                            "1st, blue ball"
                         ),
                         new ShootAction(true, true),
                         new WaitUntilInsideRegion(
                             new Translation2d(0, 0), // make actual region to change hood
-                            new Translation2d(205, 130)
+                            new Translation2d(205, 130),
+                            "2nd, red ball"
                         ),
                         new ShootAction(true, false),
                         new WaitUntilInsideRegion(
                             new Translation2d(0, 0), // make actual region to change hood
-                            new Translation2d(220, 80)
+                            new Translation2d(220, 80),
+                            "3rd, blue ball"
                         ),
                         new ShootAction(true, true),
-                        new RampUpShooterAction(Shooter.FAR_VELOCITY),
-                        new WaitAction(.5),
+                        new WaitAction(4),
+                        new RampUpShooterAction(14000),
                         new TurretAction(Turret.CARDINAL_SOUTH), // tune these two
                         new ShootAction(true, true),
                         new WaitAction(2)
                     )
                 ),
                 // stop all at end - make a stop action in the future
-                new ParallelAction(
-                    new CollectAction(false),
-                    new RampUpShooterAction(Shooter.COAST_VELOCITY),
-                    new ShootAction(false, false)
-                )
+                new StopAction(false)
             )
         );
     }

@@ -17,7 +17,7 @@ public class FiveBallAutoC implements PathContainer {
 
     @Override
     public List<Rotation2d> buildHeadings() {
-        return List.of(Rotation2d.fromDegrees(90), Rotation2d.fromDegrees(-10));
+        return List.of(Rotation2d.fromDegrees(90), Rotation2d.fromDegrees(0));
     }
 
     @Override

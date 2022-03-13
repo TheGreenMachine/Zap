@@ -30,7 +30,7 @@ public class TurretAction implements Action {
 
     @Override
     public boolean isFinished() {
-        return turret.getPositionError() < 10;
+        return true;
     }
 
     @Override

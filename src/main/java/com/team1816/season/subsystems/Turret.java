@@ -20,9 +20,9 @@ public class Turret extends Subsystem implements PidProvider {
 
     public static final double TURRET_JOG_SPEED = 0.04;
     public static final double CARDINAL_SOUTH = 0; // deg
-    public static final double CARDINAL_EAST = 90; // deg
+    public static final double CARDINAL_EAST = 270; // deg
     public static final double CARDINAL_NORTH = 180; // deg
-    public static final double CARDINAL_WEST = 270; // deg
+    public static final double CARDINAL_WEST = 90; // deg
     public static final String NAME = "turret";
     private static int HALF_ENCPPR;
     public static int TURRET_LIMIT_REVERSE =
@@ -48,9 +48,6 @@ public class Turret extends Subsystem implements PidProvider {
 
     @Inject
     private static Camera camera;
-
-    @Inject
-    private static RobotState robotState;
 
     @Inject
     private static LedManager led;

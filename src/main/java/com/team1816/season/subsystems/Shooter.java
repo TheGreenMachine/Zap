@@ -12,6 +12,7 @@ import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import org.opencv.core.Mat;
 
 @Singleton
 public class Shooter extends Subsystem implements PidProvider {
@@ -25,7 +26,6 @@ public class Shooter extends Subsystem implements PidProvider {
 
     // State
     private boolean outputsChanged;
-    private boolean distanceManaged = false;
 
     private boolean hoodOut;
     private double velocityDemand;
@@ -119,9 +119,16 @@ public class Shooter extends Subsystem implements PidProvider {
         return actualShooterVelocity;
     }
 
+    public double getTargetVelocity() {
+        return velocityDemand;
+    }
+
+    public double getError() {
+        return Math.abs(actualShooterVelocity - velocityDemand);
+    }
+
     public void setVelocity(double velocity) {
         velocityDemand = velocity;
-        distanceManaged = true;
         outputsChanged = true;
     }
 
@@ -130,16 +137,26 @@ public class Shooter extends Subsystem implements PidProvider {
         this.outputsChanged = true;
     }
 
-    public void setState(SHOOTER_STATE state) {
+    public void setDesiredState(SHOOTER_STATE state) {
         if(state != this.state){
             this.state = state;
-            this.outputsChanged = true;
+            switch (state){
+                case STOP:
+                    setVelocity(0);
+                    break;
+                case REVVING:
+                    break;
+                case COASTING:
+                    setVelocity(COAST_VELOCITY);
+                    break;
+            }
+            System.out.println("DESIRED SHOOTER STATE = " + state);
         }
     }
 
     public boolean isVelocityNearTarget() {
         return (
-            Math.abs(closedLoopError) < VELOCITY_THRESHOLD &&
+            Math.abs(velocityDemand - actualShooterVelocity) < VELOCITY_THRESHOLD &&
                 (int) velocityDemand != COAST_VELOCITY
         );
     }
@@ -148,39 +165,34 @@ public class Shooter extends Subsystem implements PidProvider {
     public void readFromHardware() {
         actualShooterVelocity = shooterMain.getSelectedSensorVelocity(0);
         closedLoopError = shooterMain.getClosedLoopError(0);
+
+        if(state != robotState.shooterState){
+            if (actualShooterVelocity < VELOCITY_THRESHOLD){
+                robotState.shooterState = SHOOTER_STATE.STOP;
+            } else if(isVelocityNearTarget()) {
+                robotState.shooterState = SHOOTER_STATE.REVVING;
+            } else {
+                robotState.shooterState = SHOOTER_STATE.COASTING;
+            }
+            if(state == SHOOTER_STATE.REVVING){
+                System.out.println("ACTUAL SHOOTER STATE = " + robotState.shooterState);
+            }
+        }
     }
 
     @Override
     public void writeToHardware() {
         if (outputsChanged) {
-            double vel = 0;
-            switch (state){
-                case STOP:
-                    vel = 0;
-                    break;
-                case REVVING:
-                    vel = velocityDemand;
-                    break;
-                case COASTING:
-                    vel = COAST_VELOCITY;
-                    break;
-            }
-            hood.set(hoodOut);
-            shooterMain.set(ControlMode.Velocity, vel);
-
-            System.out.println("velocity shooter demand = " + velocityDemand);
             outputsChanged = false;
+
+            hood.set(hoodOut);
+            System.out.println("velocity shooter demand = " + velocityDemand);
+            shooterMain.set(ControlMode.Velocity, velocityDemand);
         }
     }
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        builder.addBooleanProperty("Shooter/IsAtSpeed", this::isVelocityNearTarget, null);
-        builder.addDoubleProperty(
-            "Shooter/ShooterVelocity",
-            this::getActualVelocity,
-            this::setVelocity
-        );
     }
 
     @Override
@@ -203,19 +215,10 @@ public class Shooter extends Subsystem implements PidProvider {
         return checkShooter;
     }
 
-    public static class PeriodicIO {
-
-        //INPUTS
-        public double actualShooterVelocity;
-        public double closedLoopError;
-
-        //OUPUTS
-        public double velocityDemand;
-    }
-
     public enum SHOOTER_STATE {
         STOP,
         COASTING,
         REVVING,
+        CAMERA
     }
 }

@@ -43,7 +43,7 @@ public class Robot extends TimedRobot {
     private final SubsystemManager mSubsystemManager;
 
     //State managers
-    private final Orchestrator mOrchestrator;
+    private final Superstructure mSuperstructure;
     private final Infrastructure mInfrastructure;
     private final RobotState mRobotState;
 
@@ -90,7 +90,7 @@ public class Robot extends TimedRobot {
         mElevator = injector.getInstance(Elevator.class);
         mCamera = injector.getInstance(Camera.class);
         mSpindexer = injector.getInstance(Spindexer.class);
-        mOrchestrator = injector.getInstance(Orchestrator.class);
+        mSuperstructure = injector.getInstance(Superstructure.class);
         mShooter = injector.getInstance(Shooter.class);
         mRobotState = injector.getInstance(RobotState.class);
         mInfrastructure = injector.getInstance(Infrastructure.class);
@@ -177,19 +177,43 @@ public class Robot extends TimedRobot {
 
                     mDrive.CreateBadLogValue("Drivetrain PID", mDrive.pidToString());
                     mTurret.CreateBadLogValue("Turret PID", mTurret.pidToString());
+                    mShooter.CreateBadLogValue("Shooter PID", mShooter.pidToString());
 
-                    BadLog.createTopic(
-                        "Vision/DeltaXAngle",
-                        "Degrees",
-                        mCamera::getDeltaXAngle
-                    );
-                    BadLog.createTopic("Vision/Distance", "inches", mCamera::getDistance);
-                    BadLog.createTopic(
-                        "Vision/CenterX",
-                        "pixels",
-                        mCamera::getRawCenterX
-                    );
+                    if(mCamera.isImplemented()){
+                        BadLog.createTopic(
+                            "Vision/DeltaXAngle",
+                            "Degrees",
+                            mCamera::getDeltaXAngle
+                        );
+                        BadLog.createTopic("Vision/Distance", "inches", mCamera::getDistance);
+                        BadLog.createTopic(
+                            "Vision/CenterX",
+                            "pixels",
+                            mCamera::getRawCenterX
+                        );
+                    }
                 }
+                mShooter.CreateBadLogTopic(
+                    "Shooter/ActVel",
+                    "NativeUnits",
+                    mShooter::getActualVelocity,
+                    "hide",
+                    "join:Shooter/Velocities"
+                );
+                mShooter.CreateBadLogTopic(
+                    "Shooter/TargetVel",
+                    "NativeUnits",
+                    mShooter::getTargetVelocity,
+                    "hide",
+                    "join:Shooter/Velocities"
+                );
+                mShooter.CreateBadLogTopic(
+                    "Shooter/Error",
+                    "NativeUnits",
+                    mShooter::getError,
+                    "hide",
+                    "join:Shooter/Velocities"
+                );
                 mTurret.CreateBadLogTopic(
                     "Turret/ActPos",
                     "NativeUnits",
@@ -254,7 +278,7 @@ public class Robot extends TimedRobot {
             mDrive.zeroSensors();
             mTurret.zeroSensors();
             mClimber.zeroSensors();
-            mOrchestrator.setStopped(true); // bool statement is for shooter state (stop or coast)
+            mSuperstructure.setStopped(true); // bool statement is for shooter state (stop or coast)
 
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mSubsystemManager.registerDisabledLoops(mDisabledLooper);
@@ -285,29 +309,32 @@ public class Robot extends TimedRobot {
                             }
                         }
                     ),
-                    createHoldAction(
-                        mControlBoard::getRevShooter,
-                        revving -> {
-                            mOrchestrator.setRevving(revving, Shooter.MID_VELOCITY);
-                        }
-                    ),
+//                    createHoldAction(
+//                        mControlBoard::getRevShooter,
+//                        revving -> {
+//                            mOrchestrator.setRevving(revving, Shooter.MID_VELOCITY);
+//                        }
+//                    ),
                     createHoldAction(
                         mControlBoard::getShoot,
-                        mOrchestrator::setFiring
+                        shooting -> {
+                            mSuperstructure.setRevving(shooting, Shooter.FAR_VELOCITY);
+                            mSuperstructure.setFiring(shooting);
+                        }
                     ),
                     createAction(
                         mControlBoard::getCollectorToggle,
-                        () -> mOrchestrator.setCollecting(true)
+                        () -> mSuperstructure.setCollecting(true)
                     ),
                     createHoldAction(
                         mControlBoard::getLowShoot,
                         lowShoot -> {
-                            mOrchestrator.setRevving(lowShoot, Shooter.NEAR_VELOCITY);
+                            mSuperstructure.setRevving(lowShoot, Shooter.NEAR_VELOCITY);
                         }
                     ),
                     createAction(
                         mControlBoard::getCollectorBackspin,
-                        () -> mOrchestrator.setCollecting(false)
+                        () -> mSuperstructure.setCollecting(false)
                     ),
                     createAction(
                         mControlBoard::getZeroPose,
@@ -316,16 +343,16 @@ public class Robot extends TimedRobot {
                             mRobotState.reset(Constants.ZeroPose, Constants.EmptyRotation);
                         }
                     ),
-                    createAction(
-                        mControlBoard::getFieldFollowing,
-                        () -> {
-                            if (mTurret.getControlMode() == Turret.ControlMode.FIELD_FOLLOWING) {
-                                mTurret.setControlMode(Turret.ControlMode.CENTER_FOLLOWING);
-                            } else {
-                                mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
-                            }
-                        }
-                    ),
+//                    createAction(
+//                        mControlBoard::getFieldFollowing,
+//                        () -> {
+//                            if (mTurret.getControlMode() == Turret.ControlMode.FIELD_FOLLOWING) {
+//                                mTurret.setControlMode(Turret.ControlMode.CENTER_FOLLOWING);
+//                            } else {
+//                                mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
+//                            }
+//                        }
+//                    ),
                     createHoldAction(
                         mControlBoard::getTurretJogLeft,
                         moving ->
@@ -359,7 +386,7 @@ public class Robot extends TimedRobot {
             ledManager.setDefaultStatus(LedManager.RobotStatus.DISABLED);
             ledManager.setCameraLed(false);
 
-            mOrchestrator.setStopped(true);
+            mSuperstructure.setStopped(true);
 
             // Reset all auto mode state.
             if (mAutoModeExecutor != null) {
@@ -395,11 +422,9 @@ public class Robot extends TimedRobot {
             mTurret.zeroSensors();
             mClimber.zeroSensors();
 
-            mOrchestrator.setStopped(false);
+            mSuperstructure.setStopped(false);
 
             mDrive.setControlState(Drive.DriveControlState.TRAJECTORY_FOLLOWING);
-
-            mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
 
             System.out.println("Auto init - " + mDriveByCameraInAuto);
             if (!mDriveByCameraInAuto) {
@@ -430,7 +455,7 @@ public class Robot extends TimedRobot {
 
             mCamera.setEnabled(Constants.kUseVision); // do we enable here or only when we use vision? - this may cause an error b/c we enable more than once
 
-            mOrchestrator.setStopped(false);
+            mSuperstructure.setStopped(false);
 
             mControlBoard.reset();
         } catch (Throwable t) {
@@ -450,7 +475,7 @@ public class Robot extends TimedRobot {
                 ledManager.writeToHardware();
             }
 
-            mOrchestrator.setStopped(false);
+            mSuperstructure.setStopped(false);
 
             mEnabledLooper.stop();
             mDisabledLooper.start();

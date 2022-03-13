@@ -2,14 +2,14 @@ package com.team1816.season.auto.actions;
 
 import com.google.inject.Inject;
 import com.team1816.lib.auto.actions.Action;
-import com.team1816.season.subsystems.Orchestrator;
+import com.team1816.season.Superstructure;
 
 public class StopAction implements Action {
 
-    public final boolean notRevving;
+    public boolean notRevving;
 
     @Inject
-    private static Orchestrator orchestrator;
+    private static Superstructure superstructure;
 
     public StopAction(boolean notRevving){
         this.notRevving = notRevving;
@@ -17,7 +17,7 @@ public class StopAction implements Action {
 
     @Override
     public void start() {
-        orchestrator.setStopped(notRevving);
+        superstructure.setStopped(notRevving);
     }
 
     @Override

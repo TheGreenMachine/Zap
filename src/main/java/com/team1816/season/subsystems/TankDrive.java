@@ -58,11 +58,11 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     @Override
     public Pose2d getPose() {
-        return mRobotState.field_to_vehicle;
+        return robotState.field_to_vehicle;
     }
 
     private void updateRobotPose() {
-        mRobotState.field_to_vehicle = odometry.getPoseMeters();
+        robotState.field_to_vehicle = odometry.getPoseMeters();
     }
 
     @Override
@@ -299,7 +299,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         mPeriodicIO = new PeriodicIO();
         leftEncoderSimPosition = 0;
         rightEncoderSimPosition = 0;
-        mRobotState.field.setRobotPose(Constants.StartingPose);
+        robotState.field.setRobotPose(Constants.StartingPose);
         odometry =
             new DifferentialDriveOdometry(
                 Constants.StartingPose.getRotation(), // shouldn't this be the actual gyro angle

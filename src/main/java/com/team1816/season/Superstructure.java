@@ -1,19 +1,18 @@
-package com.team1816.season.subsystems;
+package com.team1816.season;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.team1816.season.Constants;
-import com.team1816.season.RobotState;
+import com.team1816.season.subsystems.*;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 @Singleton
-public class Orchestrator {
+public class Superstructure {
 
     // this class deals with organizing subsystems into actions
 
     @Inject
-    private static RobotState robotState;
+    private static RobotState mRobotState;
 
     @Inject
     private static Collector collector;
@@ -39,7 +38,7 @@ public class Orchestrator {
     private boolean firing;
     private final boolean useVision;
 
-    public Orchestrator() {
+    public Superstructure() {
         collecting = false;
         revving = false;
         firing = false;
@@ -47,13 +46,13 @@ public class Orchestrator {
     }
 
     public void setStopped(boolean notCoasting) {
-        collector.setState(Collector.COLLECTOR_STATE.STOP); // stop states auto-set subsystems to stop moving
-        spindexer.setState(Spindexer.SPIN_STATE.STOP);
-        elevator.setState(Elevator.ELEVATOR_STATE.STOP);
+        collector.setDesiredState(Collector.COLLECTOR_STATE.STOP); // stop states auto-set subsystems to stop moving
+        spindexer.setDesiredState(Spindexer.SPIN_STATE.STOP);
+        elevator.setDesiredState(Elevator.ELEVATOR_STATE.STOP);
         if(notCoasting){
-            shooter.setState(Shooter.SHOOTER_STATE.STOP);
+            shooter.setDesiredState(Shooter.SHOOTER_STATE.STOP);
         } else {
-            shooter.setState(Shooter.SHOOTER_STATE.COASTING);
+            shooter.setDesiredState(Shooter.SHOOTER_STATE.COASTING);
         }
         collecting = false;
         revving = false;
@@ -69,17 +68,17 @@ public class Orchestrator {
         this.collecting = collecting;
         if(collecting){
             if(backSpin){
-                collector.setState(Collector.COLLECTOR_STATE.FLUSH);
+                collector.setDesiredState(Collector.COLLECTOR_STATE.FLUSH);
             } else {
-                collector.setState(Collector.COLLECTOR_STATE.COLLECTING);
+                collector.setDesiredState(Collector.COLLECTOR_STATE.COLLECTING);
             }
             if(!firing){ // TODO set up logic to minimize / remove all ifs
-                spindexer.setState(Spindexer.SPIN_STATE.COLLECT);
+                spindexer.setDesiredState(Spindexer.SPIN_STATE.COLLECT);
             }
         } else {
-            collector.setState(Collector.COLLECTOR_STATE.STOP);
+            collector.setDesiredState(Collector.COLLECTOR_STATE.STOP);
             if(!firing){
-                spindexer.setState(Spindexer.SPIN_STATE.STOP);
+                spindexer.setDesiredState(Spindexer.SPIN_STATE.STOP);
             }
         }
     }
@@ -89,7 +88,7 @@ public class Orchestrator {
         camera.setEnabled(useVision);
         if(revving){
             System.out.println("revving!");
-            shooter.setState(Shooter.SHOOTER_STATE.REVVING);
+            shooter.setDesiredState(Shooter.SHOOTER_STATE.REVVING);
             if (useVision) {
                 shooter.setVelocity(getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
                 shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) == 1);
@@ -97,7 +96,7 @@ public class Orchestrator {
                 shooter.setVelocity(shooterVel);
             }
         } else {
-            shooter.setState(Shooter.SHOOTER_STATE.COASTING);
+            shooter.setDesiredState(Shooter.SHOOTER_STATE.COASTING);
         }
     }
 
@@ -106,23 +105,20 @@ public class Orchestrator {
         if(firing){
             if (!elevator.colorOfBall()) { // spit out ball if wrong color
                 shooter.setHood(false);
-            } else if (shooter.isVelocityNearTarget()) { // only fire if - NEEDS DEBUGGING !!!!! - later introduce robotState.isStationary()
-                if (useVision) {
-                    spindexer.setSpindexer(getDistance(DistanceManager.SUBSYSTEM.SPINDEXER)); // is this needed in buckets? - TODO
-                    elevator.autoElevator(getDistance(DistanceManager.SUBSYSTEM.ELEVATOR));
-                    shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) > 0);
-                }
-            } else {
-                return; // do not switch states to firing if not close to desired velocity && is our color of ball
+            }
+            if (useVision) {
+                spindexer.setSpindexer(getDistance(DistanceManager.SUBSYSTEM.SPINDEXER)); // is this needed in buckets? - TODO
+                elevator.setElevator(getDistance(DistanceManager.SUBSYSTEM.ELEVATOR));
+                shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) > 0);
             }
             System.out.println("FIRING!");
-            spindexer.setState(Spindexer.SPIN_STATE.FIRE);
-            elevator.setState(Elevator.ELEVATOR_STATE.FIRE);
+            spindexer.setDesiredState(Spindexer.SPIN_STATE.FIRE);
+            elevator.setDesiredState(Elevator.ELEVATOR_STATE.FIRE);
         } else {
             if(!collecting){
-                spindexer.setState(Spindexer.SPIN_STATE.STOP);
+                spindexer.setDesiredState(Spindexer.SPIN_STATE.STOP);
             }
-            elevator.setState(Elevator.ELEVATOR_STATE.STOP);
+            elevator.setDesiredState(Elevator.ELEVATOR_STATE.STOP);
         }
     }
 
@@ -134,8 +130,8 @@ public class Orchestrator {
     public double getPredictedDistance(DistanceManager.SUBSYSTEM subsystem) {
         Translation2d shooterDist = new Translation2d(
             distanceManager.getOutput(camera.getDistance(), subsystem),
-            Rotation2d.fromDegrees(robotState.getLatestFieldToTurret()));
-        Translation2d motionBuffer = new Translation2d(robotState.delta_field_to_vehicle.dx, robotState.delta_field_to_vehicle.dy);
+            Rotation2d.fromDegrees(mRobotState.getLatestFieldToTurret()));
+        Translation2d motionBuffer = new Translation2d(mRobotState.delta_field_to_vehicle.dx, mRobotState.delta_field_to_vehicle.dy);
         return (motionBuffer.plus(shooterDist)).getNorm();
     }
 }

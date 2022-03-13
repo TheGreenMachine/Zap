@@ -10,8 +10,8 @@ public class FiveBallAutoA implements PathContainer {
     @Override
     public List<Pose2d> buildWaypoints() {
         return List.of(
-            new Pose2d(261, 221, Rotation2d.fromDegrees(130)),
-            new Pose2d(223, 265, Rotation2d.fromDegrees(130))
+            new Pose2d(264, 228, Rotation2d.fromDegrees(135)),
+            new Pose2d(225, 267, Rotation2d.fromDegrees(135))
         );
     }
 

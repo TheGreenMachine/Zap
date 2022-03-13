@@ -2,13 +2,13 @@ package com.team1816.season.auto.actions;
 
 import com.google.inject.Inject;
 import com.team1816.lib.auto.actions.Action;
-import com.team1816.season.subsystems.Orchestrator;
+import com.team1816.season.Superstructure;
 import com.team1816.season.subsystems.Shooter;
 
 public class ShootAction implements Action {
 
     @Inject
-    private static Orchestrator orchestrator;
+    private static Superstructure superstructure;
 
     @Inject
     private static Shooter shooter;
@@ -24,7 +24,7 @@ public class ShootAction implements Action {
     @Override
     public void start() {
         shooter.setHood(hoodOut);
-        orchestrator.setFiring(isShooting); // if using camera, setHood is overridden
+        superstructure.setFiring(isShooting); // if using camera, setHood is overridden
     }
 
     @Override

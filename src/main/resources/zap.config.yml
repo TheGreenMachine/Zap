@@ -113,16 +113,19 @@ subsystems:
         falcons:
             shooterMain: 21
             shooterFollower: -1
+        invertMotor:
+            - shooterMain
         solenoids:
             hood: 1
         pidConfig:
             slot0:
-                kP: 0.15
-                kI: 0.0
-                kD: 2.5 #4.5
-                kF: 0.05671 #0.00953253
+                kP: 0.45
+                kI: 0.00001
+                kD: 14.0 #4.5
+                kF: 0.0477
+                allowableError: 50
         constants:
-            maxTicks: 12275.7 # TEST VALUE from drive
+            maxTicks: 20700 #
             currentFloorCheck: .12
             currentEpsilonCheck: .2
             rpmFloorCheck: 2000
@@ -130,8 +133,8 @@ subsystems:
             velocityThreshold: 500
             nearVel: 11000
             midVel: 9900
-            farVel: 11200
-            maxVel: 11500
+            farVel: 16000
+            maxVel: 20700
             coast: 5300
     climber:
         implemented: false
@@ -197,7 +200,7 @@ constants:
     wheelDiameter: 4
     kTrackScrubFactor: 1.0
     maxVelOpenLoop: 3 # 160 # 240 # inches/s # 22560 native units ---30
-    maxVelPathFollowing: 3 # 160 # 240 # inches/s # 22560 native units ---30
+    maxVelPathFollowing: 1 # 160 # 240 # inches/s # 22560 native units ---30
     maxAccel: 100 # inches/s^ 2
     ## Logging ##
     logTeleOp: 1 # 0 or 1

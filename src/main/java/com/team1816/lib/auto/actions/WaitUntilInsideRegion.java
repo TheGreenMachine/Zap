@@ -13,8 +13,15 @@ public class WaitUntilInsideRegion implements Action {
 
     private final Translation2d mBottomLeft;
     private final Translation2d mTopRight;
+    private String name = "";
 
     public WaitUntilInsideRegion(Translation2d bottomLeft, Translation2d topRight) {
+        mBottomLeft = bottomLeft;
+        mTopRight = topRight;
+    }
+
+    public WaitUntilInsideRegion(Translation2d bottomLeft, Translation2d topRight, String name) {
+        this.name = name;
         mBottomLeft = bottomLeft;
         mTopRight = topRight;
     }
@@ -36,7 +43,9 @@ public class WaitUntilInsideRegion implements Action {
     public void update() {}
 
     @Override
-    public void done() {}
+    public void done() {
+        System.out.println("INSIDE DESIRED REGION: " + name);
+    }
 
     @Override
     public void start() {}

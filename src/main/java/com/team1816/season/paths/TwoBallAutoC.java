@@ -11,14 +11,14 @@ public class TwoBallAutoC implements PathContainer {
     @Override
     public List<Pose2d> buildWaypoints() {
         return List.of(
-            new Pose2d(329, 71, Rotation2d.fromDegrees(270)),
-            new Pose2d(304, 21, Rotation2d.fromDegrees(180))
+            new Pose2d(299, 74, Rotation2d.fromDegrees(-90)),
+            new Pose2d(299, 28, Rotation2d.fromDegrees(-90))
         );
     }
 
     @Override
     public List<Rotation2d> buildHeadings() {
-        return List.of(Rotation2d.fromDegrees(270), Rotation2d.fromDegrees(180));
+        return List.of(Rotation2d.fromDegrees(-90), Rotation2d.fromDegrees(-90));
     }
 
     @Override

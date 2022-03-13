@@ -11,17 +11,17 @@ public class TwoBallAutoA implements PathContainer {
     @Override
     public List<Pose2d> buildWaypoints() {
         return List.of(
-            new Pose2d(252, 191, Rotation2d.fromDegrees(-24)),
-            new Pose2d(58, 156, Rotation2d.fromDegrees(-24)),
-            new Pose2d(105, 253, Rotation2d.fromDegrees(-24)),
-            new Pose2d(191, 253, Rotation2d.fromDegrees(-24)),
-            new Pose2d(252, 191, Rotation2d.fromDegrees(-24))
+            new Pose2d(235, 207, Rotation2d.fromDegrees(135)),
+            new Pose2d(198, 243, Rotation2d.fromDegrees(135))
         );
     }
 
     @Override
     public List<Rotation2d> buildHeadings() {
-        return List.of(Rotation2d.fromDegrees(-24), Rotation2d.fromDegrees(-24), Rotation2d.fromDegrees(-24), Rotation2d.fromDegrees(-24), Rotation2d.fromDegrees(-24));
+        return List.of(
+            Rotation2d.fromDegrees(135),
+            Rotation2d.fromDegrees(135)
+        );
     }
 
     @Override

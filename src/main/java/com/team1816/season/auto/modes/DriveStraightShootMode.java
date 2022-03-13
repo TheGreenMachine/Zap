@@ -21,10 +21,6 @@ public class DriveStraightShootMode extends AutoModeBase {
             new SeriesAction(
                 new DriveOpenLoopAction(2, .25),
                 new RampUpShooterAction(Shooter.COAST_VELOCITY), // make actual shooting vel
-                new WaitUntilInsideRegion(
-                    new Translation2d(248, 194),
-                    new Translation2d(275, 171)
-                ),
                 new ShootAction(true, true),
                 new WaitAction(2),
                 new StopAction(false)
