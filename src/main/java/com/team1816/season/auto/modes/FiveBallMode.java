@@ -42,7 +42,7 @@ public class FiveBallMode extends AutoModeBase {
                 // starting actions before paths run
                 new CollectAction(true),
                 new RampUpShooterAction(13000), // make actual shooting vel
-                new TurretAction(Turret.CARDINAL_WEST), // setting this doesn't seem to work right in simulator - magically relative to field and not the robot
+                new TurretAction(Turret.CARDINAL_WEST + 15), // setting this doesn't seem to work right in simulator - magically relative to field and not the robot
 
                 new ParallelAction(
                     // paths

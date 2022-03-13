@@ -200,7 +200,7 @@ constants:
     wheelDiameter: 4
     kTrackScrubFactor: 1.0
     maxVelOpenLoop: 3 # 160 # 240 # inches/s # 22560 native units ---30
-    maxVelPathFollowing: 1 # 160 # 240 # inches/s # 22560 native units ---30
+    maxVelPathFollowing: 2 # 160 # 240 # inches/s # 22560 native units ---30
     maxAccel: 100 # inches/s^ 2
     ## Logging ##
     logTeleOp: 1 # 0 or 1

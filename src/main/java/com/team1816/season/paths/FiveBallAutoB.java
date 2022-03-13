@@ -11,11 +11,11 @@ public class FiveBallAutoB implements PathContainer {
     public List<Pose2d> buildWaypoints() {
         return List.of(
             new Pose2d(264, 228, Rotation2d.fromDegrees(135)),
-            new Pose2d(225, 267, Rotation2d.fromDegrees(230)),
-            new Pose2d(225, 267, Rotation2d.fromDegrees(230)),
-            new Pose2d(310, 24, Rotation2d.fromDegrees(0)),
-            new Pose2d(58, 34, Rotation2d.fromDegrees(180)),
-            new Pose2d(58, 34, Rotation2d.fromDegrees(180)),
+            new Pose2d(215, 277, Rotation2d.fromDegrees(230)),
+            new Pose2d(215, 277, Rotation2d.fromDegrees(230)),
+            new Pose2d(300, 19, Rotation2d.fromDegrees(0)),
+            new Pose2d(53, 59, Rotation2d.fromDegrees(180)),
+            new Pose2d(53, 59, Rotation2d.fromDegrees(180)),
             new Pose2d(140, 155, Rotation2d.fromDegrees(0))
         );
     }
