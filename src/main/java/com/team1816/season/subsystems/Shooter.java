@@ -143,13 +143,22 @@ public class Shooter extends Subsystem implements PidProvider {
         );
         // setting velocity
         velocityDemand =
-            velocity -
             convertShooterMetersToTicksPerSecond(
+                convertShooterTicksToMetersPerSecond(velocity) -
+                    chassisVelocity.getNorm() *
+                        Math.cos(
+                            getAngleBetween(
+                                chassisVelocity,
+                                shooterDirection
+                            )
+                        )
+            );
+            /*convertShooterMetersToTicksPerSecond( //alternate
                 chassisVelocity.getX() *
                 shooterDirection.getX() +
                 chassisVelocity.getY() *
                 shooterDirection.getY()
-            );
+            );*/
     }
 
     public void setHood(boolean in) {
@@ -177,16 +186,42 @@ public class Shooter extends Subsystem implements PidProvider {
     public boolean isVelocityNearTarget() {
         return (
             Math.abs(velocityDemand - actualShooterVelocity) < VELOCITY_THRESHOLD &&
-            (int) velocityDemand != COAST_VELOCITY
+                (int) velocityDemand != COAST_VELOCITY
         );
     }
 
-    public double convertShooterTicksToMetersPerSecond(int ticks) {
+    public double convertShooterTicksToMetersPerSecond(double ticks) {
         return 0;
     }
 
-    public int convertShooterMetersToTicksPerSecond(double metersPerSecond) {
+    public double convertShooterMetersToTicksPerSecond(double metersPerSecond) {
         return 0;
+    }
+
+    private double getAngleBetween(Translation2d a, Translation2d b) {
+        double dot = (a.getNorm() * b.getNorm() == 0)
+            ? 0
+            : Math.acos(
+            (a.getX() * b.getX() + a.getY() * b.getY()) / (a.getNorm() * b.getNorm())
+        );
+        double cross = crossProduct(a, b);
+        if(cross > 0) {
+            dot*=-1;
+        }
+        return dot;
+    }
+
+    private static double crossProduct(Translation2d a, Translation2d b) {
+        double [] vect_A = {a.getX(), a.getY(), 0};
+        double [] vect_B = {b.getX(), b.getY(), 0};
+        double [] cross_P = new double[3];
+        cross_P[0] = vect_A[1] * vect_B[2]
+            - vect_A[2] * vect_B[1];
+        cross_P[1] = vect_A[2] * vect_B[0]
+            - vect_A[0] * vect_B[2];
+        cross_P[2] = vect_A[0] * vect_B[1]
+            - vect_A[1] * vect_B[0];
+        return cross_P[2];
     }
 
     @Override
@@ -220,10 +255,12 @@ public class Shooter extends Subsystem implements PidProvider {
     }
 
     @Override
-    public void initSendable(SendableBuilder builder) {}
+    public void initSendable(SendableBuilder builder) {
+    }
 
     @Override
-    public void stop() {}
+    public void stop() {
+    }
 
     private EnhancedMotorChecker.CheckerConfig getTalonCheckerConfig(
         IMotorControllerEnhanced talon

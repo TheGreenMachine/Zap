@@ -372,7 +372,7 @@ public class Turret extends Subsystem implements PidProvider {
             robotState.chassis_speeds.vyMetersPerSecond
         );
         Translation2d predictedTrajectory = driveAxis.unaryMinus().plus(shooterAxis);
-
+        //transpose predictedTrajectory.getNorm() for shooterVel
         double motionOffsetAngle = getAngleBetween(predictedTrajectory, shooterAxis);
 
         if (motionOffsetAngle > Math.PI) {
@@ -414,12 +414,30 @@ public class Turret extends Subsystem implements PidProvider {
         }
     }
 
-    public double getAngleBetween(Translation2d a, Translation2d b) {
-        return (a.getNorm() * b.getNorm() == 0)
+    private double getAngleBetween(Translation2d a, Translation2d b) {
+        double dot = (a.getNorm() * b.getNorm() == 0)
             ? 0
             : Math.acos(
-                (a.getX() * b.getX() + a.getY() * b.getY()) / (a.getNorm() * b.getNorm())
-            );
+            (a.getX() * b.getX() + a.getY() * b.getY()) / (a.getNorm() * b.getNorm())
+        );
+        double cross = crossProduct(a, b);
+        if(cross > 0) {
+            dot*=-1;
+        }
+        return dot;
+    }
+
+    private static double crossProduct(Translation2d a, Translation2d b) {
+        double [] vect_A = {a.getX(), a.getY(), 0};
+        double [] vect_B = {b.getX(), b.getY(), 0};
+        double [] cross_P = new double[3];
+        cross_P[0] = vect_A[1] * vect_B[2]
+            - vect_A[2] * vect_B[1];
+        cross_P[1] = vect_A[2] * vect_B[0]
+            - vect_A[0] * vect_B[2];
+        cross_P[2] = vect_A[0] * vect_B[1]
+            - vect_A[1] * vect_B[0];
+        return cross_P[2];
     }
 
     @Override
