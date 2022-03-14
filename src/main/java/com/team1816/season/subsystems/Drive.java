@@ -2,7 +2,6 @@ package com.team1816.season.subsystems;
 
 import static com.team1816.lib.math.DriveConversions.inchesPerSecondToTicksPer100ms;
 
-import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
@@ -14,7 +13,6 @@ import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.subsystems.TrackableDrivetrain;
 import com.team1816.season.Constants;
-import com.team1816.season.RobotState;
 import com.team254.lib.util.DriveSignal;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -40,6 +38,7 @@ public abstract class Drive
     // Components
     @Inject
     protected static LedManager ledManager;
+
     @Inject
     protected static Infrastructure mInfrastructure;
 
@@ -71,7 +70,10 @@ public abstract class Drive
         inchesPerSecondToTicksPer100ms(Constants.kDriveWheelTrackWidthInches) * Math.PI;
 
     // Constants
-    public static final double maxVelTicksPer100ms = factory.getConstant(NAME, "maxTicks");
+    public static final double maxVelTicksPer100ms = factory.getConstant(
+        NAME,
+        "maxTicks"
+    );
     public static final double DRIVE_ENCODER_PPR = factory.getConstant(NAME, "encPPR");
 
     protected Drive() {
@@ -354,7 +356,7 @@ public abstract class Drive
     }
 
     @Override
-    public void zeroSensors(){
+    public void zeroSensors() {
         zeroSensors(Constants.StartingPose);
     }
 

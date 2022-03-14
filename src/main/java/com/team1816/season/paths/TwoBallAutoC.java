@@ -3,7 +3,6 @@ package com.team1816.season.paths;
 import com.team1816.lib.paths.PathContainer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-
 import java.util.List;
 
 public class TwoBallAutoC implements PathContainer {

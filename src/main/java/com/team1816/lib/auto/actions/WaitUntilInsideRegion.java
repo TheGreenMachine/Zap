@@ -20,7 +20,11 @@ public class WaitUntilInsideRegion implements Action {
         mTopRight = topRight;
     }
 
-    public WaitUntilInsideRegion(Translation2d bottomLeft, Translation2d topRight, String name) {
+    public WaitUntilInsideRegion(
+        Translation2d bottomLeft,
+        Translation2d topRight,
+        String name
+    ) {
         this.name = name;
         mBottomLeft = bottomLeft;
         mTopRight = topRight;

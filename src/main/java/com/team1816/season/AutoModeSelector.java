@@ -3,13 +3,11 @@ package com.team1816.season;
 import com.team1816.lib.auto.modes.AutoModeBase;
 import com.team1816.lib.auto.modes.DoNothingMode;
 import com.team1816.season.auto.modes.*;
-import com.team1816.season.paths.OneBallAutoB;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.Optional;
 import javax.inject.Singleton;
-import javax.swing.text.html.Option;
 
 @Singleton
 public class AutoModeSelector {
@@ -169,5 +167,4 @@ public class AutoModeSelector {
     public Optional<AutoModeBase> getAutoMode() {
         return mAutoMode;
     }
-
 }

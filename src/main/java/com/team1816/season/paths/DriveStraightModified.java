@@ -3,7 +3,6 @@ package com.team1816.season.paths;
 import com.team1816.lib.paths.PathContainer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-
 import java.util.List;
 
 public class DriveStraightModified implements PathContainer {
@@ -20,7 +19,12 @@ public class DriveStraightModified implements PathContainer {
 
     @Override
     public List<Rotation2d> buildHeadings() {
-        return List.of(Rotation2d.fromDegrees(0), Rotation2d.fromDegrees(180), Rotation2d.fromDegrees(160), Rotation2d.fromDegrees(0));
+        return List.of(
+            Rotation2d.fromDegrees(0),
+            Rotation2d.fromDegrees(180),
+            Rotation2d.fromDegrees(160),
+            Rotation2d.fromDegrees(0)
+        );
     }
 
     @Override

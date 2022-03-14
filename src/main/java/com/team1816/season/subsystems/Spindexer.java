@@ -16,7 +16,6 @@ public class Spindexer extends Subsystem {
     private final ISolenoid feederFlap;
     private final IMotorControllerEnhanced spindexer;
 
-
     // State
     private SPIN_STATE state = SPIN_STATE.STOP;
     private boolean feederFlapOut = false; // leave for future addition if needed
@@ -29,7 +28,6 @@ public class Spindexer extends Subsystem {
     private final double INDEX;
     private final double FLUSH;
     private final double FIRE;
-
 
     public Spindexer() {
         super(NAME);
@@ -53,7 +51,7 @@ public class Spindexer extends Subsystem {
     }
 
     public void setDesiredState(SPIN_STATE state) {
-        if(this.state != state){
+        if (this.state != state) {
             this.state = state;
             switch (state) {
                 case STOP:
@@ -81,8 +79,11 @@ public class Spindexer extends Subsystem {
 
     @Override
     public void readFromHardware() {
-        if(robotState.shooterState == Shooter.SHOOTER_STATE.REVVING && state != robotState.spinState){
-            if(spindexerPower != FIRE){
+        if (
+            robotState.shooterState == Shooter.SHOOTER_STATE.REVVING &&
+            state != robotState.spinState
+        ) {
+            if (spindexerPower != FIRE) {
                 System.out.println("ACTUAL SPINDEXER STATE = FIRE");
             }
             robotState.spinState = SPIN_STATE.FIRE;

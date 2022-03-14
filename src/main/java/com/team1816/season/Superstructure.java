@@ -32,7 +32,7 @@ public class Superstructure {
 
     @Inject
     private static Camera camera;
-    
+
     private boolean collecting;
     private boolean revving;
     private boolean firing;
@@ -49,7 +49,7 @@ public class Superstructure {
         collector.setDesiredState(Collector.COLLECTOR_STATE.STOP); // stop states auto-set subsystems to stop moving
         spindexer.setDesiredState(Spindexer.SPIN_STATE.STOP);
         elevator.setDesiredState(Elevator.ELEVATOR_STATE.STOP);
-        if(notCoasting){
+        if (notCoasting) {
             shooter.setDesiredState(Shooter.SHOOTER_STATE.STOP);
         } else {
             shooter.setDesiredState(Shooter.SHOOTER_STATE.COASTING);
@@ -66,18 +66,18 @@ public class Superstructure {
 
     public void setCollecting(boolean collecting, boolean backSpin) {
         this.collecting = collecting;
-        if(collecting){
-            if(backSpin){
+        if (collecting) {
+            if (backSpin) {
                 collector.setDesiredState(Collector.COLLECTOR_STATE.FLUSH);
             } else {
                 collector.setDesiredState(Collector.COLLECTOR_STATE.COLLECTING);
             }
-            if(!firing){ // TODO set up logic to minimize / remove all ifs
+            if (!firing) { // TODO set up logic to minimize / remove all ifs
                 spindexer.setDesiredState(Spindexer.SPIN_STATE.COLLECT);
             }
         } else {
             collector.setDesiredState(Collector.COLLECTOR_STATE.STOP);
-            if(!firing){
+            if (!firing) {
                 spindexer.setDesiredState(Spindexer.SPIN_STATE.STOP);
             }
         }
@@ -86,7 +86,7 @@ public class Superstructure {
     public void setRevving(boolean revving, double shooterVel) {
         this.revving = revving;
         camera.setEnabled(useVision);
-        if(revving){
+        if (revving) {
             System.out.println("revving!");
             shooter.setDesiredState(Shooter.SHOOTER_STATE.REVVING);
             if (useVision) {
@@ -102,7 +102,7 @@ public class Superstructure {
 
     public void setFiring(boolean firing) {
         this.firing = firing;
-        if(firing){
+        if (firing) {
             if (!elevator.colorOfBall()) { // spit out ball if wrong color
                 shooter.setHood(false);
             }
@@ -115,7 +115,7 @@ public class Superstructure {
             spindexer.setDesiredState(Spindexer.SPIN_STATE.FIRE);
             elevator.setDesiredState(Elevator.ELEVATOR_STATE.FIRE);
         } else {
-            if(!collecting){
+            if (!collecting) {
                 spindexer.setDesiredState(Spindexer.SPIN_STATE.STOP);
             }
             elevator.setDesiredState(Elevator.ELEVATOR_STATE.STOP);
@@ -123,15 +123,22 @@ public class Superstructure {
     }
 
     public double getDistance(DistanceManager.SUBSYSTEM subsystem) {
-        System.out.println("GETTING DISTANCE FROM CAMERA / DISTANCE MANAGER " + distanceManager.getOutput(camera.getDistance(), subsystem));
+        System.out.println(
+            "GETTING DISTANCE FROM CAMERA / DISTANCE MANAGER " +
+            distanceManager.getOutput(camera.getDistance(), subsystem)
+        );
         return distanceManager.getOutput(camera.getDistance(), subsystem);
     }
-    
+
     public double getPredictedDistance(DistanceManager.SUBSYSTEM subsystem) {
         Translation2d shooterDist = new Translation2d(
             distanceManager.getOutput(camera.getDistance(), subsystem),
-            Rotation2d.fromDegrees(mRobotState.getLatestFieldToTurret()));
-        Translation2d motionBuffer = new Translation2d(mRobotState.delta_field_to_vehicle.dx, mRobotState.delta_field_to_vehicle.dy);
+            Rotation2d.fromDegrees(mRobotState.getLatestFieldToTurret())
+        );
+        Translation2d motionBuffer = new Translation2d(
+            mRobotState.delta_field_to_vehicle.dx,
+            mRobotState.delta_field_to_vehicle.dy
+        );
         return (motionBuffer.plus(shooterDist)).getNorm();
     }
 }

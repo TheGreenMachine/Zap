@@ -179,13 +179,17 @@ public class Robot extends TimedRobot {
                     mTurret.CreateBadLogValue("Turret PID", mTurret.pidToString());
                     mShooter.CreateBadLogValue("Shooter PID", mShooter.pidToString());
 
-                    if(mCamera.isImplemented()){
+                    if (mCamera.isImplemented()) {
                         BadLog.createTopic(
                             "Vision/DeltaXAngle",
                             "Degrees",
                             mCamera::getDeltaXAngle
                         );
-                        BadLog.createTopic("Vision/Distance", "inches", mCamera::getDistance);
+                        BadLog.createTopic(
+                            "Vision/Distance",
+                            "inches",
+                            mCamera::getDistance
+                        );
                         BadLog.createTopic(
                             "Vision/CenterX",
                             "pixels",
@@ -309,12 +313,12 @@ public class Robot extends TimedRobot {
                             }
                         }
                     ),
-//                    createHoldAction(
-//                        mControlBoard::getRevShooter,
-//                        revving -> {
-//                            mOrchestrator.setRevving(revving, Shooter.MID_VELOCITY);
-//                        }
-//                    ),
+                    //                    createHoldAction(
+                    //                        mControlBoard::getRevShooter,
+                    //                        revving -> {
+                    //                            mOrchestrator.setRevving(revving, Shooter.MID_VELOCITY);
+                    //                        }
+                    //                    ),
                     createHoldAction(
                         mControlBoard::getShoot,
                         shooting -> {
@@ -340,19 +344,22 @@ public class Robot extends TimedRobot {
                         mControlBoard::getZeroPose,
                         () -> {
                             mDrive.zeroSensors(Constants.ZeroPose);
-                            mRobotState.reset(Constants.ZeroPose, Constants.EmptyRotation);
+                            mRobotState.reset(
+                                Constants.ZeroPose,
+                                Constants.EmptyRotation
+                            );
                         }
                     ),
-//                    createAction(
-//                        mControlBoard::getFieldFollowing,
-//                        () -> {
-//                            if (mTurret.getControlMode() == Turret.ControlMode.FIELD_FOLLOWING) {
-//                                mTurret.setControlMode(Turret.ControlMode.CENTER_FOLLOWING);
-//                            } else {
-//                                mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
-//                            }
-//                        }
-//                    ),
+                    //                    createAction(
+                    //                        mControlBoard::getFieldFollowing,
+                    //                        () -> {
+                    //                            if (mTurret.getControlMode() == Turret.ControlMode.FIELD_FOLLOWING) {
+                    //                                mTurret.setControlMode(Turret.ControlMode.CENTER_FOLLOWING);
+                    //                            } else {
+                    //                                mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
+                    //                            }
+                    //                        }
+                    //                    ),
                     createHoldAction(
                         mControlBoard::getTurretJogLeft,
                         moving ->
@@ -400,7 +407,6 @@ public class Robot extends TimedRobot {
 
             mDrive.stop();
             mDrive.setBrakeMode(false);
-
         } catch (Throwable t) {
             faulted = true;
             throw t;
@@ -546,8 +552,7 @@ public class Robot extends TimedRobot {
             ) {
                 var auto = autoMode.get();
                 System.out.println("Set auto mode to: " + auto.getClass().toString());
-                mRobotState.field
-                    .getObject("Trajectory");
+                mRobotState.field.getObject("Trajectory");
                 mAutoModeExecutor.setAutoMode(auto);
                 Constants.StartingPose = auto.getTrajectory().getInitialPose();
                 mRobotState.reset();
@@ -607,7 +612,6 @@ public class Robot extends TimedRobot {
         // boolean arcadeDrive = false;
         actionManager.update();
 
-        
         if (
             Math.abs(mControlBoard.getTurretXVal()) > 0.85 ||
             Math.abs(mControlBoard.getTurretYVal()) > 0.85

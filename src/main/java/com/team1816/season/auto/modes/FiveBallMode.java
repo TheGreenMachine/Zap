@@ -5,9 +5,7 @@ import com.team1816.lib.auto.actions.*;
 import com.team1816.lib.auto.modes.AutoModeBase;
 import com.team1816.season.auto.actions.*;
 import com.team1816.season.paths.TrajectorySet;
-import com.team1816.season.subsystems.Shooter;
 import com.team1816.season.subsystems.Turret;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 public class FiveBallMode extends AutoModeBase {
@@ -43,18 +41,16 @@ public class FiveBallMode extends AutoModeBase {
                 new CollectAction(true),
                 new RampUpShooterAction(13000), // make actual shooting vel
                 new TurretAction(Turret.CARDINAL_WEST + 15), // setting this doesn't seem to work right in simulator - magically relative to field and not the robot
-
                 new ParallelAction(
                     // paths
                     new SeriesAction(
-//                        trajectory,
+                        //                        trajectory,
                         trajectory1
-//                        trajectory2
+                        //                        trajectory2
                     ),
-
                     // actions to take during the path
                     new SeriesAction(
-//                        new ShootAction(true, true),
+                        //                        new ShootAction(true, true),
                         new WaitUntilInsideRegion(
                             new Translation2d(0, 0), // make actual region to change hood
                             new Translation2d(210, 180),

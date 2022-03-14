@@ -416,7 +416,10 @@ public class RobotFactory {
         if (!getSubsystem(subsystemName).implemented) {
             return defaultVal;
         }
-        if (getSubsystem(subsystemName).constants == null || !getSubsystem(subsystemName).constants.containsKey(name)) {
+        if (
+            getSubsystem(subsystemName).constants == null ||
+            !getSubsystem(subsystemName).constants.containsKey(name)
+        ) {
             DriverStation.reportError(
                 "Yaml " + subsystemName + " constants:" + name + " missing",
                 defaultVal == 0

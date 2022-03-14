@@ -11,7 +11,7 @@ public class StopAction implements Action {
     @Inject
     private static Superstructure superstructure;
 
-    public StopAction(boolean notRevving){
+    public StopAction(boolean notRevving) {
         this.notRevving = notRevving;
     }
 
@@ -21,9 +21,7 @@ public class StopAction implements Action {
     }
 
     @Override
-    public void update() {
-
-    }
+    public void update() {}
 
     @Override
     public boolean isFinished() {
@@ -31,7 +29,5 @@ public class StopAction implements Action {
     }
 
     @Override
-    public void done() {
-
-    }
+    public void done() {}
 }

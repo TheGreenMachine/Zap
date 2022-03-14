@@ -1,8 +1,10 @@
 package com.team1816.lib.vision;
+
 import java.io.*;
 import java.net.*;
 
 public class VisionSocket {
+
     private final String PROTOCOL_LINE = "\\|";
     private Socket socket;
     private BufferedReader socketIn;
@@ -43,8 +45,8 @@ public class VisionSocket {
             cleanup();
         } catch (IOException e) {
             debug("Close failed: " + e.getMessage());
-           // e.printStackTrace();
-           return;
+            // e.printStackTrace();
+            return;
         }
     }
 
@@ -62,7 +64,7 @@ public class VisionSocket {
     }
 
     public void setEnabled(boolean enabled) {
-        if(this.enabled != enabled){
+        if (this.enabled != enabled) {
             this.enabled = enabled;
             debug("enabled: " + enabled);
             if (!enabled) {

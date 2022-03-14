@@ -6,7 +6,6 @@ import com.team1816.lib.auto.modes.AutoModeBase;
 import com.team1816.season.auto.actions.*;
 import com.team1816.season.paths.TrajectorySet;
 import com.team1816.season.subsystems.Shooter;
-import edu.wpi.first.math.geometry.Translation2d;
 
 public class DriveStraightShootMode extends AutoModeBase {
 

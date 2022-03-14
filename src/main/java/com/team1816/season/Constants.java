@@ -193,7 +193,10 @@ public class Constants {
     public static double kCameraFrameRate = 30;
 
     // Drive speed
-    public static final double kPathFollowingMaxAccel = factory.getConstant("maxAccel", 4);
+    public static final double kPathFollowingMaxAccel = factory.getConstant(
+        "maxAccel",
+        4
+    );
     public static double kPathFollowingMaxVelMeters = factory.getConstant(
         "maxVelPathFollowing"
     );

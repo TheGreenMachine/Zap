@@ -1,9 +1,9 @@
 package com.team1816.season;
 
 import com.google.inject.Singleton;
-import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.subsystems.*;
 import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -14,6 +14,7 @@ public class RobotState {
     public Pose2d field_to_vehicle = Constants.EmptyPose;
     public Rotation2d vehicle_to_turret = Constants.EmptyRotation;
     public Twist2d delta_field_to_vehicle = new Twist2d();
+    public ChassisSpeeds chassis_speeds = new ChassisSpeeds(0, 0, 0);
 
     // Superstructure ACTUAL states
     public Collector.COLLECTOR_STATE collectorState = Collector.COLLECTOR_STATE.STOP;
@@ -50,15 +51,20 @@ public class RobotState {
         return field_to_vehicle.getRotation().plus(vehicle_to_turret).getDegrees();
     }
 
-    public Twist2d getDeltaPoseToCenter(){
+    public Twist2d getDeltaPoseToCenter() {
         return delta_field_to_vehicle; // make conversion from field relative deltaPose to center relative deltaPose
     }
 
-    public boolean isStationary(){
-        return
+    public double getCurrentShooterSpeedMetersPerSecond() {
+        return 5; // just an arbitrary constant. to be changed later
+    }
+
+    public boolean isStationary() {
+        return (
             delta_field_to_vehicle.dx == 0 &&
             delta_field_to_vehicle.dy == 0 &&
-            delta_field_to_vehicle.dtheta == 0;
+            delta_field_to_vehicle.dtheta == 0
+        );
     }
 
     public synchronized void outputToSmartDashboard() {

@@ -2,10 +2,8 @@ package com.team1816.lib.hardware.components.motor;
 
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.BaseTalonConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.team1816.season.Constants;
 import edu.wpi.first.wpilibj.DriverStation;
 
 public class LazyTalonFX extends TalonFX implements IConfigurableMotorController {
@@ -25,12 +23,12 @@ public class LazyTalonFX extends TalonFX implements IConfigurableMotorController
     @Override
     public void set(ControlMode mode, double value) {
         if (value != mLastSet || mode != mLastControlMode) {
-            if(!super.hasResetOccurred()){
+            if (!super.hasResetOccurred()) {
                 mLastSet = value;
                 mLastControlMode = mode;
                 super.set(mode, value);
             } else {
-                DriverStation.reportError( "MOTOR " + getDeviceID() + " HAS RESET", false);
+                DriverStation.reportError("MOTOR " + getDeviceID() + " HAS RESET", false);
             }
         }
     }

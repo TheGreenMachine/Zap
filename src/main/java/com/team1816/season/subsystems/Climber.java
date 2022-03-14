@@ -26,16 +26,15 @@ public class Climber extends Subsystem {
     // (aka index 0 = unclamped bottom clamps + set motor to position 0, index 1 = clamped top + set motor to 1st position, etc...)
     private final double MAX_POSITION = factory.getConstant(NAME, "climberMaxPos", -200);
     private final double MIN_POSITION = factory.getConstant(NAME, "climberMinPos", 0);
-    private final double MID_POSITTION = (MAX_POSITION + MIN_POSITION)/2;
+    private final double MID_POSITTION = (MAX_POSITION + MIN_POSITION) / 2;
     private final String pidSlot = "slot0";
-
 
     public Climber() {
         super(NAME);
         elevator = factory.getMotor(NAME, "elevator");
         topClamp = factory.getSolenoid(NAME, "topClamp");
         bottomClamp = factory.getSolenoid(NAME, "bottomClamp");
-        
+
         PIDSlotConfiguration config = factory.getPidSlotConfig(NAME, pidSlot);
 
         elevator.config_kP(0, config.kP, 100);
@@ -45,7 +44,7 @@ public class Climber extends Subsystem {
     }
 
     public void setClimberPower(double power) {
-        if(state != STATE.MANUAL){
+        if (state != STATE.MANUAL) {
             state = STATE.MANUAL;
         }
         climberPower = power;
@@ -53,7 +52,7 @@ public class Climber extends Subsystem {
     }
 
     public void setClimberUp() { // make this into method traversing the index?
-        if(state != STATE.POSITION){
+        if (state != STATE.POSITION) {
             state = STATE.POSITION;
         }
         climberPosition = MAX_POSITION;
@@ -62,7 +61,7 @@ public class Climber extends Subsystem {
     @Override
     public void writeToHardware() {
         if (outputsChanged) {
-            if(state == STATE.POSITION){
+            if (state == STATE.POSITION) {
                 elevator.set(ControlMode.Position, climberPosition);
             } else {
                 elevator.set(ControlMode.PercentOutput, climberPower);
@@ -79,8 +78,8 @@ public class Climber extends Subsystem {
         return true;
     }
 
-    public enum STATE{
+    public enum STATE {
         MANUAL,
-        POSITION
+        POSITION,
     }
 }

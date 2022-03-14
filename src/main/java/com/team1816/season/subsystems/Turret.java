@@ -9,8 +9,8 @@ import com.team1816.lib.hardware.components.motor.IMotorSensor;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
-import com.team1816.season.RobotState;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -71,8 +71,7 @@ public class Turret extends Subsystem implements PidProvider {
         TURRET_PPR = (int) factory.getConstant(NAME, "turretPPR");
         TURRET_MASK = TURRET_PPR - 1;
         TURRET_ENC_RATIO = (double) TURRET_PPR / TURRET_ENCODER_PPR;
-        ABS_TICKS_SOUTH =
-            ((int) factory.getConstant(NAME, "absPosTicksSouth"));
+        ABS_TICKS_SOUTH = ((int) factory.getConstant(NAME, "absPosTicksSouth"));
         HALF_ENCPPR = TURRET_ENCODER_PPR / 2;
         ZERO_OFFSET = (int) factory.getConstant(NAME, "zeroOffset") + HALF_ENCPPR; //add offset to keep turret in positive range
         turret.setNeutralMode(NeutralMode.Brake);
@@ -83,7 +82,6 @@ public class Turret extends Subsystem implements PidProvider {
         this.kD = pidConfig.kD;
         this.kF = pidConfig.kF;
         synchronized (this) {
-
             // Position Control
             double peakOutput = 0.75;
 
@@ -137,15 +135,21 @@ public class Turret extends Subsystem implements PidProvider {
         if (turret instanceof IMotorSensor) {
             var sensors = (IMotorSensor) turret;
             // If we have a sensor position that resides within the same absolute encoder revolution as the abs_ticks_south position then it is safe to reset
-            if (sensors.getQuadraturePosition() < TURRET_ENCODER_PPR && sensors.getQuadraturePosition() > -1) {
+            if (
+                sensors.getQuadraturePosition() < TURRET_ENCODER_PPR &&
+                sensors.getQuadraturePosition() > -1
+            ) {
                 //get absolute sensor value
                 var sensorVal = sensors.getPulseWidthPosition(); // absolute
-                if(sensorVal > -1 && sensorVal < TURRET_ENCODER_PPR){
+                if (sensorVal > -1 && sensorVal < TURRET_ENCODER_PPR) {
                     var offset = ZERO_OFFSET - sensorVal + HALF_ENCPPR;
                     sensors.setQuadraturePosition(offset);
                     System.out.println("Zeroing turret! Offset: " + offset);
                 } else {
-                    DriverStation.reportError("ABSOLUTE ENCODER INVALID RANGE - not zeroing", false);
+                    DriverStation.reportError(
+                        "ABSOLUTE ENCODER INVALID RANGE - not zeroing",
+                        false
+                    );
                 }
             } else {
                 System.out.println("unsafe to zero turret sensors! NOT ZEROING");
@@ -278,6 +282,11 @@ public class Turret extends Subsystem implements PidProvider {
                 break;
             case CENTER_FOLLOWING:
                 trackCenter();
+                //autoHome();
+                positionControl(followingTurretPos);
+                break;
+            case ABSOLUTE_MADNESS:
+                trackAbsolute();
                 positionControl(followingTurretPos);
                 break;
             case POSITION:
@@ -331,13 +340,49 @@ public class Turret extends Subsystem implements PidProvider {
         // final angle adjustment to account for robot's rate of change in pose on the field (delta_field_to_vehicle)
         // I don't know how to math - looks like a Keerthi big brain moment
 
-        int adj =
-            (
-                fieldTickOffset +
-                desiredTurretPos +
-                centerOffset
-            );
-        // adj += convertTurretDegreesToTicks(camera.getDeltaXAngle()*0.10); //vision based adjustment
+        int adj = (fieldTickOffset + desiredTurretPos + centerOffset);
+        if (adj != followingTurretPos) {
+            followingTurretPos = adj;
+            outputsChanged = true;
+        }
+    }
+
+    private void trackAbsolute() {
+        // conversion to field relative
+        int fieldTickOffset = -convertTurretDegreesToTicks( // currently negated because motor is running counterclockwise
+            robotState.field_to_vehicle.getRotation().getDegrees()
+        );
+
+        // conversion to target (center) relative
+        double deltaY = Constants.fieldCenterY - robotState.field_to_vehicle.getY();
+        double deltaX = Constants.fieldCenterX - robotState.field_to_vehicle.getX();
+        double turretAngle = Math.atan(deltaY / deltaX);
+        if (deltaX < 0) turretAngle += Math.PI;
+        int centerOffset = convertTurretDegreesToTicks(
+            Units.radiansToDegrees(turretAngle)
+        );
+
+        // offset
+        Translation2d shooterAxis = new Translation2d(
+            robotState.getCurrentShooterSpeedMetersPerSecond(),
+            Rotation2d.fromDegrees(robotState.getLatestFieldToTurret())
+        );
+        Translation2d driveAxis = new Translation2d(
+            robotState.chassis_speeds.vxMetersPerSecond,
+            robotState.chassis_speeds.vyMetersPerSecond
+        );
+        Translation2d predictedTrajectory = driveAxis.unaryMinus().plus(shooterAxis);
+
+        double motionOffsetAngle = getAngleBetween(predictedTrajectory, shooterAxis);
+
+        if (motionOffsetAngle > Math.PI) {
+            motionOffsetAngle -= Math.PI * 2;
+        }
+        int motionOffset = convertTurretDegreesToTicks(
+            Units.radiansToDegrees(motionOffsetAngle)
+        );
+        int adj = (fieldTickOffset + desiredTurretPos + centerOffset + motionOffset);
+
         if (adj != followingTurretPos) {
             followingTurretPos = adj;
             outputsChanged = true;
@@ -369,6 +414,14 @@ public class Turret extends Subsystem implements PidProvider {
         }
     }
 
+    public double getAngleBetween(Translation2d a, Translation2d b) {
+        return (a.getNorm() * b.getNorm() == 0)
+            ? 0
+            : Math.acos(
+                (a.getX() * b.getX() + a.getY() * b.getY()) / (a.getNorm() * b.getNorm())
+            );
+    }
+
     @Override
     public void stop() {
         camera.setEnabled(false);
@@ -397,6 +450,7 @@ public class Turret extends Subsystem implements PidProvider {
         CAMERA_FOLLOWING,
         FIELD_FOLLOWING,
         CENTER_FOLLOWING,
+        ABSOLUTE_MADNESS,
         POSITION,
         MANUAL,
     }

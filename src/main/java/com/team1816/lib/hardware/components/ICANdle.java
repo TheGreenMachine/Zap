@@ -6,7 +6,11 @@ import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdleStatusFrame;
 
 public interface ICANdle {
-    ErrorCode setStatusFramePeriod(CANdleStatusFrame caNdleStatusFrame_status_4_controlTelem, int canMaxStatus, int i);
+    ErrorCode setStatusFramePeriod(
+        CANdleStatusFrame caNdleStatusFrame_status_4_controlTelem,
+        int canMaxStatus,
+        int i
+    );
 
     ErrorCode configFactoryDefault();
 

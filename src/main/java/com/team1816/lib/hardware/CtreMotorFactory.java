@@ -1,5 +1,7 @@
 package com.team1816.lib.hardware;
 
+import static com.team1816.lib.subsystems.Subsystem.factory;
+
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
@@ -7,8 +9,6 @@ import com.ctre.phoenix.sensors.*;
 import com.team1816.lib.hardware.components.motor.*;
 import edu.wpi.first.wpilibj.RobotBase;
 import java.util.*;
-
-import static com.team1816.lib.subsystems.Subsystem.factory;
 
 /**
  * A class to create Falcon (TalonFX), TalonSRX, VictorSPX, and GhostTalonSRX objects.
@@ -266,7 +266,7 @@ public class CtreMotorFactory {
 
         talonConfiguration.enableOptimizations = true;
 
-        if(factory.getConstant("resetFactoryDefaults", 0) > 0){
+        if (factory.getConstant("resetFactoryDefaults", 0) > 0) {
             motor.configFactoryDefault(kTimeoutMs);
         } else {
             System.out.println("NOT RESETTING DEFAULTS");

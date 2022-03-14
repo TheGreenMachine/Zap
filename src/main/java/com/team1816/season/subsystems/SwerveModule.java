@@ -14,8 +14,6 @@ import com.team1816.season.Constants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
-import static com.team1816.season.subsystems.Drive.factory;
-
 public class SwerveModule implements ISwerveModule {
 
     // Components
@@ -93,9 +91,15 @@ public class SwerveModule implements ISwerveModule {
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
-        SwerveModuleState desired_state = ModuleState.optimize(desiredState, getState().angle); // desiredState; //
+        SwerveModuleState desired_state = ModuleState.optimize(
+            desiredState,
+            getState().angle
+        ); // desiredState; //
         if (!isOpenLoop) {
-            mVelDemand = DriveConversions.metersPerSecondToTicksPer100ms(desired_state.speedMetersPerSecond);
+            mVelDemand =
+                DriveConversions.metersPerSecondToTicksPer100ms(
+                    desired_state.speedMetersPerSecond
+                );
             mDriveMotor.set(ControlMode.Velocity, mVelDemand);
         } else {
             mDriveMotor.set(
@@ -103,9 +107,10 @@ public class SwerveModule implements ISwerveModule {
                 desired_state.speedMetersPerSecond
             ); // w/out conversion, would be lying to it
         }
-        mAzmDemand = DriveConversions.convertDegreesToTicks(desired_state.angle.getDegrees()) +
+        mAzmDemand =
+            DriveConversions.convertDegreesToTicks(desired_state.angle.getDegrees()) +
             mConstants.kAzimuthEncoderHomeOffset;
-        mAzimuthMotor.set(ControlMode.Position,mAzmDemand);
+        mAzimuthMotor.set(ControlMode.Position, mAzmDemand);
     }
 
     public SwerveModuleState getState() {

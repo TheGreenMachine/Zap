@@ -1,11 +1,11 @@
 package com.team1816.lib.subsystems;
 
+import static com.team1816.lib.subsystems.Subsystem.factory;
+
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.components.IPigeonIMU;
 import com.team1816.lib.hardware.components.pcm.ICompressor;
-
-import static com.team1816.lib.subsystems.Subsystem.factory;
 
 /**
  * Subsystem housing compressor and pigeon - should we add pcm/pdh here?
@@ -43,7 +43,7 @@ public class Infrastructure {
         }
     }
 
-    public IPigeonIMU getPigeon(){
+    public IPigeonIMU getPigeon() {
         return mPigeon;
     }
 }

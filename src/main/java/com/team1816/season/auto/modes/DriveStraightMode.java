@@ -3,13 +3,8 @@ package com.team1816.season.auto.modes;
 import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.actions.*;
 import com.team1816.lib.auto.modes.AutoModeBase;
-import com.team1816.season.auto.actions.CollectAction;
 import com.team1816.season.auto.actions.DriveOpenLoopAction;
-import com.team1816.season.auto.actions.RampUpShooterAction;
-import com.team1816.season.auto.actions.ShootAction;
 import com.team1816.season.paths.TrajectorySet;
-import com.team1816.season.subsystems.Shooter;
-import edu.wpi.first.math.geometry.Translation2d;
 
 public class DriveStraightMode extends AutoModeBase {
 

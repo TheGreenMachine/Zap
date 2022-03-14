@@ -11,7 +11,6 @@ import com.team1816.lib.loops.Loop;
 import com.team1816.lib.subsystems.Subsystem;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
-
 import javax.inject.Singleton;
 
 @Singleton
@@ -49,7 +48,7 @@ public class LedManager extends Subsystem {
     public LedManager() {
         super(NAME);
         canifier = factory.getCanifier(NAME);
-        candle =  factory.getCandle(NAME);
+        candle = factory.getCandle(NAME);
 
         configureCanifier(canifier);
         configureCandle();
@@ -190,8 +189,7 @@ public class LedManager extends Subsystem {
     }
 
     @Override
-    public void stop() {
-    }
+    public void stop() {}
 
     @Override
     public void registerEnabledLoops(ILooper mEnabledLooper) {
@@ -199,8 +197,7 @@ public class LedManager extends Subsystem {
         mEnabledLooper.register(
             new Loop() {
                 @Override
-                public void onStart(double timestamp) {
-                }
+                public void onStart(double timestamp) {}
 
                 @Override
                 public void onLoop(double timestamp) {
@@ -208,8 +205,7 @@ public class LedManager extends Subsystem {
                 }
 
                 @Override
-                public void onStop(double timestamp) {
-                }
+                public void onStop(double timestamp) {}
             }
         );
     }
@@ -231,8 +227,7 @@ public class LedManager extends Subsystem {
     }
 
     @Override
-    public void initSendable(SendableBuilder builder) {
-    }
+    public void initSendable(SendableBuilder builder) {}
 
     private static final boolean RAVE_ENABLED =
         factory.getConstant(NAME, "raveEnabled") > 0;

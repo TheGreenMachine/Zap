@@ -49,7 +49,7 @@ public class LazySparkMax implements IMotorControllerEnhanced {
             mLastSet = demand;
             mLastControlMode = controlType;
             mPidController.setReference(demand, controlType); // note that this uses rpm for velocity!
-//            mMotor.set(demand);
+            //            mMotor.set(demand);
         }
     }
 

@@ -5,10 +5,14 @@ import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdleStatusFrame;
 
-public class GhostCANdle implements ICANdle{
+public class GhostCANdle implements ICANdle {
 
     @Override
-    public ErrorCode setStatusFramePeriod(CANdleStatusFrame caNdleStatusFrame_status_4_controlTelem, int canMaxStatus, int i) {
+    public ErrorCode setStatusFramePeriod(
+        CANdleStatusFrame caNdleStatusFrame_status_4_controlTelem,
+        int canMaxStatus,
+        int i
+    ) {
         return ErrorCode.OK;
     }
 

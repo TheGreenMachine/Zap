@@ -23,9 +23,9 @@ public class OrchestratorTest extends TestCase {
     @Spy
     private Constants constants;
 
-    public OrchestratorTest(){
+    public OrchestratorTest() {
         mockFactory = Mockito.spy(RobotFactory.class);
-//        when(mockFactory.getConstant(Turret.NAME, "encPPR")).thenReturn(encPPR);
+        //        when(mockFactory.getConstant(Turret.NAME, "encPPR")).thenReturn(encPPR);
         Subsystem.factory = mockFactory;
         Injector injector = Guice.createInjector(new LibModule(), new SeasonModule());
         state = injector.getInstance(RobotState.class);
@@ -37,21 +37,15 @@ public class OrchestratorTest extends TestCase {
         state.reset();
     }
 
-    public void testSetStopped() {
-    }
+    public void testSetStopped() {}
 
-    public void testSetCollecting() {
-    }
+    public void testSetCollecting() {}
 
-    public void testSetRevving() {
-    }
+    public void testSetRevving() {}
 
-    public void testSetFiring() {
-    }
+    public void testSetFiring() {}
 
-    public void testGetDistance() {
-    }
+    public void testGetDistance() {}
 
-    public void testGetPredictedDistance() {
-    }
+    public void testGetPredictedDistance() {}
 }

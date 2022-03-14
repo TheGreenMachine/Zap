@@ -25,6 +25,7 @@ public abstract class Subsystem implements Sendable {
 
     private final String name;
     public static RobotFactory factory = Robot.getFactory();
+
     @Inject
     public static RobotState robotState;
 

@@ -42,7 +42,7 @@ public class Elevator extends Subsystem {
     }
 
     public void setDesiredState(ELEVATOR_STATE state) {
-        if(this.state != state){
+        if (this.state != state) {
             this.state = state;
             switch (state) {
                 case STOP:
@@ -72,10 +72,13 @@ public class Elevator extends Subsystem {
 
     @Override
     public void readFromHardware() {
-        if(robotState.shooterState == Shooter.SHOOTER_STATE.REVVING && state != robotState.elevatorState) {
+        if (
+            robotState.shooterState == Shooter.SHOOTER_STATE.REVVING &&
+            state != robotState.elevatorState
+        ) {
             robotState.elevatorState = ELEVATOR_STATE.FIRE;
             setElevator(FIRE);
-            if(elevatorPower != FIRE){
+            if (elevatorPower != FIRE) {
                 System.out.println("ACTUAL ELEVATOR STATE = FIRE");
             }
         }

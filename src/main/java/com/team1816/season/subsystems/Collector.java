@@ -3,7 +3,6 @@ package com.team1816.season.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.google.inject.Singleton;
-import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 
@@ -33,19 +32,19 @@ public class Collector extends Subsystem {
         armPiston = factory.getSolenoid(NAME, "arm");
         intake = factory.getMotor(NAME, "intake");
 
-//        PIDSlotConfiguration config = factory.getPidSlotConfig(NAME, pidSlot);
-//
-//        intake.config_kP(0, config.kP, 100);
-//        intake.config_kI(0, config.kI, 100);
-//        intake.config_kD(0, config.kD, 100);
-//        intake.config_kF(0, config.kF, 100);
+        //        PIDSlotConfiguration config = factory.getPidSlotConfig(NAME, pidSlot);
+        //
+        //        intake.config_kP(0, config.kP, 100);
+        //        intake.config_kI(0, config.kI, 100);
+        //        intake.config_kD(0, config.kD, 100);
+        //        intake.config_kF(0, config.kF, 100);
 
         COLLECTING = factory.getConstant(NAME, "collecting");
         FLUSH = factory.getConstant(NAME, "flush");
     }
 
     public void setDesiredState(COLLECTOR_STATE state) {
-        if(this.state != state){
+        if (this.state != state) {
             this.state = state;
             System.out.println("DESIRED COLLECTOR STATE = " + state);
             outputsChanged = true;

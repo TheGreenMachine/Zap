@@ -11,8 +11,9 @@ import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import org.opencv.core.Mat;
 
 @Singleton
 public class Shooter extends Subsystem implements PidProvider {
@@ -45,7 +46,6 @@ public class Shooter extends Subsystem implements PidProvider {
     public static final int MAX_VELOCITY = (int) factory.getConstant(NAME, "maxVel");
 
     public static final int COAST_VELOCITY = (int) factory.getConstant(NAME, "coast");
-
 
     // tune this and make changeable with a button in shooter itself
     public static final int VELOCITY_THRESHOLD = (int) factory.getConstant(
@@ -132,15 +132,35 @@ public class Shooter extends Subsystem implements PidProvider {
         outputsChanged = true;
     }
 
+    public void setVelocityAlt(double velocity) {
+        Translation2d chassisVelocity = new Translation2d(
+            robotState.chassis_speeds.vxMetersPerSecond,
+            robotState.chassis_speeds.vyMetersPerSecond
+        );
+        Translation2d shooterDirection = new Translation2d( //important to make sure that this is a unit vector
+            1,
+            Rotation2d.fromDegrees(robotState.getLatestFieldToTurret())
+        );
+        // setting velocity
+        velocityDemand =
+            velocity -
+            convertShooterMetersToTicksPerSecond(
+                chassisVelocity.getX() *
+                shooterDirection.getX() +
+                chassisVelocity.getY() *
+                shooterDirection.getY()
+            );
+    }
+
     public void setHood(boolean in) {
         hoodOut = in;
         this.outputsChanged = true;
     }
 
     public void setDesiredState(SHOOTER_STATE state) {
-        if(state != this.state){
+        if (state != this.state) {
             this.state = state;
-            switch (state){
+            switch (state) {
                 case STOP:
                     setVelocity(0);
                     break;
@@ -157,8 +177,16 @@ public class Shooter extends Subsystem implements PidProvider {
     public boolean isVelocityNearTarget() {
         return (
             Math.abs(velocityDemand - actualShooterVelocity) < VELOCITY_THRESHOLD &&
-                (int) velocityDemand != COAST_VELOCITY
+            (int) velocityDemand != COAST_VELOCITY
         );
+    }
+
+    public double convertShooterTicksToMetersPerSecond(int ticks) {
+        return 0;
+    }
+
+    public int convertShooterMetersToTicksPerSecond(double metersPerSecond) {
+        return 0;
     }
 
     @Override
@@ -166,15 +194,15 @@ public class Shooter extends Subsystem implements PidProvider {
         actualShooterVelocity = shooterMain.getSelectedSensorVelocity(0);
         closedLoopError = shooterMain.getClosedLoopError(0);
 
-        if(state != robotState.shooterState){
-            if (actualShooterVelocity < VELOCITY_THRESHOLD){
+        if (state != robotState.shooterState) {
+            if (actualShooterVelocity < VELOCITY_THRESHOLD) {
                 robotState.shooterState = SHOOTER_STATE.STOP;
-            } else if(isVelocityNearTarget()) {
+            } else if (isVelocityNearTarget()) {
                 robotState.shooterState = SHOOTER_STATE.REVVING;
             } else {
                 robotState.shooterState = SHOOTER_STATE.COASTING;
             }
-            if(state == SHOOTER_STATE.REVVING){
+            if (state == SHOOTER_STATE.REVVING) {
                 System.out.println("ACTUAL SHOOTER STATE = " + robotState.shooterState);
             }
         }
@@ -192,8 +220,7 @@ public class Shooter extends Subsystem implements PidProvider {
     }
 
     @Override
-    public void initSendable(SendableBuilder builder) {
-    }
+    public void initSendable(SendableBuilder builder) {}
 
     @Override
     public void stop() {}
@@ -219,6 +246,6 @@ public class Shooter extends Subsystem implements PidProvider {
         STOP,
         COASTING,
         REVVING,
-        CAMERA
+        CAMERA,
     }
 }
