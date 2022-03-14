@@ -115,8 +115,8 @@ public class ControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getOrchestrator() {
-        return mButtonControlBoard.getOrchestrator();
+    public boolean getSuperstructure() {
+        return mButtonControlBoard.getSuperstructure();
     }
 
     @Override

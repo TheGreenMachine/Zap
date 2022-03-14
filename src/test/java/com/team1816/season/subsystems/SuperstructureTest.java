@@ -14,7 +14,7 @@ import org.junit.Before;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 
-public class OrchestratorTest extends TestCase {
+public class SuperstructureTest extends TestCase {
 
     private final RobotState state;
     private final RobotFactory mockFactory;
@@ -23,7 +23,7 @@ public class OrchestratorTest extends TestCase {
     @Spy
     private Constants constants;
 
-    public OrchestratorTest() {
+    public SuperstructureTest() {
         mockFactory = Mockito.spy(RobotFactory.class);
         //        when(mockFactory.getConstant(Turret.NAME, "encPPR")).thenReturn(encPPR);
         Subsystem.factory = mockFactory;

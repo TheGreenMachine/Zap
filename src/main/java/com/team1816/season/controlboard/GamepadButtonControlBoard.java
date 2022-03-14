@@ -35,7 +35,7 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
     }
 
     @Override
-    public boolean getOrchestrator() {
+    public boolean getSuperstructure() {
         return mController.getButton(Controller.Button.START);
     }
 
