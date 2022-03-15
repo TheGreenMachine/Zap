@@ -180,9 +180,9 @@ subsystems:
             arm: 2
         pidConfig:
             slot0:
-                kP: 0.05
+                kP: 0.01
                 kI: 0.0
-                kD: 15
+                kD: 0
                 kF: 0 # Should be 0 for position control
                 allowableError: 100
         constants:
