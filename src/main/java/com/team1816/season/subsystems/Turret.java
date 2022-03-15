@@ -72,7 +72,7 @@ public class Turret extends Subsystem implements PidProvider {
         TURRET_MASK = TURRET_PPR - 1;
         TURRET_ENC_RATIO = (double) TURRET_PPR / TURRET_ENCODER_PPR;
         ABS_TICKS_SOUTH = ((int) factory.getConstant(NAME, "absPosTicksSouth"));
-        HALF_ENCPPR = TURRET_ENCODER_PPR / 2;
+        HALF_ENCPPR = TURRET_ENCODER_PPR / 2 - HALF_ENCPPR;
         ZERO_OFFSET = (int) factory.getConstant(NAME, "zeroOffset") + HALF_ENCPPR; //add offset to keep turret in positive range
         turret.setNeutralMode(NeutralMode.Brake);
 
@@ -430,14 +430,9 @@ public class Turret extends Subsystem implements PidProvider {
     private static double crossProduct(Translation2d a, Translation2d b) {
         double [] vect_A = {a.getX(), a.getY(), 0};
         double [] vect_B = {b.getX(), b.getY(), 0};
-        double [] cross_P = new double[3];
-        cross_P[0] = vect_A[1] * vect_B[2]
-            - vect_A[2] * vect_B[1];
-        cross_P[1] = vect_A[2] * vect_B[0]
-            - vect_A[0] * vect_B[2];
-        cross_P[2] = vect_A[0] * vect_B[1]
+        double cross_P = vect_A[0] * vect_B[1]
             - vect_A[1] * vect_B[0];
-        return cross_P[2];
+        return cross_P;
     }
 
     @Override

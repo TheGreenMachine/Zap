@@ -201,6 +201,14 @@ public class RobotFactory {
                         subsystem.victors.get(name),
                         master
                     );
+            } else if (
+                subsystem.sparkmaxes != null && isHardwareValid(subsystem.sparkmaxes.get(name))
+            ) {
+                followerMotor =
+                    RevMotorFactory.createSpark(
+                        subsystem.sparkmaxes.get(name)
+                    );
+                followerMotor.follow(master);
             }
         }
         if (followerMotor == null) {

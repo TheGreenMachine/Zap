@@ -643,8 +643,14 @@ public class LazySparkMax implements IMotorControllerEnhanced {
         return null;
     }
 
+    public CANSparkMax getMotor() {
+        return mMotor;
+    }
+
     @Override
-    public void follow(IMotorController masterToFollow) {}
+    public void follow(IMotorController masterToFollow) {
+        mMotor.follow(((LazySparkMax) masterToFollow).getMotor());
+    }
 
     @Override
     public void valueUpdated() {}

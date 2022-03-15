@@ -13,14 +13,11 @@ public class RevMotorFactory {
         Map<String, PIDSlotConfiguration> pidConfigList,
         int remoteSensorId
     ) {
-        return createSpark(id, name, subsystems, pidConfigList);
+        return createSpark(id);
     }
 
-    private static IMotorControllerEnhanced createSpark(
-        int id,
-        String name,
-        SubsystemConfig subsystem,
-        Map<String, PIDSlotConfiguration> pidConfigList
+    public static IMotorControllerEnhanced createSpark(
+        int id
     ) {
         return new LazySparkMax(id);
     }
