@@ -73,7 +73,6 @@ public class Robot extends TimedRobot {
     private boolean mHasBeenEnabled = false;
 
     private ActionManager actionManager;
-    private AsyncTimer blinkTimer;
 
     // private PowerDistributionPanel pdp = new PowerDistributionPanel();
     private Turret.ControlMode prevTurretControlMode = Turret.ControlMode.FIELD_FOLLOWING;
@@ -276,7 +275,8 @@ public class Robot extends TimedRobot {
                 mCollector,
                 mTurret,
                 mClimber,
-                mCamera
+                mCamera,
+                ledManager
             );
 
             mDrive.zeroSensors();
@@ -487,8 +487,6 @@ public class Robot extends TimedRobot {
             mDisabledLooper.start();
             mTurret.zeroSensors();
             mDrive.zeroSensors();
-
-            blinkTimer.reset();
 
             ledManager.blinkStatus(LedManager.RobotStatus.DISABLED);
 

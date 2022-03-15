@@ -1,7 +1,6 @@
 package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.CANifier;
-import com.ctre.phoenix.CANifierStatusFrame;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.RainbowAnimation;
 import com.team1816.lib.hardware.components.ICANdle;
@@ -11,6 +10,7 @@ import com.team1816.lib.loops.Loop;
 import com.team1816.lib.subsystems.Subsystem;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
+
 import javax.inject.Singleton;
 
 @Singleton
@@ -26,7 +26,7 @@ public class LedManager extends Subsystem {
 
     // State
     private boolean blinkLedOn = false;
-    private boolean outputsChanged = true;
+    private boolean outputsChanged = false;
     private boolean cameraLedChanged = false;
 
     private int ledR;
@@ -49,8 +49,6 @@ public class LedManager extends Subsystem {
         super(NAME);
         canifier = factory.getCanifier(NAME);
         candle = factory.getCandle(NAME);
-
-        configureCanifier(canifier);
         configureCandle();
 
         ledR = 0;
@@ -66,15 +64,6 @@ public class LedManager extends Subsystem {
         candle.configLOSBehavior(true);
         candle.configLEDType(CANdle.LEDStripType.BRG);
         candle.configBrightnessScalar(1);
-    }
-
-    private void configureCanifier(ICanifier canifier) {
-        if (canifier == null) return;
-        canifier.setStatusFramePeriod(CANifierStatusFrame.Status_1_General, 255, 10);
-        canifier.setStatusFramePeriod(CANifierStatusFrame.Status_2_General, 255, 10);
-        canifier.setStatusFramePeriod(CANifierStatusFrame.Status_3_PwmInputs0, 255, 10);
-        canifier.setStatusFramePeriod(CANifierStatusFrame.Status_4_PwmInputs1, 255, 10);
-        canifier.setStatusFramePeriod(CANifierStatusFrame.Status_6_PwmInputs3, 255, 10);
     }
 
     public void setCameraLed(boolean cameraLedOn) {
@@ -97,19 +86,13 @@ public class LedManager extends Subsystem {
      * @param r      LED color red value (0-255)
      * @param g      LED color green value (0-255)
      * @param b      LED color blue value (0-255)
-     * @param period milliseconds
      */
-    private void setLedColorBlink(int r, int g, int b, int period) {
+    private void setLedColorBlink(int r, int g, int b) {
         // Period is in milliseconds
         setLedColor(r, g, b);
         controlState = LedControlState.BLINK;
-        this.period = period;
+        this.period = 1000;
         outputsChanged = true;
-    }
-
-    private void setLedColorBlink(int r, int g, int b) {
-        // Default period of 1 second
-        setLedColorBlink(r, g, b, 1000);
     }
 
     public void indicateStatus(RobotStatus status) {
@@ -117,13 +100,9 @@ public class LedManager extends Subsystem {
         setLedColor(status.getRed(), status.getGreen(), status.getBlue());
     }
 
-    public void setControlState(LedControlState controlState) {
-        this.controlState = controlState;
-    }
-
     public void indicateDefaultStatus() {
         if (RAVE_ENABLED && defaultStatus != RobotStatus.DISABLED) {
-            setControlState(LedControlState.RAVE);
+            controlState = LedControlState.RAVE;
         } else {
             indicateStatus(defaultStatus);
         }
@@ -144,10 +123,10 @@ public class LedManager extends Subsystem {
 
     private void writeLedHardware(int r, int g, int b) {
         if (candle != null) {
-            candle.setLEDs(r, g, b, 0, 8, 66);
-            // back to back writes cancel the first output, so we need to give candle time to write
+            if (outputsChanged && !cameraLedChanged) {
+                candle.setLEDs(r, g, b, 0, 0, 66);
+            }
             if (cameraLedChanged) {
-                //Timer.delay(.1);
                 candle.setLEDs(0, cameraLedOn ? 255 : 0, 0, 0, 0, 8);
             }
         }
@@ -156,34 +135,37 @@ public class LedManager extends Subsystem {
             canifier.setLEDOutput(g / 255.0, CANifier.LEDChannel.LEDChannelA);
             canifier.setLEDOutput(b / 255.0, CANifier.LEDChannel.LEDChannelC);
         }
+        if (cameraLedChanged) {
+            cameraLedChanged = false;
+        } else {
+            outputsChanged = false;
+        }
     }
 
     @Override
     public void writeToHardware() {
-        if (outputsChanged || cameraLedChanged) {
-            outputsChanged = false;
-            cameraLedChanged = false;
-            if (canifier != null || candle != null) {
-                switch (controlState) {
-                    case RAVE:
-                        candle.animate(new RainbowAnimation(MAX / 255.0, RAVE_SPEED, 74));
-                        break;
-                    case BLINK:
-                        if (System.currentTimeMillis() >= lastWriteTime + (period / 2)) {
-                            if (blinkLedOn) {
-                                writeLedHardware(0, 0, 0);
-                                blinkLedOn = false;
-                            } else {
-                                writeLedHardware(ledR, ledG, ledB);
-                                blinkLedOn = true;
-                            }
-                            lastWriteTime = System.currentTimeMillis();
+        if (canifier != null || candle != null) {
+            switch (controlState) {
+                case RAVE:
+                    candle.animate(new RainbowAnimation(MAX / 255.0, RAVE_SPEED, 74));
+                    break;
+                case BLINK:
+                    if (System.currentTimeMillis() >= lastWriteTime + (period / 2)) {
+                        if (blinkLedOn) {
+                            outputsChanged = true;
+                            writeLedHardware(0, 0, 0);
+                            blinkLedOn = false;
+                        } else {
+                            outputsChanged = true;
+                            writeLedHardware(ledR, ledG, ledB);
+                            blinkLedOn = true;
                         }
-                        break;
-                    case STANDARD:
-                        writeLedHardware(ledR, ledG, ledB);
-                        break;
-                }
+                        lastWriteTime = System.currentTimeMillis();
+                    }
+                    break;
+                case STANDARD:
+                    writeLedHardware(ledR, ledG, ledB);
+                    break;
             }
         }
     }
@@ -212,16 +194,25 @@ public class LedManager extends Subsystem {
 
     @Override
     public boolean checkSystem() {
-        System.out.println("Warning: checking LED systems");
-        writeLedHardware(MAX, 0, 0);
+        System.out.println("Checking LED systems");
+        controlState = LedControlState.STANDARD;
+        setLedColor(MAX, 0, 0); // set red
+        writeToHardware();
         Timer.delay(2);
-        setCameraLed(true);
-        writeLedHardware(0, MAX, 0);
+        setCameraLed(true); // turn on camera
+        writeToHardware();
+        Timer.delay(.02); // need to let candle send message on CAN bus
+        setLedColor(0, MAX, 0); // set green
+        writeToHardware();
         Timer.delay(2);
         setCameraLed(false);
-        writeLedHardware(0, 0, MAX);
+        writeToHardware();
+        Timer.delay(.02); // need to let candle send message on CAN bus
+        setLedColor(0, 0, MAX); // set blue
+        writeToHardware();
         Timer.delay(2);
-        writeLedHardware(0, 0, 0);
+        setLedColor(0, 0, 0); // turn off
+        writeToHardware();
         Timer.delay(2);
         return true;
     }
@@ -246,9 +237,9 @@ public class LedManager extends Subsystem {
         MANUAL_TURRET(MAX, MAX, MAX), // white
         OFF(0, 0, 0); // off
 
-        int red;
-        int green;
-        int blue;
+        final int red;
+        final int green;
+        final int blue;
 
         RobotStatus(int r, int g, int b) {
             this.red = r;
