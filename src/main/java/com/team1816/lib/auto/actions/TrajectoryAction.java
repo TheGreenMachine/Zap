@@ -19,20 +19,18 @@ import java.util.List;
 
 public class TrajectoryAction implements Action {
 
-    @Inject
-    private static Drive.Factory mDriveFactory;
-
     private final Command mCommand;
     private final Trajectory mTrajectory;
     private final List<Rotation2d> mHeadings;
-    private final Drive mDrive;
+
+    @Inject
+    private static Drive mDrive;
 
     public TrajectoryAction(Trajectory trajectory) {
         this(trajectory, null);
     }
 
     public TrajectoryAction(Trajectory trajectory, List<Rotation2d> headings) {
-        mDrive = mDriveFactory.getInstance();
         mTrajectory = trajectory;
         mHeadings = headings;
         if (mDrive instanceof TankDrive) {

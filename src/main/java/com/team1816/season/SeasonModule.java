@@ -1,10 +1,13 @@
 package com.team1816.season;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.controlboard.IButtonControlBoard;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.controlboard.IDriveControlBoard;
+import com.team1816.lib.hardware.RobotFactory;
 import com.team1816.season.auto.actions.*;
 import com.team1816.season.controlboard.ControlBoard;
 import com.team1816.season.controlboard.GamepadButtonControlBoard;
@@ -15,10 +18,10 @@ public class SeasonModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(Drive.Factory.class).to(SeasonFactory.class);
         bind(IControlBoard.class).to(ControlBoard.class);
         bind(IDriveControlBoard.class).to(GamepadDriveControlBoard.class);
         bind(IButtonControlBoard.class).to(GamepadButtonControlBoard.class);
+        bind(Drive.class).toProvider(DriveProvider.class);
         requestStaticInjection(SwerveKinematics.class);
         requestStaticInjection(Drive.class);
         requestStaticInjection(Superstructure.class);

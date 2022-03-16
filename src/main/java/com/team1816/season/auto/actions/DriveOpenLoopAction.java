@@ -8,14 +8,11 @@ import com.team1816.season.subsystems.Drive;
 public class DriveOpenLoopAction implements Action {
 
     @Inject
-    private static Drive.Factory driveFactory;
-
     private static Drive drive;
 
     private final AsyncTimer driveTimer;
 
     public DriveOpenLoopAction(double driveTime, double percentOutput) {
-        drive = driveFactory.getInstance();
         this.driveTimer =
             new AsyncTimer(
                 driveTime,

@@ -3,6 +3,7 @@ package com.team1816.season.subsystems;
 import static org.junit.Assert.assertEquals;
 
 import com.google.inject.Guice;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.team1816.lib.LibModule;
 import com.team1816.lib.hardware.RobotFactory;
@@ -23,6 +24,7 @@ public class SwerveDriveTest {
 
     private final RobotFactory mockFactory;
     private final RobotState state;
+
     private SwerveDrive mDrive;
     private double maxVel = 2.54; //  m per sec
     private double maxRotVel = 2 * Math.PI; // rad per sec;
@@ -34,11 +36,11 @@ public class SwerveDriveTest {
         Subsystem.factory = mockFactory;
         Injector injector = Guice.createInjector(new LibModule(), new SeasonModule());
         state = injector.getInstance(RobotState.class);
+        mDrive = injector.getInstance(SwerveDrive.class);
     }
 
     @Before
     public void setUp() {
-        mDrive = new SwerveDrive();
         mDrive.zeroSensors();
         state.reset();
     }

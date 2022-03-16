@@ -29,18 +29,11 @@ public abstract class Drive
     extends Subsystem
     implements TrackableDrivetrain, PidProvider {
 
-    public interface Factory {
-        Drive getInstance();
-    }
-
     public static final String NAME = "drivetrain";
 
     // Components
     @Inject
-    protected static LedManager ledManager;
-
-    @Inject
-    protected static Infrastructure mInfrastructure;
+    protected LedManager ledManager;
 
     protected IPigeonIMU mPigeon;
 
@@ -76,7 +69,8 @@ public abstract class Drive
     );
     public static final double DRIVE_ENCODER_PPR = factory.getConstant(NAME, "encPPR");
 
-    protected Drive() {
+    @Inject
+    protected Drive(Infrastructure mInfrastructure) {
         super(NAME);
         mPeriodicIO = new PeriodicIO();
         mPigeon = mInfrastructure.getPigeon();

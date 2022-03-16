@@ -19,7 +19,7 @@ import java.util.List;
 public class SwerveKinematics {
 
     @Inject
-    private static Drive.Factory mDriveFactory;
+    private static Drive mDrive;
 
     private static Translation2d[] moduleRelativePositions = Constants.kModulePositions;
     private static List<Translation2d> moduleRotationDirections = updateRotationDirections();
@@ -154,7 +154,6 @@ public class SwerveKinematics {
         boolean field_relative,
         boolean normalize_outputs
     ) {
-        Drive mDrive = mDriveFactory.getInstance();
 
         if (field_relative) {
             Rotation2d gyroHeading = mDrive.getHeading();
@@ -209,7 +208,6 @@ public class SwerveKinematics {
         double maxRotationSpeed
     ) {
         List<Translation2d> driveVectors = new ArrayList<>(4);
-        var mDrive = mDriveFactory.getInstance();
         var curRot = mDrive.getHeading();
 
         return driveVectors;

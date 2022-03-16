@@ -2,6 +2,7 @@ package com.team1816.season.subsystems;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.team1816.lib.subsystems.Infrastructure;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.SwerveDrivetrain;
 import com.team1816.season.AutoModeSelector;
@@ -34,8 +35,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     // Odometry variables
     private SwerveDriveOdometry swerveOdometry;
 
-    public SwerveDrive() {
-        super();
+    @Inject
+    public SwerveDrive(Infrastructure mInfrastructure) {
+        super(mInfrastructure);
         swerveModules = new SwerveModule[4];
 
         // enableDigital all Talons in open loop mode

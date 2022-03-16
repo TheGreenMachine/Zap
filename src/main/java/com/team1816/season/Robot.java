@@ -83,7 +83,7 @@ public class Robot extends TimedRobot {
         super();
         // initialize injector
         injector = Guice.createInjector(new LibModule(), new SeasonModule());
-        mDrive = (injector.getInstance(Drive.Factory.class)).getInstance();
+        mDrive = injector.getInstance(Drive.class);
         mTurret = injector.getInstance(Turret.class);
         mClimber = injector.getInstance(Climber.class);
         mCollector = injector.getInstance(Collector.class);
