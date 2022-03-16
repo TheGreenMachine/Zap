@@ -1,9 +1,6 @@
 package com.team1816.season.subsystems;
 
-import static org.junit.Assert.assertEquals;
-
 import com.google.inject.Guice;
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.team1816.lib.LibModule;
 import com.team1816.lib.hardware.RobotFactory;
@@ -16,9 +13,10 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import static org.junit.Assert.assertEquals;
 
 // @RunWith(JUnit4.class)
 public class SwerveDriveTest {
