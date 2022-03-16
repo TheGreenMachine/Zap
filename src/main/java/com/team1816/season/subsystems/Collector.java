@@ -17,7 +17,7 @@ public class Collector extends Subsystem {
     private final IMotorControllerEnhanced intake;
 
     // State
-    private double intakePow;
+    private double intakeVel;
     private boolean armDown;
     private boolean outputsChanged = false;
     private COLLECTOR_STATE state = COLLECTOR_STATE.STOP;
@@ -63,19 +63,19 @@ public class Collector extends Subsystem {
         if (outputsChanged) {
             switch (state) {
                 case STOP:
-                    intakePow = 0;
+                    intakeVel = 0;
                     armDown = false;
                     break;
                 case COLLECTING:
-                    intakePow = COLLECTING;
+                    intakeVel = COLLECTING;
                     armDown = true;
                     break;
                 case FLUSH:
-                    intakePow = FLUSH;
+                    intakeVel = FLUSH;
                     armDown = true; // do we want arm down for this? pending for build team opinion...
                     break;
             }
-            intake.set(ControlMode.Velocity, 100);
+            intake.set(ControlMode.Velocity, intakeVel);
             this.armPiston.set(armDown);
 
             this.outputsChanged = false;
