@@ -298,71 +298,24 @@ public class Turret extends Subsystem implements PidProvider {
         }
     }
 
-    private void autoHome() {
-        var angle = camera.getDeltaXAngle();
-        int adj =
-            convertTurretDegreesToTicks(angle * .10) +
-            followingTurretPos -
-            ABS_TICKS_SOUTH;
-        if (adj != followingTurretPos) {
-            followingTurretPos = adj;
-            outputsChanged = true;
-        }
-    }
-
-    private void trackGyro() {
-        int fieldTickOffset = -convertTurretDegreesToTicks( // currently negated because motor is running counterclockwise
+    private int fieldFollowingOffset() {
+        return -convertTurretDegreesToTicks( // currently negated because motor is running counterclockwise
             robotState.field_to_vehicle.getRotation().getDegrees()
         );
-        int adj = (desiredTurretPos + fieldTickOffset);
-        if (adj != followingTurretPos) {
-            followingTurretPos = adj;
-            outputsChanged = true;
-        }
     }
 
-    private void trackCenter() {
-        // conversion to field relative
-        int fieldTickOffset = -convertTurretDegreesToTicks( // currently negated because motor is running counterclockwise
-            robotState.field_to_vehicle.getRotation().getDegrees()
-        );
-
-        // conversion to target (center) relative
+    private int centerFollowingOffset() {
         double opposite = Constants.fieldCenterY - robotState.field_to_vehicle.getY();
         double adjacent = Constants.fieldCenterX - robotState.field_to_vehicle.getX();
         double turretAngle = 0;
         turretAngle = Math.atan(opposite / adjacent);
         if (adjacent < 0) turretAngle += Math.PI;
-        int centerOffset = convertTurretDegreesToTicks(
+        return convertTurretDegreesToTicks(
             Units.radiansToDegrees(turretAngle)
         );
-
-        // final angle adjustment to account for robot's rate of change in pose on the field (delta_field_to_vehicle)
-        // I don't know how to math - looks like a Keerthi big brain moment
-
-        int adj = (fieldTickOffset + desiredTurretPos + centerOffset);
-        if (adj != followingTurretPos) {
-            followingTurretPos = adj;
-            outputsChanged = true;
-        }
     }
 
-    private void trackAbsolute() {
-        // conversion to field relative
-        int fieldTickOffset = -convertTurretDegreesToTicks( // currently negated because motor is running counterclockwise
-            robotState.field_to_vehicle.getRotation().getDegrees()
-        );
-
-        // conversion to target (center) relative
-        double deltaY = Constants.fieldCenterY - robotState.field_to_vehicle.getY();
-        double deltaX = Constants.fieldCenterX - robotState.field_to_vehicle.getX();
-        double turretAngle = Math.atan(deltaY / deltaX);
-        if (deltaX < 0) turretAngle += Math.PI;
-        int centerOffset = convertTurretDegreesToTicks(
-            Units.radiansToDegrees(turretAngle)
-        );
-
-        // offset
+    private int motionOffset() {
         Translation2d shooterAxis = new Translation2d(
             robotState.getCurrentShooterSpeedMetersPerSecond(),
             Rotation2d.fromDegrees(robotState.getLatestFieldToTurret())
@@ -378,11 +331,49 @@ public class Turret extends Subsystem implements PidProvider {
         if (motionOffsetAngle > Math.PI) {
             motionOffsetAngle -= Math.PI * 2;
         }
-        int motionOffset = convertTurretDegreesToTicks(
+        return convertTurretDegreesToTicks(
             Units.radiansToDegrees(motionOffsetAngle)
         );
-        int adj = (fieldTickOffset + desiredTurretPos + centerOffset + motionOffset);
+    }
 
+    private void autoHome() {
+        var angle = camera.getDeltaXAngle();
+        int adj =
+            convertTurretDegreesToTicks(angle * .10) +
+            followingTurretPos -
+            ABS_TICKS_SOUTH;
+        if (adj != followingTurretPos) {
+            followingTurretPos = adj;
+            outputsChanged = true;
+        }
+    }
+
+    private void trackGyro() {
+        int fieldTickOffset = fieldFollowingOffset();
+        int adj = (desiredTurretPos + fieldTickOffset);
+        if (adj != followingTurretPos) {
+            followingTurretPos = adj;
+            outputsChanged = true;
+        }
+    }
+
+    private void trackCenter() {
+        int fieldTickOffset = fieldFollowingOffset();
+        int centerOffset = centerFollowingOffset();
+
+        int adj = (desiredTurretPos + fieldTickOffset + centerOffset);
+        if (adj != followingTurretPos) {
+            followingTurretPos = adj;
+            outputsChanged = true;
+        }
+    }
+
+    private void trackAbsolute() {
+        int fieldTickOffset = fieldFollowingOffset();
+        int centerOffset = centerFollowingOffset();
+        int motionOffset = motionOffset();
+
+        int adj = (desiredTurretPos + fieldTickOffset + centerOffset + motionOffset);
         if (adj != followingTurretPos) {
             followingTurretPos = adj;
             outputsChanged = true;
