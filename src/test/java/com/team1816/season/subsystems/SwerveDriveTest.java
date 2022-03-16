@@ -16,11 +16,13 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 // @RunWith(JUnit4.class)
 public class SwerveDriveTest {
+    private static final Injector injector = Guice.createInjector(new LibModule(), new SeasonModule());
 
     private final RobotFactory mockFactory;
     private final RobotState state;
@@ -29,12 +31,14 @@ public class SwerveDriveTest {
     private double maxVel = 2.54; //  m per sec
     private double maxRotVel = 2 * Math.PI; // rad per sec;
 
+    /**
+     * Note: the constructor is called before each test method (new instance of class created for each test method)
+     */
     public SwerveDriveTest() {
         mockFactory = Mockito.spy(RobotFactory.class);
         Constants.kPathFollowingMaxVelMeters = maxVel;
         Constants.kMaxAngularSpeed = maxRotVel;
         Subsystem.factory = mockFactory;
-        Injector injector = Guice.createInjector(new LibModule(), new SeasonModule());
         state = injector.getInstance(RobotState.class);
         mDrive = injector.getInstance(SwerveDrive.class);
     }
