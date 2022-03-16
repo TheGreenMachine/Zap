@@ -186,9 +186,9 @@ subsystems:
                 kF: 0.0000931000031414441
                 allowableError: 100
         constants:
-            revving: .05
-            collecting: -0.35
-            flush: .35
+            revving: 0 #.05
+            collecting: -1000 #-0.35
+            flush: 1000 #.35
     camera:
         implemented: false
         constants:

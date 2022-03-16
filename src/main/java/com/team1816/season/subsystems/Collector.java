@@ -17,16 +17,16 @@ public class Collector extends Subsystem {
     private final IMotorControllerEnhanced intake;
 
     // State
-    private double intakePow;
+    private double intakeVel;
     private boolean armDown;
     private boolean outputsChanged = false;
+    private double velocityDemand;
+    private double actualVelocity;
     private COLLECTOR_STATE state = COLLECTOR_STATE.STOP;
 
     private final double COLLECTING;
     private final double FLUSH;
     private final String pidSlot = "slot0";
-
-    private double actualVelocity;
 
     public Collector() {
         super(NAME);
@@ -45,6 +45,19 @@ public class Collector extends Subsystem {
         FLUSH = factory.getConstant(NAME, "flush");
     }
 
+    public void setVelocity(double velocity) {
+        velocityDemand = velocity;
+        outputsChanged = true;
+    }
+
+    public double getActualVelocity() {
+        return actualVelocity;
+    }
+
+    public double getDemandedVelocity() {
+        return velocityDemand;
+    }
+
     public void setDesiredState(COLLECTOR_STATE state) {
         if (this.state != state) {
             this.state = state;
@@ -55,7 +68,7 @@ public class Collector extends Subsystem {
 
     @Override
     public void readFromHardware() {
-        //        this.actualVelocity = intake.getSelectedSensorVelocity(0);
+        this.actualVelocity = intake.getSelectedSensorVelocity(0);
     }
 
     @Override
@@ -63,19 +76,19 @@ public class Collector extends Subsystem {
         if (outputsChanged) {
             switch (state) {
                 case STOP:
-                    intakePow = 0;
+                    intakeVel = 0;
                     armDown = false;
                     break;
                 case COLLECTING:
-                    intakePow = COLLECTING;
+                    intakeVel = COLLECTING;
                     armDown = true;
                     break;
                 case FLUSH:
-                    intakePow = FLUSH;
+                    intakeVel = FLUSH;
                     armDown = true; // do we want arm down for this? pending for build team opinion...
                     break;
             }
-            intake.set(ControlMode.Velocity, 100);
+            intake.set(ControlMode.Velocity, intakeVel);
             this.armPiston.set(armDown);
 
             this.outputsChanged = false;
