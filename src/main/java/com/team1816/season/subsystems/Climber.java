@@ -19,6 +19,8 @@ public class Climber extends Subsystem {
 
     // State
     private ControlMode controlMode = ControlMode.MANUAL;
+    private double error;
+    private boolean needsOverShoot;
     // Position
     private int currentStage;
     private final Stage[] stages;
@@ -61,8 +63,9 @@ public class Climber extends Subsystem {
             controlMode = ControlMode.POSITION;
         }
 
-        if(Math.abs(elevator.getSelectedSensorPosition(0) - stages[currentStage].position) < ALLOWABLE_ERROR){
+        if(Math.abs(error) < ALLOWABLE_ERROR){
             currentStage++;
+            needsOverShoot = true;
             outputsChanged = true;
         } else {
             System.out.println("climber not safely at stage " + currentStage + " - not incrementing stage!");
@@ -99,8 +102,16 @@ public class Climber extends Subsystem {
 //        setClimberPosition(convertToTurretTicks(angle));
 //    }
 
-    private void positionControl(double position) { // if we ever need to do offsets, do them here
-        elevator.set(Position, position);
+    private void positionControl(double position) {
+        if(needsOverShoot) { // keep looping if we aren't past the overshoot value
+            elevator.set(Position, position + 100); // 100 is a dummy overshoot value
+            if (error > 90) {
+                needsOverShoot = false;
+            }
+            outputsChanged = true;
+        } else {
+            elevator.set(Position, position);
+        }
     }
 
     private void setClamps(boolean topClamped, boolean bottomClamped) {
@@ -113,8 +124,14 @@ public class Climber extends Subsystem {
     }
 
     @Override
+    public void readFromHardware() {
+        error = elevator.getSelectedSensorPosition(0) - stages[currentStage].position;
+    }
+
+    @Override
     public void writeToHardware() {
         if (outputsChanged) {
+            outputsChanged = false;
             if (controlMode == ControlMode.POSITION) {
                 positionControl(stages[currentStage].position);
                 setClamps(stages[currentStage].topClamped, stages[currentStage].bottomClamped);
@@ -122,7 +139,6 @@ public class Climber extends Subsystem {
                 elevator.set(com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput, climberPower);
                 setClamps(topClamped, bottomClamped);
             }
-            outputsChanged = false;
         }
     }
 
