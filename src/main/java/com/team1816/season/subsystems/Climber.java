@@ -25,8 +25,8 @@ public class Climber extends Subsystem {
     private double climberPosition;
     //Manual
     private double climberPower;
-    private boolean topClamped;
-    private boolean bottomClamped;
+    private boolean topClamped = false;
+    private boolean bottomClamped = false;
     private boolean outputsChanged = false;
 
     private final double ALLOWABLE_ERROR = factory.getConstant(NAME, "allowableError", 50);
@@ -49,6 +49,7 @@ public class Climber extends Subsystem {
 
         stages = new Stage[]{
             new Stage(factory.getConstant(NAME, "startPos", 0), false, true),
+            new Stage(factory.getConstant(NAME, "startPos", 0), false, false),
             new Stage(factory.getConstant(NAME, "firstToSecondRungPos", -200), true, false),
             new Stage(factory.getConstant(NAME, "secondToLastRungPos", -200), false, true),
             new Stage(factory.getConstant(NAME, "lastPos", -200), true, false)
@@ -76,18 +77,18 @@ public class Climber extends Subsystem {
         outputsChanged = true;
     }
 
-    public void setTopClamp(boolean topClamped) {
+    public void setTopClamp() {
         if(controlMode == ControlMode.MANUAL){
-            this.topClamped = topClamped;
+            topClamped = !topClamped;
         } else {
             System.out.println("climber not in manual mode! - not clamping");
         }
         outputsChanged = true;
     }
 
-    public void setBottomClamp(boolean bottomClamped) {
+    public void setBottomClamp() {
         if(controlMode == ControlMode.MANUAL){
-            this.bottomClamped = bottomClamped;
+            bottomClamped = !bottomClamped;
         } else {
             System.out.println("climber not in manual mode! - not clamping");
         }
