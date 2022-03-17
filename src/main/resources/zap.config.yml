@@ -173,22 +173,22 @@ subsystems:
     collector:
         implemented: true
         sparkmaxes:
-            intake: 23
+            intake: 23 # maxTicks 10617
         invertMotor:
             - intake
         solenoids:
             arm: 2
         pidConfig:
             slot0:
-                kP: 0.05
+                kP: 0.00009999999747378752 #tunned at 4000
                 kI: 0.0
-                kD: 15
-                kF: 0 # Should be 0 for position control
+                kD: 0.006000000052154064
+                kF: 0.0000931000031414441
                 allowableError: 100
         constants:
-            revving: .05
-            collecting: -0.35
-            flush: .35
+            revving: 0 #.05
+            collecting: -1000 #-0.35
+            flush: 1000 #.35
     camera:
         implemented: false
         constants:

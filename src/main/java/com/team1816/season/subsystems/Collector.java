@@ -20,13 +20,13 @@ public class Collector extends Subsystem {
     private double intakeVel;
     private boolean armDown;
     private boolean outputsChanged = false;
+    private double velocityDemand;
+    private double actualVelocity;
     private COLLECTOR_STATE state = COLLECTOR_STATE.STOP;
 
     private final double COLLECTING;
     private final double FLUSH;
     private final String pidSlot = "slot0";
-
-    private double actualVelocity;
 
     public Collector() {
         super(NAME);
@@ -45,6 +45,19 @@ public class Collector extends Subsystem {
         FLUSH = factory.getConstant(NAME, "flush");
     }
 
+    public void setVelocity(double velocity) {
+        velocityDemand = velocity;
+        outputsChanged = true;
+    }
+
+    public double getActualVelocity() {
+        return actualVelocity;
+    }
+
+    public double getDemandedVelocity() {
+        return velocityDemand;
+    }
+
     public void setDesiredState(COLLECTOR_STATE state) {
         if (this.state != state) {
             this.state = state;
@@ -55,7 +68,7 @@ public class Collector extends Subsystem {
 
     @Override
     public void readFromHardware() {
-        //        this.actualVelocity = intake.getSelectedSensorVelocity(0);
+        this.actualVelocity = intake.getSelectedSensorVelocity(0);
     }
 
     @Override
