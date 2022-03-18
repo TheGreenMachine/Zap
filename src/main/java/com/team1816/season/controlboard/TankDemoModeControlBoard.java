@@ -127,17 +127,17 @@ public class TankDemoModeControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getLowShoot() {
+    public boolean getIncrementClimberStage() {
         return false;
     }
 
     @Override
-    public boolean getMidShoot() {
+    public boolean getBottomClamp() {
         return false;
     }
 
     @Override
-    public boolean getFarShoot() {
+    public boolean getTopClamp() {
         return false;
     }
 

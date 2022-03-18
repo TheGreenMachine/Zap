@@ -155,18 +155,18 @@ public class ControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getLowShoot() {
-        return mButtonControlBoard.getLowShoot();
+    public boolean getIncrementClimberStage() {
+        return mButtonControlBoard.getIncrementClimberStage();
     }
 
     @Override
-    public boolean getMidShoot() {
-        return mButtonControlBoard.getMidShoot();
+    public boolean getBottomClamp() {
+        return mButtonControlBoard.getBottomClamp();
     }
 
     @Override
-    public boolean getFarShoot() {
-        return mButtonControlBoard.getFarShoot();
+    public boolean getTopClamp() {
+        return mButtonControlBoard.getTopClamp();
     }
 
     @Override
