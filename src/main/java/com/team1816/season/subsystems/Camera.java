@@ -60,6 +60,11 @@ public class Camera extends Subsystem {
     private void cachePoint() {
         // self.cx+'|'+self.cy+'|' + self.distance + "\n"
         String[] data = socket.request("point");
+        if (data.length < 4) {
+            System.out.println(
+                "CAMERA DEBUG: Malformed point line: " + String.join("|", data)
+            );
+        }
         state.visionPoint.cX = Double.parseDouble(data[1]);
         state.visionPoint.cY = Double.parseDouble(data[2]);
         state.visionPoint.dist = Double.parseDouble(data[3]);
