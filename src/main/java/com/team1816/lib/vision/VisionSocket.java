@@ -25,6 +25,7 @@ public class VisionSocket {
             socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             socketOut = new PrintWriter(socket.getOutputStream(), true);
             debug("connect succeeded");
+            needsReconnect = 0;
         } catch (Throwable t) {
             debug("connect failed: " + t.getMessage());
             needsReconnect = System.currentTimeMillis();
