@@ -2,7 +2,6 @@ package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.led.CANdle;
-import com.ctre.phoenix.led.RainbowAnimation;
 import com.team1816.lib.hardware.components.ICANdle;
 import com.team1816.lib.hardware.components.ICanifier;
 import com.team1816.lib.loops.ILooper;
@@ -12,6 +11,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 
 import javax.inject.Singleton;
+import java.awt.*;
 
 @Singleton
 public class LedManager extends Subsystem {
@@ -26,6 +26,7 @@ public class LedManager extends Subsystem {
     private boolean blinkLedOn = false;
     private boolean outputsChanged = false;
     private boolean cameraLedChanged = false;
+    private int loopDelay = 0;
 
     private int ledR;
     private int ledG;
@@ -36,6 +37,8 @@ public class LedManager extends Subsystem {
     private long lastWriteTime = System.currentTimeMillis();
     private LedControlState controlState = LedControlState.STANDARD;
     private RobotStatus defaultStatus = RobotStatus.DISABLED;
+    private float raveHue;
+    private Color lastRaveColor;
 
     public enum LedControlState {
         RAVE,
@@ -64,14 +67,16 @@ public class LedManager extends Subsystem {
         candle.configBrightnessScalar(1);
     }
 
-    public void setCameraLed(boolean cameraLedOn) {
-        if (this.cameraLedOn != cameraLedOn) {
-            this.cameraLedOn = cameraLedOn;
-            cameraLedChanged = true;
+    public void setCameraLed(boolean cameraOn) {
+        if (cameraLedOn != cameraOn) {
+            cameraLedChanged = cameraOn;
+            cameraLedOn = cameraOn;
+            // if the LED is turned off we need to update the main 8 to match the others
+            if (!cameraOn) outputsChanged = true;
         }
     }
 
-    public void setLedColor(int r, int g, int b) {
+    private void setLedColor(int r, int g, int b) {
         if (ledR != r || ledG != g || ledB != b) {
             ledR = r;
             ledG = g;
@@ -81,9 +86,9 @@ public class LedManager extends Subsystem {
     }
 
     /**
-     * @param r      LED color red value (0-255)
-     * @param g      LED color green value (0-255)
-     * @param b      LED color blue value (0-255)
+     * @param r LED color red value (0-255)
+     * @param g LED color green value (0-255)
+     * @param b LED color blue value (0-255)
      */
     private void setLedColorBlink(int r, int g, int b) {
         // Period is in milliseconds
@@ -101,6 +106,7 @@ public class LedManager extends Subsystem {
     public void indicateDefaultStatus() {
         if (RAVE_ENABLED && defaultStatus != RobotStatus.DISABLED) {
             controlState = LedControlState.RAVE;
+            setLedColor(0, 0, 0);
         } else {
             indicateStatus(defaultStatus);
         }
@@ -120,12 +126,16 @@ public class LedManager extends Subsystem {
     }
 
     private void writeLedHardware(int r, int g, int b) {
+        boolean cameraUpdated = false;
         if (candle != null) {
-            if (outputsChanged && !cameraLedChanged) {
-                candle.setLEDs(r, g, b, 0, 0, 66);
+            if (cameraLedChanged && cameraLedOn) {
+                cameraLedChanged = false;
+                cameraUpdated = true;
+                candle.setLEDs(0, 255, 0, 0, 0, 8);
             }
-            if (cameraLedChanged) {
-                candle.setLEDs(0, cameraLedOn ? 255 : 0, 0, 0, 0, 8);
+            if (!cameraUpdated && outputsChanged) {
+                var ledStart = cameraLedOn ? 8 : 0;
+                candle.setLEDs(r, g, b, 0, ledStart, 74 - ledStart);
             }
         }
         if (canifier != null && outputsChanged) {
@@ -133,9 +143,7 @@ public class LedManager extends Subsystem {
             canifier.setLEDOutput(g / 255.0, CANifier.LEDChannel.LEDChannelA);
             canifier.setLEDOutput(b / 255.0, CANifier.LEDChannel.LEDChannelC);
         }
-        if (cameraLedChanged) {
-            cameraLedChanged = false;
-        } else {
+        if (!cameraUpdated) {
             outputsChanged = false;
         }
     }
@@ -143,9 +151,21 @@ public class LedManager extends Subsystem {
     @Override
     public void writeToHardware() {
         if (canifier != null || candle != null) {
+            loopDelay++;
+            if (loopDelay < 4) return;
+            loopDelay = 0;
             switch (controlState) {
                 case RAVE:
-                    candle.animate(new RainbowAnimation(MAX / 255.0, RAVE_SPEED, 74));
+                    var color = Color.getHSBColor(raveHue, 1.0f, MAX / 255.0f);
+                    if (!color.equals(lastRaveColor)) {
+                        outputsChanged = true;
+                        writeLedHardware(
+                            color.getRed(),
+                            color.getGreen(),
+                            color.getBlue()
+                        );
+                    }
+                    raveHue += RAVE_SPEED;
                     break;
                 case BLINK:
                     if (System.currentTimeMillis() >= lastWriteTime + (period / 2)) {
@@ -195,24 +215,22 @@ public class LedManager extends Subsystem {
         System.out.println("Checking LED systems");
         controlState = LedControlState.STANDARD;
         setLedColor(MAX, 0, 0); // set red
-        writeToHardware();
-        Timer.delay(2);
+        testDelay();
         setCameraLed(true); // turn on camera
-        writeToHardware();
-        Timer.delay(.02); // need to let candle send message on CAN bus
-        setLedColor(0, MAX, 0); // set green
-        writeToHardware();
-        Timer.delay(2);
+        testDelay();
         setCameraLed(false);
-        writeToHardware();
-        Timer.delay(.02); // need to let candle send message on CAN bus
+        testDelay();
+        setLedColor(0, MAX, 0); // set green
+        testDelay();
         setLedColor(0, 0, MAX); // set blue
-        writeToHardware();
-        Timer.delay(2);
-        setLedColor(0, 0, 0); // turn off
-        writeToHardware();
-        Timer.delay(2);
+        testDelay();
         return true;
+    }
+
+    private void testDelay() {
+        loopDelay = 10;
+        writeToHardware();
+        Timer.delay(1.5);
     }
 
     @Override
