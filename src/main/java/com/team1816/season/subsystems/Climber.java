@@ -63,7 +63,7 @@ public class Climber extends Subsystem {
             controlMode = ControlMode.POSITION;
         }
 
-        if(Math.abs(error) < ALLOWABLE_ERROR){
+        if(Math.abs(error) < ALLOWABLE_ERROR && currentStage < stages.length) {
             currentStage++;
             needsOverShoot = true;
             outputsChanged = true;
@@ -126,6 +126,7 @@ public class Climber extends Subsystem {
     @Override
     public void readFromHardware() {
         error = elevator.getSelectedSensorPosition(0) - stages[currentStage].position;
+        climberPosition = elevator.getSelectedSensorPosition(0);
     }
 
     @Override
