@@ -161,7 +161,7 @@ subsystems:
             firePow: 0.5
             flushPow: -0.5
     spindexer:
-        implemented: true
+        implemented: false
         talons:
             spindexer: 31
         solenoids:
@@ -188,8 +188,8 @@ subsystems:
                 allowableError: 100
         constants:
             revving: 0 #.05
-            collecting: -1000 #-0.35
-            flush: 1000 #.35
+            collecting: -4000 #-0.35
+            flush: 4000 #.35
     camera:
         implemented: true
         constants:
