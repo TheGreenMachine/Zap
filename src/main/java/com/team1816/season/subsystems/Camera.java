@@ -47,7 +47,7 @@ public class Camera extends Subsystem {
             for (int i = 0; i< parts.length; i++) {
                 System.out.print(parts[i]+" ");
             }
-            System.out.println();
+            System.out.println("WJRf2u9iqtehfu CAMERA.java LINE 50");
             return 0;
         }
         System.out.println("CAMERA: getDistance() " + Double.parseDouble(parts[1]));
