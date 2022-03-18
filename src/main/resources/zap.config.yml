@@ -191,7 +191,7 @@ subsystems:
             collecting: -4000 #-0.35
             flush: 4000 #.35
     camera:
-        implemented: true
+        implemented: false
         constants:
             debug: 0
 pcm: -1
