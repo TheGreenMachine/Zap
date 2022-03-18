@@ -88,10 +88,11 @@ public class RobotState {
             );
     }
 
-    private class Point{
-        public int cX;
-        public int cY;
-        public int dist;
+    public class Point {
+        public double cX;
+        public double cY;
+        public double dist;
+        public double deltaX;
         public Point () {
             cX = 0;
             cY = 0;
