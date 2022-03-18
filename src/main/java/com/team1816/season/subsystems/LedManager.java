@@ -18,8 +18,6 @@ public class LedManager extends Subsystem {
 
     public static final String NAME = "ledmanager";
 
-    private static LedManager INSTANCE;
-
     // Components
     private final ICanifier canifier;
     private final ICANdle candle;
