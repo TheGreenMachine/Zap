@@ -86,7 +86,7 @@ subsystems:
         canifier: -1
         candle: 22
         constants:
-            raveEnabled: 0
+            raveEnabled: 1
             raveSpeed: 0.05
             cameraLed: 1
             maxLevel: 255
@@ -190,10 +190,10 @@ subsystems:
             collecting: -1000 #-0.35
             flush: 1000 #.35
     camera:
-        implemented: false
+        implemented: true
         constants:
             debug: 0
-pcm: 28
+pcm: -1
 canivoreBusName: highSpeed
 constants:
     # pigeon

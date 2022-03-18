@@ -17,6 +17,7 @@ public class RobotState {
     public ChassisSpeeds chassis_speeds = new ChassisSpeeds(0, 0, 0);
 
     // Superstructure ACTUAL states
+    public Point visionPoint = new Point();
     public Collector.COLLECTOR_STATE collectorState = Collector.COLLECTOR_STATE.STOP;
     public Shooter.SHOOTER_STATE shooterState = Shooter.SHOOTER_STATE.STOP;
     public Spindexer.SPIN_STATE spinState = Spindexer.SPIN_STATE.STOP;
@@ -85,5 +86,17 @@ public class RobotState {
                     Rotation2d.fromDegrees(getLatestFieldToTurret())
                 )
             );
+    }
+
+    public class Point {
+        public double cX;
+        public double cY;
+        public double dist;
+        public double deltaX;
+        public Point () {
+            cX = 0;
+            cY = 0;
+            dist = 0;
+        }
     }
 }
