@@ -97,6 +97,7 @@ public class RobotState {
             cX = 0;
             cY = 0;
             dist = 0;
+            deltaX = 0;
         }
     }
 }
