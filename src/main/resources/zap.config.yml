@@ -161,7 +161,7 @@ subsystems:
             firePow: 0.5
             flushPow: -0.5
     spindexer:
-        implemented: false
+        implemented: true
         talons:
             spindexer: 31
         solenoids:
