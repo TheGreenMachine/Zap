@@ -99,6 +99,7 @@ jar {
     manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
     spotless
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
 }
 
 jsonSchema2Pojo {

@@ -314,12 +314,6 @@ public class Robot extends TimedRobot {
                             }
                         }
                     ),
-                    //                    createHoldAction(
-                    //                        mControlBoard::getRevShooter,
-                    //                        revving -> {
-                    //                            mOrchestrator.setRevving(revving, Shooter.MID_VELOCITY);
-                    //                        }
-                    //                    ),
                     createHoldAction(
                         mControlBoard::getShoot,
                         shooting -> {
@@ -330,12 +324,6 @@ public class Robot extends TimedRobot {
                     createAction(
                         mControlBoard::getCollectorToggle,
                         () -> mSuperstructure.setCollecting(true)
-                    ),
-                    createHoldAction(
-                        mControlBoard::getLowShoot,
-                        lowShoot -> {
-                            mSuperstructure.setRevving(lowShoot, Shooter.NEAR_VELOCITY);
-                        }
                     ),
                     createAction(
                         mControlBoard::getCollectorBackspin,
@@ -351,16 +339,6 @@ public class Robot extends TimedRobot {
                             );
                         }
                     ),
-                    //                    createAction(
-                    //                        mControlBoard::getFieldFollowing,
-                    //                        () -> {
-                    //                            if (mTurret.getControlMode() == Turret.ControlMode.FIELD_FOLLOWING) {
-                    //                                mTurret.setControlMode(Turret.ControlMode.CENTER_FOLLOWING);
-                    //                            } else {
-                    //                                mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
-                    //                            }
-                    //                        }
-                    //                    ),
                     createHoldAction(
                         mControlBoard::getTurretJogLeft,
                         moving ->
@@ -378,6 +356,18 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         mControlBoard::getClimberDown,
                         moving -> mClimber.setClimberPower(moving ? .7 : 0)
+                    ),
+                    createAction(
+                        mControlBoard::getTopClamp,
+                        mClimber::setTopClamp
+                    ),
+                    createAction(
+                        mControlBoard::getBottomClamp,
+                        mClimber::setBottomClamp
+                    ),
+                    createAction(
+                        mControlBoard::getIncrementClimberStage,
+                        mClimber::incrementClimberStage
                     )
                 );
         } catch (Throwable t) {
@@ -438,7 +428,8 @@ public class Robot extends TimedRobot {
                 mAutoModeExecutor.start();
             }
             mEnabledLooper.start();
-        } catch (Throwable t) {
+        }
+        catch (Throwable t) {
             throw t;
         }
     }

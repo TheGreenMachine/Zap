@@ -93,17 +93,17 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
     }
 
     @Override
-    public boolean getLowShoot() {
+    public boolean getIncrementClimberStage() {
         return mController.getButton(Controller.Button.Y);
     }
 
     @Override
-    public boolean getMidShoot() {
+    public boolean getBottomClamp() {
         return mController.getButton(Controller.Button.B);
     }
 
     @Override
-    public boolean getFarShoot() {
+    public boolean getTopClamp() {
         return mController.getButton(Controller.Button.A);
     }
 

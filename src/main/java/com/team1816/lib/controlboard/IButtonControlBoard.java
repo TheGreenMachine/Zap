@@ -29,11 +29,11 @@ public interface IButtonControlBoard {
 
     boolean getShoot();
 
-    boolean getLowShoot();
+    boolean getIncrementClimberStage();
 
-    boolean getMidShoot();
+    boolean getBottomClamp();
 
-    boolean getFarShoot();
+    boolean getTopClamp();
 
     boolean getFieldFollowing();
 }
