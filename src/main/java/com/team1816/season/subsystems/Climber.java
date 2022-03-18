@@ -14,7 +14,7 @@ public class Climber extends Subsystem {
 
     // Components
     private final IMotorControllerEnhanced elevator;
-    private final IMotorControllerEnhanced elevatorFollower;
+    //private final IMotorControllerEnhanced elevatorFollower;
     private final ISolenoid topClamp;
     private final ISolenoid bottomClamp;
 
@@ -38,7 +38,7 @@ public class Climber extends Subsystem {
     public Climber() {
         super(NAME);
         elevator = factory.getMotor(NAME, "elevator");
-        elevatorFollower = (IMotorControllerEnhanced) factory.getMotor(NAME, "elvatorFollower", elevator);
+        //elevatorFollower = (IMotorControllerEnhanced) factory.getMotor(NAME, "elvatorFollower", elevator);
         topClamp = factory.getSolenoid(NAME, "topClamp");
         bottomClamp = factory.getSolenoid(NAME, "bottomClamp");
 
