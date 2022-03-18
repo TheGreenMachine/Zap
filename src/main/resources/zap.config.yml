@@ -140,6 +140,7 @@ subsystems:
         implemented: false
         sparkmaxes:
             elevator: 20
+            elevatorFollower: -1
         solenoids:
             deployer: 2
         pidConfig: # DUMMY VALUES ! NEED TO TEST REAL VALUES
