@@ -373,11 +373,11 @@ public class Robot extends TimedRobot {
                     ),
                     createHoldAction(
                         mControlBoard::getClimberUp,
-                        moving -> mClimber.setClimberPosition(moving ? -.7 : 0)
+                        moving -> mClimber.setClimberPower(moving ? -.7 : 0)
                     ),
                     createHoldAction(
                         mControlBoard::getClimberDown,
-                        moving -> mClimber.setClimberPosition(moving ? .7 : 0)
+                        moving -> mClimber.setClimberPower(moving ? .7 : 0)
                     )
                 );
         } catch (Throwable t) {

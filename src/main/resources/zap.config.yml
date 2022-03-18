@@ -190,10 +190,10 @@ subsystems:
             collecting: -1000 #-0.35
             flush: 1000 #.35
     camera:
-        implemented: false
+        implemented: true
         constants:
-            debug: 0
-pcm: 28
+            debug: 1
+pcm: -1
 canivoreBusName: highSpeed
 constants:
     # pigeon

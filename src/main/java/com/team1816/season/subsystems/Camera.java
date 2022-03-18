@@ -44,7 +44,10 @@ public class Camera extends Subsystem {
     public double getDistance() {
         String[] parts = socket.request("distance");
         if (parts.length < 2) {
-            System.out.println("lol" + String.join(" ", parts));
+            for (int i = 0; i< parts.length; i++) {
+                System.out.print(parts[i]+" ");
+            }
+            System.out.println();
             return 0;
         }
         System.out.println("CAMERA: getDistance() " + Double.parseDouble(parts[1]));
