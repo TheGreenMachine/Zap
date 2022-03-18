@@ -64,6 +64,7 @@ public class Camera extends Subsystem {
             System.out.println(
                 "CAMERA DEBUG: Malformed point line: " + String.join("|", data)
             );
+            return;
         }
         state.visionPoint.cX = Double.parseDouble(data[1]);
         state.visionPoint.cY = Double.parseDouble(data[2]);
