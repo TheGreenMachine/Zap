@@ -105,7 +105,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             mPeriodicIO.gyro_heading_no_offset.rotateBy(mGyroOffset);
 
         swerveOdometry.update(mPeriodicIO.gyro_heading, states);
-        updateRobotPose();
+        updateRobotState();
     }
 
     @Override
@@ -154,7 +154,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             trajectory.getInitialPose(),
             trajectory.getInitialPose().getRotation()
         );
-        updateRobotPose();
+        updateRobotState();
         setHeading(trajectory.getInitialPose().getRotation());
         mDriveControlState = DriveControlState.TRAJECTORY_FOLLOWING;
         setBrakeMode(true);
@@ -181,7 +181,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         return robotState.field_to_vehicle; // swerveOdometry.getPoseMeters();
     }
 
-    private void updateRobotPose() {
+    private void updateRobotState() {
         robotState.field_to_vehicle = swerveOdometry.getPoseMeters();
         robotState.chassis_speeds =
             new ChassisSpeeds(
@@ -358,7 +358,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
         boolean checkPigeon = mPigeon == null;
 
-        return true; // not actually doing anything lol
+        return true; // not actually doing anything
     }
 
     @Override

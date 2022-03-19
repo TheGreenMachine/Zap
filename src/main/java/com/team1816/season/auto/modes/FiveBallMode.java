@@ -10,24 +10,11 @@ import edu.wpi.first.math.geometry.Translation2d;
 
 public class FiveBallMode extends AutoModeBase {
 
-    private TrajectoryAction trajectory1;
-    private TrajectoryAction trajectory2;
-
     public FiveBallMode() {
         trajectory =
             new TrajectoryAction(
-                TrajectorySet.FIVE_BALL_A,
-                TrajectorySet.FIVE_BALL_A_HEADINGS
-            );
-        trajectory1 =
-            new TrajectoryAction(
                 TrajectorySet.FIVE_BALL_B,
                 TrajectorySet.FIVE_BALL_B_HEADINGS
-            );
-        trajectory2 =
-            new TrajectoryAction(
-                TrajectorySet.FIVE_BALL_C,
-                TrajectorySet.FIVE_BALL_C_HEADINGS
             );
     }
 
@@ -44,9 +31,7 @@ public class FiveBallMode extends AutoModeBase {
                 new ParallelAction(
                     // paths
                     new SeriesAction(
-                        //                        trajectory,
-                        trajectory1
-                        //                        trajectory2
+                        trajectory
                     ),
                     // actions to take during the path
                     new SeriesAction(
@@ -54,20 +39,21 @@ public class FiveBallMode extends AutoModeBase {
                         new WaitUntilInsideRegion(
                             new Translation2d(0, 0), // make actual region to change hood
                             new Translation2d(210, 180),
-                            "1st, blue ball"
+                            "1st, ally ball"
                         ),
                         new ShootAction(true, true),
                         new WaitUntilInsideRegion(
                             new Translation2d(0, 0), // make actual region to change hood
                             new Translation2d(205, 130),
-                            "2nd, red ball"
+                            "2nd, enemy ball"
                         ),
                         new ShootAction(true, false),
                         new WaitUntilInsideRegion(
                             new Translation2d(0, 0), // make actual region to change hood
                             new Translation2d(220, 80),
-                            "3rd, blue ball"
+                            "3rd, ally ball"
                         ),
+                        new TurretAction(Turret.CARDINAL_NORTH),
                         new ShootAction(true, true),
                         new WaitAction(4),
                         new RampUpShooterAction(14000),

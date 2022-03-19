@@ -149,7 +149,7 @@ public class Climber extends Subsystem {
                 topClamp.set(topClamped);
             }
             System.out.println("setting climber clamps!");
-            Timer.delay(5.25);
+            Timer.delay(.25);
         }
     }
 
