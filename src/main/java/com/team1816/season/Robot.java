@@ -351,24 +351,24 @@ public class Robot extends TimedRobot {
                     ),
                     createHoldAction(
                         mControlBoard::getClimberUp,
-                        moving -> mClimber.setClimberPower(moving ? -.7 : 0)
+                        moving -> mClimber.setClimberPower(moving ? -.3 : 0)
                     ),
                     createHoldAction(
                         mControlBoard::getClimberDown,
-                        moving -> mClimber.setClimberPower(moving ? .7 : 0)
-                    ),
-                    createAction(
-                        mControlBoard::getTopClamp,
-                        mClimber::setTopClamp
-                    ),
-                    createAction(
-                        mControlBoard::getBottomClamp,
-                        mClimber::setBottomClamp
-                    ),
-                    createAction(
-                        mControlBoard::getIncrementClimberStage,
-                        mClimber::incrementClimberStage
-                    )
+                        moving -> mClimber.setClimberPower(moving ? .3 : 0)
+                    )//,
+//                    createAction(
+//                        mControlBoard::getTopClamp,
+//                        mClimber::setTopClamp
+//                    ),
+//                    createAction(
+//                        mControlBoard::getBottomClamp,
+//                        mClimber::setBottomClamp
+//                    ),
+//                    createAction(
+//                        mControlBoard::getIncrementClimberStage,
+//                        mClimber::incrementClimberStage
+//                    )
                 );
         } catch (Throwable t) {
             faulted = true;

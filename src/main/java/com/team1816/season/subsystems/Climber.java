@@ -14,7 +14,7 @@ public class Climber extends Subsystem {
 
     // Components
     private final IMotorControllerEnhanced elevator;
-    //private final IMotorControllerEnhanced elevatorFollower;
+    private final IMotorControllerEnhanced elevatorFollower;
     private final ISolenoid topClamp;
     private final ISolenoid bottomClamp;
 
@@ -38,7 +38,7 @@ public class Climber extends Subsystem {
     public Climber() {
         super(NAME);
         elevator = factory.getMotor(NAME, "elevator");
-        //elevatorFollower = (IMotorControllerEnhanced) factory.getMotor(NAME, "elvatorFollower", elevator);
+        elevatorFollower = (IMotorControllerEnhanced) factory.getMotor(NAME, "elevatorFollower", elevator);
         topClamp = factory.getSolenoid(NAME, "topClamp");
         bottomClamp = factory.getSolenoid(NAME, "bottomClamp");
 
@@ -48,6 +48,14 @@ public class Climber extends Subsystem {
         elevator.config_kI(0, config.kI, 100);
         elevator.config_kD(0, config.kD, 100);
         elevator.config_kF(0, config.kF, 100);
+
+        elevatorFollower.config_kP(0, config.kP, 100);
+        elevatorFollower.config_kI(0, config.kI, 100);
+        elevatorFollower.config_kD(0, config.kD, 100);
+        elevatorFollower.config_kF(0, config.kF, 100);
+
+        elevator.setInverted(false);
+        elevatorFollower.setInverted(false);
 
         currentStage = 0;
 
@@ -78,7 +86,7 @@ public class Climber extends Subsystem {
         if (controlMode != ControlMode.MANUAL) {
             controlMode = ControlMode.MANUAL;
         }
-        climberPosition = power;
+        climberPower = power;
         outputsChanged = true;
     }
 

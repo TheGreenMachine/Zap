@@ -109,7 +109,7 @@ subsystems:
             encPPR: 4096
             turretPPR: 53248 # 4096 * 13
     shooter:
-        implemented: true
+        implemented: false
         falcons:
             shooterMain: 21
             shooterFollower: -1
@@ -137,10 +137,10 @@ subsystems:
             maxVel: 20700
             coast: 5300
     climber:
-        implemented: false
+        implemented: true
         sparkmaxes:
-            elevator: 20
-            elevatorFollower: -1
+            elevator: 34 #20
+            elevatorFollower: 35 #-1
         solenoids:
             deployer: 2
         pidConfig: # DUMMY VALUES ! NEED TO TEST REAL VALUES
@@ -191,7 +191,7 @@ subsystems:
             collecting: -4000 #-0.35
             flush: 4000 #.35
     camera:
-        implemented: false
+        implemented: true
         constants:
             debug: 0
 pcm: -1
