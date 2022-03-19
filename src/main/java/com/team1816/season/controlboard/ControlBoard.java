@@ -120,8 +120,8 @@ public class ControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getFeederFlapOut() {
-        return mButtonControlBoard.getFeederFlapOut();
+    public boolean getCameraToggle() {
+        return mButtonControlBoard.getCameraToggle();
     }
 
     @Override

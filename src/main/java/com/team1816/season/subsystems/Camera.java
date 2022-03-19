@@ -13,6 +13,8 @@ public class Camera extends Subsystem {
 
     public final VisionSocket socket = new VisionSocket();
 
+    public boolean enabled;
+
     // Components
     @Inject
     static RobotState state;
@@ -49,8 +51,13 @@ public class Camera extends Subsystem {
     }
 
     public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
         led.setCameraLed(enabled);
         socket.setEnabled(enabled);
+    }
+
+    public void setEnabled() {
+        setEnabled(!enabled);
     }
 
     public boolean checkSystem() {

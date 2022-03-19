@@ -66,7 +66,7 @@ public class TankDemoModeControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getFeederFlapOut() {
+    public boolean getCameraToggle() {
         return false;
     }
 

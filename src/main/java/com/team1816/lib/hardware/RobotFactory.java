@@ -409,9 +409,9 @@ public class RobotFactory {
         return new GhostCANdle();
     }
 
-    public ICompressor getCompressor(boolean isREV) {
+    public ICompressor getCompressor() {
         if (isPcmEnabled()) {
-            if (isREV){
+            if (factory.getConstant("phIsRev") > 0){
                 return new CompressorImpl(
                     getPcmId(),
                     PneumaticsModuleType.REVPH

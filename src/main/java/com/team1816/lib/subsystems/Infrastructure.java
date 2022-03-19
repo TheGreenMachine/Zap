@@ -24,7 +24,7 @@ public class Infrastructure {
     private boolean lastCompressorOn = false;
 
     public Infrastructure() {
-        mCompressor = factory.getCompressor(factory.getConstant("phIsRev") > 0);
+        mCompressor = factory.getCompressor();
         mPigeon = factory.getPigeon();
         mPigeon.configFactoryDefault();
         mPigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_1_General, 200);
@@ -38,14 +38,14 @@ public class Infrastructure {
             );
     }
 
-    private void startCompressor() { // not used because compressor currently turns on by default once robot is enabled
+    public void startCompressor() { // not used because compressor currently turns on by default once robot is enabled
         if (compressorEnabled && !lastCompressorOn) {
             mCompressor.enableDigital();
             lastCompressorOn = true;
         }
     }
 
-    private void stopCompressor() {
+    public void stopCompressor() {
         if (compressorEnabled && lastCompressorOn) {
             mCompressor.disable();
             lastCompressorOn = false;

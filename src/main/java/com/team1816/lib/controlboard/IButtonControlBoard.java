@@ -7,7 +7,7 @@ public interface IButtonControlBoard {
 
     boolean getSuperstructure();
 
-    boolean getFeederFlapOut();
+    boolean getCameraToggle();
 
     boolean getFeederFlapIn();
 

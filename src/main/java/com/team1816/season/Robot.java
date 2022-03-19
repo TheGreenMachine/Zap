@@ -305,6 +305,10 @@ public class Robot extends TimedRobot {
                             }
                         }
                     ),
+                    createAction(
+                        mControlBoard::getCameraToggle,
+                        mCamera::setEnabled
+                    ),
                     createHoldAction(
                         mControlBoard::getShoot,
                         shooting -> {
@@ -376,7 +380,6 @@ public class Robot extends TimedRobot {
             ledManager.setCameraLed(false);
 
             mSuperstructure.setStopped(true);
-            mCamera.setEnabled(true); // this is for debugging BEWARE !
 
             // Reset all auto mode state.
             if (mAutoModeExecutor != null) {
@@ -446,6 +449,7 @@ public class Robot extends TimedRobot {
             mCamera.setEnabled(false); // do we enable here or only when we use vision? - this may cause an error b/c we enable more than once
 
             mSuperstructure.setStopped(false);
+            mInfrastructure.startCompressor();
 
             mControlBoard.reset();
         } catch (Throwable t) {

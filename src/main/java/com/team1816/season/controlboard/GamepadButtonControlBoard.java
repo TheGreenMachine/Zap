@@ -68,8 +68,8 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
 
     // Feeder Flap
     @Override
-    public boolean getFeederFlapOut() {
-        return mController.getButton(Controller.Button.Y);
+    public boolean getCameraToggle() {
+        return mController.getButton(Controller.Button.BACK);
     }
 
     @Override

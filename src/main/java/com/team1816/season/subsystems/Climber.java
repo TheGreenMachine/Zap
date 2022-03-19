@@ -68,7 +68,7 @@ public class Climber extends Subsystem {
         currentStage = 0;
 
         stages = new Stage[]{
-            new Stage(factory.getConstant(NAME, "startPos", 0), false, false, false),
+            new Stage(factory.getConstant(NAME, "startPos", 0), false, false, false), // just here as an init value
             new Stage(factory.getConstant(NAME, "startPos", 0), false, false, false),
             new Stage(factory.getConstant(NAME, "firstToSecondRungPos", -63), true, false, true),
             new Stage(factory.getConstant(NAME, "secondToLastRungPos", -153), false, true, false),
@@ -126,8 +126,8 @@ public class Climber extends Subsystem {
 
     private void positionControl(double position) {
         if(needsOverShoot) { // keep looping if we aren't past the overshoot value
-            elevator.set(Position, position - 10);
-            if (error < -8) {
+            elevator.set(Position, position - 20);
+            if (error < -18) {
                 needsOverShoot = false;
             }
             outputsChanged = true;
