@@ -197,6 +197,13 @@ public class Robot extends TimedRobot {
                         );
                     }
                 }
+                BadLog.createTopic(
+                    "ClimberPosition",
+                    "NativeRotationUnits",
+                    mClimber::getClimberPosition,
+                    "hide",
+                    "join:Tracking/Angles"
+                );
                 mShooter.CreateBadLogTopic(
                     "Shooter/ActVel",
                     "NativeUnits",
@@ -257,12 +264,6 @@ public class Robot extends TimedRobot {
                     mTurret::getActualTurretPositionDegrees,
                     "hide",
                     "join:Tracking/Angles"
-                );
-                mCamera.CreateBadLogTopic(
-                    "Camera/CenterX",
-                    "Degrees",
-                    mCamera::getRawCenterX,
-                    "hide"
                 );
             }
 
@@ -356,7 +357,7 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         mControlBoard::getClimberDown,
                         moving -> mClimber.setClimberPower(moving ? .3 : 0)
-                    )//,
+                    ),
 //                    createAction(
 //                        mControlBoard::getTopClamp,
 //                        mClimber::setTopClamp
@@ -365,10 +366,10 @@ public class Robot extends TimedRobot {
 //                        mControlBoard::getBottomClamp,
 //                        mClimber::setBottomClamp
 //                    ),
-//                    createAction(
-//                        mControlBoard::getIncrementClimberStage,
-//                        mClimber::incrementClimberStage
-//                    )
+                    createAction(
+                        mControlBoard::getIncrementClimberStage,
+                        mClimber::incrementClimberStage
+                    )
                 );
         } catch (Throwable t) {
             faulted = true;
@@ -417,7 +418,6 @@ public class Robot extends TimedRobot {
 
             mDrive.zeroSensors();
             mTurret.zeroSensors();
-            mClimber.zeroSensors();
 
             mSuperstructure.setStopped(false);
 
@@ -446,10 +446,11 @@ public class Robot extends TimedRobot {
 
             mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
             mTurret.zeroSensors();
+            mClimber.zeroSensors();
             mHasBeenEnabled = true;
 
             mEnabledLooper.start();
-            mTurret.setControlMode(Turret.ControlMode.CENTER_FOLLOWING);
+            mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
 
             mCamera.setEnabled(Constants.kUseVision); // do we enable here or only when we use vision? - this may cause an error b/c we enable more than once
 

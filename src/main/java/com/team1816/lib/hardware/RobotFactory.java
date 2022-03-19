@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.sensors.*;
 import com.team1816.lib.hardware.components.*;
+import com.team1816.lib.hardware.components.motor.LazySparkMax;
 import com.team1816.lib.hardware.components.pcm.*;
 import com.team1816.lib.math.DriveConversions;
 import com.team1816.season.Constants;
@@ -210,6 +211,36 @@ public class RobotFactory {
                     );
                 followerMotor.follow(master);
             }
+        }
+        if (followerMotor == null) {
+            if (subsystem.implemented) reportGhostWarning("Motor", subsystemName, name);
+            followerMotor =
+                CtreMotorFactory.createGhostTalon(
+                    (int) factory.getConstant(subsystemName, "maxTicks"),
+                    0
+                );
+        }
+        if (master != null) {
+            followerMotor.setInverted(master.getInverted());
+        }
+        return followerMotor;
+    }
+
+    public IMotorController getMotor( // a hack to circumnavigate sparkMax follower methods
+        String subsystemName,
+        String name,
+        IMotorController master,
+        boolean invert
+    ) { // TODO: optimize this method
+        IMotorController followerMotor = null;
+        var subsystem = getSubsystem(subsystemName);
+        if (subsystem.sparkmaxes != null && isHardwareValid(subsystem.sparkmaxes.get(name)))
+        {
+                followerMotor =
+                    RevMotorFactory.createSpark(
+                        subsystem.sparkmaxes.get(name)
+                    );
+            ((LazySparkMax) followerMotor).follow(master, invert);
         }
         if (followerMotor == null) {
             if (subsystem.implemented) reportGhostWarning("Motor", subsystemName, name);

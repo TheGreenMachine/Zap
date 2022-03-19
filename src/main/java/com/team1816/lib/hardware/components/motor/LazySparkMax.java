@@ -63,6 +63,7 @@ public class LazySparkMax implements IMotorControllerEnhanced {
     @Override
     public void setNeutralMode(NeutralMode neutralMode) {}
 
+    @Override
     public void setInverted(boolean isInverted) {
         mMotor.setInverted(isInverted);
     }
@@ -77,7 +78,8 @@ public class LazySparkMax implements IMotorControllerEnhanced {
 
     @Override
     public ErrorCode configOpenloopRamp(double secondsFromNeutralToFull, int timeoutMs) {
-        return null;
+        mMotor.setOpenLoopRampRate(secondsFromNeutralToFull);
+        return ErrorCode.OK;
     }
 
     @Override
@@ -85,7 +87,8 @@ public class LazySparkMax implements IMotorControllerEnhanced {
         double secondsFromNeutralToFull,
         int timeoutMs
     ) {
-        return null;
+        mMotor.setClosedLoopRampRate(secondsFromNeutralToFull);
+        return ErrorCode.OK;
     }
 
     @Override
@@ -206,13 +209,13 @@ public class LazySparkMax implements IMotorControllerEnhanced {
 
     @Override
     public double getSelectedSensorPosition(int pidIdx) {
-        return 0;
-    }
+        return mEncoder.getPosition();
+    } // native position value
 
     @Override
     public double getSelectedSensorVelocity(int pidIdx) {
-        return 0;
-    }
+        return mEncoder.getCountsPerRevolution();
+    } // RPM
 
     @Override
     public ErrorCode setSelectedSensorPosition(
@@ -220,7 +223,8 @@ public class LazySparkMax implements IMotorControllerEnhanced {
         int pidIdx,
         int timeoutMs
     ) {
-        return null;
+        mEncoder.setPosition(sensorPos);
+        return ErrorCode.OK;
     }
 
     @Override
@@ -648,8 +652,12 @@ public class LazySparkMax implements IMotorControllerEnhanced {
     }
 
     @Override
-    public void follow(IMotorController masterToFollow) {
+    public void follow(IMotorController masterToFollow) { // only use if not inverted
         mMotor.follow(((LazySparkMax) masterToFollow).getMotor());
+    }
+
+    public void follow(IMotorController masterToFollow, boolean inverted) {
+        mMotor.follow(((LazySparkMax) masterToFollow).getMotor(), inverted);
     }
 
     @Override

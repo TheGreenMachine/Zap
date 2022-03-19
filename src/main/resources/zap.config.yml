@@ -84,7 +84,7 @@ subsystems:
     ledmanager:
         implemented: true
         canifier: -1
-        candle: 22
+        candle: -1
         constants:
             raveEnabled: 1
             raveSpeed: 0.05
@@ -96,7 +96,7 @@ subsystems:
             slot0:
                 kP: 0.35
                 kI: 0.0
-                kD: 15
+                kD: 18
                 kF: 0 # Should be 0 for position control
                 allowableError: 100
         talons:
@@ -145,13 +145,17 @@ subsystems:
             deployer: 2
         pidConfig: # DUMMY VALUES ! NEED TO TEST REAL VALUES
             slot0:
-                kP: 0.15
+                kP: 0.0250 #tunned at 4000
                 kI: 0.0
-                kD: 2.5 #4.5
-                kF: 0.05671 #0.00953253
+                kD: 0.006
+                kF: 0.0001
+                allowableError: 10
         constants:
-            climberMinPos: -5
-            climberMaxPos: -280
+            maxTicks: 1 # TODO set this value
+            startPos: 0
+            firstToSecondRungPos: -63
+            secondToLastRungPos: -153
+            lastPos: -181
     elevator:
         implemented: true
         talons:
@@ -181,11 +185,11 @@ subsystems:
             arm: 2
         pidConfig:
             slot0:
-                kP: 0.00009999999747378752 #tunned at 4000
+                kP: 0.0001 #tunned at 4000
                 kI: 0.0
-                kD: 0.006000000052154064
-                kF: 0.0000931000031414441
-                allowableError: 100
+                kD: 0.006
+                kF: 0.0001
+                allowableError: 10
         constants:
             revving: 0 #.05
             collecting: -4000 #-0.35

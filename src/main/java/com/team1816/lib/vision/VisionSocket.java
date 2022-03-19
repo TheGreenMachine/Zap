@@ -102,7 +102,7 @@ public class VisionSocket {
             String line = socketIn.readLine();
             debug("Read line: " + line);
             if (line == null) return new String[0];
-            System.out.println("CAMERA LINE: " + line);
+            debug("CAMERA LINE: " + line);
             return line.split(PROTOCOL_LINE);
         } catch (IOException e) {
             debug("Write failed: " + e.getMessage());
