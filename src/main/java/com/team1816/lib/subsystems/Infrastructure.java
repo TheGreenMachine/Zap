@@ -6,6 +6,7 @@ import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.components.IPigeonIMU;
 import com.team1816.lib.hardware.components.pcm.ICompressor;
+import edu.wpi.first.wpilibj.PowerDistribution;
 
 /**
  * Subsystem housing compressor and pigeon - should we add pcm/pdh here?
@@ -14,8 +15,9 @@ import com.team1816.lib.hardware.components.pcm.ICompressor;
 @Singleton
 public class Infrastructure {
 
-    private ICompressor mCompressor;
-    private IPigeonIMU mPigeon;
+    private static ICompressor mCompressor;
+    private static IPigeonIMU mPigeon;
+    private static PowerDistribution pdh;
 
     private static final boolean compressorEnabled =
         factory.getConstant("compressorEnabled") > 0;
@@ -27,6 +29,13 @@ public class Infrastructure {
         mPigeon.configFactoryDefault();
         mPigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_1_General, 200);
         mPigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_6_Accel, 1000);
+        pdh =
+            new PowerDistribution(
+                1,
+                factory.getConstant("pdIsRev") == 0
+                    ? PowerDistribution.ModuleType.kCTRE
+                    : PowerDistribution.ModuleType.kRev
+            );
     }
 
     private void startCompressor() { // not used because compressor currently turns on by default once robot is enabled
@@ -45,5 +54,9 @@ public class Infrastructure {
 
     public IPigeonIMU getPigeon() {
         return mPigeon;
+    }
+
+    public PowerDistribution getPdh(){
+        return pdh;
     }
 }

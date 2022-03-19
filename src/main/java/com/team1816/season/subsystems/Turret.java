@@ -250,8 +250,7 @@ public class Turret extends Subsystem implements PidProvider {
                 turret.getSelectedSensorPosition(kPrimaryCloseLoop) -
                 ABS_TICKS_SOUTH -
                 ZERO_OFFSET
-            ) %
-            TURRET_MASK
+            )
         );
     }
 
@@ -381,6 +380,9 @@ public class Turret extends Subsystem implements PidProvider {
 
     private void positionControl(int rawPos) {
         int adjPos = (rawPos + ABS_TICKS_SOUTH + ZERO_OFFSET) % TURRET_MASK;
+        if(adjPos < 0){
+            adjPos += TURRET_MASK;
+        }
         if (outputsChanged) {
             turret.set(com.ctre.phoenix.motorcontrol.ControlMode.Position, adjPos);
             outputsChanged = false;

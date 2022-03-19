@@ -142,8 +142,9 @@ subsystems:
             elevator: 34 #20
             elevatorFollower: 35 #-1
         solenoids:
-            deployer: 2
-        pidConfig: # DUMMY VALUES ! NEED TO TEST REAL VALUES
+            topClamp: 4
+            bottomClamp: 8
+        pidConfig:
             slot0:
                 kP: 0.0250 #tunned at 4000
                 kI: 0.0

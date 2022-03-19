@@ -49,7 +49,6 @@ public class Robot extends TimedRobot {
 
     // subsystems
     private final Drive mDrive;
-    private final PowerDistribution pdh;
     private final PneumaticHub ph = new PneumaticHub(1); //use fatory.getPcm later
     private final Collector mCollector;
     private final Shooter mShooter;
@@ -99,13 +98,6 @@ public class Robot extends TimedRobot {
         mAutoModeSelector = injector.getInstance(AutoModeSelector.class);
         trajectorySet = injector.getInstance(TrajectorySet.class);
         //compressor =  new Compressor(getFactory().getPcmId(), PneumaticsModuleType.REVPH);
-        pdh =
-            new PowerDistribution(
-                1,
-                getFactory().getConstant("pdIsRev") == 0
-                    ? PowerDistribution.ModuleType.kCTRE
-                    : PowerDistribution.ModuleType.kRev
-            );
     }
 
     public static RobotFactory getFactory() {
@@ -173,7 +165,7 @@ public class Robot extends TimedRobot {
 
                 DrivetrainLogger.init(mDrive);
                 if (RobotBase.isReal()) {
-                    BadLog.createTopic("PDP/Current", "Amps", pdh::getTotalCurrent);
+                    BadLog.createTopic("PDP/Current", "Amps", mInfrastructure.getPdh()::getTotalCurrent);
 
                     mDrive.CreateBadLogValue("Drivetrain PID", mDrive.pidToString());
                     mTurret.CreateBadLogValue("Turret PID", mTurret.pidToString());
