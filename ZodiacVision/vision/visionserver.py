@@ -54,7 +54,7 @@ class ThreadedVisionServer(object):
             writer.write("center_y|" + self.cy + "\n")
             writer.flush()
         elif msg == 'point':
-            writer.write(self.cx+'|'+self.cy+'|' + self.distance + "\n")
+            writer.write('point|'+self.cx+'|'+self.cy+'|' + self.distance + "\n")
             writer.flush()
         elif 'calib' in msg:
             print(str(msg))
