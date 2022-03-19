@@ -35,7 +35,7 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
     }
 
     @Override
-    public boolean getOrchestrator() {
+    public boolean getSuperstructure() {
         return mController.getButton(Controller.Button.START);
     }
 
@@ -63,7 +63,7 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
 
     @Override
     public boolean getFieldFollowing() {
-        return mController.getButton(Controller.Button.X);
+        return mController.getButton(Controller.Button.A);
     }
 
     // Feeder Flap
@@ -104,7 +104,7 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
 
     @Override
     public boolean getTopClamp() {
-        return mController.getButton(Controller.Button.A);
+        return mController.getButton(Controller.Button.X);
     }
 
     @Override

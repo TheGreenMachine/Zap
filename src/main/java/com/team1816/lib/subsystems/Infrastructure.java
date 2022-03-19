@@ -24,7 +24,7 @@ public class Infrastructure {
     private boolean lastCompressorOn = false;
 
     public Infrastructure() {
-        mCompressor = factory.getCompressor(true);
+        mCompressor = factory.getCompressor(factory.getConstant("phIsRev") > 0);
         mPigeon = factory.getPigeon();
         mPigeon.configFactoryDefault();
         mPigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_1_General, 200);
@@ -32,9 +32,9 @@ public class Infrastructure {
         pdh =
             new PowerDistribution(
                 1,
-                factory.getConstant("pdIsRev") == 0
-                    ? PowerDistribution.ModuleType.kCTRE
-                    : PowerDistribution.ModuleType.kRev
+                factory.getConstant("pdIsRev") > 0
+                    ? PowerDistribution.ModuleType.kRev
+                    : PowerDistribution.ModuleType.kCTRE
             );
     }
 

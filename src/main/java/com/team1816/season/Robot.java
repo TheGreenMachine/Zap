@@ -49,7 +49,6 @@ public class Robot extends TimedRobot {
 
     // subsystems
     private final Drive mDrive;
-    private final PneumaticHub ph = new PneumaticHub(1); //use fatory.getPcm later
     private final Collector mCollector;
     private final Shooter mShooter;
     private final Turret mTurret;
@@ -97,7 +96,6 @@ public class Robot extends TimedRobot {
         mSubsystemManager = injector.getInstance(SubsystemManager.class);
         mAutoModeSelector = injector.getInstance(AutoModeSelector.class);
         trajectorySet = injector.getInstance(TrajectorySet.class);
-        //compressor =  new Compressor(getFactory().getPcmId(), PneumaticsModuleType.REVPH);
     }
 
     public static RobotFactory getFactory() {
@@ -350,14 +348,14 @@ public class Robot extends TimedRobot {
                         mControlBoard::getClimberDown,
                         moving -> mClimber.setClimberPower(moving ? .3 : 0)
                     ),
-//                    createAction(
-//                        mControlBoard::getTopClamp,
-//                        mClimber::setTopClamp
-//                    ),
-//                    createAction(
-//                        mControlBoard::getBottomClamp,
-//                        mClimber::setBottomClamp
-//                    ),
+                    createAction(
+                        mControlBoard::getTopClamp,
+                        mClimber::setTopClamp
+                    ),
+                    createAction(
+                        mControlBoard::getBottomClamp,
+                        mClimber::setBottomClamp
+                    ),
                     createAction(
                         mControlBoard::getIncrementClimberStage,
                         mClimber::incrementClimberStage
@@ -378,6 +376,7 @@ public class Robot extends TimedRobot {
             ledManager.setCameraLed(false);
 
             mSuperstructure.setStopped(true);
+            mCamera.setEnabled(true); // this is for debugging BEWARE !
 
             // Reset all auto mode state.
             if (mAutoModeExecutor != null) {
@@ -409,7 +408,7 @@ public class Robot extends TimedRobot {
             mHasBeenEnabled = true;
 
             mDrive.zeroSensors();
-            mTurret.zeroSensors();
+//            mTurret.zeroSensors();
 
             mSuperstructure.setStopped(false);
 
@@ -437,14 +436,14 @@ public class Robot extends TimedRobot {
             }
 
             mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
-            mTurret.zeroSensors();
+//            mTurret.zeroSensors();
             mClimber.zeroSensors();
             mHasBeenEnabled = true;
 
             mEnabledLooper.start();
             mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
 
-            mCamera.setEnabled(Constants.kUseVision); // do we enable here or only when we use vision? - this may cause an error b/c we enable more than once
+            mCamera.setEnabled(false); // do we enable here or only when we use vision? - this may cause an error b/c we enable more than once
 
             mSuperstructure.setStopped(false);
 
@@ -470,7 +469,7 @@ public class Robot extends TimedRobot {
 
             mEnabledLooper.stop();
             mDisabledLooper.start();
-            mTurret.zeroSensors();
+//            mTurret.zeroSensors();
             mDrive.zeroSensors();
 
             blinkTimer.reset();

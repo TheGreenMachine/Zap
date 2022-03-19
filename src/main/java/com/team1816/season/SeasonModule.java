@@ -24,9 +24,9 @@ public class SeasonModule extends AbstractModule {
         requestStaticInjection(Superstructure.class);
         requestStaticInjection(TankDrive.class);
         requestStaticInjection(SwerveDrive.class);
-        requestStaticInjection(Shooter.class);
         requestStaticInjection(Camera.class);
         requestStaticInjection(Turret.class);
+        requestStaticInjection(LedManager.class);
         requestStaticInjection(TrajectoryAction.class);
         requestStaticInjection(TurretAction.class);
         requestStaticInjection(DriveOpenLoopAction.class);

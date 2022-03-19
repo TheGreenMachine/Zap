@@ -5,7 +5,7 @@ public interface IButtonControlBoard {
 
     void setRumble(boolean on);
 
-    boolean getOrchestrator();
+    boolean getSuperstructure();
 
     boolean getFeederFlapOut();
 

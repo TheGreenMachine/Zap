@@ -21,6 +21,8 @@ import edu.wpi.first.wpilibj.RobotBase;
 import java.util.Map;
 import javax.annotation.Nonnull;
 
+import static com.team1816.lib.subsystems.Subsystem.factory;
+
 public class RobotFactory {
 
     private RobotConfiguration config;
@@ -333,7 +335,9 @@ public class RobotFactory {
             if (subsystem.implemented && isHardwareValid(solenoidId) && isPcmEnabled()) {
                 return new SolenoidImpl(
                     config.pcm,
-                    PneumaticsModuleType.REVPH,
+                    factory.getConstant("phIsRev") > 0
+                        ? PneumaticsModuleType.REVPH
+                        : PneumaticsModuleType.CTREPCM,
                     solenoidId
                 );
             }
@@ -407,10 +411,14 @@ public class RobotFactory {
 
     public ICompressor getCompressor(boolean isREV) {
         if (isPcmEnabled()) {
-            if (isREV) return new CompressorImpl(
-                getPcmId(),
-                PneumaticsModuleType.REVPH
-            ); else return new CompressorImpl(getPcmId(), PneumaticsModuleType.CTREPCM);
+            if (isREV){
+                return new CompressorImpl(
+                    getPcmId(),
+                    PneumaticsModuleType.REVPH
+                );
+            } else {
+                return new CompressorImpl(getPcmId(), PneumaticsModuleType.CTREPCM);
+            }
         }
         reportGhostWarning("Compressor", "ROOT", "on PCM ID " + getPcmId()); // root?
         return new GhostCompressor();

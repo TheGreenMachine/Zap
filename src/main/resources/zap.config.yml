@@ -142,8 +142,8 @@ subsystems:
             elevator: 34 #20
             elevatorFollower: 35 #-1
         solenoids:
-            topClamp: 4
-            bottomClamp: 8
+            topClamp: 7
+            bottomClamp: 6
         pidConfig:
             slot0:
                 kP: 0.0250 #tunned at 4000
@@ -199,7 +199,7 @@ subsystems:
         implemented: true
         constants:
             debug: 0
-pcm: -1
+pcm: 2
 canivoreBusName: highSpeed
 constants:
     # pigeon
@@ -225,6 +225,7 @@ constants:
     teleopFieldCentric: 1 # 0 or 1
     compressorEnabled: 1 # 0 or 1
     kLooperDt: .050 # seconds
-    pdIsRev: 1
+    pdIsRev: 1 # power distribution
+    phIsRev: 0 # pneumatics control
     resetFactoryDefaults: 0 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret
 

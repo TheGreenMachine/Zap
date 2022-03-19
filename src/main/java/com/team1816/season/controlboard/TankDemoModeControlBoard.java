@@ -61,7 +61,7 @@ public class TankDemoModeControlBoard implements IControlBoard {
     public void setRumble(boolean on) {}
 
     @Override
-    public boolean getOrchestrator() {
+    public boolean getSuperstructure() {
         return false;
     }
 
