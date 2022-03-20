@@ -200,6 +200,7 @@ subsystems:
         implemented: false
         constants:
             debug: 0
+            deviation: -20
 pcm: 2
 canivoreBusName: highSpeed
 constants:
