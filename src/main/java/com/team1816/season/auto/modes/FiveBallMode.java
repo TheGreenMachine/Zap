@@ -53,8 +53,9 @@ public class FiveBallMode extends AutoModeBase {
                             new Translation2d(220, 80),
                             "3rd, ally ball"
                         ),
-                        new TurretAction(Turret.CARDINAL_NORTH),
                         new ShootAction(true, true),
+//                        another wait until inside region action here
+//                        new TurretAction(Turret.CARDINAL_NORTH),
                         new WaitAction(4),
                         new RampUpShooterAction(14000),
                         new TurretAction(Turret.CARDINAL_SOUTH), // tune these two
@@ -62,7 +63,7 @@ public class FiveBallMode extends AutoModeBase {
                         new WaitAction(2)
                     )
                 ),
-                // stop all at end - make a stop action in the future
+                // stop all at end
                 new StopAction(false)
             )
         );

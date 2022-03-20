@@ -32,6 +32,7 @@ public class Climber extends Subsystem {
     private int currentStage;
     private final Stage[] stages;
     private double climberPosition;
+    private double currentDraw;
     //Manual
     private double climberPower = 0;
     private boolean topClamped = false;
@@ -68,20 +69,20 @@ public class Climber extends Subsystem {
         currentStage = 0;
 
         stages = new Stage[]{
-            new Stage(factory.getConstant(NAME, "startPos", 0), false, false, false), // just here as an init value
-            new Stage(factory.getConstant(NAME, "startPos", 0), false, false, false),
-            new Stage(factory.getConstant(NAME, "firstToSecondRungPos", -63), true, false, true),
-            new Stage(factory.getConstant(NAME, "secondToLastRungPos", -153), false, true, false),
-            new Stage(factory.getConstant(NAME, "lastPos", -180), true, false, true)
+            new Stage(factory.getConstant(NAME, "dummyValue", 0), true, true, false), // just here as an init value
+            new Stage(factory.getConstant(NAME, "unlockPos", -20), true, true, false),
+            new Stage(factory.getConstant(NAME, "startPos", 1), true, true, false),
+            new Stage(factory.getConstant(NAME, "firstToSecondRungPos", -63), false, true, true),
+            new Stage(factory.getConstant(NAME, "secondToLastRungPos", -153), true, false, false),
+            new Stage(factory.getConstant(NAME, "lastPos", -180), false, true, true)
         };
     }
 
     public void incrementClimberStage(){ // we can't go backwards (descend rungs) using this logic, but it shouldn't really matter
-        if (controlMode != ControlMode.POSITION) {
-            controlMode = ControlMode.POSITION;
-        }
-
-        if(Math.abs(error) < ALLOWABLE_ERROR && currentStage < stages.length && !needsOverShoot) {
+        if(currentStage < stages.length - 1 && !needsOverShoot) {
+            if (controlMode != ControlMode.POSITION) {
+                controlMode = ControlMode.POSITION;
+            }
             System.out.println("incrementing climber to stage " + currentStage + " .....");
             currentStage++;
             needsOverShoot = true;
@@ -101,38 +102,33 @@ public class Climber extends Subsystem {
     }
 
     public void setTopClamp() {
-        if(controlMode == ControlMode.MANUAL){
-            topClamped = !topClamped;
-        } else {
-            System.out.println("climber not in manual mode! - not clamping");
+        if(controlMode != ControlMode.MANUAL){
+            controlMode = ControlMode.MANUAL;
         }
+        topClamped = !topClamped;
         needsClamp = true;
         outputsChanged = true;
     }
 
     public void setBottomClamp() {
-        if(controlMode == ControlMode.MANUAL){
-            bottomClamped = !bottomClamped;
-        } else {
-            System.out.println("climber not in manual mode! - not clamping");
+        if(controlMode != ControlMode.MANUAL){
+            controlMode = ControlMode.MANUAL;
         }
+        bottomClamped = !bottomClamped;
+
         needsClamp = true;
         outputsChanged = true;
     }
 
-//    public void setClimberAngle(double angle) {
-//        setClimberPosition(convertToTurretTicks(angle));
-//    }
-
     private void positionControl(double position) {
         if(needsOverShoot) { // keep looping if we aren't past the overshoot value
-            elevator.set(Position, position - 20);
-            if (error < -18) {
+            elevator.set(Position, position);
+            if (Math.abs(error) < 5) {
                 needsOverShoot = false;
             }
             outputsChanged = true;
         } else {
-            elevator.set(Position, position);
+            elevator.set(PercentOutput, 0); // coast so that the climber falls down to lock
         }
     }
 
@@ -157,6 +153,7 @@ public class Climber extends Subsystem {
     public void readFromHardware() {
         error = elevator.getSelectedSensorPosition(0) - stages[currentStage].position;
         climberPosition = elevator.getSelectedSensorPosition(0);
+        currentDraw = elevator.getOutputCurrent();
 //        System.out.println("climber position = " + climberPosition);
     }
 
@@ -179,8 +176,13 @@ public class Climber extends Subsystem {
         return climberPosition;
     }
 
+    public double getCurrentDraw(){
+        return currentDraw;
+    }
+
     @Override
     public void zeroSensors() {
+        currentStage = 0;
         elevator.setSelectedSensorPosition(stages[0].position, 0, Constants.kCANTimeoutMs);
     }
 

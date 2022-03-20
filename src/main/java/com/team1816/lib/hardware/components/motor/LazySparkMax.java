@@ -604,11 +604,6 @@ public class LazySparkMax implements IMotorControllerEnhanced {
     }
 
     @Override
-    public double getOutputCurrent() {
-        return 0;
-    }
-
-    @Override
     public ErrorCode configVelocityMeasurementPeriod(
         SensorVelocityMeasPeriod period,
         int timeoutMs
@@ -658,6 +653,11 @@ public class LazySparkMax implements IMotorControllerEnhanced {
 
     public void follow(IMotorController masterToFollow, boolean inverted) {
         mMotor.follow(((LazySparkMax) masterToFollow).getMotor(), inverted);
+    }
+
+    @Override
+    public double getOutputCurrent(){
+        return mMotor.getOutputCurrent();
     }
 
     @Override

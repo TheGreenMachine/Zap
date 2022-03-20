@@ -59,7 +59,7 @@ subsystems:
                     kF: 0.0499
             azimuthPID:
                 slot0:
-                    kP: 4.0 # 6.0
+                    kP: 3.6 # 6.0
                     kI: 0.0005
                     kD: 30
                     kF: 0
@@ -109,7 +109,7 @@ subsystems:
             encPPR: 4096
             turretPPR: 53248 # 4096 * 13
     shooter:
-        implemented: false
+        implemented: true
         falcons:
             shooterMain: 21
             shooterFollower: -1
@@ -133,8 +133,8 @@ subsystems:
             velocityThreshold: 500
             nearVel: 11000
             midVel: 9900
-            farVel: 16000
-            maxVel: 20700
+            farVel: 15000
+            maxVel: 16500
             coast: 5300
     climber:
         implemented: true
@@ -146,17 +146,18 @@ subsystems:
             bottomClamp: 6
         pidConfig:
             slot0:
-                kP: 0.0250 #tunned at 4000
+                kP: 0.041 #tunned at 4000
                 kI: 0.0
                 kD: 0.006
                 kF: 0.0001
                 allowableError: 10
         constants:
             maxTicks: 1 # TODO set this value
-            startPos: 0
-            firstToSecondRungPos: -63
-            secondToLastRungPos: -153
-            lastPos: -181
+            unlockPos: -20
+            startPose: 1
+            firstToSecondRungPos: -89
+            secondToLastRungPos: -172
+            lastPos: -180
     elevator:
         implemented: true
         talons:
@@ -196,7 +197,7 @@ subsystems:
             collecting: -4000 #-0.35
             flush: 4000 #.35
     camera:
-        implemented: true
+        implemented: false
         constants:
             debug: 0
 pcm: 2

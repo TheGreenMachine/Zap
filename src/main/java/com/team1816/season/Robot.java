@@ -194,6 +194,11 @@ public class Robot extends TimedRobot {
                     "hide",
                     "join:Tracking/Angles"
                 );
+                BadLog.createTopic(
+                    "ClimberCurrentDraw",
+                    "Amps",
+                    mClimber::getCurrentDraw
+                );
                 mShooter.CreateBadLogTopic(
                     "Shooter/ActVel",
                     "NativeUnits",
@@ -312,7 +317,7 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         mControlBoard::getShoot,
                         shooting -> {
-                            mSuperstructure.setRevving(shooting, Shooter.FAR_VELOCITY);
+                            mSuperstructure.setRevving(shooting, 11000);
                             mSuperstructure.setFiring(shooting);
                         }
                     ),
@@ -346,11 +351,11 @@ public class Robot extends TimedRobot {
                     ),
                     createHoldAction(
                         mControlBoard::getClimberUp,
-                        moving -> mClimber.setClimberPower(moving ? -.3 : 0)
+                        moving -> mClimber.setClimberPower(moving ? -.5 : 0)
                     ),
                     createHoldAction(
                         mControlBoard::getClimberDown,
-                        moving -> mClimber.setClimberPower(moving ? .3 : 0)
+                        moving -> mClimber.setClimberPower(moving ? .5 : 0)
                     ),
                     createAction(
                         mControlBoard::getTopClamp,

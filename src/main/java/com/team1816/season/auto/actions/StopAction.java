@@ -3,6 +3,7 @@ package com.team1816.season.auto.actions;
 import com.google.inject.Inject;
 import com.team1816.lib.auto.actions.Action;
 import com.team1816.season.Superstructure;
+import com.team1816.season.subsystems.Drive;
 
 public class StopAction implements Action {
 
@@ -11,13 +12,20 @@ public class StopAction implements Action {
     @Inject
     private static Superstructure superstructure;
 
+    @Inject
+    private static Drive.Factory driveFactory;
+
+    private Drive drive;
+
     public StopAction(boolean notRevving) {
         this.notRevving = notRevving;
+        drive = driveFactory.getInstance();
     }
 
     @Override
     public void start() {
         superstructure.setStopped(notRevving);
+        drive.stop();
     }
 
     @Override

@@ -85,7 +85,6 @@ public class Superstructure {
 
     public void setRevving(boolean revving, double shooterVel) {
         this.revving = revving;
-        camera.setEnabled(useVision);
         if (revving) {
             System.out.println("revving!");
             shooter.setDesiredState(Shooter.SHOOTER_STATE.REVVING);
@@ -107,7 +106,6 @@ public class Superstructure {
                 shooter.setHood(false);
             }
             if (useVision) {
-                spindexer.setSpindexer(getDistance(DistanceManager.SUBSYSTEM.SPINDEXER)); // is this needed in buckets? - TODO
                 elevator.setElevator(getDistance(DistanceManager.SUBSYSTEM.ELEVATOR));
                 shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) > 0);
             }
