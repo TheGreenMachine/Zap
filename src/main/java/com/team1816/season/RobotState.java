@@ -35,8 +35,15 @@ public class RobotState {
         Pose2d initial_field_to_vehicle,
         Rotation2d initial_vehicle_to_turret
     ) {
-        field_to_vehicle = initial_field_to_vehicle;
+        reset(initial_field_to_vehicle);
         vehicle_to_turret = initial_vehicle_to_turret;
+    }
+
+    public synchronized void reset(
+        Pose2d initial_field_to_vehicle
+    ) {
+        field_to_vehicle = initial_field_to_vehicle;
+        field.setRobotPose(initial_field_to_vehicle);
     }
 
     public synchronized void reset() {

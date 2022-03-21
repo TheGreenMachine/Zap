@@ -84,7 +84,7 @@ subsystems:
     ledmanager:
         implemented: true
         canifier: -1
-        candle: -1
+        candle: 22
         constants:
             raveEnabled: 1
             raveSpeed: 0.05
@@ -102,7 +102,7 @@ subsystems:
         talons:
             turret: 33 # need to set to pdp port number
         constants:
-            revLimit: 6456 # adjusted for zero-offset
+            revLimit: 7456 # adjusted for zero-offset
             fwdLimit: 41000 # adjusted for zero-offset
             absPosTicksSouth: 0 # absolute
             zeroOffset: 12639 # (turretPPR - non-adjusted fwdLimit - non-adjusted revlimit) / 2
@@ -116,7 +116,7 @@ subsystems:
         invertMotor:
             - shooterMain
         solenoids:
-            hood: 1
+            hood: 0
         pidConfig:
             slot0:
                 kP: 0.45
@@ -131,7 +131,7 @@ subsystems:
             rpmFloorCheck: 2000
             rpmEpsilonCheck: 60
             velocityThreshold: 500
-            nearVel: 11000
+            nearVel: 11250
             midVel: 9900
             farVel: 15000
             maxVel: 16500
@@ -200,6 +200,7 @@ subsystems:
         implemented: false
         constants:
             debug: 0
+            useShuffleboard: 1
             deviation: -20
 pcm: 2
 canivoreBusName: highSpeed

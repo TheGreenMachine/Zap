@@ -3,8 +3,12 @@ package com.team1816.season.subsystems;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.subsystems.Subsystem;
+import com.team1816.season.Constants;
 import com.team1816.season.RobotState;
 import com.team1816.lib.vision.VisionSocket;
+import edu.wpi.first.networktables.EntryListenerFlags;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 @Singleton
 public class Camera extends Subsystem {
@@ -14,6 +18,8 @@ public class Camera extends Subsystem {
     public final VisionSocket socket = new VisionSocket();
 
     public boolean enabled;
+
+    public double shuffleBoardDistance = -1;
 
     // Components
     @Inject
@@ -37,10 +43,7 @@ public class Camera extends Subsystem {
         double deltaXPixels = (x - (VIDEO_WIDTH / 2)); // Calculate deltaX from center of screen
         double base = Math.toDegrees(Math.atan2(deltaXPixels, CAMERA_FOCAL_LENGTH)) * 0.64;
         double deviation = factory.getConstant(NAME, "deviation", 0);
-        if (deviation != 0) {
-            base += deviation;
-        }
-        return base;
+        return base + deviation;
     }
 
     public double getDeltaXAngle() {
@@ -48,6 +51,10 @@ public class Camera extends Subsystem {
     }
 
     public double getDistance() {
+        if(factory.getConstant(NAME, "useShuffleboard", 0) > 0){
+            return shuffleBoardDistance;
+        }
+
         return state.visionPoint.dist;
     }
 
@@ -96,5 +103,21 @@ public class Camera extends Subsystem {
             cachePoint();
         }
         loops++;
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        SmartDashboard.putNumber("Dummy Camera Distance", this.shuffleBoardDistance);
+        SmartDashboard
+            .getEntry("Dummy Camera Distance")
+            .addListener(
+                notification -> setShuffleBoardDistance(notification.value.getDouble()),
+                EntryListenerFlags.kNew | EntryListenerFlags.kUpdate
+            );
+    }
+
+    public void setShuffleBoardDistance(double shuffleBoardDistance){
+        this.shuffleBoardDistance = shuffleBoardDistance;
+        System.out.println("setting camera dummy distance to " + shuffleBoardDistance);
     }
 }

@@ -89,12 +89,14 @@ public class Superstructure {
             System.out.println("revving!");
             shooter.setDesiredState(Shooter.SHOOTER_STATE.REVVING);
             if (useVision) {
+                camera.setEnabled(true);
                 shooter.setVelocity(getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
                 shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) == 1);
             } else {
                 shooter.setVelocity(shooterVel);
             }
         } else {
+//            camera.setEnabled(false);
             shooter.setDesiredState(Shooter.SHOOTER_STATE.COASTING);
         }
     }
@@ -106,6 +108,7 @@ public class Superstructure {
                 shooter.setHood(false);
             }
             if (useVision) {
+                spindexer.setSpindexer(getDistance(DistanceManager.SUBSYSTEM.SPINDEXER)); // is this needed in buckets? - TODO
                 elevator.setElevator(getDistance(DistanceManager.SUBSYSTEM.ELEVATOR));
                 shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) > 0);
             }

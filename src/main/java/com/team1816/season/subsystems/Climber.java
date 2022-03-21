@@ -63,8 +63,8 @@ public class Climber extends Subsystem {
         elevatorFollower.config_kD(0, config.kD, 100);
         elevatorFollower.config_kF(0, config.kF, 100);
 
-        elevator.configClosedloopRamp(.5, Constants.kCANTimeoutMs);
-        elevatorFollower.configClosedloopRamp(.5, Constants.kCANTimeoutMs);
+        elevator.configClosedloopRamp(.20, Constants.kCANTimeoutMs);
+        elevatorFollower.configClosedloopRamp(.20, Constants.kCANTimeoutMs);
 
         currentStage = 0;
 

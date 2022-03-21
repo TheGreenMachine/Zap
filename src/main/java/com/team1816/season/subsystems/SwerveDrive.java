@@ -330,7 +330,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             mPeriodicIO.desiredModuleStates[i] = new SwerveModuleState();
             mPeriodicIO.chassisSpeed = new ChassisSpeeds();
         }
-        robotState.field.setRobotPose(Constants.StartingPose);
+        robotState.reset(pose);
         autoModeSelector.setHardwareFailure(false);
         //        if (mPigeon.getLastError() != ErrorCode.OK) {
         //            // BadLog.createValue("PigeonErrorDetected", "true");

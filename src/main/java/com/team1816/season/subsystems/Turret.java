@@ -281,7 +281,6 @@ public class Turret extends Subsystem implements PidProvider {
                 break;
             case CENTER_FOLLOWING:
                 trackCenter();
-                //autoHome();
                 positionControl(followingTurretPos);
                 break;
             case ABSOLUTE_MADNESS:
