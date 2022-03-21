@@ -181,6 +181,6 @@ public class ControlBoard implements IControlBoard {
 
     @Override
     public boolean getHood() {
-        return mDriveControlBoard.getHood();
+        return mButtonControlBoard.getHood();
     }
 }

@@ -35,7 +35,7 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
 
     @Override
     public boolean getSlowMode() {
-        return mController.getTrigger(Controller.Axis.RIGHT_TRIGGER);
+        return mController.getButton(Controller.Button.R_JOYSTICK);
     }
 
     @Override
@@ -76,11 +76,6 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
     @Override
     public boolean getFieldRelative() {
         return !mController.getButton(XboxController.Button.LEFT_BUMPER);
-    }
-
-    @Override
-    public boolean getHood() {
-        return mController.getButton(LogitechController.Button.Y);
     }
 
     @Override

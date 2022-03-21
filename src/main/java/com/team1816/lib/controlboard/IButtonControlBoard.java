@@ -11,6 +11,8 @@ public interface IButtonControlBoard {
 
     boolean getFeederFlapIn();
 
+    boolean getHood();
+
     boolean getClimberUp();
 
     boolean getClimberDown();

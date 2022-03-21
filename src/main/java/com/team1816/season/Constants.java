@@ -58,8 +58,10 @@ public class Constants {
     );
     public static double kTrackScrubFactor = factory.getConstant("kTrackScrubFactor");
 
-    public static Pose2d StartingPose = new Pose2d(0.5, 3.5, new Rotation2d());
-    public static final Pose2d ZeroPose = StartingPose;
+    public static final Pose2d ZeroPose = new Pose2d(0.5, 3.5, EmptyRotation);
+    public static Pose2d StartingPose = ZeroPose;
+    public static Pose2d prevDrivePose = Constants.EmptyPose;
+
 
     // CAN Timeouts
     public static final int kCANTimeoutMs = 10; // use for important on the fly updates

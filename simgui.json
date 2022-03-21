@@ -118,6 +118,9 @@
   },
   "NetworkTables": {
     "SmartDashboard": {
+      "Drive": {
+        "open": true
+      },
       "Field": {
         "open": true
       },

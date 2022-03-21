@@ -76,6 +76,11 @@ public class TankDemoModeControlBoard implements IControlBoard {
     }
 
     @Override
+    public boolean getHood() {
+        return false;
+    }
+
+    @Override
     public boolean getClimberUp() {
         return false;
     }
@@ -213,11 +218,6 @@ public class TankDemoModeControlBoard implements IControlBoard {
 
     @Override
     public boolean getFieldRelative() {
-        return false;
-    }
-
-    @Override
-    public boolean getHood() {
         return false;
     }
 }

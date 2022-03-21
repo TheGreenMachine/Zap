@@ -76,8 +76,6 @@ public class Robot extends TimedRobot {
 
     // private PowerDistributionPanel pdp = new PowerDistributionPanel();
     private Turret.ControlMode prevTurretControlMode = Turret.ControlMode.CENTER_FOLLOWING;
-    private Pose2d prevDrivePose = Constants.EmptyPose;
-    private Rotation2d prevTurretAngle = Constants.EmptyRotation;
     private boolean faulted;
 
     Robot() {
@@ -333,13 +331,10 @@ public class Robot extends TimedRobot {
                         () -> mSuperstructure.setCollecting(false)
                     ),
                     createAction(
-                        mControlBoard::getZeroPose,
+                        mControlBoard::getZeroPose, // line up against ally field wall and point turret forward -> zero
                         () -> {
                             mDrive.zeroSensors(Constants.ZeroPose);
-                            mRobotState.reset(
-                                Constants.ZeroPose,
-                                Constants.EmptyRotation
-                            );
+                            mTurret.zeroSensors();
                         }
                     ),
                     createHoldAction(
@@ -371,6 +366,10 @@ public class Robot extends TimedRobot {
                     createAction(
                         mControlBoard::getIncrementClimberStage,
                         mClimber::incrementClimberStage
+                    ),
+                    createAction(
+                        mControlBoard::getIncrementClimberStage,
+                        mClimber::incrementClimberStage
                     )
                 );
         } catch (Throwable t) {
@@ -382,8 +381,7 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         try {
-            prevDrivePose = mDrive.getPose();
-            prevTurretAngle = mRobotState.vehicle_to_turret;
+            Constants.prevDrivePose = mDrive.getPose();
             mEnabledLooper.stop();
 
             ledManager.setDefaultStatus(LedManager.RobotStatus.DISABLED);
@@ -421,8 +419,7 @@ public class Robot extends TimedRobot {
             mHasBeenEnabled = true;
 
             mDrive.zeroSensors();
-//            mTurret.zeroSensors();
-            mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
+            mTurret.zeroSensors();
 
             mSuperstructure.setStopped(false);
 
@@ -449,20 +446,19 @@ public class Robot extends TimedRobot {
                 mAutoModeExecutor.stop();
             }
 
+//            mDrive.setHeading( // may not be needed - if not working make a prev turret rotation - track then set on teleopInit
+//                prevDrivePose.getRotation()
+//            );
+
             mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
             mTurret.zeroSensors();
-            mDrive.zeroSensors(prevDrivePose);
+            mDrive.zeroSensors(Constants.prevDrivePose);
             mClimber.zeroSensors();
-
-            mDrive.setHeading( // may not be needed - if not working make a prev turret rotation - track then set on teleopInit
-                prevDrivePose.getRotation()
-            );
-//            mRobotState.reset(prevDrivePose, prevTurretAngle);
 
             mHasBeenEnabled = true;
 
             mEnabledLooper.start();
-            mTurret.setControlMode(Turret.ControlMode.CENTER_FOLLOWING);
+            mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
 
             mCamera.setEnabled(false); // do we enable here or only when we use vision? - this may cause an error b/c we enable more than once
 
@@ -491,7 +487,7 @@ public class Robot extends TimedRobot {
 
             mEnabledLooper.stop();
             mDisabledLooper.start();
-//            mTurret.zeroSensors();
+            mTurret.zeroSensors();
             mDrive.zeroSensors();
 
             blinkTimer.reset();

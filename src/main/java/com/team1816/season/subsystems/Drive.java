@@ -386,6 +386,7 @@ public abstract class Drive
                 entryNotification -> {
                     if (entryNotification.value.getBoolean()) {
                         zeroSensors();
+                        Constants.prevDrivePose = Constants.ZeroPose;
                         entryNotification.getEntry().setBoolean(false);
                     }
                 },

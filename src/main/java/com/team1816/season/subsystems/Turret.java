@@ -24,7 +24,7 @@ public class Turret extends Subsystem implements PidProvider {
     public static final double CARDINAL_NORTH = 180; // deg
     public static final double CARDINAL_WEST = 90; // deg
     public static final String NAME = "turret";
-    private static int HALF_ENCPPR;
+    private static int HALF_ABS_ENCPPR;
     public static int TURRET_LIMIT_REVERSE =
         ((int) factory.getConstant(NAME, "revLimit"));
     public static int TURRET_LIMIT_FORWARD =
@@ -36,7 +36,7 @@ public class Turret extends Subsystem implements PidProvider {
     private static final int kPrimaryCloseLoop = 0;
     private static final int kPIDGyroIDx = 0;
     private static final int kPIDVisionIDx = 0;
-    public static int TURRET_ENCODER_PPR = 4096;
+    public static int TURRET_ABS_ENCODER_PPR = 4096;
     public final int TURRET_PPR;
     private final int TURRET_MASK;
     private final double TURRET_ENC_RATIO;
@@ -59,6 +59,8 @@ public class Turret extends Subsystem implements PidProvider {
     private final double kF;
     // State
     private int desiredTurretPos = 0;
+    private int desiredTurretPosOffset = 0;
+
     private int followingTurretPos = 0;
     private double turretSpeed;
     private boolean outputsChanged = true;
@@ -67,13 +69,13 @@ public class Turret extends Subsystem implements PidProvider {
     public Turret() {
         super(NAME);
         this.turret = factory.getMotor(NAME, "turret");
-        TURRET_ENCODER_PPR = (int) factory.getConstant(NAME, "encPPR");
+        TURRET_ABS_ENCODER_PPR = (int) factory.getConstant(NAME, "encPPR");
         TURRET_PPR = (int) factory.getConstant(NAME, "turretPPR");
         TURRET_MASK = TURRET_PPR - 1;
-        TURRET_ENC_RATIO = (double) TURRET_PPR / TURRET_ENCODER_PPR;
+        TURRET_ENC_RATIO = (double) TURRET_PPR / TURRET_ABS_ENCODER_PPR;
         ABS_TICKS_SOUTH = ((int) factory.getConstant(NAME, "absPosTicksSouth"));
-        HALF_ENCPPR = TURRET_ENCODER_PPR / 2 - HALF_ENCPPR;
-        ZERO_OFFSET = (int) factory.getConstant(NAME, "zeroOffset") + HALF_ENCPPR; //add offset to keep turret in positive range
+        HALF_ABS_ENCPPR = TURRET_ABS_ENCODER_PPR / 2 - HALF_ABS_ENCPPR;
+        ZERO_OFFSET = (int) factory.getConstant(NAME, "zeroOffset") + HALF_ABS_ENCPPR; //add offset to keep turret in positive range
         turret.setNeutralMode(NeutralMode.Brake);
 
         PIDSlotConfiguration pidConfig = factory.getPidSlotConfig(NAME, pidSlot);
@@ -134,17 +136,15 @@ public class Turret extends Subsystem implements PidProvider {
     public synchronized void zeroSensors() {
         if (turret instanceof IMotorSensor) {
             var sensors = (IMotorSensor) turret;
-            // If we have a sensor position that resides within the same absolute encoder revolution as the abs_ticks_south position then it is safe to reset
-            if (
-                sensors.getQuadraturePosition() < TURRET_ENCODER_PPR &&
-                sensors.getQuadraturePosition() > -1
-            ) {
-                //get absolute sensor value
-                var sensorVal = sensors.getPulseWidthPosition(); // absolute
-                if (sensorVal > -1 && sensorVal < TURRET_ENCODER_PPR) {
-                    var offset = ZERO_OFFSET - sensorVal + HALF_ENCPPR;
+            var absSensorVal = sensors.getPulseWidthPosition(); // absolute
+            var offset = ZERO_OFFSET - absSensorVal;
+
+            // It is safe to reset quadrature if turret enc reads ~0 (on startup)
+            if (Math.abs(sensors.getQuadraturePosition()) < HALF_ABS_ENCPPR) {
+                //second check - don't zero if abs enc not in viable range
+                if (absSensorVal > -1 && absSensorVal < TURRET_ABS_ENCODER_PPR) {
                     sensors.setQuadraturePosition(offset);
-                    System.out.println("Zeroing turret! Offset: " + offset);
+                    System.out.println("Zeroing turret limits! Offset: " + offset);
                 } else {
                     DriverStation.reportError(
                         "ABSOLUTE ENCODER INVALID RANGE - not zeroing",
@@ -152,12 +152,15 @@ public class Turret extends Subsystem implements PidProvider {
                     );
                 }
             } else {
-                System.out.println("unsafe to zero turret sensors! NOT ZEROING");
-                // should we directly make turret into manual control at this point?
+                System.out.println("UNSAFE - NOT ZEROING TURRET QUADRATURE");
+            }
+
+            // If turret enc reads ~offset (is pointing forward after startup) then reset turret tracking positions (for joystick/setAngle calls)
+            if(Math.abs(sensors.getQuadraturePosition() - offset) < HALF_ABS_ENCPPR){
+                System.out.println("zeroing turret positions (not quadrature)");
+                desiredTurretPosOffset = desiredTurretPos;
             }
         }
-        setTurretAngle(CARDINAL_SOUTH);
-        robotState.vehicle_to_turret = Constants.EmptyRotation;
     }
 
     public ControlMode getControlMode() {
@@ -218,6 +221,7 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     private synchronized void setTurretPosition(double position) {
+        position -= desiredTurretPosOffset;
         //Since we are using position we need ensure value stays in one rotation
         if (desiredTurretPos != (int) position) {
             desiredTurretPos = (int) position;

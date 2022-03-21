@@ -231,7 +231,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             mDriveControlState = DriveControlState.OPEN_LOOP;
         }
         mPeriodicIO.use_heading_controller = use_heading_controller;
-
         SwerveDriveSignal signal = swerveDriveHelper.calculateDriveSignal(
             forward,
             strafe,
@@ -330,7 +329,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             mPeriodicIO.desiredModuleStates[i] = new SwerveModuleState();
             mPeriodicIO.chassisSpeed = new ChassisSpeeds();
         }
-        robotState.reset(pose);
         autoModeSelector.setHardwareFailure(false);
         //        if (mPigeon.getLastError() != ErrorCode.OK) {
         //            // BadLog.createValue("PigeonErrorDetected", "true");

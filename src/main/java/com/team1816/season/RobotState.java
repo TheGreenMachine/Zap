@@ -44,11 +44,11 @@ public class RobotState {
         Pose2d initial_field_to_vehicle
     ) {
         field_to_vehicle = initial_field_to_vehicle;
-        field.setRobotPose(initial_field_to_vehicle);
+//        field.setRobotPose(initial_field_to_vehicle);
     }
 
     public synchronized void reset() {
-        reset(Constants.StartingPose, Constants.EmptyRotation);
+        reset(Constants.StartingPose);
     }
 
     public synchronized Pose2d getLatestFieldToVehicle() {

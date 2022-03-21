@@ -29,5 +29,4 @@ public interface IDriveControlBoard {
 
     boolean getFieldRelative();
 
-    boolean getHood();
 }
