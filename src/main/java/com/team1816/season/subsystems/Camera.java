@@ -6,6 +6,7 @@ import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
 import com.team1816.season.RobotState;
 import com.team1816.lib.vision.VisionSocket;
+import java.util.ArrayList;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -33,6 +34,7 @@ public class Camera extends Subsystem {
     private static final double VIDEO_WIDTH = 672.0; // px
     public static final double ALLOWABLE_AIM_ERROR = 0.2; // deg
     private int loops = 0;
+    private ArrayList<Double> distances = new ArrayList<Double>();
 
     public Camera() {
         super(NAME);
@@ -87,8 +89,17 @@ public class Camera extends Subsystem {
         }
         state.visionPoint.cX = Double.parseDouble(data[1]);
         state.visionPoint.cY = Double.parseDouble(data[2]);
-        state.visionPoint.dist = Double.parseDouble(data[3]);
+        distances.add(Double.parseDouble(data[3]));
         state.visionPoint.deltaX = parseDeltaX(state.visionPoint.cX);
+
+        if (loops % 5 == 0) {
+            state.visionPoint.dist = distances
+                .stream()
+                .mapToDouble(Double::doubleValue)
+                .average()
+                .orElse(0.0);
+            distances.clear();
+        }
     }
 
     public void stop() {

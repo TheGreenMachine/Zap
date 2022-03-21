@@ -450,7 +450,7 @@ public class Robot extends TimedRobot {
             }
 
             mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
-//            mTurret.zeroSensors();
+            mTurret.zeroSensors();
             mDrive.zeroSensors(prevDrivePose);
             mClimber.zeroSensors();
 

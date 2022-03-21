@@ -156,6 +156,8 @@ public class Turret extends Subsystem implements PidProvider {
                 // should we directly make turret into manual control at this point?
             }
         }
+        setTurretAngle(CARDINAL_SOUTH);
+        robotState.vehicle_to_turret = Constants.EmptyRotation;
     }
 
     public ControlMode getControlMode() {
