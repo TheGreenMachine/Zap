@@ -19,11 +19,12 @@ public class Elevator extends Subsystem {
     private double elevatorPower;
     private boolean outputsChanged;
     private ELEVATOR_STATE state = ELEVATOR_STATE.STOP;
-    private boolean distanceManaged = false;
+
 
     // Constants
     private final double FLUSH;
-    private final double FIRE;
+    private final double VELOCITY_THRESHOLD;
+    private double FIRE; // bear in mind this is overridden
 
     public Elevator() {
         super(NAME);
@@ -34,28 +35,29 @@ public class Elevator extends Subsystem {
 
         FLUSH = factory.getConstant(NAME, "flushPow", -0.5);
         FIRE = factory.getConstant(NAME, "firePow", 0.5);
+        VELOCITY_THRESHOLD = factory.getConstant(NAME, "velocityThreshold", 100);
     }
 
-    public void setElevator(double elevatorOutput) {
+    public void overridePower(double newFirePow){
+        FIRE = newFirePow;
+    }
+
+    private void setElevator(double elevatorOutput) {
         this.elevatorPower = elevatorOutput;
-        outputsChanged = true;
+    }
+
+    private void lockToShooter(){
+        if (robotState.shooterState == Shooter.SHOOTER_STATE.REVVING) {
+            setElevator(FIRE);
+        } else {
+            outputsChanged = true; // keep looping through writeToHardware if shooter not up to speed
+        }
     }
 
     public void setDesiredState(ELEVATOR_STATE state) {
         if (this.state != state) {
             this.state = state;
-            switch (state) {
-                case STOP:
-                    setElevator(0);
-                    robotState.elevatorState = ELEVATOR_STATE.STOP;
-                    break;
-                case FIRE: // dealt with in read - waiting for shooter state
-                    break;
-                case FLUSH:
-                    setElevator(FLUSH);
-                    robotState.elevatorState = ELEVATOR_STATE.FLUSH;
-                    break;
-            }
+            outputsChanged = true;
             System.out.println("DESIRED ELEVATOR STATE = " + state);
         }
     }
@@ -72,15 +74,18 @@ public class Elevator extends Subsystem {
 
     @Override
     public void readFromHardware() {
-        if (
-            robotState.shooterState == Shooter.SHOOTER_STATE.REVVING &&
-            state != robotState.elevatorState
-        ) {
-            robotState.elevatorState = ELEVATOR_STATE.FIRE;
-            setElevator(FIRE);
-            if (elevatorPower != FIRE) {
-                System.out.println("ACTUAL ELEVATOR STATE = FIRE");
+        double actualVel = elevator.getSelectedSensorVelocity(0);
+        if(state != robotState.elevatorState){
+
+            if(Math.abs(actualVel) < VELOCITY_THRESHOLD) {
+                robotState.elevatorState = ELEVATOR_STATE.STOP;
+            } else if (actualVel > VELOCITY_THRESHOLD) {
+                robotState.elevatorState = ELEVATOR_STATE.FIRE;
+            } else if(actualVel < -VELOCITY_THRESHOLD){
+                robotState.elevatorState = ELEVATOR_STATE.FLUSH;
             }
+
+            System.out.println("ACTUAL ELEVATOR STATE = " + robotState.elevatorState);
         }
     }
 
@@ -88,11 +93,20 @@ public class Elevator extends Subsystem {
     public void writeToHardware() {
         if (outputsChanged) {
             outputsChanged = false;
-
+            switch (state) {
+                case STOP:
+                    setElevator(0);
+                    break;
+                case FIRE:
+                    lockToShooter();
+                    break;
+                case FLUSH:
+                    setElevator(FLUSH);
+                    break;
+            }
             System.out.println(elevatorPower + " = elevator power");
             this.elevator.set(ControlMode.PercentOutput, elevatorPower);
             // create ball color updating here once sensor created
-            distanceManaged = false;
         }
     }
 

@@ -6,6 +6,9 @@ import com.google.inject.Singleton;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import org.ejml.dense.row.SpecializedOps_FDRM;
+
+import javax.print.attribute.standard.MediaSize;
 
 @Singleton
 public class Spindexer extends Subsystem {
@@ -28,6 +31,7 @@ public class Spindexer extends Subsystem {
     private final double INDEX;
     private final double FLUSH;
     private final double FIRE;
+    private final double VELOCITY_THRESHOLD;
 
     public Spindexer() {
         super(NAME);
@@ -38,11 +42,19 @@ public class Spindexer extends Subsystem {
         INDEX = factory.getConstant(NAME, "indexPow", -0.25);
         FLUSH = factory.getConstant(NAME, "flushPow", -1);
         FIRE = factory.getConstant(NAME, "firePow", 1);
+        VELOCITY_THRESHOLD = factory.getConstant(NAME, "velocityThreshold", 100);
     }
 
-    public void setSpindexer(double spindexerPower) {
+    private void setSpindexer(double spindexerPower) {
         this.spindexerPower = spindexerPower;
-        outputsChanged = true;
+    }
+
+    private void lockToShooter(){ // bear in mind this might never fire if shooter not implemented - not rly important tho
+        if (robotState.shooterState == Shooter.SHOOTER_STATE.REVVING) {
+            setSpindexer(FIRE);
+        } else {
+            outputsChanged = true; // keep looping through writeToHardWare if shooter not up to speed
+        }
     }
 
     public void setFeederFlap(boolean feederFlapOut) {
@@ -53,41 +65,26 @@ public class Spindexer extends Subsystem {
     public void setDesiredState(SPIN_STATE state) {
         if (this.state != state) {
             this.state = state;
-            switch (state) {
-                case STOP:
-                    setSpindexer(0);
-                    robotState.spinState = SPIN_STATE.STOP;
-                    break;
-                case COLLECT:
-                    robotState.spinState = SPIN_STATE.COLLECT;
-                    setSpindexer(COLLECT);
-                    break;
-                case INDEX:
-                    robotState.spinState = SPIN_STATE.INDEX;
-                    setSpindexer(INDEX);
-                    break;
-                case FLUSH:
-                    robotState.spinState = SPIN_STATE.FLUSH;
-                    setSpindexer(FLUSH);
-                    break;
-                case FIRE:
-                    break;
-            }
             System.out.println("DESIRED SPINDEXER STATE = " + state);
         }
     }
 
     @Override
     public void readFromHardware() {
-        if (
-            robotState.shooterState == Shooter.SHOOTER_STATE.REVVING &&
-            state != robotState.spinState
-        ) {
-            if (spindexerPower != FIRE) {
-                System.out.println("ACTUAL SPINDEXER STATE = FIRE");
+        if(state != robotState.spinState){
+            double actualVel = spindexer.getSelectedSensorVelocity(0);
+
+            if(state == SPIN_STATE.COLLECT || state == SPIN_STATE.INDEX){ // logic not yet made for collect / index
+                robotState.spinState = state;
+            } else if(Math.abs(actualVel) < VELOCITY_THRESHOLD) {
+                robotState.spinState = SPIN_STATE.STOP;
+            } else if (actualVel > VELOCITY_THRESHOLD) {
+                robotState.spinState = SPIN_STATE.FIRE;
+            } else if(actualVel < -VELOCITY_THRESHOLD){
+                robotState.spinState = SPIN_STATE.FLUSH;
             }
-            robotState.spinState = SPIN_STATE.FIRE;
-            setSpindexer(FIRE);
+
+            System.out.println("ACTUAL ELEVATOR STATE = " + robotState.elevatorState);
         }
     }
 
@@ -95,6 +92,23 @@ public class Spindexer extends Subsystem {
     public void writeToHardware() {
         if (outputsChanged) {
             outputsChanged = false;
+            switch (state) {
+                case STOP:
+                    setSpindexer(0);
+                    break;
+                case COLLECT:
+                    setSpindexer(COLLECT);
+                    break;
+                case INDEX:
+                    setSpindexer(INDEX);
+                    break;
+                case FLUSH:
+                    setSpindexer(FLUSH);
+                    break;
+                case FIRE:
+                    lockToShooter();
+                    break;
+            }
             System.out.println(spindexerPower + " = spindexer pow");
             spindexer.set(ControlMode.PercentOutput, spindexerPower);
             this.feederFlap.set(feederFlapOut);

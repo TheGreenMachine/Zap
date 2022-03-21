@@ -31,7 +31,6 @@ public class Shooter extends Subsystem implements PidProvider {
     private boolean hoodOut;
     private double velocityDemand;
     private double actualShooterVelocity;
-    private double closedLoopError;
 
     // Constants
     private final String pidSlot = "slot0";
@@ -127,11 +126,6 @@ public class Shooter extends Subsystem implements PidProvider {
         return Math.abs(actualShooterVelocity - velocityDemand);
     }
 
-    public void setVelocity(double velocity) {
-        velocityDemand = velocity;
-        outputsChanged = true;
-    }
-
     public void setVelocityAlt(double velocity) {
         Translation2d chassisVelocity = new Translation2d(
             robotState.chassis_speeds.vxMetersPerSecond,
@@ -166,19 +160,15 @@ public class Shooter extends Subsystem implements PidProvider {
         this.outputsChanged = true;
     }
 
+    public void setVelocity(double velocity) {
+        velocityDemand = velocity;
+        outputsChanged = true;
+    }
+
     public void setDesiredState(SHOOTER_STATE state) {
         if (state != this.state) {
             this.state = state;
-            switch (state) {
-                case STOP:
-                    setVelocity(0);
-                    break;
-                case REVVING:
-                    break;
-                case COASTING:
-                    setVelocity(COAST_VELOCITY);
-                    break;
-            }
+            outputsChanged = true;
             System.out.println("DESIRED SHOOTER STATE = " + state);
         }
     }
@@ -188,6 +178,44 @@ public class Shooter extends Subsystem implements PidProvider {
             Math.abs(velocityDemand - actualShooterVelocity) < VELOCITY_THRESHOLD &&
                 (int) velocityDemand != COAST_VELOCITY
         );
+    }
+
+    @Override
+    public void readFromHardware() {
+        actualShooterVelocity = shooterMain.getSelectedSensorVelocity(0);
+
+        if (state != robotState.shooterState) {
+            if (actualShooterVelocity < VELOCITY_THRESHOLD) {
+                robotState.shooterState = SHOOTER_STATE.STOP;
+            } else if (isVelocityNearTarget()) {
+                robotState.shooterState = SHOOTER_STATE.REVVING;
+            } else {
+                robotState.shooterState = SHOOTER_STATE.COASTING;
+            }
+            if (state == SHOOTER_STATE.REVVING) {
+                System.out.println("ACTUAL SHOOTER STATE = " + robotState.shooterState);
+            }
+        }
+    }
+
+    @Override
+    public void writeToHardware() {
+        if (outputsChanged) {
+            outputsChanged = false;
+            switch (state) {
+                case STOP:
+                    setVelocity(0);
+                    break;
+                case REVVING: // velocity is set in higher classes (superstructure)
+                    break;
+                case COASTING:
+                    setVelocity(COAST_VELOCITY);
+                    break;
+            }
+            hood.set(hoodOut);
+            System.out.println("velocity shooter demand = " + velocityDemand);
+            shooterMain.set(ControlMode.Velocity, velocityDemand);
+        }
     }
 
     public double convertShooterTicksToMetersPerSecond(double ticks) {
@@ -214,45 +242,8 @@ public class Shooter extends Subsystem implements PidProvider {
     private static double crossProduct(Translation2d a, Translation2d b) {
         double [] vect_A = {a.getX(), a.getY(), 0};
         double [] vect_B = {b.getX(), b.getY(), 0};
-        double [] cross_P = new double[3];
-        cross_P[0] = vect_A[1] * vect_B[2]
-            - vect_A[2] * vect_B[1];
-        cross_P[1] = vect_A[2] * vect_B[0]
-            - vect_A[0] * vect_B[2];
-        cross_P[2] = vect_A[0] * vect_B[1]
+        return vect_A[0] * vect_B[1]
             - vect_A[1] * vect_B[0];
-        return cross_P[2];
-    }
-
-    @Override
-    public void readFromHardware() {
-        actualShooterVelocity = shooterMain.getSelectedSensorVelocity(0);
-        closedLoopError = shooterMain.getClosedLoopError(0);
-        robotState.shooterSpeed = convertShooterTicksToMetersPerSecond(actualShooterVelocity); //arbitrary constants, need to be measured
-
-        if (state != robotState.shooterState) {
-            if (actualShooterVelocity < VELOCITY_THRESHOLD) {
-                robotState.shooterState = SHOOTER_STATE.STOP;
-            } else if (isVelocityNearTarget()) {
-                robotState.shooterState = SHOOTER_STATE.REVVING;
-            } else {
-                robotState.shooterState = SHOOTER_STATE.COASTING;
-            }
-            if (state == SHOOTER_STATE.REVVING) {
-                System.out.println("ACTUAL SHOOTER STATE = " + robotState.shooterState);
-            }
-        }
-    }
-
-    @Override
-    public void writeToHardware() {
-        if (outputsChanged) {
-            outputsChanged = false;
-
-            hood.set(hoodOut);
-            System.out.println("velocity shooter demand = " + velocityDemand);
-            shooterMain.set(ControlMode.Velocity, velocityDemand);
-        }
     }
 
     @Override

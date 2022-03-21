@@ -57,7 +57,7 @@ public class Superstructure {
         collecting = false;
         revving = false;
         firing = false;
-        System.out.println("stopping/starting orchestrator");
+        System.out.println("stopping/starting superstructure");
     }
 
     public void setCollecting(boolean backSpin) {
@@ -72,7 +72,7 @@ public class Superstructure {
             } else {
                 collector.setDesiredState(Collector.COLLECTOR_STATE.COLLECTING);
             }
-            if (!firing) { // TODO set up logic to minimize / remove all ifs
+            if (!firing) {
                 spindexer.setDesiredState(Spindexer.SPIN_STATE.COLLECT);
             }
         } else {
@@ -91,10 +91,11 @@ public class Superstructure {
             if (useVision) {
                 camera.setEnabled(true);
                 shooter.setVelocity(getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
-                shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) == 1);
+                shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) > 0);
             } else {
                 shooter.setVelocity(shooterVel);
             }
+            System.out.println("superstructure set to rev");
         } else {
 //            camera.setEnabled(false);
             shooter.setDesiredState(Shooter.SHOOTER_STATE.COASTING);
@@ -104,17 +105,16 @@ public class Superstructure {
     public void setFiring(boolean firing) {
         this.firing = firing;
         if (firing) {
+            spindexer.setDesiredState(Spindexer.SPIN_STATE.FIRE);
+            elevator.setDesiredState(Elevator.ELEVATOR_STATE.FIRE);
+
             if (!elevator.colorOfBall()) { // spit out ball if wrong color
                 shooter.setHood(false);
             }
             if (useVision) {
-                spindexer.setSpindexer(getDistance(DistanceManager.SUBSYSTEM.SPINDEXER)); // is this needed in buckets? - TODO
-                elevator.setElevator(getDistance(DistanceManager.SUBSYSTEM.ELEVATOR));
-                shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) > 0);
+                elevator.overridePower(getDistance(DistanceManager.SUBSYSTEM.ELEVATOR));
             }
-            System.out.println("FIRING!");
-            spindexer.setDesiredState(Spindexer.SPIN_STATE.FIRE);
-            elevator.setDesiredState(Elevator.ELEVATOR_STATE.FIRE);
+            System.out.println("superstructure set to fire");
         } else {
             if (!collecting) {
                 spindexer.setDesiredState(Spindexer.SPIN_STATE.STOP);
