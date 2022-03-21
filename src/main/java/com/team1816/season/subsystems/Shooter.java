@@ -144,14 +144,15 @@ public class Shooter extends Subsystem implements PidProvider {
         // setting velocity
         velocityDemand =
             convertShooterMetersToTicksPerSecond(
-                convertShooterTicksToMetersPerSecond(velocity) -
+                convertShooterTicksToMetersPerSecond(velocity, (hoodOut?45.0:20.0)) -
                     chassisVelocity.getNorm() *
                         Math.cos(
                             getAngleBetween(
                                 chassisVelocity,
                                 shooterDirection
                             )
-                        )
+                        ),
+                (hoodOut?45.0:20.0)
             );
             /*convertShooterMetersToTicksPerSecond( //alternate
                 chassisVelocity.getX() *
@@ -190,11 +191,11 @@ public class Shooter extends Subsystem implements PidProvider {
         );
     }
 
-    public double convertShooterTicksToMetersPerSecond(double ticks) {
+    public double convertShooterTicksToMetersPerSecond(double ticks, double hoodAngleDegrees) {
         return 0;
     }
 
-    public double convertShooterMetersToTicksPerSecond(double metersPerSecond) {
+    public double convertShooterMetersToTicksPerSecond(double metersPerSecond, double hoodAngleDegrees) {
         return 0;
     }
 
@@ -228,6 +229,7 @@ public class Shooter extends Subsystem implements PidProvider {
     public void readFromHardware() {
         actualShooterVelocity = shooterMain.getSelectedSensorVelocity(0);
         closedLoopError = shooterMain.getClosedLoopError(0);
+        robotState.shooterSpeed = convertShooterTicksToMetersPerSecond(actualShooterVelocity, hoodOut?45:20); //arbitrary constants, need to be measured
 
         if (state != robotState.shooterState) {
             if (actualShooterVelocity < VELOCITY_THRESHOLD) {

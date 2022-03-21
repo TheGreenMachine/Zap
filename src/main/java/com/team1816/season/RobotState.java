@@ -15,6 +15,7 @@ public class RobotState {
     public Rotation2d vehicle_to_turret = Constants.EmptyRotation;
     public Twist2d delta_field_to_vehicle = new Twist2d();
     public ChassisSpeeds chassis_speeds = new ChassisSpeeds(0, 0, 0);
+    public double shooterSpeed = 0;
 
     // Superstructure ACTUAL states
     public Point visionPoint = new Point();
@@ -57,7 +58,7 @@ public class RobotState {
     }
 
     public double getCurrentShooterSpeedMetersPerSecond() {
-        return 5; // just an arbitrary constant. to be changed later
+        return shooterSpeed;
     }
 
     public boolean isStationary() {
