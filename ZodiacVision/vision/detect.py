@@ -12,9 +12,8 @@ def midpoint(x1, y1, x2, y2):
     return (x1 + x2)/2, (y1 + y2)/2
 
 class Detector:
-    def __init__(self, nt, vs):
+    def __init__(self, vs):
         self.frame = 0
-        self.nt = nt
         self.vs = vs
 
     def preProcessFrame(self, frame):
@@ -47,17 +46,22 @@ class Detector:
 
             cx_real, cy_real = midpoint(cx1, cy1, cx2, cy2)
             cx_real, cy_real = int(cx_real), int(cy_real)
-            err, point3D = point_cloud.get_value(cx_real, cy_real)
-            distance = math.sqrt(point3D[0] * point3D[0] + point3D[1] * point3D[1] + point3D[2] * point3D[2])
+            err, point3D = point_cloud.get_value(cx1, cy1)
+            distance1 = math.sqrt(point3D[0] * point3D[0] + point3D[1] * point3D[1] + point3D[2] * point3D[2])
+            err, point3D = point_cloud.get_value(cx2, cy2)
+            distance2 = math.sqrt(point3D[0] * point3D[0] + point3D[1] * point3D[1] + point3D[2] * point3D[2])
+            distance = (distance1 + distance2) / 2
             if math.isnan(distance) or math.isinf(distance):
-                self.nt.putValue('distance', -1)
                 self.vs.updateSavedDistance(-1)
-                self.vs.updateSavedCenter(cx_real, cy_real)
+                self.vs.updateSavedCenter(-1, -1)
                 return largest, second
-            self.nt.putValue('distance', round(distance))
+            #with open('/home/jetson/ZodiacVision/distanceout.txt', 'a') as f:
+            #    f.write(str(round(distance)) + '\n')
             self.vs.updateSavedDistance(round(distance))
             self.vs.updateSavedCenter(cx_real, cy_real)
             return largest, second
+        self.vs.updateSavedDistance(-1)
+        self.vs.updateSavedCenter(-1, -1)
         return -1, -1
     def findTarget(self, mask):
         contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -76,11 +80,12 @@ class Detector:
         cv2.rectangle(frame, (x1, y1), (x1 + w1, y1 + h1), (255, 0, 255), 2)
         cx1 = (int(x + (w / 2)))
         cy1 = (int(y + (h / 2)))
+        drawn_frame = cv2.circle(frame, (int(cx1), int(cy1)), radius=0, color=(255, 0, 255), thickness=3)
 
         cx2 = (int(x1 + (w1 / 2)))
         cy2 = (int(y1 + (h1 / 2)))
 
         cx_real, cy_real = midpoint(cx1, cy1, cx2, cy2)
 
-        drawn_frame = cv2.circle(frame, (int(cx_real), int(cy_real)), radius=0, color=(255, 0, 255), thickness=5)
+        drawn_frame = cv2.circle(drawn_frame, (int(cx_real), int(cy_real)), radius=0, color=(255, 0, 255), thickness=5)
         return drawn_frame
