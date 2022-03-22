@@ -1,6 +1,6 @@
 import socket
 import threading
-
+import copy
 import yaml
 
 
@@ -15,6 +15,7 @@ class ThreadedVisionServer(object):
         self.cy = '-1'
         self.distance = '-1'
         self.yml_data = yaml_data
+        self.original_yml = copy.deepcopy(yaml_data)
         self.yml_path = yml_path
         self.update_exposure = False
         self.calib_camera = False
@@ -78,37 +79,34 @@ class ThreadedVisionServer(object):
         if key == "HMIN":
             value = float(value)
             self.yml_data['color']['lower']['H'] = value
-            dumpYML()
         elif key == "SMIN":
             value = float(value)
             self.yml_data['color']['lower']['S'] = value
-            dumpYML()
         elif key == "VMIN":
             value = float(value)
             self.yml_data['color']['lower']['V'] = value
-            dumpYML()
         elif key == "HMAX":
             value = float(value)
             self.yml_data['color']['upper']['H'] = value
-            dumpYML()
         elif key == "SMAX":
             value = float(value)
             self.yml_data['color']['upper']['S'] = value
-            dumpYML()
         elif key == "VMAX":
             value = float(value)
             self.yml_data['color']['upper']['V'] = value
-            dumpYML()
         elif key == "EXPS":
             value = float(value)
             self.yml_data['camera']['exposure'] = value
-            dumpYML()
             self.update_exposure = True
         elif key == "LINE":
             self.yml_data['stream']['line'] = value
-            dumpYML()
             self.line = True
         elif key == "CalibrationCamera":
             self.calib_camera = value
+        elif key == "RESET":
+            self.yml_data.update(self.original_yml)
+            dumpYML()
+        elif key == "SAVE":
+            dumpYML()
         print(self.yml_data)
 
