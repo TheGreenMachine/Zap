@@ -334,7 +334,6 @@ public class Robot extends TimedRobot {
                         mControlBoard::getZeroPose, // line up against ally field wall and point turret forward -> zero
                         () -> {
                             mDrive.zeroSensors(Constants.ZeroPose);
-                            mTurret.zeroSensors();
                         }
                     ),
                     createHoldAction(
@@ -446,9 +445,9 @@ public class Robot extends TimedRobot {
                 mAutoModeExecutor.stop();
             }
 
-//            mDrive.setHeading( // may not be needed - if not working make a prev turret rotation - track then set on teleopInit
-//                prevDrivePose.getRotation()
-//            );
+            mDrive.setHeading( // may not be needed - if not working make a prev turret rotation - track then set on teleopInit
+                Constants.prevDrivePose.getRotation()
+            );
 
             mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
             mTurret.zeroSensors();
@@ -458,7 +457,7 @@ public class Robot extends TimedRobot {
             mHasBeenEnabled = true;
 
             mEnabledLooper.start();
-            mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
+            mTurret.setControlMode(Turret.ControlMode.CENTER_FOLLOWING);
 
             mCamera.setEnabled(false); // do we enable here or only when we use vision? - this may cause an error b/c we enable more than once
 

@@ -62,6 +62,7 @@ public class Turret extends Subsystem implements PidProvider {
     private int desiredTurretPosOffset = 0;
 
     private int followingTurretPos = 0;
+    private int visionCorroboration = 0;
     private double turretSpeed;
     private boolean outputsChanged = true;
     private ControlMode controlMode = ControlMode.MANUAL;
@@ -364,7 +365,7 @@ public class Turret extends Subsystem implements PidProvider {
         int fieldTickOffset = fieldFollowingOffset();
         int centerOffset = centerFollowingOffset();
 
-        int adj = (desiredTurretPos + fieldTickOffset + centerOffset);
+        int adj = (desiredTurretPos + fieldTickOffset + centerOffset + visionCorroboration);
         if (adj != followingTurretPos) {
             followingTurretPos = adj;
             outputsChanged = true;
