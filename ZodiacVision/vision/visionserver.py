@@ -1,6 +1,6 @@
 import socket
 import threading
-
+import copy
 import yaml
 
 
@@ -15,6 +15,7 @@ class ThreadedVisionServer(object):
         self.cy = '-1'
         self.distance = '-1'
         self.yml_data = yaml_data
+        self.original_yml = copy.deepcopy(yaml_data)
         self.yml_path = yml_path
         self.update_exposure = False
         self.calib_camera = False
@@ -27,6 +28,7 @@ class ThreadedVisionServer(object):
             threading.Thread(target=self.listenToClient, args=(client, address)).start()
 
     def listenToClient(self, client, address):
+        print(address)
         read = client.makefile('r')
         write = client.makefile('w')
         with client, read, write:
@@ -45,16 +47,16 @@ class ThreadedVisionServer(object):
 
     def dispatchResponse(self, writer, msg):
         if msg == 'distance':
-            writer.write("distance|" + self.distance + "\n")
+            writer.write("distance|" + str(self.distance) + "\n")
             writer.flush()
         elif msg == 'center_x':
-            writer.write("center_x|" + self.cx + "\n")
+            writer.write("center_x|" + str(self.cx) + "\n")
             writer.flush()
         elif msg == 'center_y':
-            writer.write("center_y|" + self.cy + "\n")
+            writer.write("center_y|" + str(self.cy) + "\n")
             writer.flush()
         elif msg == 'point':
-            writer.write('point|'+self.cx+'|'+self.cy+'|' + self.distance + "\n")
+            writer.write("point|"+str(self.cx)+'|'+str(self.cy)+'|' + str(self.distance) + "\n")
             writer.flush()
         elif 'calib' in msg:
             print(str(msg))
@@ -77,37 +79,34 @@ class ThreadedVisionServer(object):
         if key == "HMIN":
             value = float(value)
             self.yml_data['color']['lower']['H'] = value
-            dumpYML()
         elif key == "SMIN":
             value = float(value)
             self.yml_data['color']['lower']['S'] = value
-            dumpYML()
         elif key == "VMIN":
             value = float(value)
             self.yml_data['color']['lower']['V'] = value
-            dumpYML()
         elif key == "HMAX":
             value = float(value)
             self.yml_data['color']['upper']['H'] = value
-            dumpYML()
         elif key == "SMAX":
             value = float(value)
             self.yml_data['color']['upper']['S'] = value
-            dumpYML()
         elif key == "VMAX":
             value = float(value)
             self.yml_data['color']['upper']['V'] = value
-            dumpYML()
         elif key == "EXPS":
             value = float(value)
             self.yml_data['camera']['exposure'] = value
-            dumpYML()
             self.update_exposure = True
         elif key == "LINE":
             self.yml_data['stream']['line'] = value
-            dumpYML()
             self.line = True
         elif key == "CalibrationCamera":
             self.calib_camera = value
+        elif key == "RESET":
+            self.yml_data.update(self.original_yml)
+            dumpYML()
+        elif key == "SAVE":
+            dumpYML()
         print(self.yml_data)
 
