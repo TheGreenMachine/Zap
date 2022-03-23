@@ -74,12 +74,12 @@ public class LedManager extends Subsystem {
     }
 
     public void setCameraLed(boolean cameraOn) {
-//        if (cameraLedOn != cameraOn) {
+        if (cameraLedOn != cameraOn) {
             cameraLedChanged = cameraOn;
             cameraLedOn = cameraOn;
             // if the LED is turned off we need to update the main 8 to match the others
             if (!cameraOn) outputsChanged = true;
-//        }
+        }
     }
 
     private void setLedColor(int r, int g, int b) {

@@ -86,7 +86,6 @@ public class Superstructure {
     public void setRevving(boolean revving, double shooterVel) {
         this.revving = revving;
         if (revving) {
-            System.out.println("revving!");
             shooter.setDesiredState(Shooter.SHOOTER_STATE.REVVING);
             if (useVision) {
                 camera.setEnabled(true);
@@ -97,7 +96,8 @@ public class Superstructure {
             }
             System.out.println("superstructure set to rev");
         } else {
-//            camera.setEnabled(false);
+            camera.setEnabled(false);
+            System.out.println("superstructure set to not rev");
             shooter.setDesiredState(Shooter.SHOOTER_STATE.COASTING);
         }
     }
@@ -120,6 +120,7 @@ public class Superstructure {
                 spindexer.setDesiredState(Spindexer.SPIN_STATE.STOP);
             }
             elevator.setDesiredState(Elevator.ELEVATOR_STATE.STOP);
+            System.out.println("superstructure set to not fire");
         }
     }
 

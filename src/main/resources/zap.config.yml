@@ -146,18 +146,18 @@ subsystems:
             bottomClamp: 6
         pidConfig:
             slot0:
-                kP: 0.041 #tunned at 4000
+                kP: 0.075 #tunned at 4000
                 kI: 0.0
                 kD: 0.006
-                kF: 0.0001
+                kF: 0.000
                 allowableError: 10
         constants:
             maxTicks: 1 # TODO set this value
-            unlockPos: -20
-            startPose: 1
-            firstToSecondRungPos: -89
-            secondToLastRungPos: -172
-            lastPos: -180
+            unlockPos: -12
+            startPos: 0
+            firstToSecondRungPos: 83
+            secondToLastRungPos: 163
+            lastPos: 190
     elevator:
         implemented: true
         talons:

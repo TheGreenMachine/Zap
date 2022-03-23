@@ -25,7 +25,7 @@ public interface IButtonControlBoard {
 
     boolean getTurretJogRight();
 
-    boolean getRevShooter();
+    boolean getYeetShot();
 
     boolean getAutoAim();
 

@@ -60,12 +60,12 @@ public class FiveBallMode extends AutoModeBase {
                         new RampUpShooterAction(14000),
                         new TurretAction(Turret.CARDINAL_SOUTH), // tune these two
                         new ShootAction(true, true),
-                        new WaitAction(2)
+                        new WaitAction(2),
+                        new StopAction(false)
                     )
-                ),
-                // stop all at end
-                new StopAction(false)
+                )
             )
         );
+//        runAction(); // stop all at end
     }
 }

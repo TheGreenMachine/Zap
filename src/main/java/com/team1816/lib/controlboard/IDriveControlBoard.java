@@ -11,7 +11,7 @@ public interface IDriveControlBoard {
 
     boolean getSlowMode();
 
-    boolean getDrivetrainFlipped();
+    boolean getUnlockClimber();
 
     boolean getCollectorToggle();
 

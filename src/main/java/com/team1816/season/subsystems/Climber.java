@@ -26,6 +26,7 @@ public class Climber extends Subsystem {
     // State
     private ControlMode controlMode = ControlMode.MANUAL;
     private double error;
+    private boolean unlocked;
     private boolean needsOverShoot = false;
     private boolean needsClamp = false;
     // Position
@@ -67,18 +68,27 @@ public class Climber extends Subsystem {
         elevatorFollower.configClosedloopRamp(.20, Constants.kCANTimeoutMs);
 
         currentStage = 0;
+        unlocked = false;
 
         stages = new Stage[]{
-            new Stage(factory.getConstant(NAME, "dummyValue", 0), true, true, false), // just here as an init value
-            new Stage(factory.getConstant(NAME, "unlockPos", -20), true, true, false),
-            new Stage(factory.getConstant(NAME, "startPos", 1), true, true, false),
+            new Stage(factory.getConstant(NAME, "startPos", 0), true, false, false), // just here as an init value
+            new Stage(factory.getConstant(NAME, "unlockPos", -20), true, false, false),
+            new Stage(factory.getConstant(NAME, "startPos", 0), true, false, false),
             new Stage(factory.getConstant(NAME, "firstToSecondRungPos", -63), false, true, true),
             new Stage(factory.getConstant(NAME, "secondToLastRungPos", -153), true, false, false),
             new Stage(factory.getConstant(NAME, "lastPos", -180), false, true, true)
         };
     }
 
+    public void setUnlocked(){
+        unlocked = !unlocked;
+    }
+
     public void incrementClimberStage(){ // we can't go backwards (descend rungs) using this logic, but it shouldn't really matter
+        if(!unlocked){
+            System.out.println("climber not unlocked!");
+            return;
+        }
         if(currentStage < stages.length - 1 && !needsOverShoot) {
             if (controlMode != ControlMode.POSITION) {
                 controlMode = ControlMode.POSITION;
@@ -94,6 +104,10 @@ public class Climber extends Subsystem {
     }
 
     public void setClimberPower(double power){
+        if(!unlocked){
+            System.out.println("climber not unlocked!");
+            return;
+        }
         if (controlMode != ControlMode.MANUAL) {
             controlMode = ControlMode.MANUAL;
         }
@@ -102,6 +116,10 @@ public class Climber extends Subsystem {
     }
 
     public void setTopClamp() {
+        if(!unlocked){
+            System.out.println("climber not unlocked!");
+            return;
+        }
         if(controlMode != ControlMode.MANUAL){
             controlMode = ControlMode.MANUAL;
         }
@@ -111,6 +129,10 @@ public class Climber extends Subsystem {
     }
 
     public void setBottomClamp() {
+        if(!unlocked){
+            System.out.println("climber not unlocked!");
+            return;
+        }
         if(controlMode != ControlMode.MANUAL){
             controlMode = ControlMode.MANUAL;
         }
@@ -137,11 +159,11 @@ public class Climber extends Subsystem {
             needsClamp = false;
             if(topFirst){
                 topClamp.set(topClamped);
-                Timer.delay(.5);
+                Timer.delay(.25);
                 bottomClamp.set(bottomClamped);
             } else {
                 bottomClamp.set(bottomClamped);
-                Timer.delay(.5);
+                Timer.delay(.25);
                 topClamp.set(topClamped);
             }
             System.out.println("setting climber clamps!");

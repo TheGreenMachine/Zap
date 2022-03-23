@@ -35,17 +35,17 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
 
     @Override
     public boolean getSlowMode() {
-        return mController.getButton(Controller.Button.R_JOYSTICK);
+        return mController.getTrigger(Controller.Axis.RIGHT_TRIGGER);
     }
 
     @Override
-    public boolean getDrivetrainFlipped() {
+    public boolean getUnlockClimber() {
         return mController.getButton(Controller.Button.Y);
     }
 
     @Override
     public boolean getQuickTurn() {
-        return mController.getButton(Controller.Button.R_JOYSTICK);
+        return mController.getButton(Controller.Button.B);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
 
     @Override
     public boolean getBrakeMode() {
-        return mController.getButton(Controller.Button.A);
+        return mController.getTrigger(Controller.Axis.LEFT_TRIGGER);
     }
 
     @Override

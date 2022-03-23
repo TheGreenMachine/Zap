@@ -23,7 +23,7 @@ public class Elevator extends Subsystem {
 
     // Constants
     private final double FLUSH;
-    private final double VELOCITY_THRESHOLD;
+    private final double POWER_THRESHOLD;
     private double FIRE; // bear in mind this is overridden
 
     public Elevator() {
@@ -35,7 +35,7 @@ public class Elevator extends Subsystem {
 
         FLUSH = factory.getConstant(NAME, "flushPow", -0.5);
         FIRE = factory.getConstant(NAME, "firePow", 0.5);
-        VELOCITY_THRESHOLD = factory.getConstant(NAME, "velocityThreshold", 100);
+        POWER_THRESHOLD = .1;
     }
 
     public void overridePower(double newFirePow){
@@ -44,6 +44,7 @@ public class Elevator extends Subsystem {
 
     private void setElevator(double elevatorOutput) {
         this.elevatorPower = elevatorOutput;
+        this.elevator.set(ControlMode.PercentOutput, elevatorPower);
     }
 
     private void lockToShooter(){
@@ -74,16 +75,16 @@ public class Elevator extends Subsystem {
 
     @Override
     public void readFromHardware() {
-        double actualVel = elevator.getSelectedSensorVelocity(0);
+//        double actualVel = elevator.getSelectedSensorVelocity(0);
         if(state != robotState.elevatorState){
-
-            if(Math.abs(actualVel) < VELOCITY_THRESHOLD) {
-                robotState.elevatorState = ELEVATOR_STATE.STOP;
-            } else if (actualVel > VELOCITY_THRESHOLD) {
-                robotState.elevatorState = ELEVATOR_STATE.FIRE;
-            } else if(actualVel < -VELOCITY_THRESHOLD){
-                robotState.elevatorState = ELEVATOR_STATE.FLUSH;
-            }
+//            if(Math.abs(elevatorPower) == 0) {
+//                robotState.elevatorState = ELEVATOR_STATE.STOP;
+//            } else if (elevatorPower > POWER_THRESHOLD) {
+//                robotState.elevatorState = ELEVATOR_STATE.FIRE;
+//            } else if(elevatorPower < -POWER_THRESHOLD){
+//                robotState.elevatorState = ELEVATOR_STATE.FLUSH;
+//            }
+            robotState.elevatorState = state;
 
             System.out.println("ACTUAL ELEVATOR STATE = " + robotState.elevatorState);
         }
@@ -105,7 +106,6 @@ public class Elevator extends Subsystem {
                     break;
             }
             System.out.println(elevatorPower + " = elevator power");
-            this.elevator.set(ControlMode.PercentOutput, elevatorPower);
             // create ball color updating here once sensor created
         }
     }

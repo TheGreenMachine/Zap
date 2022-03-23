@@ -160,13 +160,19 @@ public class Shooter extends Subsystem implements PidProvider {
         this.outputsChanged = true;
     }
 
+    public void setHood() {
+        hoodOut = !hoodOut;
+        this.outputsChanged = true;
+    }
+
     public void setVelocity(double velocity) {
         velocityDemand = velocity;
-        outputsChanged = true;
+        shooterMain.set(ControlMode.Velocity, velocityDemand);
     }
 
     public void setDesiredState(SHOOTER_STATE state) {
-        if (state != this.state) {
+        // no checker for state because we may tell the shooter to set to the same state but different vel
+        if(this.state != state){
             this.state = state;
             outputsChanged = true;
             System.out.println("DESIRED SHOOTER STATE = " + state);
@@ -174,6 +180,7 @@ public class Shooter extends Subsystem implements PidProvider {
     }
 
     public boolean isVelocityNearTarget() {
+//        System.out.println("checking if shooter up to speed - " + velocityDemand + " = velocity demand"  + actualShooterVelocity + " = act vel");
         return (
             Math.abs(velocityDemand - actualShooterVelocity) < VELOCITY_THRESHOLD &&
                 (int) velocityDemand != COAST_VELOCITY
@@ -214,7 +221,6 @@ public class Shooter extends Subsystem implements PidProvider {
             }
             hood.set(hoodOut);
             System.out.println("velocity shooter demand = " + velocityDemand);
-            shooterMain.set(ControlMode.Velocity, velocityDemand);
         }
     }
 
