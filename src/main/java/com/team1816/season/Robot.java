@@ -21,6 +21,7 @@ import com.team1816.season.subsystems.*;
 import com.team254.lib.util.LatchedBoolean;
 import com.team254.lib.util.SwerveDriveSignal;
 import com.team254.lib.util.TimeDelayedBoolean;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.*;
 import java.nio.file.Files;
@@ -75,7 +76,6 @@ public class Robot extends TimedRobot {
 
     // private PowerDistributionPanel pdp = new PowerDistributionPanel();
     private Turret.ControlMode prevTurretControlMode = Turret.ControlMode.CENTER_FOLLOWING;
-    private boolean isBraked = false;
     private boolean faulted;
 
     Robot() {
@@ -339,6 +339,17 @@ public class Robot extends TimedRobot {
                         mControlBoard::getHood,
                         mShooter::setHood
                     ),
+                    createHoldAction(
+                        mControlBoard::getBrakeMode,
+                        braking -> {
+                            if(braking){
+                                mDrive.setTeleopInputs(0,0 ,1,false,false);
+                                mDrive.setBrakeMode(true);
+                            } else {
+                                mDrive.setBrakeMode(false);
+                            }
+                        }
+                    ),
                     createAction(
                         mControlBoard::getCollectorBackspin,
                         () -> mSuperstructure.setCollecting(false)
@@ -351,7 +362,6 @@ public class Robot extends TimedRobot {
                         mControlBoard::getZeroPose, // line up against ally field wall and point turret forward -> zero
                         () -> {
                             mDrive.zeroSensors(Constants.ZeroPose);
-//                            mTurret.zeroSensors();
                         }
                     ),
                     createHoldAction(
@@ -381,24 +391,12 @@ public class Robot extends TimedRobot {
                         mClimber::setBottomClamp
                     ),
                     createAction(
-                        mControlBoard::getAutoClimb,
-                        () -> {
-                            mTurret.setTurretAngle(Turret.CARDINAL_SOUTH - 10);
-                            mClimber.incrementClimberStage();
-                        }
+                        mControlBoard::getIncrementClimberStage,
+                        mClimber::incrementClimberStage
                     ),
-                    createHoldAction(
-                        mControlBoard::getBrakeMode,
-                        braking -> {
-                            System.out.println("pressed brake button");
-                            if(braking){
-                                isBraked = true;
-                                mDrive.setBrakeMode(true);
-                            } else {
-                                isBraked = false;
-                                mDrive.setBrakeMode(false);
-                            }
-                        }
+                    createAction(
+                        mControlBoard::getIncrementClimberStage,
+                        mClimber::incrementClimberStage
                     )
                 );
         } catch (Throwable t) {
@@ -478,7 +476,7 @@ public class Robot extends TimedRobot {
             }
 
 //            mDrive.setHeading( // may not be needed - if not working make a prev turret rotation - track then set on teleopInit
-//                prevDrivePose.getRotation()
+//                Constants.prevDrivePose.getRotation()
 //            );
 
             mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
@@ -591,7 +589,7 @@ public class Robot extends TimedRobot {
                 mAutoModeExecutor.setAutoMode(auto);
                 Constants.StartingPose = auto.getTrajectory().getInitialPose();
                 mRobotState.reset(Constants.StartingPose);
-//                mDrive.zeroSensors();
+                mDrive.zeroSensors();
             }
         } catch (Throwable t) {
             faulted = true;
@@ -660,15 +658,14 @@ public class Robot extends TimedRobot {
                 ).getDegrees()
             );
         }
-//        if(!isBraked){
-            mDrive.setTeleopInputs(
-                mControlBoard.getThrottle(),
-                mControlBoard.getStrafe(),
-                mControlBoard.getTurn(),
-                mControlBoard.getSlowMode(),
-                false
-            );
-//        }
+
+        mDrive.setTeleopInputs(
+            mControlBoard.getThrottle(),
+            mControlBoard.getStrafe(),
+            mControlBoard.getTurn(),
+            mControlBoard.getSlowMode(),
+            false
+        );
     }
 
     @Override

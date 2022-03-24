@@ -343,6 +343,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         setBrakeMode(false);
         resetPigeon();
         resetOdometry(pose);
+        robotState.field_to_vehicle = pose;
         for (int i = 0; i < 4; i++) {
             swerveModules[i].setDesiredState(new SwerveModuleState(), true);
             mPeriodicIO.desiredModuleStates[i] = new SwerveModuleState();

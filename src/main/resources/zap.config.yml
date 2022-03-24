@@ -84,7 +84,7 @@ subsystems:
     ledmanager:
         implemented: true
         canifier: -1
-        candle: 22
+        candle: -1
         constants:
             raveEnabled: 1
             raveSpeed: 0.05
