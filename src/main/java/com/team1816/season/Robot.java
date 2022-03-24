@@ -343,6 +343,7 @@ public class Robot extends TimedRobot {
                         mControlBoard::getBrakeMode,
                         braking -> {
                             if(braking){
+                                System.out.println("braking button pressed !!!!! - - ");
                                 mDrive.setBrakeMode(true);
                             } else {
                                 mDrive.setBrakeMode(false);

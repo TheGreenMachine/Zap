@@ -84,39 +84,37 @@ public class Turret extends Subsystem implements PidProvider {
         this.kI = pidConfig.kI;
         this.kD = pidConfig.kD;
         this.kF = pidConfig.kF;
-        synchronized (this) {
-            // Position Control
-            double peakOutput = 0.75;
+        // Position Control
+        double peakOutput = 0.75;
 
-            turret.configPeakOutputForward(peakOutput, Constants.kCANTimeoutMs);
-            turret.configNominalOutputForward(0, Constants.kCANTimeoutMs);
-            turret.configNominalOutputReverse(0, Constants.kCANTimeoutMs);
-            turret.configPeakOutputReverse(-peakOutput, Constants.kCANTimeoutMs);
-            turret.configAllowableClosedloopError(
-                kPIDGyroIDx,
-                ALLOWABLE_ERROR_TICKS,
-                Constants.kCANTimeoutMs
-            );
-            turret.configAllowableClosedloopError(
-                kPIDVisionIDx,
-                ALLOWABLE_ERROR_TICKS,
-                Constants.kCANTimeoutMs
-            );
+        turret.configPeakOutputForward(peakOutput, Constants.kCANTimeoutMs);
+        turret.configNominalOutputForward(0, Constants.kCANTimeoutMs);
+        turret.configNominalOutputReverse(0, Constants.kCANTimeoutMs);
+        turret.configPeakOutputReverse(-peakOutput, Constants.kCANTimeoutMs);
+        turret.configAllowableClosedloopError(
+            kPIDGyroIDx,
+            ALLOWABLE_ERROR_TICKS,
+            Constants.kCANTimeoutMs
+        );
+        turret.configAllowableClosedloopError(
+            kPIDVisionIDx,
+            ALLOWABLE_ERROR_TICKS,
+            Constants.kCANTimeoutMs
+        );
 
-            // Soft Limits
-            turret.configForwardSoftLimitEnable(true, Constants.kCANTimeoutMs);
-            turret.configReverseSoftLimitEnable(true, Constants.kCANTimeoutMs);
-            turret.configForwardSoftLimitThreshold(
-                TURRET_LIMIT_FORWARD,
-                Constants.kCANTimeoutMs
-            ); // Forward = MAX
-            turret.configReverseSoftLimitThreshold(
-                TURRET_LIMIT_REVERSE,
-                Constants.kCANTimeoutMs
-            ); // Reverse = MIN
-            turret.overrideLimitSwitchesEnable(true);
-            turret.overrideSoftLimitsEnable(true);
-        }
+        // Soft Limits
+        turret.configForwardSoftLimitEnable(true, Constants.kCANTimeoutMs);
+        turret.configReverseSoftLimitEnable(true, Constants.kCANTimeoutMs);
+        turret.configForwardSoftLimitThreshold(
+            TURRET_LIMIT_FORWARD,
+            Constants.kCANTimeoutMs
+        ); // Forward = MAX
+        turret.configReverseSoftLimitThreshold(
+            TURRET_LIMIT_REVERSE,
+            Constants.kCANTimeoutMs
+        ); // Reverse = MIN
+        turret.overrideLimitSwitchesEnable(true);
+        turret.overrideSoftLimitsEnable(true);
     }
 
     /**

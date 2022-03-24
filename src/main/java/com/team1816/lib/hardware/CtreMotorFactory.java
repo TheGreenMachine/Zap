@@ -253,7 +253,7 @@ public class CtreMotorFactory {
         }
         if (talonConfiguration instanceof TalonFXConfiguration) {
             ((TalonFXConfiguration) talonConfiguration).supplyCurrLimit =
-                new SupplyCurrentLimitConfiguration(config.ENABLE_CURRENT_LIMIT, 0, 0, 0);
+                new SupplyCurrentLimitConfiguration(config.ENABLE_CURRENT_LIMIT, 40, 80, 1); // TODO ADD YAML CONFIGS FOR CURRENT LIMITS
         }
 
         ErrorCode code = motor.configVelocityMeasurementPeriod(
