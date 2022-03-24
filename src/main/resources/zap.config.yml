@@ -120,8 +120,8 @@ subsystems:
         pidConfig:
             slot0:
                 kP: 0.45
-                kI: 0.00001
-                kD: 14.0 #4.5
+                kI: 0.00002
+                kD: 11.0 #4.5
                 kF: 0.0477
                 allowableError: 50
         constants:
@@ -155,8 +155,8 @@ subsystems:
             maxTicks: 1 # TODO set this value
             unlockPos: -12
             startPos: 0
-            firstToSecondRungPos: 83
-            secondToLastRungPos: 163
+            firstToSecondRungPos: 84
+            secondToLastRungPos: 164
             lastPos: 190
     elevator:
         implemented: true

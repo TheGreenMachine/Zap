@@ -164,7 +164,10 @@ public class SwerveModule implements ISwerveModule {
     }
 
     public synchronized void setDriveBrakeMode(boolean brake_mode) {
-        mDriveMotor.setNeutralMode(brake_mode ? NeutralMode.Brake : NeutralMode.Coast);
+//        mDriveMotor.setNeutralMode(brake_mode ? NeutralMode.Brake : NeutralMode.Coast);
+        if(brake_mode){
+            mDriveMotor.set(ControlMode.Velocity, 0);
+        }
         isBrakeMode = brake_mode;
     }
 

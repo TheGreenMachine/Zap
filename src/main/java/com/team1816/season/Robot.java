@@ -75,6 +75,7 @@ public class Robot extends TimedRobot {
 
     // private PowerDistributionPanel pdp = new PowerDistributionPanel();
     private Turret.ControlMode prevTurretControlMode = Turret.ControlMode.CENTER_FOLLOWING;
+    private boolean isBraked = false;
     private boolean faulted;
 
     Robot() {
@@ -338,17 +339,6 @@ public class Robot extends TimedRobot {
                         mControlBoard::getHood,
                         mShooter::setHood
                     ),
-                    createHoldAction(
-                        mControlBoard::getBrakeMode,
-                        braking -> {
-                            if(braking){
-                                mDrive.setTeleopInputs(0,0 ,1,false,false);
-                                mDrive.setBrakeMode(true);
-                            } else {
-                                mDrive.setBrakeMode(false);
-                            }
-                        }
-                    ),
                     createAction(
                         mControlBoard::getCollectorBackspin,
                         () -> mSuperstructure.setCollecting(false)
@@ -391,15 +381,24 @@ public class Robot extends TimedRobot {
                         mClimber::setBottomClamp
                     ),
                     createAction(
-                        mControlBoard::getIncrementClimberStage,
+                        mControlBoard::getAutoClimb,
                         () -> {
-                            mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
+                            mTurret.setTurretAngle(Turret.CARDINAL_SOUTH - 10);
                             mClimber.incrementClimberStage();
                         }
                     ),
-                    createAction(
-                        mControlBoard::getIncrementClimberStage,
-                        mClimber::incrementClimberStage
+                    createHoldAction(
+                        mControlBoard::getBrakeMode,
+                        braking -> {
+                            System.out.println("pressed brake button");
+                            if(braking){
+                                isBraked = true;
+                                mDrive.setBrakeMode(true);
+                            } else {
+                                isBraked = false;
+                                mDrive.setBrakeMode(false);
+                            }
+                        }
                     )
                 );
         } catch (Throwable t) {
@@ -661,14 +660,15 @@ public class Robot extends TimedRobot {
                 ).getDegrees()
             );
         }
-
-        mDrive.setTeleopInputs(
-            mControlBoard.getThrottle(),
-            mControlBoard.getStrafe(),
-            mControlBoard.getTurn(),
-            mControlBoard.getSlowMode(),
-            false
-        );
+//        if(!isBraked){
+            mDrive.setTeleopInputs(
+                mControlBoard.getThrottle(),
+                mControlBoard.getStrafe(),
+                mControlBoard.getTurn(),
+                mControlBoard.getSlowMode(),
+                false
+            );
+//        }
     }
 
     @Override

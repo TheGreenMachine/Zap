@@ -16,7 +16,7 @@ public class SwerveDriveHelper implements DriveHelper {
     private final static double kMaxRotation = Constants.kMaxAngularSpeed;
 
     private final static double kHighPowerRotationScalar = 0.8;
-    private final static double kLowPowerScalar = 0.25;
+    private final static double kLowPowerScalar = 0.1; //yml time
     private final static double kRotationExponent = 4.0;
     private final static double kPoleThreshold = 0.0;
     private final static double kRobotRelativePoleThreshold = Math.toRadians(5);

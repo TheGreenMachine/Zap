@@ -155,8 +155,8 @@ public class ControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getIncrementClimberStage() {
-        return mButtonControlBoard.getIncrementClimberStage();
+    public boolean getAutoClimb() {
+        return mButtonControlBoard.getAutoClimb();
     }
 
     @Override

@@ -36,7 +36,7 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
 
     @Override
     public boolean getSuperstructure() {
-        return mController.getButton(Controller.Button.START);
+        return mController.getButton(Controller.Button.B);
     }
 
     // Turret teleop control - note that X VAL doesn't necessarily correspond to joystick X AXIS
@@ -69,7 +69,7 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
     // Feeder Flap
     @Override
     public boolean getCameraToggle() {
-        return mController.getButton(Controller.Button.BACK);
+        return mController.getButton(Controller.Button.X);
     }
 
     @Override
@@ -98,18 +98,18 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
     }
 
     @Override
-    public boolean getIncrementClimberStage() {
+    public boolean getAutoClimb() {
         return mController.getButton(Controller.Button.Y);
     }
 
     @Override
     public boolean getBottomClamp() {
-        return mController.getButton(Controller.Button.B);
+        return mController.getButton(Controller.Button.BACK);
     }
 
     @Override
     public boolean getTopClamp() {
-        return mController.getButton(Controller.Button.X);
+        return mController.getButton(Controller.Button.START);
     }
 
     @Override

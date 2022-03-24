@@ -61,15 +61,26 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     @Override
     public synchronized void writeToHardware() {
         if (mDriveControlState == DriveControlState.OPEN_LOOP) { // autonomous (Trajectory_Following) loop is in setModuleStates
-            SwerveDriveKinematics.desaturateWheelSpeeds(
-                mPeriodicIO.desiredModuleStates,
-                Constants.kOpenLoopMaxVelMeters
-            ); // TODO get swerve max speed in meters/s
-            for (int i = 0; i < 4; i++) {
-                swerveModules[i].setDesiredState(
+            if(!mIsBrakeMode){
+                SwerveDriveKinematics.desaturateWheelSpeeds(
+                    mPeriodicIO.desiredModuleStates,
+                    Constants.kOpenLoopMaxVelMeters
+                ); // TODO get swerve max speed in meters/s
+                for (int i = 0; i < 4; i++) {
+                    swerveModules[i].setDesiredState(
                         mPeriodicIO.desiredModuleStates[i],
                         true
                     );
+                }
+            } else {
+                System.out.println("should be stopping drivetrain! - speed = " + mPeriodicIO.desiredModuleStates);
+                for (int i = 0; i < swerveModules.length; i++) {
+                    if(i == 0 || i == 3){
+                        swerveModules[i].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)), false);
+                    } else {
+                        swerveModules[i].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)), false);
+                    }
+                }
             }
         }
     }
@@ -254,8 +265,16 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     @Override
     public synchronized void setBrakeMode(boolean on) {
         super.setBrakeMode(on);
-        for (SwerveModule module : swerveModules) {
-            module.setDriveBrakeMode(on);
+        for (int i = 0; i < swerveModules.length; i++) {
+            if(on){
+                System.out.println("BRAKING DRIVETRAIN + = = = =  = ==  = = =");
+                if(i == 0 || i == 3){
+                    swerveModules[i].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)), false);
+                } else {
+                    swerveModules[i].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)), false);
+                }
+            }
+            swerveModules[i].setDriveBrakeMode(on);
         }
     }
 

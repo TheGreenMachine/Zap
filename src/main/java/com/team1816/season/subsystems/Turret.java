@@ -158,7 +158,7 @@ public class Turret extends Subsystem implements PidProvider {
             // If turret enc reads ~offset (is pointing forward after startup) then reset turret tracking positions (for joystick/setAngle calls)
             if(Math.abs(sensors.getQuadraturePosition() - offset) < TURRET_ABS_ENCODER_PPR){
                 System.out.println("zeroing turret positions (not quadrature)");
-                desiredTurretPosOffset = desiredTurretPos;
+//                desiredTurretPosOffset = desiredTurretPos;
             }
 
         }
@@ -189,7 +189,7 @@ public class Turret extends Subsystem implements PidProvider {
                     led.indicateDefaultStatus();
                 }
             }
-            System.out.println("TURRET CONTROL MODE IS " + controlMode);
+            System.out.println("TURRET CONTROL MODE IS . . . . . ." + controlMode);
         }
     }
 
@@ -398,17 +398,17 @@ public class Turret extends Subsystem implements PidProvider {
 
     private void manualControl() {
         if (outputsChanged) {
-            if (turretSpeed == 0) {
-                turret.set(
-                    com.ctre.phoenix.motorcontrol.ControlMode.Position,
-                    getActualTurretPositionTicks() + 200 * turret.getMotorOutputPercent()
-                );
-            } else {
+//            if (turretSpeed == 0) {
+//                turret.set(
+//                    com.ctre.phoenix.motorcontrol.ControlMode.Position,
+//                    getActualTurretPositionTicks() + 200 * turret.getMotorOutputPercent()
+//                );
+//            } else {
                 turret.set(
                     com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput,
                     turretSpeed
                 );
-            }
+//            }
             outputsChanged = false;
         }
     }

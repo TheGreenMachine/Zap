@@ -132,7 +132,7 @@ public class TankDemoModeControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getIncrementClimberStage() {
+    public boolean getAutoClimb() {
         return false;
     }
 

@@ -31,7 +31,7 @@ public interface IButtonControlBoard {
 
     boolean getShoot();
 
-    boolean getIncrementClimberStage();
+    boolean getAutoClimb();
 
     boolean getBottomClamp();
 
