@@ -343,7 +343,6 @@ public class Robot extends TimedRobot {
                         mControlBoard::getBrakeMode,
                         braking -> {
                             if(braking){
-                                mDrive.setTeleopInputs(0,0 ,1,false,false);
                                 mDrive.setBrakeMode(true);
                             } else {
                                 mDrive.setBrakeMode(false);
@@ -391,12 +390,11 @@ public class Robot extends TimedRobot {
                         mClimber::setBottomClamp
                     ),
                     createAction(
-                        mControlBoard::getIncrementClimberStage,
-                        mClimber::incrementClimberStage
-                    ),
-                    createAction(
-                        mControlBoard::getIncrementClimberStage,
-                        mClimber::incrementClimberStage
+                        mControlBoard::getAutoClimb,
+                        () -> {
+                            mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
+                            mClimber.incrementClimberStage();
+                        }
                     )
                 );
         } catch (Throwable t) {
