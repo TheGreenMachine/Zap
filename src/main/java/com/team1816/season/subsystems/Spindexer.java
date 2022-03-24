@@ -6,9 +6,6 @@ import com.google.inject.Singleton;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import org.ejml.dense.row.SpecializedOps_FDRM;
-
-import javax.print.attribute.standard.MediaSize;
 
 @Singleton
 public class Spindexer extends Subsystem {
@@ -31,7 +28,7 @@ public class Spindexer extends Subsystem {
     private final double INDEX;
     private final double FLUSH;
     private final double FIRE;
-    private final double VELOCITY_THRESHOLD;
+    private final double POWER_THRESHOLD;
 
     public Spindexer() {
         super(NAME);
@@ -42,11 +39,12 @@ public class Spindexer extends Subsystem {
         INDEX = factory.getConstant(NAME, "indexPow", -0.25);
         FLUSH = factory.getConstant(NAME, "flushPow", -1);
         FIRE = factory.getConstant(NAME, "firePow", 1);
-        VELOCITY_THRESHOLD = factory.getConstant(NAME, "velocityThreshold", 100);
+        POWER_THRESHOLD = .1;
     }
 
     private void setSpindexer(double spindexerPower) {
         this.spindexerPower = spindexerPower;
+        spindexer.set(ControlMode.PercentOutput, spindexerPower);
     }
 
     private void lockToShooter(){ // bear in mind this might never fire if shooter not implemented - not rly important tho
@@ -65,6 +63,7 @@ public class Spindexer extends Subsystem {
     public void setDesiredState(SPIN_STATE state) {
         if (this.state != state) {
             this.state = state;
+            outputsChanged = true;
             System.out.println("DESIRED SPINDEXER STATE = " + state);
         }
     }
@@ -72,19 +71,21 @@ public class Spindexer extends Subsystem {
     @Override
     public void readFromHardware() {
         if(state != robotState.spinState){
-            double actualVel = spindexer.getSelectedSensorVelocity(0);
+//            double actualVel = spindexer.getSelectedSensorVelocity(0);
 
-            if(state == SPIN_STATE.COLLECT || state == SPIN_STATE.INDEX){ // logic not yet made for collect / index
-                robotState.spinState = state;
-            } else if(Math.abs(actualVel) < VELOCITY_THRESHOLD) {
-                robotState.spinState = SPIN_STATE.STOP;
-            } else if (actualVel > VELOCITY_THRESHOLD) {
-                robotState.spinState = SPIN_STATE.FIRE;
-            } else if(actualVel < -VELOCITY_THRESHOLD){
-                robotState.spinState = SPIN_STATE.FLUSH;
-            }
+//            if(state == SPIN_STATE.COLLECT || state == SPIN_STATE.INDEX){ // logic not yet made for collect / index
+//                robotState.spinState = state;
+//            } else if(Math.abs(spindexerPower) < POWER_THRESHOLD) {
+//                robotState.spinState = SPIN_STATE.STOP;
+//            } else if (spindexerPower > POWER_THRESHOLD) {
+//                robotState.spinState = SPIN_STATE.FIRE;
+//            } else if(spindexerPower < -POWER_THRESHOLD){
+//                robotState.spinState = SPIN_STATE.FLUSH;
+//            }
+            robotState.spinState = state;
 
-            System.out.println("ACTUAL ELEVATOR STATE = " + robotState.elevatorState);
+
+            System.out.println("ACTUAL SPINDEXER STATE = " + robotState.spinState);
         }
     }
 
@@ -110,7 +111,6 @@ public class Spindexer extends Subsystem {
                     break;
             }
             System.out.println(spindexerPower + " = spindexer pow");
-            spindexer.set(ControlMode.PercentOutput, spindexerPower);
             this.feederFlap.set(feederFlapOut);
             distanceManaged = false;
         }

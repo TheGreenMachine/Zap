@@ -49,8 +49,8 @@ public class ControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getDrivetrainFlipped() {
-        return mDriveControlBoard.getDrivetrainFlipped();
+    public boolean getUnlockClimber() {
+        return mDriveControlBoard.getUnlockClimber();
     }
 
     @Override
@@ -110,8 +110,8 @@ public class ControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getRevShooter() {
-        return mButtonControlBoard.getRevShooter();
+    public boolean getYeetShot() {
+        return mButtonControlBoard.getYeetShot();
     }
 
     @Override

@@ -316,9 +316,18 @@ public class Robot extends TimedRobot {
                         mCamera::setEnabled
                     ),
                     createHoldAction(
+                        mControlBoard::getYeetShot,
+                        yeet -> {
+                            mShooter.setHood(false);
+                            mSuperstructure.setRevving(yeet, Shooter.NEAR_VELOCITY);
+                            mSuperstructure.setFiring(yeet);
+                        }
+                    ),
+                    createHoldAction(
                         mControlBoard::getShoot,
                         shooting -> {
-                            mSuperstructure.setRevving(shooting, 11000);
+                            mShooter.setHood(true);
+                            mSuperstructure.setRevving(shooting, 11000); // TODO TUNE
                             mSuperstructure.setFiring(shooting);
                         }
                     ),
@@ -327,8 +336,27 @@ public class Robot extends TimedRobot {
                         () -> mSuperstructure.setCollecting(true)
                     ),
                     createAction(
+                        mControlBoard::getHood,
+                        mShooter::setHood
+                    ),
+                    createHoldAction(
+                        mControlBoard::getBrakeMode,
+                        braking -> {
+                            if(braking){
+                                mDrive.setTeleopInputs(0,0 ,1,false,false);
+                                mDrive.setBrakeMode(true);
+                            } else {
+                                mDrive.setBrakeMode(false);
+                            }
+                        }
+                    ),
+                    createAction(
                         mControlBoard::getCollectorBackspin,
                         () -> mSuperstructure.setCollecting(false)
+                    ),
+                    createAction(
+                        mControlBoard::getUnlockClimber,
+                        mClimber::setUnlocked
                     ),
                     createAction(
                         mControlBoard::getZeroPose, // line up against ally field wall and point turret forward -> zero
@@ -420,6 +448,8 @@ public class Robot extends TimedRobot {
             mDrive.zeroSensors();
             mTurret.zeroSensors();
 
+            mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
+
             mSuperstructure.setStopped(false);
 
             mDrive.setControlState(Drive.DriveControlState.TRAJECTORY_FOLLOWING);
@@ -445,19 +475,22 @@ public class Robot extends TimedRobot {
                 mAutoModeExecutor.stop();
             }
 
-            mDrive.setHeading( // may not be needed - if not working make a prev turret rotation - track then set on teleopInit
-                Constants.prevDrivePose.getRotation()
-            );
+//            mDrive.setHeading( // may not be needed - if not working make a prev turret rotation - track then set on teleopInit
+//                Constants.prevDrivePose.getRotation()
+//            );
 
             mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
             mTurret.zeroSensors();
             mDrive.zeroSensors(Constants.prevDrivePose);
             mClimber.zeroSensors();
 
+            mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
+
             mHasBeenEnabled = true;
 
             mEnabledLooper.start();
             mTurret.setControlMode(Turret.ControlMode.CENTER_FOLLOWING);
+            prevTurretControlMode = mTurret.getControlMode();
 
             mCamera.setEnabled(false); // do we enable here or only when we use vision? - this may cause an error b/c we enable more than once
 
@@ -567,8 +600,8 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         loopStart = Timer.getFPGATimestamp();
-        boolean signalToResume = !mControlBoard.getDrivetrainFlipped(); // TODO: select auto interrupt button
-        boolean signalToStop = mControlBoard.getDrivetrainFlipped();
+        boolean signalToResume = !mControlBoard.getUnlockClimber(); // TODO: select auto interrupt button
+        boolean signalToStop = mControlBoard.getUnlockClimber();
         // Resume if switch flipped up
         if (mWantsAutoExecution.update(signalToResume)) {
             mAutoModeExecutor.resume();

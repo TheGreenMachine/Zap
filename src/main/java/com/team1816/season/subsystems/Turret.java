@@ -76,7 +76,7 @@ public class Turret extends Subsystem implements PidProvider {
         TURRET_ENC_RATIO = (double) TURRET_PPR / TURRET_ABS_ENCODER_PPR;
         ABS_TICKS_SOUTH = ((int) factory.getConstant(NAME, "absPosTicksSouth"));
         HALF_ABS_ENCPPR = TURRET_ABS_ENCODER_PPR / 2 - HALF_ABS_ENCPPR;
-        ZERO_OFFSET = (int) factory.getConstant(NAME, "zeroOffset") + HALF_ABS_ENCPPR; //add offset to keep turret in positive range
+        ZERO_OFFSET = (int) factory.getConstant(NAME, "zeroOffset"); //add offset to keep turret in positive range
         turret.setNeutralMode(NeutralMode.Brake);
 
         PIDSlotConfiguration pidConfig = factory.getPidSlotConfig(NAME, pidSlot);
@@ -138,7 +138,7 @@ public class Turret extends Subsystem implements PidProvider {
         if (turret instanceof IMotorSensor) {
             var sensors = (IMotorSensor) turret;
             var absSensorVal = sensors.getPulseWidthPosition(); // absolute
-            var offset = ZERO_OFFSET - absSensorVal;
+            var offset = ZERO_OFFSET - absSensorVal + HALF_ABS_ENCPPR;
 
             // It is safe to reset quadrature if turret enc reads ~0 (on startup)
             if (Math.abs(sensors.getQuadraturePosition()) < HALF_ABS_ENCPPR) {
@@ -157,10 +157,11 @@ public class Turret extends Subsystem implements PidProvider {
             }
 
             // If turret enc reads ~offset (is pointing forward after startup) then reset turret tracking positions (for joystick/setAngle calls)
-            if(Math.abs(sensors.getQuadraturePosition() - offset) < HALF_ABS_ENCPPR){
+            if(Math.abs(sensors.getQuadraturePosition() - offset) < TURRET_ABS_ENCODER_PPR){
                 System.out.println("zeroing turret positions (not quadrature)");
                 desiredTurretPosOffset = desiredTurretPos;
             }
+
         }
     }
 
@@ -222,10 +223,11 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     private synchronized void setTurretPosition(double position) {
-        position -= desiredTurretPosOffset;
+        double pos = position - desiredTurretPosOffset;
         //Since we are using position we need ensure value stays in one rotation
-        if (desiredTurretPos != (int) position) {
-            desiredTurretPos = (int) position;
+        if (desiredTurretPos != (int) pos) {
+            System.out.println("setting desiredTurretPos to " + pos);
+            desiredTurretPos = (int) pos;
             outputsChanged = true;
         }
     }

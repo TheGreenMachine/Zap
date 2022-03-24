@@ -10,13 +10,13 @@ import edu.wpi.first.math.geometry.Translation2d;
  */
 public class SwerveDriveHelper implements DriveHelper {
 
-    private final static double kHighAdjustmentPower = 1.75 + 0.4375;
+    private final static double kHighAdjustmentPower = 1.50; // 1.75 + 0.4375
     private final static double kLowAdjustmentPower = 1.50;
     private final static double kMaxSpeed = (Constants.kOpenLoopMaxVelMeters);
     private final static double kMaxRotation = Constants.kMaxAngularSpeed;
 
     private final static double kHighPowerRotationScalar = 0.8;
-    private final static double kLowPowerScalar = 0.5;
+    private final static double kLowPowerScalar = 0.25;
     private final static double kRotationExponent = 4.0;
     private final static double kPoleThreshold = 0.0;
     private final static double kRobotRelativePoleThreshold = Math.toRadians(5);

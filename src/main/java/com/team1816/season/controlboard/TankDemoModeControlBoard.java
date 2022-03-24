@@ -117,7 +117,7 @@ public class TankDemoModeControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getRevShooter() {
+    public boolean getYeetShot() {
         return mController.getTrigger(Controller.Axis.RIGHT_TRIGGER);
     }
 
@@ -177,7 +177,7 @@ public class TankDemoModeControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getDrivetrainFlipped() {
+    public boolean getUnlockClimber() {
         return false;
     }
 

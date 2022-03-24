@@ -12,20 +12,21 @@ public class StopAction implements Action {
     @Inject
     private static Superstructure superstructure;
 
-    @Inject
-    private static Drive.Factory driveFactory;
+//    @Inject
+//    private static Drive.Factory driveFactory;
 
-    private Drive drive;
+//    private Drive drive;
 
     public StopAction(boolean notRevving) {
         this.notRevving = notRevving;
-        drive = driveFactory.getInstance();
+//        drive = driveFactory.getInstance();
     }
 
     @Override
     public void start() {
+        System.out.println("stopping action : - - - -");
         superstructure.setStopped(notRevving);
-        drive.stop();
+//        drive.stop();
     }
 
     @Override
