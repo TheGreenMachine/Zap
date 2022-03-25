@@ -1,24 +1,11 @@
-camera: {exposure: 1.0, fps: 100}
+camera: {exposure: 10.0, fps: 100}
 color:
-  lower: {H: 3.0, S: 2.0, V: 1.0}
-  upper: {H: 2.0, S: 0.0, V: 4.0}
+    lower: {H: 36.0, S: 80.0, V: 150.0}
+    upper: {H: 180.0, S: 255.0, V: 255.0}
 gstreamer: true
 main: {device-ip: 10.18.16.16, team-number: 1816}
 network:
-  nt-ip: 10.18.16.2
-  variables: [center_x, center_y, distance]
-stream: {line: 336.0, port: 1180}
-zed: true
-camera: 
-    exposure: 1.0
-    fps: 100
-color:
-  lower: {H: 3.0, S: 2.0, V: 1.0}
-  upper: {H: 2.0, S: 0.0, V: 4.0}
-gstreamer: true
-main: {device-ip: 10.18.16.16, team-number: 1816}
-network:
-  nt-ip: 10.18.16.2
-  variables: [center_x, center_y, distance]
+    nt-ip: 10.18.16.2
+    variables: [center_x, center_y, distance]
 stream: {line: 336.0, port: 1180}
 zed: true

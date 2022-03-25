@@ -9,6 +9,7 @@
         "showGrid": true,
         "hgap": 16.0,
         "vgap": 16.0,
+        "titleType": 0,
         "tiles": {
           "0,1": {
             "size": [
@@ -86,28 +87,6 @@
               "_source0": "network_table:///SmartDashboard/center_y",
               "_title": "SmartDashboard/center_y"
             }
-          },
-          "3,2": {
-            "size": [
-              3,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Heading Relative to Initial",
-              "_title": "/SmartDashboard/Heading Relative to Initial"
-            }
-          },
-          "5,3": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/distance",
-              "_title": "/SmartDashboard/distance"
-            }
           }
         }
       }
@@ -121,6 +100,7 @@
         "showGrid": true,
         "hgap": 16.0,
         "vgap": 16.0,
+        "titleType": 0,
         "tiles": {
           "6,1": {
             "size": [
@@ -257,6 +237,7 @@
         "showGrid": true,
         "hgap": 16.0,
         "vgap": 16.0,
+        "titleType": 0,
         "tiles": {
           "0,1": {
             "size": [
@@ -301,6 +282,21 @@
               "_source0": "network_table:///SmartDashboard/StartingPositionSelected",
               "_title": "SmartDashboard/StartingPositionSelected"
             }
+          },
+          "4,0": {
+            "size": [
+              6,
+              5
+            ],
+            "content": {
+              "_type": "Field",
+              "_source0": "network_table:///SmartDashboard/Field",
+              "_title": "Field",
+              "Game/Game": "A2022_Rapid_React",
+              "Visuals/Robot Icon Size": 50.0,
+              "Visuals/Show Outside Circles": false,
+              "Colors/turret": "#FFFFFFFF"
+            }
           }
         }
       }
@@ -314,6 +310,7 @@
         "showGrid": true,
         "hgap": 16.0,
         "vgap": 16.0,
+        "titleType": 0,
         "tiles": {
           "1,0": {
             "size": [
@@ -466,9 +463,9 @@
     }
   ],
   "windowGeometry": {
-    "x": 1.2000000476837158,
-    "y": 25.200000762939453,
+    "x": 0.8347826600074768,
+    "y": 25.043479919433594,
     "width": 1440.0,
-    "height": 804.0
+    "height": 804.3130493164062
   }
 }
