@@ -172,11 +172,11 @@ public class Shooter extends Subsystem implements PidProvider {
 
     public void setDesiredState(SHOOTER_STATE state) {
         // no checker for state because we may tell the shooter to set to the same state but different vel
-        if(this.state != state){
+//        if(this.state != state){
             this.state = state;
             outputsChanged = true;
             System.out.println("DESIRED SHOOTER STATE = " + state);
-        }
+//        }
     }
 
     public boolean isVelocityNearTarget() {

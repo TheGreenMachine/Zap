@@ -21,7 +21,6 @@ import com.team1816.season.subsystems.*;
 import com.team254.lib.util.LatchedBoolean;
 import com.team254.lib.util.SwerveDriveSignal;
 import com.team254.lib.util.TimeDelayedBoolean;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.*;
 import java.nio.file.Files;
@@ -299,6 +298,17 @@ public class Robot extends TimedRobot {
                     // Driver Gamepad
                     createHoldAction(mControlBoard::getSlowMode, mDrive::setSlowMode),
                     createHoldAction(
+                        mControlBoard::getBrakeMode,
+                        braking -> {
+                            System.out.println("braking button pressed !!!!! - - ");
+                            if(braking){
+                                mDrive.setBrakeMode(true);
+                            } else {
+                                mDrive.setBrakeMode(false);
+                            }
+                        }
+                    ),
+                    createHoldAction(
                         mControlBoard::getAutoAim,
                         pressed -> {
                             if (pressed) {
@@ -338,17 +348,6 @@ public class Robot extends TimedRobot {
                     createAction(
                         mControlBoard::getHood,
                         mShooter::setHood
-                    ),
-                    createHoldAction(
-                        mControlBoard::getBrakeMode,
-                        braking -> {
-                            if(braking){
-                                System.out.println("braking button pressed !!!!! - - ");
-                                mDrive.setBrakeMode(true);
-                            } else {
-                                mDrive.setBrakeMode(false);
-                            }
-                        }
                     ),
                     createAction(
                         mControlBoard::getCollectorBackspin,
@@ -445,7 +444,7 @@ public class Robot extends TimedRobot {
             mHasBeenEnabled = true;
 
             mDrive.zeroSensors();
-            mTurret.zeroSensors();
+//            mTurret.zeroSensors();
 
             mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
 

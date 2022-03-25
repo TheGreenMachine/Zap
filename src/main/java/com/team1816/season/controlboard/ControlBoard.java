@@ -39,8 +39,8 @@ public class ControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getQuickTurn() {
-        return mDriveControlBoard.getQuickTurn();
+    public boolean getBrakeMode() {
+        return mDriveControlBoard.getBrakeMode();
     }
 
     @Override
@@ -74,7 +74,7 @@ public class ControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getBrakeMode() {
+    public boolean getQuickTurnMode() {
         return false;
     }
 

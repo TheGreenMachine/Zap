@@ -73,7 +73,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                     );
                 }
             } else {
-                System.out.println("should be stopping drivetrain! - speed = " + mPeriodicIO.desiredModuleStates);
+//                System.out.println("should be stopping drivetrain! - speed = " + mPeriodicIO.desiredModuleStates);
                 for (int i = 0; i < swerveModules.length; i++) {
                     if(i == 0 || i == 3){
                         swerveModules[i].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)), false);
@@ -267,7 +267,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         super.setBrakeMode(on);
         for (int i = 0; i < swerveModules.length; i++) {
             if(on){
-                System.out.println("BRAKING DRIVETRAIN + = = = =  = ==  = = =");
+//                System.out.println("BRAKING DRIVETRAIN + = = = =  = ==  = = =");
                 if(i == 0 || i == 3){
                     swerveModules[i].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)), false);
                 } else {

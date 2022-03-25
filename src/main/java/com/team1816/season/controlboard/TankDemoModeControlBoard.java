@@ -167,7 +167,7 @@ public class TankDemoModeControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getQuickTurn() {
+    public boolean getBrakeMode() {
         return false;
     }
 
@@ -202,7 +202,7 @@ public class TankDemoModeControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getBrakeMode() {
+    public boolean getQuickTurnMode() {
         return false;
     }
 

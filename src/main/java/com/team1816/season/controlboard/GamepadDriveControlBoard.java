@@ -44,8 +44,8 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
     }
 
     @Override
-    public boolean getQuickTurn() {
-        return mController.getButton(Controller.Button.B);
+    public boolean getBrakeMode() {
+        return mController.getTrigger(Controller.Axis.LEFT_TRIGGER);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
     }
 
     @Override
-    public boolean getBrakeMode() {
+    public boolean getQuickTurnMode() {
         return mController.getTrigger(Controller.Axis.LEFT_TRIGGER);
     }
 
