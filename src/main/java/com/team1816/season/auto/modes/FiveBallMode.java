@@ -10,11 +10,31 @@ import edu.wpi.first.math.geometry.Translation2d;
 
 public class FiveBallMode extends AutoModeBase {
 
+    private final TrajectoryAction trajectory1;
+    private final TrajectoryAction trajectory2;
+    private final TrajectoryAction trajectory3;
+
+
     public FiveBallMode() {
         trajectory =
             new TrajectoryAction(
+                TrajectorySet.FIVE_BALL_A,
+                TrajectorySet.FIVE_BALL_A_HEADINGS
+            );
+        trajectory1 =
+            new TrajectoryAction(
                 TrajectorySet.FIVE_BALL_B,
                 TrajectorySet.FIVE_BALL_B_HEADINGS
+            );
+        trajectory2 =
+            new TrajectoryAction(
+                TrajectorySet.FIVE_BALL_C,
+                TrajectorySet.FIVE_BALL_C_HEADINGS
+            );
+        trajectory3 =
+            new TrajectoryAction(
+                TrajectorySet.FIVE_BALL_D,
+                TrajectorySet.FIVE_BALL_D_HEADINGS
             );
     }
 
@@ -24,48 +44,49 @@ public class FiveBallMode extends AutoModeBase {
         runAction(new WaitAction(.5));
         runAction(
             new SeriesAction(
-                // starting actions before paths run
-                new CollectAction(true),
-                new RampUpShooterAction(13000), // make actual shooting vel
-                new TurretAction(Turret.CARDINAL_WEST + 15), // setting this doesn't seem to work right in simulator - magically relative to field and not the robot
                 new ParallelAction(
-                    // paths
+                    new CollectAction(true),
+                    new RampUpShooterAction(13000), // make actual shooting vel
+                    new TurretAction(Turret.CARDINAL_WEST + 15), // setting this doesn't seem to work right in simulator - magically relative to field and not the robot
+                    trajectory
+                ),
+                new ParallelAction(
+                    trajectory1,
                     new SeriesAction(
-                        trajectory
-                    ),
-                    // actions to take during the path
-                    new SeriesAction(
-                        //                        new ShootAction(true, true),
-                        new WaitUntilInsideRegion(
-                            new Translation2d(0, 0), // make actual region to change hood
-                            new Translation2d(210, 180),
-                            "1st, ally ball"
-                        ),
                         new ShootAction(true, true),
                         new WaitUntilInsideRegion(
-                            new Translation2d(0, 0), // make actual region to change hood
-                            new Translation2d(205, 130),
+                            new Translation2d(160, 99), // make actual region to change hood
+                            new Translation2d(203, 134),
                             "2nd, enemy ball"
                         ),
                         new ShootAction(true, false),
                         new WaitUntilInsideRegion(
-                            new Translation2d(0, 0), // make actual region to change hood
-                            new Translation2d(220, 80),
+                            new Translation2d(184, 46), // make actual region to change hood
+                            new Translation2d(241, 69),
                             "3rd, ally ball"
                         ),
                         new ShootAction(true, true),
-//                        another wait until inside region action here
-//                        new TurretAction(Turret.CARDINAL_NORTH),
-                        new WaitAction(4),
-                        new RampUpShooterAction(14000),
-                        new TurretAction(Turret.CARDINAL_SOUTH), // tune these two
-                        new ShootAction(true, true),
-                        new WaitAction(2),
-                        new StopAction(false)
+                        new WaitUntilInsideRegion(
+                            new Translation2d(265, 25),
+                            new Translation2d(306, 47),
+                            "4th, ally ball"
+                        ),
+                        new TurretAction(Turret.CARDINAL_WEST - 10)
                     )
-                )
+                ),
+                new WaitAction(1),
+                new ShootAction(false, true),
+                trajectory2,
+                new WaitAction(1),
+                new ParallelAction(
+                    new RampUpShooterAction(14000),
+                    new TurretAction(Turret.CARDINAL_SOUTH),
+                    trajectory3
+                ),
+                new ShootAction(true, true),
+                new WaitAction(2),
+                new StopAction(false)
             )
         );
-//        runAction(); // stop all at end
     }
 }

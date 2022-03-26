@@ -51,6 +51,7 @@ public abstract class Drive
     protected Trajectory mTrajectory;
     protected List<Rotation2d> mHeadings;
     protected int mTrajectoryIndex = 0;
+    protected boolean trajectoryStarted = false;
 
     // hardware states
     protected String pidSlot = "slot0";

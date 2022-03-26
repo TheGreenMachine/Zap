@@ -202,7 +202,7 @@ subsystems:
         constants:
             debug: 0
             useShuffleboard: 0
-            deviation: -20
+            deviation: 0
 pcm: 2
 canivoreBusName: highSpeed
 constants:
