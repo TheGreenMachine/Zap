@@ -58,6 +58,7 @@ else:
 detector = detect.Detector(vs)
 width = int(vs.yml_data['stream']['line'])
 fpsCounter = fps.FPS()
+lastDist = -1
 while True:
     fpsCounter.reset()
     fpsCounter.start()
@@ -78,8 +79,10 @@ while True:
             fpsCounter.update()
             fpsCounter.stop()
             #stream_image = fps.putIterationsPerSec(stream_image, fpsCounter.fps())
-           # stream_image = cv2.bitwise_and(stream_image, stream_image, mask=mask)
-            stream_image = cv2.putText(stream_image, f"{vs.distance} in",
+            # stream_image = cv2.bitwise_and(stream_image, stream_image, mask=mask)
+            if vs.distance >= 0:
+                lastDist = vs.distance
+            stream_image = cv2.putText(stream_image, f"{lastDist} in",
                 (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 0))
             offset = abs(336 -  int(vs.cx))
             if 336 < int(vs.cx):
@@ -116,4 +119,3 @@ while True:
                 out.write(stream_image)
         else:
             streamer.write(stream_image)
-
