@@ -5,7 +5,7 @@ import com.google.inject.Inject;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.season.Robot;
-import com.team1816.season.RobotState;
+import com.team1816.season.states.RobotState;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;

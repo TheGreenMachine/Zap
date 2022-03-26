@@ -1,7 +1,7 @@
 package com.team1816.lib.auto.actions;
 
 import com.google.inject.Inject;
-import com.team1816.season.RobotState;
+import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;

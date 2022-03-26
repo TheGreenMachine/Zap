@@ -10,7 +10,7 @@ import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.hardware.components.motor.GhostMotorControllerEnhanced;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
-import com.team1816.season.RobotState;
+import com.team1816.season.states.RobotState;
 import com.team1816.season.SeasonModule;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;

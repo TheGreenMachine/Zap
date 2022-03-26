@@ -2,9 +2,9 @@ package com.team1816.lib.auto.actions;
 
 import com.google.inject.Inject;
 import com.team1816.season.Constants;
-import com.team1816.season.subsystems.Drive;
-import com.team1816.season.subsystems.SwerveDrive;
-import com.team1816.season.subsystems.TankDrive;
+import com.team1816.lib.subsystems.Drive;
+import com.team1816.lib.subsystems.SwerveDrive;
+import com.team1816.lib.subsystems.TankDrive;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.RamseteController;

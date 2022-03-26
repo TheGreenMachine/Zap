@@ -1,6 +1,6 @@
-package com.team1816.season.subsystems;
+package com.team1816.lib.subsystems;
 
-import static com.team1816.season.subsystems.Drive.factory;
+import static com.team1816.lib.subsystems.Drive.factory;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;

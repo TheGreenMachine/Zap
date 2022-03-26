@@ -14,7 +14,7 @@ import com.team1816.lib.hardware.components.motor.LazySparkMax;
 import com.team1816.lib.hardware.components.pcm.*;
 import com.team1816.lib.math.DriveConversions;
 import com.team1816.season.Constants;
-import com.team1816.season.subsystems.SwerveModule;
+import com.team1816.lib.subsystems.SwerveModule;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotBase;

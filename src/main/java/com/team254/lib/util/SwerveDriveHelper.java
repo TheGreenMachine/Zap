@@ -1,7 +1,7 @@
 package com.team254.lib.util;
 
 import com.team1816.season.Constants;
-import com.team1816.season.SwerveKinematics;
+import com.team1816.lib.math.SwerveKinematics;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 

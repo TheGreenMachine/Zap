@@ -2,7 +2,7 @@ package com.team1816.season.auto.actions;
 
 import com.google.inject.Inject;
 import com.team1816.lib.auto.actions.Action;
-import com.team1816.season.Superstructure;
+import com.team1816.season.states.Superstructure;
 import com.team1816.season.subsystems.Shooter;
 
 public class ShootAction implements Action {

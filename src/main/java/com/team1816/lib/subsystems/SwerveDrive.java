@@ -1,9 +1,7 @@
-package com.team1816.season.subsystems;
+package com.team1816.lib.subsystems;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.team1816.lib.subsystems.PidProvider;
-import com.team1816.lib.subsystems.SwerveDrivetrain;
 import com.team1816.season.auto.AutoModeSelector;
 import com.team1816.season.Constants;
 import com.team254.lib.util.DriveSignal;

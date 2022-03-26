@@ -12,12 +12,15 @@ import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.lib.loops.Looper;
+import com.team1816.lib.subsystems.Drive;
 import com.team1816.lib.subsystems.DrivetrainLogger;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.subsystems.SubsystemManager;
 import com.team1816.season.auto.AutoModeSelector;
 import com.team1816.season.controlboard.ActionManager;
 import com.team1816.season.auto.paths.TrajectorySet;
+import com.team1816.season.states.RobotState;
+import com.team1816.season.states.Superstructure;
 import com.team1816.season.subsystems.*;
 import com.team254.lib.util.LatchedBoolean;
 import com.team254.lib.util.SwerveDriveSignal;
@@ -46,7 +49,7 @@ public class Robot extends TimedRobot {
     //State managers
     private final Superstructure mSuperstructure;
     private final Infrastructure mInfrastructure;
-    private final RobotState mRobotState;
+    private final com.team1816.season.states.RobotState mRobotState;
 
     // subsystems
     private final Drive mDrive;
