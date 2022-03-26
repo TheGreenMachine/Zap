@@ -59,9 +59,9 @@ subsystems:
                     kF: 0.0499
             azimuthPID:
                 slot0:
-                    kP: 3.6 # 6.0
+                    kP: 4 # 6.0
                     kI: 0.0005
-                    kD: 30
+                    kD: 35
                     kF: 0
                     allowableError: 5
         constants:
@@ -102,7 +102,7 @@ subsystems:
         talons:
             turret: 33 # need to set to pdp port number
         constants:
-            revLimit: 7456 # adjusted for zero-offset
+            revLimit: 7800 # adjusted for zero-offset
             fwdLimit: 41000 # adjusted for zero-offset
             absPosTicksSouth: 0 # absolute
             zeroOffset: 12639 # (turretPPR - non-adjusted fwdLimit - non-adjusted revlimit) / 2
@@ -177,7 +177,7 @@ subsystems:
             collectPow: 0.5
             indexPow: -0.25
             flushPow: -1
-            firePow: .45
+            firePow: .38
     collector:
         implemented: true
         sparkmaxes:
