@@ -8,6 +8,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+/* class responsible with logging the robot's ACTUAL states - robot position (predicted) and superstructure subsystem actual states */
+
 @Singleton
 public class RobotState {
 
