@@ -63,7 +63,7 @@ public class Turret extends Subsystem implements PidProvider {
     private int visionCorroboration = 0;
     private double turretSpeed;
     private boolean outputsChanged = true;
-    private static ControlMode controlMode = ControlMode.MANUAL;
+    private static ControlMode controlMode;
 
     public Turret() {
         super(NAME);
@@ -160,6 +160,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     public void setControlMode(ControlMode controlMode) {
         if (Turret.controlMode != controlMode) {
+            outputsChanged = true;
             if (controlMode == ControlMode.CAMERA_FOLLOWING) {
                 if (Constants.kUseVision) {
                     Turret.controlMode = controlMode;
@@ -223,6 +224,7 @@ public class Turret extends Subsystem implements PidProvider {
     public synchronized void setTurretAngle(double angle) {
         setControlMode(ControlMode.POSITION);
         setTurretPosition(convertTurretDegreesToTicks(angle));
+//        outputsChanged = true;
     }
 
     public synchronized void setFollowingAngle(double angle) {

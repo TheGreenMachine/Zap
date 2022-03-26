@@ -156,8 +156,8 @@ subsystems:
             maxTicks: 1 # TODO set this value
             unlockPos: -12
             startPos: 0
-            firstToSecondRungPos: 84
-            secondToLastRungPos: 164
+            firstToSecondRungPos: 86.5
+            secondToLastRungPos: 166.5
             lastPos: 190
     elevator:
         implemented: true

@@ -149,7 +149,10 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         mHeadings = headings;
         if(!trajectoryStarted){
             trajectoryStarted = true; // massive hack here woo
-            resetOdometry(trajectory.getInitialPose());
+            swerveOdometry.resetPosition(trajectory.getInitialPose(),
+                trajectory.getInitialPose().getRotation()
+            );
+            setHeading(trajectory.getInitialPose().getRotation());
         }
         mTrajectoryIndex = 0;
         updateRobotState();

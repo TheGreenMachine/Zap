@@ -78,7 +78,7 @@ public class Robot extends TimedRobot {
     private AsyncTimer blinkTimer;
 
     // private PowerDistributionPanel pdp = new PowerDistributionPanel();
-    private final Turret.ControlMode defaultTurretControlMode = Turret.ControlMode.CENTER_FOLLOWING;
+    private final Turret.ControlMode defaultTurretControlMode = Turret.ControlMode.FIELD_FOLLOWING;
     private boolean faulted;
 
     Robot() {
@@ -348,7 +348,6 @@ public class Robot extends TimedRobot {
                         yeet -> {
                             if (yeet) {
                                 mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
-                                mTurret.setFollowingAngle(Turret.CARDINAL_SOUTH);
                             } else {
                                 mTurret.setControlMode(defaultTurretControlMode); // this gets called when the robot inits - this could be bad?
                             }
