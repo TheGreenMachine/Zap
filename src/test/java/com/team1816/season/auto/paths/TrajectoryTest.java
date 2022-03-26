@@ -1,4 +1,4 @@
-package com.team1816.season.paths;
+package com.team1816.season.auto.paths;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

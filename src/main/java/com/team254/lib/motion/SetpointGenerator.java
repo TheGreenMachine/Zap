@@ -1,6 +1,6 @@
 package com.team254.lib.motion;
 
-import com.team1816.lib.hardware.RobotFactory;
+import com.team1816.lib.hardware.factory.RobotFactory;
 
 import java.util.Optional;
 

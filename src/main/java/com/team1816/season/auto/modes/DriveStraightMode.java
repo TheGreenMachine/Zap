@@ -4,7 +4,7 @@ import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.actions.*;
 import com.team1816.lib.auto.modes.AutoModeBase;
 import com.team1816.season.auto.actions.DriveOpenLoopAction;
-import com.team1816.season.paths.TrajectorySet;
+import com.team1816.season.auto.paths.TrajectorySet;
 
 public class DriveStraightMode extends AutoModeBase {
 

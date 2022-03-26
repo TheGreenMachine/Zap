@@ -1,7 +1,7 @@
 package com.team254.lib.control;
 
 import com.team1816.season.Constants;
-import com.team1816.lib.hardware.RobotFactory;
+import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.motion.*;

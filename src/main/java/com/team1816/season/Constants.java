@@ -3,7 +3,7 @@ package com.team1816.season;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
-import com.team1816.lib.hardware.RobotFactory;
+import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team254.lib.util.Units;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;

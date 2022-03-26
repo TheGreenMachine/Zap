@@ -1,4 +1,4 @@
-package com.team1816.season.paths;
+package com.team1816.season.auto.paths;
 
 import com.google.inject.Singleton;
 import edu.wpi.first.math.geometry.Rotation2d;

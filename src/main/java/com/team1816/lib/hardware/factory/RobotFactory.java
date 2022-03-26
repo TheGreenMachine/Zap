@@ -1,4 +1,4 @@
-package com.team1816.lib.hardware;
+package com.team1816.lib.hardware.factory;
 
 import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifierStatusFrame;
@@ -8,20 +8,18 @@ import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.sensors.*;
+import com.team1816.lib.hardware.*;
 import com.team1816.lib.hardware.components.*;
 import com.team1816.lib.hardware.components.motor.LazySparkMax;
 import com.team1816.lib.hardware.components.pcm.*;
 import com.team1816.lib.math.DriveConversions;
 import com.team1816.season.Constants;
-import com.team1816.season.subsystems.Drive;
 import com.team1816.season.subsystems.SwerveModule;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotBase;
 import java.util.Map;
 import javax.annotation.Nonnull;
-
-import static com.team1816.lib.subsystems.Subsystem.factory;
 
 public class RobotFactory {
 

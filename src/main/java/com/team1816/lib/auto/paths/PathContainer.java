@@ -1,4 +1,4 @@
-package com.team1816.lib.paths;
+package com.team1816.lib.auto.paths;
 
 import com.team1816.season.Constants;
 import com.team254.lib.util.Units;

@@ -3,7 +3,7 @@ package com.team1816.season.subsystems;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.team1816.lib.LibModule;
-import com.team1816.lib.hardware.RobotFactory;
+import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
 import com.team1816.season.RobotState;

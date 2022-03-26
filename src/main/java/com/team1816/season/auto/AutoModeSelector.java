@@ -1,4 +1,4 @@
-package com.team1816.season.auto.modes;
+package com.team1816.season.auto;
 
 import com.team1816.lib.auto.modes.AutoModeBase;
 import com.team1816.lib.auto.modes.DoNothingMode;

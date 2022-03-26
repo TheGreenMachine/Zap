@@ -4,7 +4,7 @@ import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.auto.actions.WaitAction;
 import com.team1816.lib.auto.modes.AutoModeBase;
-import com.team1816.season.paths.TrajectorySet;
+import com.team1816.season.auto.paths.TrajectorySet;
 
 public class TuneDrivetrainMode extends AutoModeBase {
 

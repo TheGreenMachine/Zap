@@ -1,6 +1,6 @@
-package com.team1816.lib.paths;
+package com.team1816.lib.auto.paths;
 
-import com.team1816.lib.hardware.RobotFactory;
+import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team254.lib.control.Path;
 import com.team254.lib.control.PathSegment;
 import com.team254.lib.geometry.Pose2d;

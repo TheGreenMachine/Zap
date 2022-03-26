@@ -1,4 +1,4 @@
-package com.team1816.lib.hardware;
+package com.team1816.lib.util;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
