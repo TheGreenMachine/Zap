@@ -30,7 +30,7 @@ public class TwoBallModeA extends AutoModeBase {
                 ),
                 trajectory,
                 new ShootAction(true, true),
-                new WaitAction(2)
+                new WaitAction(4)
             )
         );
         runAction(new StopAction(false));

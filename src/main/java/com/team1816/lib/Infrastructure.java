@@ -1,4 +1,4 @@
-package com.team1816.lib.subsystems;
+package com.team1816.lib;
 
 import static com.team1816.lib.subsystems.Subsystem.factory;
 

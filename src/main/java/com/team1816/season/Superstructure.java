@@ -5,6 +5,7 @@ import com.google.inject.Singleton;
 import com.team1816.season.subsystems.*;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 
 @Singleton
 public class Superstructure {
@@ -37,12 +38,14 @@ public class Superstructure {
     private boolean revving;
     private boolean firing;
     private final boolean useVision;
+    private final boolean usePoseTrack;
 
     public Superstructure() {
         collecting = false;
         revving = false;
         firing = false;
         useVision = Constants.kUseVision;
+        usePoseTrack = Constants.kUsePoseTrack;
     }
 
     public void setStopped(boolean notCoasting) {
@@ -76,8 +79,12 @@ public class Superstructure {
                 spindexer.setDesiredState(Spindexer.SPIN_STATE.COLLECT);
             }
         } else {
+            if(!revving){
+                collector.setDesiredState(Collector.COLLECTOR_STATE.STOP);
+            }
             collector.setDesiredState(Collector.COLLECTOR_STATE.STOP);
             if (!firing) {
+                spindexer.setDesiredState(Spindexer.SPIN_STATE.STOP);
                 spindexer.setDesiredState(Spindexer.SPIN_STATE.STOP);
             }
         }
@@ -87,18 +94,22 @@ public class Superstructure {
         this.revving = revving;
         if (revving) {
             shooter.setDesiredState(Shooter.SHOOTER_STATE.REVVING);
-            if (useVision) {
-                camera.setEnabled(true);
+            if (camera.cameraEnabled || usePoseTrack) {
                 shooter.setVelocity(getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
                 shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) > 0);
             } else {
                 shooter.setVelocity(shooterVel);
             }
+            if(!collecting){
+                collector.setDesiredState(Collector.COLLECTOR_STATE.REVVING);
+            }
             System.out.println("superstructure set to rev");
         } else {
-            camera.setEnabled(false);
             System.out.println("superstructure set to not rev");
             shooter.setDesiredState(Shooter.SHOOTER_STATE.COASTING);
+            if(!collecting){
+                collector.setDesiredState(Collector.COLLECTOR_STATE.STOP);
+            }
         }
     }
 
@@ -111,7 +122,7 @@ public class Superstructure {
             if (!elevator.colorOfBall()) { // spit out ball if wrong color
                 shooter.setHood(false);
             }
-            if (useVision) {
+            if (camera.cameraEnabled) {
                 elevator.overridePower(getDistance(DistanceManager.SUBSYSTEM.ELEVATOR));
             }
             System.out.println("superstructure set to fire");
@@ -125,11 +136,24 @@ public class Superstructure {
     }
 
     public double getDistance(DistanceManager.SUBSYSTEM subsystem) {
-        System.out.println(
-            "GETTING DISTANCE FROM CAMERA / DISTANCE MANAGER " +
-            distanceManager.getOutput(camera.getDistance(), subsystem)
-        );
-        return distanceManager.getOutput(camera.getDistance(), subsystem);
+        if(useVision){
+            System.out.println(
+                "GETTING DISTANCE FROM CAMERA / DISTANCE MANAGER " +
+                    distanceManager.getOutput(camera.getDistance(), subsystem)
+            );
+            return distanceManager.getOutput(camera.getDistance(), subsystem);
+        } else if(usePoseTrack){
+            System.out.println("using position to plan shooter velocity");
+            return distanceManager.getOutput(calculateDistanceToGoal(), subsystem);
+        } else {
+            System.out.println("using neither poseTracking nor vision ! - not intended");
+            return -1;
+        }
+    }
+
+    public double calculateDistanceToGoal(){
+        double distanceToGoalMeters = mRobotState.field_to_vehicle.getTranslation().getDistance(Constants.goalPos.getTranslation());
+        return Units.metersToInches(distanceToGoalMeters) / 1.2;
     }
 
     public double getPredictedDistance(DistanceManager.SUBSYSTEM subsystem) {

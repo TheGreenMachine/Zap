@@ -58,14 +58,12 @@ public class Turret extends Subsystem implements PidProvider {
     private final double kD;
     private final double kF;
     // State
-    private int desiredTurretPos = 0;
-    private int desiredTurretPosOffset = 0;
-
-    private int followingTurretPos = 0;
+    private static int desiredTurretPos = 0;
+    private static int followingTurretPos = 0;
     private int visionCorroboration = 0;
     private double turretSpeed;
     private boolean outputsChanged = true;
-    private ControlMode controlMode = ControlMode.MANUAL;
+    private static ControlMode controlMode = ControlMode.MANUAL;
 
     public Turret() {
         super(NAME);
@@ -153,13 +151,6 @@ public class Turret extends Subsystem implements PidProvider {
             } else {
                 System.out.println("UNSAFE - NOT ZEROING TURRET QUADRATURE");
             }
-
-            // If turret enc reads ~offset (is pointing forward after startup) then reset turret tracking positions (for joystick/setAngle calls)
-            if(Math.abs(sensors.getQuadraturePosition() - offset) < TURRET_ABS_ENCODER_PPR){
-                System.out.println("zeroing turret positions (not quadrature)");
-//                desiredTurretPosOffset = desiredTurretPos;
-            }
-
         }
     }
 
@@ -168,27 +159,27 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     public void setControlMode(ControlMode controlMode) {
-        if (this.controlMode != controlMode) {
+        if (Turret.controlMode != controlMode) {
             if (controlMode == ControlMode.CAMERA_FOLLOWING) {
                 if (Constants.kUseVision) {
+                    Turret.controlMode = controlMode;
                     turret.selectProfileSlot(kPIDVisionIDx, 0);
-                    this.controlMode = controlMode;
-                    camera.setEnabled(true);
+                    camera.setCameraEnabled(true);
                     led.indicateStatus(LedManager.RobotStatus.SEEN_TARGET);
                 } else {
                     System.out.println("auto aim not enabled! Not aiming with camera!");
                 }
             } else {
+                Turret.controlMode = controlMode;
                 turret.selectProfileSlot(kPIDGyroIDx, 0);
-                this.controlMode = controlMode;
-                camera.setEnabled(false);
+                camera.setCameraEnabled(false);
                 if (controlMode == ControlMode.MANUAL) {
                     led.indicateStatus(LedManager.RobotStatus.MANUAL_TURRET);
                 } else {
                     led.indicateDefaultStatus();
                 }
             }
-            System.out.println("TURRET CONTROL MODE IS . . . . . ." + controlMode);
+            System.out.println("TURRET CONTROL MODE IS . . . . . . " + Turret.controlMode);
         }
     }
 
@@ -221,11 +212,10 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     private synchronized void setTurretPosition(double position) {
-        double pos = position - desiredTurretPosOffset;
         //Since we are using position we need ensure value stays in one rotation
-        if (desiredTurretPos != (int) pos) {
-            System.out.println("setting desiredTurretPos to " + pos);
-            desiredTurretPos = (int) pos;
+        if (desiredTurretPos != (int) position) {
+            System.out.println("setting desiredTurretPos to " + position);
+            desiredTurretPos = (int) position;
             outputsChanged = true;
         }
     }
@@ -310,8 +300,8 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     private int centerFollowingOffset() {
-        double opposite = Constants.fieldCenterY - robotState.field_to_vehicle.getY();
-        double adjacent = Constants.fieldCenterX - robotState.field_to_vehicle.getX();
+        double opposite = Constants.fieldCenterY - robotState.getFieldToTurretPos().getY();
+        double adjacent = Constants.fieldCenterX - robotState.getFieldToTurretPos().getX();
         double turretAngle = 0;
         turretAngle = Math.atan(opposite / adjacent);
         if (adjacent < 0) turretAngle += Math.PI;
@@ -435,7 +425,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     @Override
     public void stop() {
-        camera.setEnabled(false);
+        camera.setCameraEnabled(false);
     }
 
     @Override

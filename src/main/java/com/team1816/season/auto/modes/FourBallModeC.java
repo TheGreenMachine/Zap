@@ -7,13 +7,26 @@ import com.team1816.season.auto.actions.*;
 import com.team1816.season.paths.TrajectorySet;
 import com.team1816.season.subsystems.Turret;
 
-public class TwoBallModeC extends AutoModeBase {
+public class FourBallModeC extends AutoModeBase {
 
-    public TwoBallModeC() {
+    private final TrajectoryAction trajectory1;
+    private final TrajectoryAction trajectory2;
+
+    public FourBallModeC() {
         trajectory =
             new TrajectoryAction(
                 TrajectorySet.TWO_BALL_C,
                 TrajectorySet.TWO_BALL_C_HEADINGS
+            );
+        trajectory1 =
+            new TrajectoryAction(
+                TrajectorySet.FOUR_BALL_C2,
+                TrajectorySet.FOUR_BALL_C2_HEADINGS
+            );
+        trajectory2 =
+            new TrajectoryAction(
+                TrajectorySet.FOUR_BALL_C3,
+                TrajectorySet.FOUR_BALL_C3_HEADINGS
             );
     }
 
@@ -30,7 +43,14 @@ public class TwoBallModeC extends AutoModeBase {
                 ),
                 trajectory,
                 new ShootAction(true, true),
-                new WaitAction(4)
+                new WaitAction(2),
+                new ShootAction(false, true),
+                trajectory1,
+                new WaitAction(2),
+                new TurretAction(Turret.CARDINAL_WEST), // this is in dead zone so tune heading or turret angle
+                trajectory2,
+                new ShootAction(true, true),
+                new WaitAction(3)
             )
         );
         runAction(new StopAction(false));

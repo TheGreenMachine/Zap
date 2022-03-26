@@ -3,7 +3,6 @@ package com.team1816.season.subsystems;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.subsystems.Subsystem;
-import com.team1816.season.Constants;
 import com.team1816.season.RobotState;
 import com.team1816.lib.vision.VisionSocket;
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ public class Camera extends Subsystem {
 
     public final VisionSocket socket = new VisionSocket();
 
-    public boolean enabled;
+    public static boolean cameraEnabled;
 
     public double shuffleBoardDistance = -1;
 
@@ -44,8 +43,7 @@ public class Camera extends Subsystem {
     private double parseDeltaX(double x) {
         double deltaXPixels = (x - (VIDEO_WIDTH / 2)); // Calculate deltaX from center of screen
         double base = Math.toDegrees(Math.atan2(deltaXPixels, CAMERA_FOCAL_LENGTH)) * 0.64;
-        double deviation = factory.getConstant(NAME, "deviation", 0);
-        return base + deviation;
+        return base;
     }
 
     public double getDeltaXAngle() {
@@ -56,22 +54,22 @@ public class Camera extends Subsystem {
         if(factory.getConstant(NAME, "useShuffleboard", 0) > 0){
             return shuffleBoardDistance;
         }
-
-        return state.visionPoint.dist;
+        double deviation = factory.getConstant(NAME, "deviation", 0);
+        return state.visionPoint.dist + deviation;
     }
 
     public double getRawCenterX() {
         return state.visionPoint.cX;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-        led.setCameraLed(enabled);
-        socket.setEnabled(enabled);
+    public void setCameraEnabled(boolean cameraEnabled) {
+        Camera.cameraEnabled = cameraEnabled;
+        led.setCameraLed(cameraEnabled);
+        socket.setEnabled(cameraEnabled);
     }
 
     public void setEnabled() {
-        setEnabled(!enabled);
+        setCameraEnabled(!cameraEnabled);
     }
 
     public boolean checkSystem() {

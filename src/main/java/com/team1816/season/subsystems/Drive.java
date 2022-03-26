@@ -8,7 +8,7 @@ import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.IPigeonIMU;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.lib.loops.Loop;
-import com.team1816.lib.subsystems.Infrastructure;
+import com.team1816.lib.Infrastructure;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.subsystems.TrackableDrivetrain;
@@ -63,6 +63,7 @@ public abstract class Drive
     protected boolean mOverrideTrajectory = false;
 
     protected boolean isSlowMode;
+    protected boolean pigeonNeedsReset = false;
 
     // Simulator
     protected double gyroDrift;
@@ -350,9 +351,15 @@ public abstract class Drive
     }
 
     public synchronized void resetPigeon() {
-        mPigeon.setYaw(0);
-        mPigeon.setFusedHeading(0);
-        mPigeon.setAccumZAngle(0);
+        if(!pigeonNeedsReset){
+            pigeonNeedsReset = true;
+            System.out.println("resetting Pigeon  - - ");
+            mPigeon.setYaw(0);
+            mPigeon.setFusedHeading(0);
+            mPigeon.setAccumZAngle(0);
+        } else {
+            System.out.println("not resetting pigeon - pigeon reset has already occurred!");
+        }
     }
 
     @Override

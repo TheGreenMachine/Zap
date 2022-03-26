@@ -12,9 +12,10 @@ public class RobotState {
 
     public final Field2d field = new Field2d();
     public Pose2d field_to_vehicle = Constants.EmptyPose;
+    public Pose2d field_to_turret_pos = Constants.EmptyPose;
     public Rotation2d vehicle_to_turret = Constants.EmptyRotation;
     public Twist2d delta_field_to_vehicle = new Twist2d();
-    public ChassisSpeeds chassis_speeds = new ChassisSpeeds(0, 0, 0);
+    public ChassisSpeeds chassis_speeds = new ChassisSpeeds();
     public double shooterSpeed = 0;
 
     // Superstructure ACTUAL states
@@ -60,6 +61,20 @@ public class RobotState {
         return field_to_vehicle.getRotation().plus(vehicle_to_turret).getDegrees();
     }
 
+    public synchronized Pose2d getFieldToTurretPos(){
+        return new Pose2d(
+            field_to_vehicle
+                .transformBy(
+                    new Transform2d(
+                        new Translation2d(-.1, .1),
+                        Constants.EmptyRotation
+                    )
+                )
+                .getTranslation(),
+            Rotation2d.fromDegrees(getLatestFieldToTurret())
+        );
+    }
+
     public Twist2d getDeltaPoseToCenter() {
         return delta_field_to_vehicle; // make conversion from field relative deltaPose to center relative deltaPose
     }
@@ -82,17 +97,7 @@ public class RobotState {
         field
             .getObject(Turret.NAME)
             .setPose(
-                new Pose2d(
-                    field_to_vehicle
-                        .transformBy(
-                            new Transform2d(
-                                new Translation2d(-.1, .1),
-                                Constants.EmptyRotation
-                            )
-                        )
-                        .getTranslation(),
-                    Rotation2d.fromDegrees(getLatestFieldToTurret())
-                )
+                getFieldToTurretPos()
             );
     }
 

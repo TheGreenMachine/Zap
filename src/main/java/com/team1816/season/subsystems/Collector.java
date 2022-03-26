@@ -26,6 +26,7 @@ public class Collector extends Subsystem {
 
     private final double COLLECTING;
     private final double FLUSH;
+    private final double REVVING;
     private final String pidSlot = "slot0";
 
     public Collector() {
@@ -43,6 +44,7 @@ public class Collector extends Subsystem {
 
         COLLECTING = factory.getConstant(NAME, "collecting");
         FLUSH = factory.getConstant(NAME, "flush");
+        REVVING = factory.getConstant(NAME, "revving", .5);
     }
 
     public void setVelocity(double velocity) {
@@ -83,6 +85,10 @@ public class Collector extends Subsystem {
                     intakeVel = COLLECTING;
                     armDown = true;
                     break;
+                case REVVING:
+                    intakeVel = REVVING;
+                    armDown = false;
+                    break;
                 case FLUSH:
                     intakeVel = FLUSH;
                     armDown = true; // do we want arm down for this? pending for build team opinion...
@@ -106,6 +112,7 @@ public class Collector extends Subsystem {
     public enum COLLECTOR_STATE {
         STOP,
         COLLECTING,
+        REVVING,
         FLUSH,
     }
 }

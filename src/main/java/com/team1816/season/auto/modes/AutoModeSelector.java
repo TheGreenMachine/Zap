@@ -1,4 +1,4 @@
-package com.team1816.season;
+package com.team1816.season.auto.modes;
 
 import com.team1816.lib.auto.modes.AutoModeBase;
 import com.team1816.lib.auto.modes.DoNothingMode;
@@ -33,7 +33,9 @@ public class AutoModeSelector {
         DRIVE_STRAIGHT_SHOOT,
         TWO_BALL_A,
         TWO_BALL_B,
+        FOUR_BALL_B,
         TWO_BALL_C,
+        FOUR_BALL_C,
         FIVE_BALL,
     }
 
@@ -59,18 +61,22 @@ public class AutoModeSelector {
         SmartDashboard.putData("Auto mode", mModeChooser);
 
         // Debugging / Tuning
-        mModeChooser.addOption("Tune Drivetrain", DesiredMode.TUNE_DRIVETRAIN);
+        mModeChooser.addOption("Tune Drivetrain - FOR TESTING", DesiredMode.TUNE_DRIVETRAIN);
         mModeChooser.addOption("Do Nothing", DesiredMode.DO_NOTHING);
-        mModeChooser.addOption("Living Room", DesiredMode.LIVING_ROOM);
+        mModeChooser.addOption("Living Room - FOR TESTING", DesiredMode.LIVING_ROOM);
 
         // Safety Nets
         mModeChooser.setDefaultOption("Drive Straight", DesiredMode.DRIVE_STRAIGHT);
-        mModeChooser.addOption("Drive Staight Shoot", DesiredMode.DRIVE_STRAIGHT_SHOOT);
+        mModeChooser.addOption("Drive Straight Shoot", DesiredMode.DRIVE_STRAIGHT_SHOOT);
 
         // General autos
         mModeChooser.addOption("Two Ball A", DesiredMode.TWO_BALL_A);
         mModeChooser.addOption("Two Ball B", DesiredMode.TWO_BALL_B);
         mModeChooser.addOption("Two Ball C", DesiredMode.TWO_BALL_C);
+
+        mModeChooser.addOption("Four Ball B", DesiredMode.FOUR_BALL_B);
+        mModeChooser.addOption("Four Ball C", DesiredMode.FOUR_BALL_C);
+
         mModeChooser.addOption("Five Ball", DesiredMode.FIVE_BALL);
 
         SmartDashboard.putData("Auto mode", mModeChooser);
@@ -139,8 +145,12 @@ public class AutoModeSelector {
                 return (Optional.of(new TwoBallModeA()));
             case TWO_BALL_B:
                 return (Optional.of(new TwoBallModeB()));
+            case FOUR_BALL_B:
+                return (Optional.of(new FourBallModeB()));
             case TWO_BALL_C:
                 return (Optional.of(new TwoBallModeC()));
+            case FOUR_BALL_C:
+                return (Optional.of(new FourBallModeC()));
             case FIVE_BALL:
                 return (Optional.of(new FiveBallMode()));
             default:

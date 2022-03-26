@@ -24,6 +24,7 @@ public class Constants {
     // Field characterization
     public static final double fieldCenterY = 8.23 / 2.0;
     public static final double fieldCenterX = 16.46 / 2.0;
+    public static final Pose2d goalPos = new Pose2d(fieldCenterX, fieldCenterY, EmptyRotation);
 
     // Drivetrain characterization
     public static final double kDriveWheelTrackWidthInches = factory.getConstant(
@@ -58,9 +59,9 @@ public class Constants {
     );
     public static double kTrackScrubFactor = factory.getConstant("kTrackScrubFactor");
 
-    public static final Pose2d ZeroPose = new Pose2d(0.5, 3.5, EmptyRotation);
-    public static Pose2d StartingPose = new Pose2d(0.5, 3.5, EmptyRotation);
-    public static Pose2d prevDrivePose = new Pose2d(0.5, 3.5, EmptyRotation);
+    public static final Pose2d ZeroPose = new Pose2d(0.5, fieldCenterY, EmptyRotation);
+    public static Pose2d StartingPose = new Pose2d(0.5, fieldCenterY, EmptyRotation);
+    public static Pose2d prevDrivePose = new Pose2d(0.5, fieldCenterY, EmptyRotation);
 
 
     // CAN Timeouts
@@ -224,6 +225,7 @@ public class Constants {
     public static final boolean kIsLoggingTeleOp = factory.getConstant("logTeleOp") > 0;
     public static final boolean kIsLoggingAutonomous = factory.getConstant("logAuto") > 0;
 
+    public static final boolean kUsePoseTrack = factory.getConstant("shooter", "usingPoseForSpeed", 0) > 0;
     public static final boolean kUseVision = factory.getSubsystem("camera").implemented;
     // Do not change anything after this line unless you rewire the robot and
     // update the spreadsheet!

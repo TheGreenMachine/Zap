@@ -63,7 +63,7 @@ public interface PathContainer {
 
     default List<Rotation2d> generateHeadings() {
         double startX = .5;
-        double startY = 3.5;
+        double startY = Constants.fieldCenterY;
 
         Trajectory trajectory = generateTrajectory();
         List<Pose2d> waypointsMeters = new ArrayList<>();

@@ -42,7 +42,9 @@ public class VisionSocket {
 
     public void close() {
         try {
-            if (socket != null) socket.close();
+            if (socket != null) {
+                socket.close();
+            }
             cleanup();
         } catch (IOException e) {
             debug("Close failed: " + e.getMessage());
