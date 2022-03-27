@@ -2,6 +2,7 @@ import cv2
 import socket
 import sys
 import argparse
+import json
 
 # Initialize parser
 parser = argparse.ArgumentParser()
@@ -22,43 +23,33 @@ if __name__ == '__main__':
     data = ''.join(sys.argv[1:])
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-
-    def updateHmin(value):
-        s.send(b'calib|HMIN|' + str(value).zfill(3).encode() + b'\n')
-
-
-    def updateSmin(value):
-        s.send(b'calib|SMIN|' + str(value).zfill(3).encode() + b'\n')
-
-
-    def updateVmin(value):
-        s.send(b'calib|VMIN|' +  str(value).zfill(3).encode() + b'\n')
-
-    def updateHmax(value):
-        s.send(b'calib|HMAX|' +  str(value).zfill(3).encode() + b'\n')
-
-
-    def updateSmax(value):
-        s.send(b'calib|SMAX|' +  str(value).zfill(3).encode() + b'\n')
-
-
-    def updateVmax(value):
-        s.send(b'calib|VMAX|' +  str(value).zfill(3).encode() + b'\n')
-
-
-    def updateExposure(value):
-        s.send(b'calib|EXPS|' +  str(value).zfill(3).encode() + b'\n')
-
+    def update(type):
+        type = type.encode() 
+        return lambda value : (
+            s.send(b'calib|' + type + b'|' + str(value).zfill(3).encode() + b'\n')
+        )
 
     s.connect(address)
+    reader = s.makefile('r')
+    s.send(b"settings\n")
+    raw_data = reader.readline()
+
+    print("read settings: " + raw_data)
+    data = json.loads(raw_data)
+    colors = data['color'];
     cv2.namedWindow('config')
     cv2.resizeWindow('config', 500, 400)
-    cv2.createTrackbar('HMIN', 'config', 36, 180, updateHmin)
-    cv2.createTrackbar('SMIN', 'config', 80, 255, updateSmin)
-    cv2.createTrackbar('VMIN', 'config', 150, 255, updateVmin)
-    cv2.createTrackbar('HMAX', 'config', 180, 180, updateHmax)
-    cv2.createTrackbar('SMAX', 'config', 255, 255, updateSmax)
-    cv2.createTrackbar('VMAX', 'config', 255, 255, updateVmax)
-    cv2.createTrackbar('EXPOSURE', 'config', 10, 50, updateExposure)
+    cv2.createTrackbar('HMIN', 'config', int(colors['lower']['H']), 180, update("HMIN"))
+    cv2.createTrackbar('SMIN', 'config', int(colors['lower']['S']), 255, update("SMIN"))
+    cv2.createTrackbar('VMIN', 'config', int(colors['lower']['V']), 255, update("VMIN"))
+    cv2.createTrackbar('HMAX', 'config', int(colors['upper']['H']), 180, update("HMAX"))
+    cv2.createTrackbar('SMAX', 'config', int(colors['upper']['S']), 255, update("SMAX"))
+    cv2.createTrackbar('VMAX', 'config', int(colors['upper']['V']), 255, update("VMAX"))
+    cv2.createTrackbar('EXPOSURE', 'config', int(data['camera']['exposure']), 50, update("EXPS"))
+    # todo: fix this - using createButton throws saying the library was compiled 
+    # without it
+    
+    # cv2.createButton("Save", lambda : s.send(b'calib|SAVE\n'))
+    # cv2.createButton("Reset", lambda : s.send(b'calib|RESET\n'))
     cv2.waitKey(0)
     cv2.destroyAllWindows()

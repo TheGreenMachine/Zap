@@ -1,7 +1,7 @@
-camera: {exposure: 10.0, fps: 100}
+camera: {exposure: 8.0, fps: 100}
 color:
-    lower: {H: 36.0, S: 80.0, V: 150.0}
-    upper: {H: 180.0, S: 255.0, V: 255.0}
+    lower: {H:60.0, S: 132.0, V: 150.0}
+    upper: {H: 81.0, S: 255.0, V: 255.0}
 gstreamer: true
 main: {device-ip: 10.18.16.16, team-number: 1816}
 network:

@@ -2,6 +2,7 @@ import socket
 import threading
 import copy
 import yaml
+import json
 
 
 class ThreadedVisionServer(object):
@@ -41,7 +42,6 @@ class ThreadedVisionServer(object):
                         print(response)
                         self.dispatchResponse(write, response)
                 except Exception as e:
-                    print(e)
                     client.close()
                     return False
 
@@ -58,6 +58,9 @@ class ThreadedVisionServer(object):
         elif msg == 'point':
             writer.write("point|"+str(self.cx)+'|'+str(self.cy)+'|' + str(self.distance) + "\n")
             writer.flush()
+        elif msg == 'settings':
+            writer.write(json.dumps(self.yml_data) + "\n")
+            writer.flush()
         elif 'calib' in msg:
             print(str(msg))
             msg = str(msg).replace("'", "").split('|')
@@ -70,7 +73,6 @@ class ThreadedVisionServer(object):
     def updateSavedDistance(self, d):
         self.distance = d
     def calibChange(self, key, value):
-        print(value)
         def dumpYML():
             with open(self.yml_path, "w") as f:
                 yaml.dump(self.yml_data, f)

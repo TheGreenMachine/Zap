@@ -53,7 +53,7 @@ class Detector:
             distance = (distance1 + distance2) / 2
             if math.isnan(distance) or math.isinf(distance):
                 self.vs.updateSavedDistance(-1)
-                self.vs.updateSavedCenter(-1, -1)
+                self.vs.updateSavedCenter(cx_real, cy_real)
                 return largest, second
             #with open('/home/jetson/ZodiacVision/distanceout.txt', 'a') as f:
             #    f.write(str(round(distance)) + '\n')
@@ -72,6 +72,7 @@ class Detector:
             return largest, second
         return -1, -1
     def postProcess(self, frame, largest, second_largest):
+        drawn_frame = cv2.line(frame, (int(672/2), 0),  (int(672/2), 376), color=(255, 255, 0), thickness=1)
         if second_largest is -1 or largest is -1:
             return frame
         x, y, w, h = cv2.boundingRect(largest)
@@ -80,7 +81,6 @@ class Detector:
         cv2.rectangle(frame, (x1, y1), (x1 + w1, y1 + h1), (255, 0, 255), 2)
         cx1 = (int(x + (w / 2)))
         cy1 = (int(y + (h / 2)))
-        drawn_frame = cv2.circle(frame, (int(cx1), int(cy1)), radius=0, color=(255, 0, 255), thickness=3)
 
         cx2 = (int(x1 + (w1 / 2)))
         cy2 = (int(y1 + (h1 / 2)))
