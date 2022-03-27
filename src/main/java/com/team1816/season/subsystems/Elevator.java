@@ -44,6 +44,7 @@ public class Elevator extends Subsystem {
 
     private void setElevator(double elevatorOutput) {
         this.elevatorPower = elevatorOutput;
+        System.out.println(elevatorPower + " = elevator power");
         this.elevator.set(ControlMode.PercentOutput, elevatorPower);
     }
 
@@ -59,7 +60,7 @@ public class Elevator extends Subsystem {
         if (this.state != state) {
             this.state = state;
             outputsChanged = true;
-            System.out.println("DESIRED ELEVATOR STATE = " + state);
+            System.out.println("desired elevator " + state);
         }
     }
 
@@ -105,7 +106,6 @@ public class Elevator extends Subsystem {
                     setElevator(FLUSH);
                     break;
             }
-            System.out.println(elevatorPower + " = elevator power");
             // create ball color updating here once sensor created
         }
     }

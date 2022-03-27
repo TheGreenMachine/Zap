@@ -94,9 +94,10 @@ public class Superstructure {
 
     public void setRevving(boolean revving, double shooterVel) {
         this.revving = revving;
+        System.out.println("struct - rev " + revving);
         if (revving) {
             shooter.setDesiredState(Shooter.SHOOTER_STATE.REVVING);
-            if (camera.cameraEnabled || usePoseTrack) {
+            if (Camera.cameraEnabled || usePoseTrack) {
                 shooter.setVelocity(getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
                 shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) > 0);
             } else {
@@ -105,9 +106,7 @@ public class Superstructure {
             if(!collecting){
                 collector.setDesiredState(Collector.COLLECTOR_STATE.REVVING);
             }
-            System.out.println("superstructure set to rev");
         } else {
-            System.out.println("superstructure set to not rev");
             shooter.setDesiredState(Shooter.SHOOTER_STATE.COASTING);
             if(!collecting){
                 collector.setDesiredState(Collector.COLLECTOR_STATE.STOP);
@@ -117,6 +116,7 @@ public class Superstructure {
 
     public void setFiring(boolean firing) {
         this.firing = firing;
+        System.out.println("struct - fire " + firing);
         if (firing) {
             spindexer.setDesiredState(Spindexer.SPIN_STATE.FIRE);
             elevator.setDesiredState(Elevator.ELEVATOR_STATE.FIRE);
@@ -124,26 +124,22 @@ public class Superstructure {
             if (!elevator.colorOfBall()) { // spit out ball if wrong color
                 shooter.setHood(false);
             }
-            if (camera.cameraEnabled) {
+            if (Camera.cameraEnabled || usePoseTrack) {
                 elevator.overridePower(getDistance(DistanceManager.SUBSYSTEM.ELEVATOR));
             }
-            System.out.println("superstructure set to fire");
         } else {
             if (!collecting) {
                 spindexer.setDesiredState(Spindexer.SPIN_STATE.STOP);
             }
             elevator.setDesiredState(Elevator.ELEVATOR_STATE.STOP);
-            System.out.println("superstructure set to not fire");
         }
     }
 
     public double getDistance(DistanceManager.SUBSYSTEM subsystem) {
         if(useVision){
-            System.out.println(
-                "GETTING DISTANCE FROM CAMERA / DISTANCE MANAGER " +
-                    distanceManager.getOutput(camera.getDistance(), subsystem)
-            );
-            return distanceManager.getOutput(camera.getDistance(), subsystem);
+            double camDis = camera.getDistance();
+            System.out.println("tracked camera distance is . . . " + camDis);
+            return distanceManager.getOutput(camDis, subsystem);
         } else if(usePoseTrack){
             System.out.println("using position to plan shooter velocity");
             return distanceManager.getOutput(calculateDistanceToGoal(), subsystem);

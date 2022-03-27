@@ -40,7 +40,7 @@ public class Turret extends Subsystem implements PidProvider {
     public final int TURRET_PPR;
     private final int TURRET_MASK;
     private final double TURRET_ENC_RATIO;
-    private static final int ALLOWABLE_ERROR_TICKS = 5;
+    private final int ALLOWABLE_ERROR_TICKS;
     private static Turret INSTANCE;
 
     // Components
@@ -82,6 +82,7 @@ public class Turret extends Subsystem implements PidProvider {
         this.kI = pidConfig.kI;
         this.kD = pidConfig.kD;
         this.kF = pidConfig.kF;
+        ALLOWABLE_ERROR_TICKS = pidConfig.allowableError.intValue();
         // Position Control
         double peakOutput = 0.75;
 
@@ -159,11 +160,11 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     public void setControlMode(ControlMode controlMode) {
-        if (Turret.controlMode != controlMode) {
+        if (this.controlMode != controlMode) {
             outputsChanged = true;
             if (controlMode == ControlMode.CAMERA_FOLLOWING) {
                 if (Constants.kUseVision) {
-                    Turret.controlMode = controlMode;
+                    this.controlMode = controlMode;
                     turret.selectProfileSlot(kPIDVisionIDx, 0);
                     camera.setCameraEnabled(true);
                     led.indicateStatus(LedManager.RobotStatus.SEEN_TARGET);
@@ -171,7 +172,7 @@ public class Turret extends Subsystem implements PidProvider {
                     System.out.println("auto aim not enabled! Not aiming with camera!");
                 }
             } else {
-                Turret.controlMode = controlMode;
+                this.controlMode = controlMode;
                 turret.selectProfileSlot(kPIDGyroIDx, 0);
                 camera.setCameraEnabled(false);
                 if (controlMode == ControlMode.MANUAL) {
@@ -180,7 +181,7 @@ public class Turret extends Subsystem implements PidProvider {
                     led.indicateDefaultStatus();
                 }
             }
-            System.out.println("TURRET CONTROL MODE IS . . . . . . " + Turret.controlMode);
+            System.out.println("TURRET CONTROL MODE IS . . . . . . " + this.controlMode);
         }
     }
 
@@ -297,7 +298,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     private int cameraFollowingOffset() {
         var angle = -camera.getDeltaXAngle();
-        return convertTurretDegreesToTicks(angle * .1) - ABS_TICKS_SOUTH;
+        return ((int) (angle * 7)) - ABS_TICKS_SOUTH;
     }
 
     private int fieldFollowingOffset() {
@@ -338,8 +339,11 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     private void autoHome() {
-        int adj = cameraFollowingOffset() +
-            followingTurretPos;
+        var angle = -camera.getDeltaXAngle();
+        int adj =
+            ((int) (angle * 7)) +
+            followingTurretPos -
+            ABS_TICKS_SOUTH;
         if (adj != followingTurretPos) {
             followingTurretPos = adj;
             outputsChanged = true;

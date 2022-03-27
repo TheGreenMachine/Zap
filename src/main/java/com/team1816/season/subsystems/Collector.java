@@ -63,7 +63,7 @@ public class Collector extends Subsystem {
     public void setDesiredState(COLLECTOR_STATE state) {
         if (this.state != state) {
             this.state = state;
-            System.out.println("DESIRED COLLECTOR STATE = " + state);
+            System.out.println("desired collector " + state);
             outputsChanged = true;
         }
     }

@@ -6,6 +6,10 @@ import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.states.RobotState;
 import com.team1816.lib.vision.VisionSocket;
 import java.util.ArrayList;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Stack;
+
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -33,7 +37,9 @@ public class Camera extends Subsystem {
     private static final double VIDEO_WIDTH = 672.0; // px
     public static final double ALLOWABLE_AIM_ERROR = 0.2; // deg
     private int loops = 0;
-    private ArrayList<Double> distances = new ArrayList<Double>();
+//    private Queue<Double> distances = new PriorityQueue<Double>();
+    private ArrayList<Double> distances = new ArrayList<>();
+
 
     public Camera() {
         super(NAME);
@@ -41,7 +47,7 @@ public class Camera extends Subsystem {
     }
 
     private double parseDeltaX(double x) {
-        if(state.visionPoint.dist < 0){
+        if(Math.abs(x) > 672){
             return 0;
         }
         double deltaXPixels = (x - (VIDEO_WIDTH / 2)); // Calculate deltaX from center of screen
@@ -82,7 +88,8 @@ public class Camera extends Subsystem {
     private void cachePoint() {
         // self.cx+'|'+self.cy+'|' + self.distance + "\n"
         String[] data = socket.request("point");
-        if (data.length < 4) {
+        if (data == null || data.length < 4) {
+            assert data != null;
             System.out.println(
                 "CAMERA DEBUG: Malformed point line: " + String.join("|", data)
             );
@@ -90,16 +97,19 @@ public class Camera extends Subsystem {
         }
         state.visionPoint.cX = Double.parseDouble(data[1]);
         state.visionPoint.cY = Double.parseDouble(data[2]);
-        distances.add(Double.parseDouble(data[3]));
-        state.visionPoint.deltaX = parseDeltaX(state.visionPoint.cX);
+        double dis = Double.parseDouble(data[3]);
+        if(dis > 0){
+            distances.add(dis);
+        }
 
-        if (loops % 5 == 0) {
-            state.visionPoint.dist = distances
-                .stream()
-                .mapToDouble(Double::doubleValue)
-                .average()
-                .orElse(0.0);
-            distances.clear();
+        if (distances.size() > 5) {
+            double distanceSum = 0;
+            for(int i = 0; i < 6; i++){
+                distanceSum += distances.get(i);
+            }
+            state.visionPoint.dist = distanceSum / distances.size();
+            distances.remove(0);
+            state.visionPoint.deltaX = parseDeltaX(state.visionPoint.cX);
         }
     }
 
