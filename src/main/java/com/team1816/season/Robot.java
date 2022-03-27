@@ -639,7 +639,7 @@ public class Robot extends TimedRobot {
             Math.abs(mControlBoard.getTurretXVal()) > 0.90 ||
             Math.abs(mControlBoard.getTurretYVal()) > 0.90
         ) {
-            mTurret.setControlMode(defaultTurretControlMode);
+            mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
             mTurret.setFollowingAngle(
                 (
                     new Rotation2d(
