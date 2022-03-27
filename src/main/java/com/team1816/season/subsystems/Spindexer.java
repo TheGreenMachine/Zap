@@ -44,6 +44,7 @@ public class Spindexer extends Subsystem {
 
     private void setSpindexer(double spindexerPower) {
         this.spindexerPower = spindexerPower;
+        System.out.println(spindexerPower + " = spindexer pow");
         spindexer.set(ControlMode.PercentOutput, spindexerPower);
     }
 
@@ -64,7 +65,7 @@ public class Spindexer extends Subsystem {
         if (this.state != state) {
             this.state = state;
             outputsChanged = true;
-            System.out.println("DESIRED SPINDEXER STATE = " + state);
+            System.out.println("desired spindexer " + state);
         }
     }
 
@@ -110,7 +111,6 @@ public class Spindexer extends Subsystem {
                     lockToShooter();
                     break;
             }
-            System.out.println(spindexerPower + " = spindexer pow");
             this.feederFlap.set(feederFlapOut);
             distanceManaged = false;
         }

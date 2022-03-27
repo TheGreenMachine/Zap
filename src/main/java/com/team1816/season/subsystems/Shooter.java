@@ -172,11 +172,9 @@ public class Shooter extends Subsystem implements PidProvider {
 
     public void setDesiredState(SHOOTER_STATE state) {
         // no checker for state because we may tell the shooter to set to the same state but different vel
-//        if(this.state != state){
-            this.state = state;
-            outputsChanged = true;
-            System.out.println("DESIRED SHOOTER STATE = " + state);
-//        }
+        this.state = state;
+        outputsChanged = true;
+        System.out.println("desired shooter " + state);
     }
 
     public boolean isVelocityNearTarget() {
@@ -200,7 +198,7 @@ public class Shooter extends Subsystem implements PidProvider {
                 robotState.shooterState = SHOOTER_STATE.COASTING;
             }
             if (state == SHOOTER_STATE.REVVING) {
-                System.out.println("ACTUAL SHOOTER STATE = " + robotState.shooterState);
+                System.out.println("shooter not at speed! actual state = " + robotState.shooterState);
             }
         }
     }
