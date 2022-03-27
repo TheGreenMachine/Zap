@@ -361,6 +361,8 @@ public abstract class Drive
         }
     }
 
+    public abstract void resetOdometry(Pose2d pose);
+
     @Override
     public void zeroSensors() {
         zeroSensors(Constants.StartingPose);

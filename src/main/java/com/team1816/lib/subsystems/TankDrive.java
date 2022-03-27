@@ -81,6 +81,12 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         mOverrideTrajectory = false;
     }
 
+    @Override
+    public void resetOdometry(Pose2d pose) {
+        odometry.resetPosition(pose, getHeading());
+        robotState.field_to_vehicle = pose;
+    } // resetPosition says we don't need to account for offset here so getHeading() should work
+
     public TankDrive() {
         super();
         mPeriodicIO = new PeriodicIO();

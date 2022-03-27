@@ -28,7 +28,7 @@ subsystems:
                     azimuth: FLAz
                     canCoder: FLEnc
                     constants:
-                        encoderOffset: 2097
+                        encoderOffset: 2101
                         invertSensorPhase: 1
                 frontRight:
                     drive: FRDr
@@ -42,7 +42,7 @@ subsystems:
                     azimuth: RLAz
                     canCoder: RLEnc
                     constants:
-                        encoderOffset: 3126
+                        encoderOffset: 3117
                         invertSensorPhase: 1
                 backRight:
                     drive: RRDr
@@ -59,9 +59,9 @@ subsystems:
                     kF: 0.0499
             azimuthPID:
                 slot0:
-                    kP: 4 # 6.0
+                    kP: 3.75 # 6.0
                     kI: 0.0005
-                    kD: 76
+                    kD: 77
                     kF: 0
                     allowableError: 5
         constants:
@@ -94,16 +94,16 @@ subsystems:
         implemented: true
         pidConfig:
             slot0:
-                kP: 0.35
-                kI: 0.0
-                kD: 18
+                kP: 0.5
+                kI: 0.0003
+                kD: 22.5
                 kF: 0 # Should be 0 for position control
-                allowableError: 100
+                allowableError: 40
         talons:
             turret: 33 # need to set to pdp port number
         constants:
             revLimit: 7800 # adjusted for zero-offset
-            fwdLimit: 41000 # adjusted for zero-offset
+            fwdLimit: 40000 # adjusted for zero-offset
             absPosTicksSouth: 0 # absolute
             zeroOffset: 12639 # (turretPPR - non-adjusted fwdLimit - non-adjusted revlimit) / 2
             encPPR: 4096
@@ -123,7 +123,7 @@ subsystems:
                 kI: 0.00002
                 kD: 11.0 # 11 - 4.5
                 kF: 0.0477
-                allowableError: 50
+                allowableError: 100
         constants:
             usingPoseForSpeed: 0
             maxTicks: 20700 #
@@ -131,12 +131,11 @@ subsystems:
             currentEpsilonCheck: .2
             rpmFloorCheck: 2000
             rpmEpsilonCheck: 60
-            velocityThreshold: 500
             nearVel: 11250
-            midVel: 9900
+            midVel: 12000
             farVel: 15000
             maxVel: 16500
-            coast: 5300
+            coast: 10000
     climber:
         implemented: true
         sparkmaxes:

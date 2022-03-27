@@ -24,7 +24,7 @@ public class Constants {
     // Field characterization
     public static final double fieldCenterY = 8.23 / 2.0;
     public static final double fieldCenterX = 16.46 / 2.0;
-    public static final Pose2d goalPos = new Pose2d(fieldCenterX, fieldCenterY, EmptyRotation);
+    public static final Pose2d targetPos = new Pose2d(fieldCenterX, fieldCenterY, EmptyRotation);
 
     // Drivetrain characterization
     public static final double kDriveWheelTrackWidthInches = factory.getConstant(
@@ -68,7 +68,8 @@ public class Constants {
     public static final int kCANTimeoutMs = 10; // use for important on the fly updates
     public static final int kLongCANTimeoutMs = 100; // use for constructors
 
-    public static final double kOpenLoopRampRate = factory.getConstant(
+    public static final double
+        kOpenLoopRampRate = factory.getConstant(
         "drivetrain",
         "openLoopRampRate"
     );

@@ -2,10 +2,12 @@ package com.team1816.season.states;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.team1816.lib.subsystems.Drive;
 import com.team1816.season.Constants;
-import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.*;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
@@ -15,7 +17,15 @@ import edu.wpi.first.math.util.Units;
 public class Superstructure {
 
     @Inject
-    private static RobotState mRobotState;
+    private static RobotState robotState;
+
+    @Inject
+    private static Drive.Factory driveFactory;
+
+    private static Drive drive;
+
+    @Inject
+    private static Turret turret;
 
     @Inject
     private static Collector collector;
@@ -43,6 +53,7 @@ public class Superstructure {
     private final boolean usePoseTrack;
 
     public Superstructure() {
+        drive = driveFactory.getInstance();
         collecting = false;
         revving = false;
         firing = false;
@@ -150,18 +161,28 @@ public class Superstructure {
     }
 
     public double calculateDistanceToGoal(){
-        double distanceToGoalMeters = mRobotState.field_to_vehicle.getTranslation().getDistance(Constants.goalPos.getTranslation());
+        double distanceToGoalMeters = robotState.field_to_vehicle.getTranslation().getDistance(Constants.targetPos.getTranslation());
         return Units.metersToInches(distanceToGoalMeters) / 1.2;
+    }
+
+    public void updatePoseWithCamera() {
+        double cameraDist = camera.getDistance();
+        // 26.56 = radius of center hub - - 5629 = square of height of hub
+        double distanceToCenterMeters = Units.inchesToMeters(26.56 + (Math.sqrt((cameraDist * cameraDist) + 5629.5)));
+
+        Translation2d deltaToHub = new Translation2d(distanceToCenterMeters, Rotation2d.fromDegrees(robotState.getLatestFieldToTurret()));
+        Pose2d newRobotPose = Constants.targetPos.transformBy(new Transform2d(deltaToHub.unaryMinus(), robotState.field_to_vehicle.getRotation())); //
+        drive.resetOdometry(newRobotPose);
     }
 
     public double getPredictedDistance(DistanceManager.SUBSYSTEM subsystem) {
         Translation2d shooterDist = new Translation2d(
             distanceManager.getOutput(camera.getDistance(), subsystem),
-            Rotation2d.fromDegrees(mRobotState.getLatestFieldToTurret())
+            Rotation2d.fromDegrees(robotState.getLatestFieldToTurret())
         );
         Translation2d motionBuffer = new Translation2d(
-            mRobotState.delta_field_to_vehicle.dx,
-            mRobotState.delta_field_to_vehicle.dy
+            robotState.delta_field_to_vehicle.dx,
+            robotState.delta_field_to_vehicle.dy
         );
         return (motionBuffer.plus(shooterDist)).getNorm();
     }

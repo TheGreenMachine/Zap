@@ -78,7 +78,7 @@ public class Robot extends TimedRobot {
     private AsyncTimer blinkTimer;
 
     // private PowerDistributionPanel pdp = new PowerDistributionPanel();
-    private final Turret.ControlMode defaultTurretControlMode = Turret.ControlMode.FIELD_FOLLOWING;
+    private final Turret.ControlMode defaultTurretControlMode = Turret.ControlMode.CENTER_FOLLOWING;
     private boolean faulted;
 
     Robot() {
@@ -335,6 +335,7 @@ public class Robot extends TimedRobot {
                                     Turret.ControlMode.CAMERA_FOLLOWING
                                 );
                             } else {
+                                mSuperstructure.updatePoseWithCamera();
                                 mTurret.setControlMode(defaultTurretControlMode); // this gets called when the robot inits - this could be bad?
                             }
                         }
@@ -402,6 +403,7 @@ public class Robot extends TimedRobot {
                         }
                     )
                 );
+            mDrive.zeroSensors();
         } catch (Throwable t) {
             faulted = true;
             throw t;
