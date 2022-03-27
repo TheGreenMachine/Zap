@@ -19,7 +19,7 @@ public class RobotState {
     public Rotation2d vehicle_to_turret = Constants.EmptyRotation;
     public Twist2d delta_field_to_vehicle = new Twist2d();
     public ChassisSpeeds chassis_speeds = new ChassisSpeeds();
-    public double shooterSpeed = 0;
+    public double shooterSpeed = 5;
 
     // Superstructure ACTUAL states
     public Point visionPoint = new Point();
@@ -60,8 +60,8 @@ public class RobotState {
         return field_to_vehicle;
     }
 
-    public double getLatestFieldToTurret() {
-        return field_to_vehicle.getRotation().plus(vehicle_to_turret).getDegrees();
+    public Rotation2d getLatestFieldToTurret() {
+        return field_to_vehicle.getRotation().plus(vehicle_to_turret);
     }
 
     public synchronized Pose2d getFieldToTurretPos(){
@@ -74,7 +74,7 @@ public class RobotState {
                     )
                 )
                 .getTranslation(),
-            Rotation2d.fromDegrees(getLatestFieldToTurret())
+            getLatestFieldToTurret()
         );
     }
 

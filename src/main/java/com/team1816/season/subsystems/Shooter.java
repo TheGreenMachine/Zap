@@ -133,7 +133,7 @@ public class Shooter extends Subsystem implements PidProvider {
         );
         Translation2d shooterDirection = new Translation2d( //important to make sure that this is a unit vector
             1,
-            Rotation2d.fromDegrees(robotState.getLatestFieldToTurret())
+            robotState.getLatestFieldToTurret()
         );
         // setting velocity
         velocityDemand =

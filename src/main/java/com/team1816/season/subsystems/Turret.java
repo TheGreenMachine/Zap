@@ -295,6 +295,11 @@ public class Turret extends Subsystem implements PidProvider {
         }
     }
 
+    private int cameraFollowingOffset() {
+        var angle = -camera.getDeltaXAngle();
+        return convertTurretDegreesToTicks(angle * .1) - ABS_TICKS_SOUTH;
+    }
+
     private int fieldFollowingOffset() {
         return -convertTurretDegreesToTicks( // currently negated because motor is running counterclockwise
             robotState.field_to_vehicle.getRotation().getDegrees()
@@ -315,7 +320,7 @@ public class Turret extends Subsystem implements PidProvider {
     private int motionOffset() {
         Translation2d shooterAxis = new Translation2d(
             robotState.getCurrentShooterSpeedMetersPerSecond(),
-            Rotation2d.fromDegrees(robotState.getLatestFieldToTurret())
+            robotState.getLatestFieldToTurret()
         );
         Translation2d driveAxis = new Translation2d(
             robotState.chassis_speeds.vxMetersPerSecond,
@@ -333,11 +338,8 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     private void autoHome() {
-        var angle = -camera.getDeltaXAngle();
-        int adj =
-            convertTurretDegreesToTicks(angle * .1) +
-            followingTurretPos -
-            ABS_TICKS_SOUTH;
+        int adj = cameraFollowingOffset() +
+            followingTurretPos;
         if (adj != followingTurretPos) {
             followingTurretPos = adj;
             outputsChanged = true;

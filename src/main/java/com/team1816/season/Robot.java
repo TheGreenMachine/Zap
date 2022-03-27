@@ -78,7 +78,7 @@ public class Robot extends TimedRobot {
     private AsyncTimer blinkTimer;
 
     // private PowerDistributionPanel pdp = new PowerDistributionPanel();
-    private final Turret.ControlMode defaultTurretControlMode = Turret.ControlMode.FIELD_FOLLOWING;
+    private final Turret.ControlMode defaultTurretControlMode = Turret.ControlMode.ABSOLUTE_MADNESS;
     private boolean faulted;
 
     Robot() {
@@ -246,7 +246,7 @@ public class Robot extends TimedRobot {
                 mTurret.CreateBadLogTopic(
                     "Turret/FieldToTurret",
                     "Degrees",
-                    mRobotState::getLatestFieldToTurret,
+                    () -> mRobotState.getLatestFieldToTurret().getDegrees(),
                     "hide",
                     "join:Tracking/Angles"
                 );

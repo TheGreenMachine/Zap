@@ -161,7 +161,7 @@ public class Superstructure {
     public double getPredictedDistance(DistanceManager.SUBSYSTEM subsystem) {
         Translation2d shooterDist = new Translation2d(
             distanceManager.getOutput(camera.getDistance(), subsystem),
-            Rotation2d.fromDegrees(mRobotState.getLatestFieldToTurret())
+            mRobotState.getLatestFieldToTurret()
         );
         Translation2d motionBuffer = new Translation2d(
             mRobotState.delta_field_to_vehicle.dx,
