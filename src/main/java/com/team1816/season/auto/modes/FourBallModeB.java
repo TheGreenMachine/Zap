@@ -37,17 +37,17 @@ public class FourBallModeB extends AutoModeBase {
         runAction(
             new SeriesAction(
                 new ParallelAction(
-                    new TurretAction(Turret.CARDINAL_NORTH + 25), // to be changed
+                    new TurretAction(Turret.CARDINAL_NORTH), // to be changed
                     new CollectAction(true),
-                    new RampUpShooterAction(13000) // make actual shooting vel
+                    new RampUpShooterAction(13500) // make actual shooting vel
                 ),
                 trajectory,
                 new ShootAction(true, true),
-                new WaitAction(3),
+                new WaitAction(2),
                 new ShootAction(false, true),
                 trajectory1,
-                new WaitAction(3),
-                new TurretAction(Turret.CARDINAL_SOUTH + 25),
+                new WaitAction(1),
+                new TurretAction(Turret.CARDINAL_SOUTH + 28),
                 trajectory2,
                 new ShootAction(true, true),
                 new WaitAction(3)
