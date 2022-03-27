@@ -361,7 +361,7 @@ public class Robot extends TimedRobot {
                         mControlBoard::getShoot,
                         shooting -> {
                             mShooter.setHood(true);
-                            mSuperstructure.setRevving(shooting, 12000); // TODO TUNE
+                            mSuperstructure.setRevving(shooting, 11925); // TODO TUNE
                             mSuperstructure.setFiring(shooting);
                         }
                     ),
