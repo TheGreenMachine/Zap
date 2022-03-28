@@ -78,7 +78,7 @@ public class Robot extends TimedRobot {
     private AsyncTimer blinkTimer;
 
     // private PowerDistributionPanel pdp = new PowerDistributionPanel();
-    private final Turret.ControlMode defaultTurretControlMode = Turret.ControlMode.ABSOLUTE_MADNESS;
+    private final Turret.ControlMode defaultTurretControlMode = Turret.ControlMode.CENTER_FOLLOWING;
     private boolean faulted;
 
     Robot() {
@@ -335,6 +335,7 @@ public class Robot extends TimedRobot {
                                     Turret.ControlMode.CAMERA_FOLLOWING
                                 );
                             } else {
+                                mSuperstructure.updatePoseWithCamera();
                                 mTurret.setControlMode(defaultTurretControlMode); // this gets called when the robot inits - this could be bad?
                             }
                         }
@@ -360,7 +361,7 @@ public class Robot extends TimedRobot {
                         mControlBoard::getShoot,
                         shooting -> {
                             mShooter.setHood(true);
-                            mSuperstructure.setRevving(shooting, 12000); // TODO TUNE
+                            mSuperstructure.setRevving(shooting, 11920); // TODO TUNE
                             mSuperstructure.setFiring(shooting);
                         }
                     ),
@@ -402,6 +403,7 @@ public class Robot extends TimedRobot {
                         }
                     )
                 );
+            mDrive.zeroSensors();
         } catch (Throwable t) {
             faulted = true;
             throw t;
@@ -637,7 +639,7 @@ public class Robot extends TimedRobot {
             Math.abs(mControlBoard.getTurretXVal()) > 0.90 ||
             Math.abs(mControlBoard.getTurretYVal()) > 0.90
         ) {
-            mTurret.setControlMode(defaultTurretControlMode);
+            mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
             mTurret.setFollowingAngle(
                 (
                     new Rotation2d(

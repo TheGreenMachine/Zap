@@ -47,11 +47,7 @@ public class Shooter extends Subsystem implements PidProvider {
     public static final int COAST_VELOCITY = (int) factory.getConstant(NAME, "coast");
 
     // tune this and make changeable with a button in shooter itself
-    public static final int VELOCITY_THRESHOLD = (int) factory.getConstant(
-        NAME,
-        "velocityThreshold",
-        500
-    );
+    public final int VELOCITY_THRESHOLD;
     private SHOOTER_STATE state = SHOOTER_STATE.STOP;
 
     public Shooter() {
@@ -73,6 +69,7 @@ public class Shooter extends Subsystem implements PidProvider {
         this.kI = pidConfig.kI;
         this.kD = pidConfig.kD;
         this.kF = pidConfig.kF;
+        VELOCITY_THRESHOLD = pidConfig.allowableError.intValue();
 
         shooterMain.setNeutralMode(NeutralMode.Coast);
         shooterFollower.setNeutralMode(NeutralMode.Coast);

@@ -46,8 +46,8 @@ public class FourBallModeC extends AutoModeBase {
                 new WaitAction(2),
                 new ShootAction(false, true),
                 trajectory1,
-                new WaitAction(2),
-                new TurretAction(Turret.CARDINAL_WEST), // this is in dead zone so tune heading or turret angle
+                new WaitAction(1),
+                new TurretAction(Turret.CARDINAL_SOUTH), // this is in dead zone so tune heading or turret angle
                 trajectory2,
                 new ShootAction(true, true),
                 new WaitAction(3)

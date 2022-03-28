@@ -340,10 +340,12 @@ public class Turret extends Subsystem implements PidProvider {
 
     private void autoHome() {
         var angle = -camera.getDeltaXAngle();
+//        var bounceOutCorrection = convertTurretDegreesToTicks(2);
         int adj =
-            ((int) (angle * 7)) +
+            ((int) (angle * 8.5)) +
             followingTurretPos -
             ABS_TICKS_SOUTH;
+//            bounceOutCorrection;
         if (adj != followingTurretPos) {
             followingTurretPos = adj;
             outputsChanged = true;

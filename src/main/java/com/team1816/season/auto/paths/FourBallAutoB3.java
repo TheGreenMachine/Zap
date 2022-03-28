@@ -18,7 +18,7 @@ public class FourBallAutoB3 implements PathContainer {
 
     @Override
     public List<Rotation2d> buildHeadings() {
-        return List.of(Rotation2d.fromDegrees(-160), Rotation2d.fromDegrees(0));
+        return List.of(Rotation2d.fromDegrees(-100), Rotation2d.fromDegrees(0));
     }
 
     @Override

@@ -149,10 +149,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         mHeadings = headings;
         if(!trajectoryStarted){
             trajectoryStarted = true; // massive hack here woo
-            swerveOdometry.resetPosition(trajectory.getInitialPose(),
-                trajectory.getInitialPose().getRotation()
-            );
-            setHeading(trajectory.getInitialPose().getRotation());
+            zeroSensors(trajectory.getInitialPose());
         }
         mTrajectoryIndex = 0;
         updateRobotState();
@@ -212,7 +209,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             System.out.println(signal);
             mDriveControlState = DriveControlState.OPEN_LOOP;
             for (int i = 0; i < 4; i++) {
-                swerveModules[i].setDesiredState(new SwerveModuleState(), true);
+                swerveModules[i].setDesiredState(new SwerveModuleState(), false);
                 mPeriodicIO.desiredModuleStates[i] = new SwerveModuleState();
                 mPeriodicIO.chassisSpeed = new ChassisSpeeds();
             }
@@ -321,8 +318,10 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         return getDesiredRotation2d().getDegrees();
     }
 
+    @Override
     public void resetOdometry(Pose2d pose) {
         swerveOdometry.resetPosition(pose, getHeading());
+        robotState.field_to_vehicle = pose;
     } // resetPosition says we don't need to account for offset here so getHeading() should work
 
     @Override
@@ -332,7 +331,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         setBrakeMode(false);
         resetPigeon();
         resetOdometry(pose);
-        robotState.field_to_vehicle = pose;
         for (int i = 0; i < 4; i++) {
             swerveModules[i].setDesiredState(new SwerveModuleState(), true);
             mPeriodicIO.desiredModuleStates[i] = new SwerveModuleState();

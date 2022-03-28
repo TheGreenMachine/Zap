@@ -67,7 +67,7 @@ public class SwerveModule implements ISwerveModule {
                 canCoder.getDeviceID()
             );
 
-        mDriveMotor.configOpenloopRamp(.5, Constants.kCANTimeoutMs);
+        mDriveMotor.configOpenloopRamp(.75, Constants.kCANTimeoutMs);
         mAzimuthMotor.configSupplyCurrentLimit(
             new SupplyCurrentLimitConfiguration(true, 25, 0, 0),
             Constants.kLongCANTimeoutMs

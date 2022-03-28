@@ -88,7 +88,6 @@ public class TrajectoryAction implements Action {
     public void done() {
         mCommand.end(false);
         mDrive.stop();
-        System.out.println("Trajectory finished +++++++++++++=");
     }
 
     @Override
