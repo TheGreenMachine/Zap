@@ -185,6 +185,7 @@ public class Shooter extends Subsystem implements PidProvider {
     @Override
     public void readFromHardware() {
         actualShooterVelocity = shooterMain.getSelectedSensorVelocity(0);
+        robotState.shooterSpeed = convertShooterTicksToMetersPerSecond(actualShooterVelocity);
 
         if (state != robotState.shooterState) {
             if (actualShooterVelocity < VELOCITY_THRESHOLD) {
@@ -220,11 +221,11 @@ public class Shooter extends Subsystem implements PidProvider {
     }
 
     public double convertShooterTicksToMetersPerSecond(double ticks) {
-        return 0;
+        return 0.00019527 * ticks; //TODO: verify conversion (roughly accurate based on recorded data)
     }
 
     public double convertShooterMetersToTicksPerSecond(double metersPerSecond) {
-        return 0;
+        return 5121.21 * metersPerSecond; //TODO: verify conversion
     }
 
     private double getAngleBetween(Translation2d a, Translation2d b) {

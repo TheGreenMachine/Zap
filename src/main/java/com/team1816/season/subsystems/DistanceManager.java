@@ -67,7 +67,7 @@ public class DistanceManager {
         if(distance < 90){
             return Shooter.NEAR_VELOCITY;
         }
-        // cubic spline for shooter speed
+        // cubic spline for shooter speed developed through repeated testing
         if(distance < 97) {
             return -0.015322 * Math.pow(distance, 3) + 4.1370 * Math.pow(distance, 2) - 325.15 * distance + 18849;
         } else if(distance < 107) {
