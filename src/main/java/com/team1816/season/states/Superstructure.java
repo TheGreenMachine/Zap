@@ -174,7 +174,6 @@ public class Superstructure {
         Translation2d deltaToHub = new Translation2d(distanceToCenterMeters, robotState.getLatestFieldToTurret());
         Pose2d newRobotPose = Constants.targetPos.transformBy(new Transform2d(deltaToHub.unaryMinus(), robotState.field_to_vehicle.getRotation())); //
         drive.resetOdometry(newRobotPose);
-        System.out.println("ROBOT POSE IS UPDATED TO: (" + newRobotPose.getX() + ", " + newRobotPose.getY() + ")");
     }
 
     public double getPredictedDistance(DistanceManager.SUBSYSTEM subsystem) {
