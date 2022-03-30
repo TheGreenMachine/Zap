@@ -296,17 +296,26 @@ public class Robot extends TimedRobot {
             mDrive.setHeading(new Rotation2d());
 
             mAutoModeSelector.updateModeCreator();
+            mAutoModeSelector.updateModeCreator();
 
             actionManager =
                 new ActionManager(
                     // Driver Gamepad
-                    createAction(
+//                    createAction(
+//                        mControlBoard::getCollectorToggle,
+//                        () -> mSuperstructure.setCollecting(true)
+//                    ),
+//                    createAction(
+//                        mControlBoard::getCollectorBackspin,
+//                        () -> mSuperstructure.setCollecting(false)
+//                    ),
+                    createHoldAction( //TODO verify action
                         mControlBoard::getCollectorToggle,
-                        () -> mSuperstructure.setCollecting(true)
+                        collecting -> mSuperstructure.setCollecting(collecting, true)
                     ),
-                    createAction(
+                    createHoldAction(
                         mControlBoard::getCollectorBackspin,
-                        () -> mSuperstructure.setCollecting(false)
+                        collecting -> mSuperstructure.setCollecting(collecting, false)
                     ),
                     createAction(
                         mControlBoard::getUnlockClimber,
@@ -353,7 +362,7 @@ public class Robot extends TimedRobot {
                                 mTurret.setControlMode(defaultTurretControlMode); // this gets called when the robot inits - this could be bad?
                             }
                             mShooter.setHood(false);
-                            mSuperstructure.setRevving(yeet, Shooter.NEAR_VELOCITY);
+                            mSuperstructure.setRevving(yeet, Shooter.NEAR_VELOCITY); // made to yaml
                             mSuperstructure.setFiring(yeet);
                         }
                     ),

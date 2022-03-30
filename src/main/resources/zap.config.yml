@@ -131,7 +131,7 @@ subsystems:
             currentEpsilonCheck: .2
             rpmFloorCheck: 2000
             rpmEpsilonCheck: 60
-            nearVel: 11250
+            nearVel: 14600 #11250
             midVel: 12000
             farVel: 15000
             maxVel: 16500
@@ -197,7 +197,7 @@ subsystems:
             collecting: -4000 #-0.35
             flush: 4000 #.35
     camera:
-        implemented: true
+        implemented: false
         constants:
             debug: 0
             useShuffleboard: 0
