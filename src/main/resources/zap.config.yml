@@ -119,10 +119,10 @@ subsystems:
             hood: 0
         pidConfig:
             slot0:
-                kP: 0.45 #.45
-                kI: 0.00002
-                kD: 11.0 # 11 - 4.5
-                kF: 0.0477
+                kP: 0.728 #.45
+                kI: 0.00024
+                kD: 92.4 # 11 - 4.5
+                kF: 0.0552
                 allowableError: 100
         constants:
             usingPoseForSpeed: 0
@@ -135,7 +135,7 @@ subsystems:
             midVel: 12000
             farVel: 15000
             maxVel: 16500
-            coast: 10000
+            coast: 5000
     climber:
         implemented: true
         sparkmaxes:
