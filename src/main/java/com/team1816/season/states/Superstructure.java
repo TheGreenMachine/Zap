@@ -110,7 +110,11 @@ public class Superstructure {
         if (revving) {
             shooter.setDesiredState(Shooter.SHOOTER_STATE.REVVING);
             if  (false) {//(Camera.cameraEnabled || usePoseTrack) {
-                shooter.setVelocity(getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
+                if (turret.getControlMode() == Turret.ControlMode.ABSOLUTE_MADNESS) {
+                    shooter.setVelocity(getShooterVelAdj());
+                } else {
+                    shooter.setVelocity(getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
+                }
                 shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) > 0);
             } else {
                 shooter.setVelocity(shooterVel);
@@ -166,10 +170,64 @@ public class Superstructure {
         return Units.metersToInches(distanceToGoalMeters) / 1.2;
     }
 
+    public double getShooterVelAdj() {
+        double cameraDist = camera.getDistance();
+        Translation2d chassisVelocity = new Translation2d(
+            robotState.chassis_speeds.vxMetersPerSecond,
+            robotState.chassis_speeds.vyMetersPerSecond
+        );
+        Translation2d shooterDirection = new Translation2d( //important to make sure that this is a unit vector
+            1,
+            robotState.getLatestFieldToTurret()
+        );
+
+        // setting velocity
+        return convertShooterMetersToTicksPerSecond(
+                getBallVel(cameraDist) - //get velocity of ball
+                    chassisVelocity.getNorm() *
+                        Math.cos(
+                            getAngleBetween(
+                                chassisVelocity,
+                                shooterDirection
+                            )
+                        )
+            );
+    }
+
+    public double getBallVel(double distance) {
+        return 0.0248*distance - 0.53;
+    }
+
+    public double convertShooterMetersToTicksPerSecond(double metersPerSecond) {
+        double cameraDist = (metersPerSecond + 0.53)/0.0248;
+        double shooterOutput = distanceManager.getOutput(cameraDist, DistanceManager.SUBSYSTEM.SHOOTER);
+        return shooterOutput;
+    }
+
+    private double getAngleBetween(Translation2d a, Translation2d b) {
+        double dot = (a.getNorm() * b.getNorm() == 0)
+            ? 0
+            : Math.acos(
+            (a.getX() * b.getX() + a.getY() * b.getY()) / (a.getNorm() * b.getNorm())
+        );
+        double cross = crossProduct(a, b);
+        if(cross > 0) {
+            dot*=-1;
+        }
+        return dot;
+    }
+
+    private static double crossProduct(Translation2d a, Translation2d b) {
+        double [] vect_A = {a.getX(), a.getY(), 0};
+        double [] vect_B = {b.getX(), b.getY(), 0};
+        return vect_A[0] * vect_B[1]
+            - vect_A[1] * vect_B[0];
+    }
+
     public void updatePoseWithCamera() {
         double cameraDist = camera.getDistance();
         // 26.56 = radius of center hub - - 5629 = square of height of hub
-        double distanceToCenterMeters = Units.inchesToMeters(26.56 + (Math.sqrt((cameraDist * cameraDist) + 5629.5)));
+        double distanceToCenterMeters = Units.inchesToMeters(26.56 + (Math.sqrt((cameraDist * cameraDist) - 5629.5)));
 
         Translation2d deltaToHub = new Translation2d(distanceToCenterMeters, robotState.getLatestFieldToTurret());
         Pose2d newRobotPose = Constants.targetPos.transformBy(new Transform2d(deltaToHub.unaryMinus(), robotState.field_to_vehicle.getRotation())); //
