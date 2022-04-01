@@ -178,7 +178,7 @@ public class Shooter extends Subsystem implements PidProvider {
 //        System.out.println("checking if shooter up to speed - " + velocityDemand + " = velocity demand"  + actualShooterVelocity + " = act vel");
         return (
             Math.abs(velocityDemand - actualShooterVelocity) < VELOCITY_THRESHOLD &&
-                (int) velocityDemand != COAST_VELOCITY
+                state != SHOOTER_STATE.COASTING
         );
     }
 

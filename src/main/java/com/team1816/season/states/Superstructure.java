@@ -54,6 +54,7 @@ public class Superstructure {
     private final boolean usePoseTrack;
 
     public Superstructure() {
+        drive = driveFactory.getInstance();
         collecting = false;
         revving = false;
         firing = false;
@@ -108,7 +109,7 @@ public class Superstructure {
         System.out.println("struct - rev " + revving);
         if (revving) {
             shooter.setDesiredState(Shooter.SHOOTER_STATE.REVVING);
-            if (Camera.cameraEnabled || usePoseTrack) {
+            if  (false) {//(Camera.cameraEnabled || usePoseTrack) {
                 shooter.setVelocity(getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
                 shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) > 0);
             } else {
@@ -135,7 +136,7 @@ public class Superstructure {
             if (!elevator.colorOfBall()) { // spit out ball if wrong color
                 shooter.setHood(false);
             }
-            if (Camera.cameraEnabled || usePoseTrack) {
+            if (false) {// (Camera.cameraEnabled || usePoseTrack) {
                 elevator.overridePower(getDistance(DistanceManager.SUBSYSTEM.ELEVATOR));
             }
         } else {

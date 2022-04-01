@@ -94,7 +94,7 @@ subsystems:
         implemented: true
         pidConfig:
             slot0:
-                kP: 0.5
+                kP: 0.85
                 kI: 0.0003
                 kD: 22.5
                 kF: 0 # Should be 0 for position control
@@ -119,9 +119,9 @@ subsystems:
             hood: 0
         pidConfig:
             slot0:
-                kP: 0.45 #.45
-                kI: 0.00002
-                kD: 11.0 # 11 - 4.5
+                kP: 0.40 #.45
+                kI: 0.0003
+                kD: 13.0 # 11 - 4.5
                 kF: 0.0477
                 allowableError: 100
         constants:
@@ -131,11 +131,11 @@ subsystems:
             currentEpsilonCheck: .2
             rpmFloorCheck: 2000
             rpmEpsilonCheck: 60
-            nearVel: 11250
+            nearVel: 4500
             midVel: 12000
             farVel: 15000
             maxVel: 16500
-            coast: 10000
+            coast: 6000
     climber:
         implemented: true
         sparkmaxes:

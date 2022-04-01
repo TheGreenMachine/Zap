@@ -19,6 +19,9 @@ public class Constants {
     public static final Pose2d EmptyPose = new Pose2d();
     public static final Rotation2d EmptyRotation = new Rotation2d();
 
+    public static boolean robotInitialized = false;
+
+
     public static final double kLooperDt = factory.getConstant("kLooperDt", .020);
 
     // Field characterization
