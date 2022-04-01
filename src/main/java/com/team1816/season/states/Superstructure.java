@@ -110,7 +110,7 @@ public class Superstructure {
         if (revving) {
             shooter.setDesiredState(Shooter.SHOOTER_STATE.REVVING);
             if  (false) {//(Camera.cameraEnabled || usePoseTrack) {
-                if (turret.getControlMode() == Turret.ControlMode.ABSOLUTE_MADNESS) {
+                if (turret.getControlMode() == Turret.ControlMode.ABSOLUTE_MADNESS && camera.isImplemented()) {
                     shooter.setVelocity(getShooterVelAdj());
                 } else {
                     shooter.setVelocity(getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
@@ -227,7 +227,7 @@ public class Superstructure {
     public void updatePoseWithCamera() {
         double cameraDist = camera.getDistance();
         // 26.56 = radius of center hub - - 5629 = square of height of hub
-        double distanceToCenterMeters = Units.inchesToMeters(26.56 + (Math.sqrt((cameraDist * cameraDist) - 5629.5)));
+        double distanceToCenterMeters = Units.inchesToMeters(26.56 + (Math.sqrt((cameraDist * cameraDist) + 5629.5)));
 
         Translation2d deltaToHub = new Translation2d(distanceToCenterMeters, robotState.getLatestFieldToTurret());
         Pose2d newRobotPose = Constants.targetPos.transformBy(new Transform2d(deltaToHub.unaryMinus(), robotState.field_to_vehicle.getRotation())); //
