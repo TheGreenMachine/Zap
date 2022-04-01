@@ -350,15 +350,10 @@ public abstract class Drive
     }
 
     public synchronized void resetPigeon() {
-        if(!pigeonNeedsReset){
-            pigeonNeedsReset = true;
-            System.out.println("resetting Pigeon  - - ");
-            mPigeon.setYaw(0);
-            mPigeon.setFusedHeading(0);
-            mPigeon.setAccumZAngle(0);
-        } else {
-            System.out.println("not resetting pigeon - pigeon reset has already occurred!");
-        }
+        System.out.println("resetting Pigeon  - - ");
+        mPigeon.setYaw(0);
+        mPigeon.setFusedHeading(0);
+        mPigeon.setAccumZAngle(0);
     }
 
     public abstract void resetOdometry(Pose2d pose);

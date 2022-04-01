@@ -327,7 +327,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     @Override
     public void zeroSensors(Pose2d pose) {
         System.out.println("Zeroing drive sensors!");
-        trajectoryStarted = false;
         setBrakeMode(false);
         resetPigeon();
         resetOdometry(pose);

@@ -330,15 +330,13 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         mControlBoard::getAutoAim,
                         pressed -> {
-                            if(Constants.robotInitialized){
-                                if (pressed) {
-                                    mTurret.setControlMode(
-                                        Turret.ControlMode.CAMERA_FOLLOWING
-                                    );
-                                } else {
-                                    mSuperstructure.updatePoseWithCamera();
-                                    mTurret.setControlMode(defaultTurretControlMode); // this gets called when the robot inits - this could be bad?
-                                }
+                            if (pressed) {
+                                mTurret.setControlMode(
+                                    Turret.ControlMode.CAMERA_FOLLOWING
+                                );
+                            } else {
+                                mSuperstructure.updatePoseWithCamera();
+                                mTurret.setControlMode(defaultTurretControlMode); // this gets called when the robot inits - this could be bad?
                             }
                         }
                     ),
@@ -349,23 +347,21 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         mControlBoard::getYeetShot,
                         yeet -> {
-                            if(Constants.robotInitialized){
-                                if (yeet) {
-                                    mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
-                                } else {
-                                    mTurret.setControlMode(defaultTurretControlMode); // this gets called when the robot inits - this could be bad?
-                                }
-                                mShooter.setHood(false);
-                                mSuperstructure.setRevving(yeet, Shooter.NEAR_VELOCITY);
-                                mSuperstructure.setFiring(yeet);
+                            if (yeet) {
+                                mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
+                            } else {
+                                mTurret.setControlMode(defaultTurretControlMode); // this gets called when the robot inits - this could be bad?
                             }
+                            mShooter.setHood(false);
+                            mSuperstructure.setRevving(yeet, Shooter.NEAR_VELOCITY);
+                            mSuperstructure.setFiring(yeet);
                         }
                     ),
                     createHoldAction(
                         mControlBoard::getShoot,
                         shooting -> {
                             mShooter.setHood(true);
-                            mSuperstructure.setRevving(shooting,8700); // TODO TUNE
+                            mSuperstructure.setRevving(shooting, 11920); // TODO TUNE
                             mSuperstructure.setFiring(shooting);
                         }
                     ),
@@ -408,7 +404,6 @@ public class Robot extends TimedRobot {
                     )
                 );
             mDrive.zeroSensors();
-            Constants.robotInitialized = true;
         } catch (Throwable t) {
             faulted = true;
             throw t;
