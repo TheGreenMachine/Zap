@@ -177,7 +177,7 @@ public class Robot extends TimedRobot {
                         BadLog.createTopic(
                             "Vision/DeltaXAngle",
                             "Degrees",
-                            mCamera::getDeltaXAngle
+                            mCamera::getDeltaX
                         );
                         BadLog.createTopic(
                             "Vision/Distance",

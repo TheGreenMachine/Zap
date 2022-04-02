@@ -6,9 +6,6 @@ import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.states.RobotState;
 import com.team1816.lib.vision.VisionSocket;
 import java.util.ArrayList;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Stack;
 
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -55,7 +52,7 @@ public class Camera extends Subsystem {
         return base;
     }
 
-    public double getDeltaXAngle() {
+    public double getDeltaX() {
         return state.visionPoint.deltaX;
     }
 
