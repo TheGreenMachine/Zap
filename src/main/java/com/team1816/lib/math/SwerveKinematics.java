@@ -1,9 +1,9 @@
 package com.team1816.lib.math;
 
 import com.google.inject.Inject;
-import com.team1816.season.Constants;
 import com.team1816.lib.subsystems.Drive;
 import com.team1816.lib.subsystems.SwerveModule;
+import com.team1816.season.Constants;
 import com.team254.lib.util.SwerveDriveSignal;
 import edu.wpi.first.math.geometry.*;
 import java.util.ArrayList;

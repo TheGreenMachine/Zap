@@ -44,11 +44,9 @@ public class RobotState {
         vehicle_to_turret = initial_vehicle_to_turret;
     }
 
-    public synchronized void reset(
-        Pose2d initial_field_to_vehicle
-    ) {
+    public synchronized void reset(Pose2d initial_field_to_vehicle) {
         field_to_vehicle = initial_field_to_vehicle;
-//        field.setRobotPose(initial_field_to_vehicle);
+        //        field.setRobotPose(initial_field_to_vehicle);
     }
 
     public synchronized void reset() {
@@ -64,14 +62,11 @@ public class RobotState {
         return field_to_vehicle.getRotation().plus(vehicle_to_turret);
     }
 
-    public synchronized Pose2d getFieldToTurretPos(){
+    public synchronized Pose2d getFieldToTurretPos() {
         return new Pose2d(
             field_to_vehicle
                 .transformBy(
-                    new Transform2d(
-                        new Translation2d(-.1, .1),
-                        Constants.EmptyRotation
-                    )
+                    new Transform2d(new Translation2d(-.1, .1), Constants.EmptyRotation)
                 )
                 .getTranslation(),
             getLatestFieldToTurret()
@@ -97,19 +92,17 @@ public class RobotState {
     public synchronized void outputToSmartDashboard() {
         //shuffleboard periodic updates should be here
         field.setRobotPose(field_to_vehicle);
-        field
-            .getObject(Turret.NAME)
-            .setPose(
-                getFieldToTurretPos()
-            );
+        field.getObject(Turret.NAME).setPose(getFieldToTurretPos());
     }
 
     public class Point {
+
         public double cX;
         public double cY;
         public double dist;
         public double deltaX;
-        public Point () {
+
+        public Point() {
             cX = 0;
             cY = 0;
             dist = 0;

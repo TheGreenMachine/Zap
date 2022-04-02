@@ -36,7 +36,6 @@ public class Collector extends Subsystem {
 
         PIDSlotConfiguration config = factory.getPidSlotConfig(NAME, pidSlot);
 
-
         intake.config_kP(0, config.kP, 100);
         intake.config_kI(0, config.kI, 100);
         intake.config_kD(0, config.kD, 100);

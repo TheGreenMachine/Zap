@@ -83,7 +83,7 @@ dependencies {
     implementation 'com.google.inject.extensions:guice-assistedinject:5.0.1'
 
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:3.6.0'
+    testImplementation 'org.mockito:mockito-inline:3.6.0'
     testImplementation 'org.hamcrest:hamcrest:2.1'
 }
 
@@ -201,18 +201,6 @@ deployArtifact.jarTask = jar
 wpi.java.configureExecutableTasks(jar)
 wpi.java.configureTestTasks(test)
 
-
-
-
-
-
-
-
-//tasks.create('deployVision') {
-//    println "Deploying ZodiacVision..."
-//    // TODO: Develop deployVision task
-//}
-//
-//tasks.named('deploy').configure {
-//    dependsOn tasks.named('deployVision')
-//}
+compileJava {
+    dependsOn tasks.named("spotlessApply")
+}

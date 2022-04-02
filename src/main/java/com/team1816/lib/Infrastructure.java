@@ -56,7 +56,7 @@ public class Infrastructure {
         return mPigeon;
     }
 
-    public PowerDistribution getPdh(){
+    public PowerDistribution getPdh() {
         return pdh;
     }
 }

@@ -4,7 +4,6 @@ import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.actions.Action;
 import com.team1816.lib.auto.actions.NoopAction;
 import com.team1816.lib.auto.actions.TrajectoryAction;
-import com.team1816.season.auto.actions.StopAction;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;
 
