@@ -310,11 +310,23 @@ public class Robot extends TimedRobot {
 //                    ),
                     createHoldAction(
                         mControlBoard::getCollectorToggle,
-                        pressed -> mSuperstructure.setCollecting(pressed, true)
+                        pressed -> {
+                            if (pressed) {
+                                mSuperstructure.setCollecting(pressed, true);
+                            } else {
+                                mSuperstructure.setCollecting(false, false);
+                            }
+                        }
                     ),
                     createHoldAction(
                         mControlBoard::getCollectorBackspin,
-                        pressed -> mSuperstructure.setCollecting(pressed, false)
+                        pressed -> {
+                            if (pressed) {
+                                mSuperstructure.setCollecting(pressed, false);
+                            } else {
+                                mSuperstructure.setCollecting(false, false);
+                            }
+                        }
                     ),
                     createAction(
                         mControlBoard::getUnlockClimber,
