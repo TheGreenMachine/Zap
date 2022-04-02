@@ -300,13 +300,21 @@ public class Robot extends TimedRobot {
             actionManager =
                 new ActionManager(
                     // Driver Gamepad
-                    createAction(
+//                    createAction(
+//                        mControlBoard::getCollectorToggle,
+//                        () -> mSuperstructure.setCollecting(true)
+//                    ),
+//                    createAction(
+//                        mControlBoard::getCollectorBackspin,
+//                        () -> mSuperstructure.setCollecting(false)
+//                    ),
+                    createHoldAction(
                         mControlBoard::getCollectorToggle,
-                        () -> mSuperstructure.setCollecting(true)
+                        pressed -> mSuperstructure.setCollecting(pressed, true)
                     ),
-                    createAction(
+                    createHoldAction(
                         mControlBoard::getCollectorBackspin,
-                        () -> mSuperstructure.setCollecting(false)
+                        pressed -> mSuperstructure.setCollecting(pressed, false)
                     ),
                     createAction(
                         mControlBoard::getUnlockClimber,
