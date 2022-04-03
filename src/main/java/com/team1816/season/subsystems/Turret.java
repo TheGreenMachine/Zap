@@ -302,7 +302,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     private int cameraFollowingOffset() {
         var delta = -camera.getDeltaX();
-        return ((int) delta) - ABS_TICKS_SOUTH;
+        return  ((int) (delta * 10)) - ABS_TICKS_SOUTH;
     }
 
     private int fieldFollowingOffset() {
