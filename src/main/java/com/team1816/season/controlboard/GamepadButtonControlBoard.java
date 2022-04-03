@@ -78,7 +78,7 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
     }
 
     @Override
-    public boolean getHood(){
+    public boolean getHood() {
         return mController.getButton(Controller.Button.RIGHT_BUMPER);
     }
 

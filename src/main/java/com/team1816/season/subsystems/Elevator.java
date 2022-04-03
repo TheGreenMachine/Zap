@@ -20,7 +20,6 @@ public class Elevator extends Subsystem {
     private boolean outputsChanged;
     private ELEVATOR_STATE state = ELEVATOR_STATE.STOP;
 
-
     // Constants
     private final double FLUSH;
     private final double POWER_THRESHOLD;
@@ -38,7 +37,7 @@ public class Elevator extends Subsystem {
         POWER_THRESHOLD = .1;
     }
 
-    public void overridePower(double newFirePow){
+    public void overridePower(double newFirePow) {
         FIRE = newFirePow;
     }
 
@@ -48,7 +47,7 @@ public class Elevator extends Subsystem {
         this.elevator.set(ControlMode.PercentOutput, -elevatorPower);
     }
 
-    private void lockToShooter(){
+    private void lockToShooter() {
         if (robotState.shooterState == Shooter.SHOOTER_STATE.REVVING) {
             setElevator(FIRE);
         } else {
@@ -76,15 +75,15 @@ public class Elevator extends Subsystem {
 
     @Override
     public void readFromHardware() {
-//        double actualVel = elevator.getSelectedSensorVelocity(0);
-        if(state != robotState.elevatorState){
-//            if(Math.abs(elevatorPower) == 0) {
-//                robotState.elevatorState = ELEVATOR_STATE.STOP;
-//            } else if (elevatorPower > POWER_THRESHOLD) {
-//                robotState.elevatorState = ELEVATOR_STATE.FIRE;
-//            } else if(elevatorPower < -POWER_THRESHOLD){
-//                robotState.elevatorState = ELEVATOR_STATE.FLUSH;
-//            }
+        //        double actualVel = elevator.getSelectedSensorVelocity(0);
+        if (state != robotState.elevatorState) {
+            //            if(Math.abs(elevatorPower) == 0) {
+            //                robotState.elevatorState = ELEVATOR_STATE.STOP;
+            //            } else if (elevatorPower > POWER_THRESHOLD) {
+            //                robotState.elevatorState = ELEVATOR_STATE.FIRE;
+            //            } else if(elevatorPower < -POWER_THRESHOLD){
+            //                robotState.elevatorState = ELEVATOR_STATE.FLUSH;
+            //            }
             robotState.elevatorState = state;
 
             System.out.println("ACTUAL ELEVATOR STATE = " + robotState.elevatorState);

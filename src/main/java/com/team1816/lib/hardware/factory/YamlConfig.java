@@ -1,9 +1,8 @@
 package com.team1816.lib.hardware.factory;
 
+import com.team1816.lib.hardware.RobotConfiguration;
 import java.io.InputStream;
 import java.util.*;
-
-import com.team1816.lib.hardware.RobotConfiguration;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.BeanAccess;

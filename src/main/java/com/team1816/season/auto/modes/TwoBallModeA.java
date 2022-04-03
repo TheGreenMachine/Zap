@@ -35,5 +35,4 @@ public class TwoBallModeA extends AutoModeBase {
         );
         runAction(new StopAction(false));
     }
-
 }

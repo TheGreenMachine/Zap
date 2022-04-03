@@ -5,13 +5,12 @@ import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.google.inject.Singleton;
-import com.team1816.lib.util.EnhancedMotorChecker;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
+import com.team1816.lib.util.EnhancedMotorChecker;
 import com.team1816.season.Constants;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.SendableBuilder;
 
@@ -136,15 +135,10 @@ public class Shooter extends Subsystem implements PidProvider {
         velocityDemand =
             convertShooterMetersToTicksPerSecond(
                 convertShooterTicksToMetersPerSecond(velocity) -
-                    chassisVelocity.getNorm() *
-                        Math.cos(
-                            getAngleBetween(
-                                chassisVelocity,
-                                shooterDirection
-                            )
-                        )
+                chassisVelocity.getNorm() *
+                Math.cos(getAngleBetween(chassisVelocity, shooterDirection))
             );
-            /*convertShooterMetersToTicksPerSecond( //alternate
+        /*convertShooterMetersToTicksPerSecond( //alternate
                 chassisVelocity.getX() *
                 shooterDirection.getX() +
                 chassisVelocity.getY() *
@@ -175,17 +169,18 @@ public class Shooter extends Subsystem implements PidProvider {
     }
 
     public boolean isVelocityNearTarget() {
-//        System.out.println("checking if shooter up to speed - " + velocityDemand + " = velocity demand"  + actualShooterVelocity + " = act vel");
+        //        System.out.println("checking if shooter up to speed - " + velocityDemand + " = velocity demand"  + actualShooterVelocity + " = act vel");
         return (
             Math.abs(velocityDemand - actualShooterVelocity) < VELOCITY_THRESHOLD &&
-                state != SHOOTER_STATE.COASTING
+            state != SHOOTER_STATE.COASTING
         );
     }
 
     @Override
     public void readFromHardware() {
         actualShooterVelocity = shooterMain.getSelectedSensorVelocity(0);
-        robotState.shooterSpeed = convertShooterTicksToMetersPerSecond(actualShooterVelocity);
+        robotState.shooterSpeed =
+            convertShooterTicksToMetersPerSecond(actualShooterVelocity);
 
         if (state != robotState.shooterState) {
             if (actualShooterVelocity < VELOCITY_THRESHOLD) {
@@ -196,7 +191,9 @@ public class Shooter extends Subsystem implements PidProvider {
                 robotState.shooterState = SHOOTER_STATE.COASTING;
             }
             if (state == SHOOTER_STATE.REVVING) {
-                System.out.println("shooter not at speed! actual state = " + robotState.shooterState);
+                System.out.println(
+                    "shooter not at speed! actual state = " + robotState.shooterState
+                );
             }
         }
     }
@@ -232,29 +229,26 @@ public class Shooter extends Subsystem implements PidProvider {
         double dot = (a.getNorm() * b.getNorm() == 0)
             ? 0
             : Math.acos(
-            (a.getX() * b.getX() + a.getY() * b.getY()) / (a.getNorm() * b.getNorm())
-        );
+                (a.getX() * b.getX() + a.getY() * b.getY()) / (a.getNorm() * b.getNorm())
+            );
         double cross = crossProduct(a, b);
-        if(cross > 0) {
-            dot*=-1;
+        if (cross > 0) {
+            dot *= -1;
         }
         return dot;
     }
 
     private static double crossProduct(Translation2d a, Translation2d b) {
-        double [] vect_A = {a.getX(), a.getY(), 0};
-        double [] vect_B = {b.getX(), b.getY(), 0};
-        return vect_A[0] * vect_B[1]
-            - vect_A[1] * vect_B[0];
+        double[] vect_A = { a.getX(), a.getY(), 0 };
+        double[] vect_B = { b.getX(), b.getY(), 0 };
+        return vect_A[0] * vect_B[1] - vect_A[1] * vect_B[0];
     }
 
     @Override
-    public void initSendable(SendableBuilder builder) {
-    }
+    public void initSendable(SendableBuilder builder) {}
 
     @Override
-    public void stop() {
-    }
+    public void stop() {}
 
     private EnhancedMotorChecker.CheckerConfig getTalonCheckerConfig(
         IMotorControllerEnhanced talon

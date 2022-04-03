@@ -3,15 +3,14 @@ package com.team1816.season.subsystems;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.team1816.lib.LibModule;
-import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.hardware.components.motor.GhostMotorControllerEnhanced;
+import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
 import com.team1816.season.states.RobotState;
-import com.team1816.season.SeasonModule;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import org.junit.Assert;
@@ -41,7 +40,15 @@ public class TurretTest {
         when(mockFactory.getConstant(Turret.NAME, "turretPPR")).thenReturn(encPPR);
         when(mockFactory.getConstant(Turret.NAME, "encPPR")).thenReturn(encPPR);
         Subsystem.factory = mockFactory;
-        Injector injector = Guice.createInjector(new LibModule(), new SeasonModule());
+        Injector injector = Guice.createInjector(
+            new AbstractModule() {
+                @Override
+                protected void configure() {
+                    requestStaticInjection(Camera.class);
+                    requestStaticInjection(Turret.class);
+                }
+            }
+        );
         state = injector.getInstance(RobotState.class);
     }
 
@@ -174,7 +181,10 @@ public class TurretTest {
         mTurret = new Turret();
         mTurret.zeroSensors();
         Assert.assertEquals(
-            mTurret.TURRET_PPR / 2.0 - mTurret.TURRET_PPR == mTurret.TURRET_ABS_ENCODER_PPR
+            mTurret.TURRET_PPR /
+                2.0 -
+                mTurret.TURRET_PPR ==
+                mTurret.TURRET_ABS_ENCODER_PPR
                 ? 0
                 : absInit,
             mTurret.getActualTurretPositionTicks(),

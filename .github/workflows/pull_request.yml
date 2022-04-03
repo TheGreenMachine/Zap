@@ -13,7 +13,7 @@ jobs:
                     java-version: 11
             -   id: assemble
                 name: Gradle assemble
-                run: ./gradlew assemble
+                run: gradle assemble
             -   id: tests
                 name: Run JUnit tests
                 continue-on-error: true

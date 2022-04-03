@@ -13,8 +13,8 @@ import com.team1816.lib.hardware.components.*;
 import com.team1816.lib.hardware.components.motor.LazySparkMax;
 import com.team1816.lib.hardware.components.pcm.*;
 import com.team1816.lib.math.DriveConversions;
-import com.team1816.season.Constants;
 import com.team1816.lib.subsystems.SwerveModule;
+import com.team1816.season.Constants;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -203,12 +203,11 @@ public class RobotFactory {
                         master
                     );
             } else if (
-                subsystem.sparkmaxes != null && isHardwareValid(subsystem.sparkmaxes.get(name))
+                subsystem.sparkmaxes != null &&
+                isHardwareValid(subsystem.sparkmaxes.get(name))
             ) {
                 followerMotor =
-                    RevMotorFactory.createSpark(
-                        subsystem.sparkmaxes.get(name)
-                    );
+                    RevMotorFactory.createSpark(subsystem.sparkmaxes.get(name));
                 followerMotor.follow(master);
             }
         }
@@ -234,12 +233,11 @@ public class RobotFactory {
     ) { // TODO: optimize this method
         IMotorController followerMotor = null;
         var subsystem = getSubsystem(subsystemName);
-        if (subsystem.sparkmaxes != null && isHardwareValid(subsystem.sparkmaxes.get(name)))
-        {
-                followerMotor =
-                    RevMotorFactory.createSpark(
-                        subsystem.sparkmaxes.get(name)
-                    );
+        if (
+            subsystem.sparkmaxes != null &&
+            isHardwareValid(subsystem.sparkmaxes.get(name))
+        ) {
+            followerMotor = RevMotorFactory.createSpark(subsystem.sparkmaxes.get(name));
             ((LazySparkMax) followerMotor).follow(master, invert);
         }
         if (followerMotor == null) {
@@ -409,11 +407,8 @@ public class RobotFactory {
 
     public ICompressor getCompressor() {
         if (isPcmEnabled()) {
-            if (factory.getConstant("phIsRev") > 0){
-                return new CompressorImpl(
-                    getPcmId(),
-                    PneumaticsModuleType.REVPH
-                );
+            if (factory.getConstant("phIsRev") > 0) {
+                return new CompressorImpl(getPcmId(), PneumaticsModuleType.REVPH);
             } else {
                 return new CompressorImpl(getPcmId(), PneumaticsModuleType.CTREPCM);
             }

@@ -3,7 +3,6 @@ package com.team1816.season.auto.paths;
 import com.team1816.lib.auto.paths.PathContainer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-
 import java.util.List;
 
 public class FourBallAutoB3 implements PathContainer {
