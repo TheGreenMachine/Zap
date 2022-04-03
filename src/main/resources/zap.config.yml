@@ -200,7 +200,7 @@ subsystems:
                 allowableError: 10
         constants:
             revving: 0.5 #.05
-            collecting: -4000 #-0.35
+            collecting: -5000 #-5500
             flush: 4000 #.35
     camera:
         implemented: true
