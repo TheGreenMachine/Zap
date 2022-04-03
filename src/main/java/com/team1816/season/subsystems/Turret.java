@@ -40,7 +40,7 @@ public class Turret extends Subsystem implements PidProvider {
     public final int TURRET_PPR;
     private final int TURRET_MASK;
     private final double TURRET_ENC_RATIO;
-    private final int ALLOWABLE_ERROR_TICKS;
+    public final int ALLOWABLE_ERROR_TICKS;
     private static Turret INSTANCE;
 
     // Components
@@ -243,7 +243,7 @@ public class Turret extends Subsystem implements PidProvider {
         return convertTurretTicksToDegrees(getActualTurretPositionTicks());
     }
 
-    // this is what is eventually referred to in readFromHardware so we're undoing conversions here
+    // this is what is eventually referred to in readFromHardware, so we're undoing conversions here
     public double getActualTurretPositionTicks() {
         return (
             (
@@ -255,11 +255,14 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     public double getTargetPosition() {
+        if(controlMode == ControlMode.POSITION){
+            return desiredTurretPos;
+        }
         return followingTurretPos;
     }
 
     public double getPositionError() {
-        return turret.getClosedLoopError(kPrimaryCloseLoop);
+        return getTargetPosition() - getActualTurretPositionTicks();
     }
 
     @Override

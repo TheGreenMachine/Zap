@@ -69,7 +69,7 @@ public class SwerveModule implements ISwerveModule {
 
         mDriveMotor.configOpenloopRamp(.5, Constants.kCANTimeoutMs);
         mAzimuthMotor.configSupplyCurrentLimit(
-            new SupplyCurrentLimitConfiguration(true, 25, 0, 0),
+            new SupplyCurrentLimitConfiguration(true, 18, 28, 1),
             Constants.kLongCANTimeoutMs
         );
 

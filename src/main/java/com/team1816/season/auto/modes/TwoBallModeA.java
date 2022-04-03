@@ -25,6 +25,7 @@ public class TwoBallModeA extends AutoModeBase {
             new SeriesAction(
                 new ParallelAction(
                     new TurretAction(Turret.CARDINAL_NORTH + 15), // to be changed
+                    new AutoAimAction(10),
                     new CollectAction(true),
                     new RampUpShooterAction(13000) // make actual shooting vel
                 ),

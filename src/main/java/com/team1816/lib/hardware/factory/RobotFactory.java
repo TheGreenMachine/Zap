@@ -137,7 +137,7 @@ public class RobotFactory {
         var motorId = motor.getDeviceID();
 
         //no need to invert of print if ghosted - this is done in both here and CTREMotorFactory - why?
-        if (motorId >= 0) {
+        if (true) {
             // Motor configuration
             if (subsystem.implemented && subsystem.invertMotor.contains(name)) {
                 System.out.println("Inverting " + name + " with ID " + motorId);

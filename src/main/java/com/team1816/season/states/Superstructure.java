@@ -121,11 +121,24 @@ public class Superstructure {
             }
             if(!collecting){
                 collector.setDesiredState(Collector.COLLECTOR_STATE.REVVING);
+                if(!firing){
+                    spindexer.setDesiredState(Spindexer.SPIN_STATE.INDEX);
+                }
+            }
+            if(!firing){
+                elevator.setDesiredState(Elevator.ELEVATOR_STATE.FLUSH);
             }
         } else {
             shooter.setDesiredState(Shooter.SHOOTER_STATE.COASTING);
             if(!collecting){
                 collector.setDesiredState(Collector.COLLECTOR_STATE.STOP);
+                if(!firing){
+                    spindexer.setDesiredState(Spindexer.SPIN_STATE.STOP);
+                }
+            }
+
+            if(!firing){
+                elevator.setDesiredState(Elevator.ELEVATOR_STATE.STOP);
             }
         }
     }
@@ -140,9 +153,10 @@ public class Superstructure {
             if (!elevator.colorOfBall()) { // spit out ball if wrong color
                 shooter.setHood(false);
             }
-            if (Camera.cameraEnabled || usePoseTrack) {
-                elevator.overridePower(getDistance(DistanceManager.SUBSYSTEM.ELEVATOR));
-            }
+            // not needed because override pow is same as default pow
+//            if (Camera.cameraEnabled || usePoseTrack) {
+//                elevator.overridePower(getDistance(DistanceManager.SUBSYSTEM.ELEVATOR));
+//            }
         } else {
             if (!collecting) {
                 spindexer.setDesiredState(Spindexer.SPIN_STATE.STOP);
