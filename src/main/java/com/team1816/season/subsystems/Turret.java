@@ -35,7 +35,7 @@ public class Turret extends Subsystem implements PidProvider {
     // Constants
     private static final int kPrimaryCloseLoop = 0;
     private static final int kPIDGyroIDx = 0;
-    private static final int kPIDVisionIDx = 0;
+    private static final int kPIDVisionIDx = 1;
     public static int TURRET_ABS_ENCODER_PPR = 4096;
     public final int TURRET_PPR;
     private final int TURRET_MASK;
@@ -283,8 +283,12 @@ public class Turret extends Subsystem implements PidProvider {
                 trackCenter();
                 positionControl(followingTurretPos);
                 break;
-            case ABSOLUTE_MADNESS:
+            case ABSOLUTE_FOLLOWING:
                 trackAbsolute();
+                positionControl(followingTurretPos);
+                break;
+            case ABSOLUTE_MADNESS:
+                autoHomeWithOffset(motionOffset());
                 positionControl(followingTurretPos);
                 break;
             case POSITION:
@@ -297,8 +301,8 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     private int cameraFollowingOffset() {
-        var angle = -camera.getDeltaXAngle();
-        return ((int) (angle * 7)) - ABS_TICKS_SOUTH;
+        var delta = -camera.getDeltaX();
+        return  ((int) (delta * 10)) - ABS_TICKS_SOUTH;
     }
 
     private int fieldFollowingOffset() {
@@ -339,13 +343,17 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     private void autoHome() {
-        var angle = -camera.getDeltaXAngle();
-//        var bounceOutCorrection = convertTurretDegreesToTicks(2);
-        int adj =
-            ((int) (angle * 14.5)) +
-            followingTurretPos -
-            ABS_TICKS_SOUTH;
-//            bounceOutCorrection;
+        var cameraOffset = cameraFollowingOffset();
+        int adj = followingTurretPos + cameraOffset;
+        if (adj != followingTurretPos) {
+            followingTurretPos = adj;
+            outputsChanged = true;
+        }
+    }
+
+    private void autoHomeWithOffset(int offset) {
+        var cameraOffset = cameraFollowingOffset();
+        int adj = followingTurretPos + cameraOffset + offset;
         if (adj != followingTurretPos) {
             followingTurretPos = adj;
             outputsChanged = true;
@@ -461,6 +469,7 @@ public class Turret extends Subsystem implements PidProvider {
         CAMERA_FOLLOWING,
         FIELD_FOLLOWING,
         CENTER_FOLLOWING,
+        ABSOLUTE_FOLLOWING,
         ABSOLUTE_MADNESS,
         POSITION,
         MANUAL,

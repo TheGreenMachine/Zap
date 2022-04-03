@@ -45,7 +45,7 @@ public class Elevator extends Subsystem {
     private void setElevator(double elevatorOutput) {
         this.elevatorPower = elevatorOutput;
         System.out.println(elevatorPower + " = elevator power");
-        this.elevator.set(ControlMode.PercentOutput, elevatorPower);
+        this.elevator.set(ControlMode.PercentOutput, -elevatorPower);
     }
 
     private void lockToShooter(){

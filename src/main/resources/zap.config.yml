@@ -42,7 +42,7 @@ subsystems:
                     azimuth: RLAz
                     canCoder: RLEnc
                     constants:
-                        encoderOffset: 3117
+                        encoderOffset: 534
                         invertSensorPhase: 1
                 backRight:
                     drive: RRDr
@@ -94,6 +94,12 @@ subsystems:
         implemented: true
         pidConfig:
             slot0:
+                kP: 0.85
+                kI: 0.0003
+                kD: 22.5
+                kF: 0 # Should be 0 for position control
+                allowableError: 40
+            slot1: # used for vision aiming
                 kP: 0.85
                 kI: 0.0003
                 kD: 22.5
