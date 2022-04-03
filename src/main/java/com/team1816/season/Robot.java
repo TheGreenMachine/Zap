@@ -315,7 +315,6 @@ public class Robot extends TimedRobot {
                     createAction(
                         mControlBoard::getZeroPose, // line up against ally field wall and point turret forward -> zero
                         () -> {
-                            mDrive.zeroSensors(Constants.ZeroPose);
                         }
                     ),
                     createHoldAction(

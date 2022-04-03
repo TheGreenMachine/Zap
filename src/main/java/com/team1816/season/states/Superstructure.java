@@ -109,8 +109,8 @@ public class Superstructure {
         System.out.println("struct - rev " + revving);
         if (revving) {
             shooter.setDesiredState(Shooter.SHOOTER_STATE.REVVING);
-            if  (false) {//(Camera.cameraEnabled || usePoseTrack) {
-                if (turret.getControlMode() == Turret.ControlMode.ABSOLUTE_MADNESS && camera.isImplemented()) {
+            if  (Camera.cameraEnabled || usePoseTrack) {
+                if (turret.getControlMode() == Turret.ControlMode.ABSOLUTE_MADNESS) {
                     shooter.setVelocity(getShooterVelAdj());
                 } else {
                     shooter.setVelocity(getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
@@ -140,7 +140,7 @@ public class Superstructure {
             if (!elevator.colorOfBall()) { // spit out ball if wrong color
                 shooter.setHood(false);
             }
-            if (false) {// (Camera.cameraEnabled || usePoseTrack) {
+            if (Camera.cameraEnabled || usePoseTrack) {
                 elevator.overridePower(getDistance(DistanceManager.SUBSYSTEM.ELEVATOR));
             }
         } else {

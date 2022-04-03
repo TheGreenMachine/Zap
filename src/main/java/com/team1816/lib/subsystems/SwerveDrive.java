@@ -147,10 +147,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         mTrajectoryStart = 0;
         mTrajectory = trajectory;
         mHeadings = headings;
-        if(!trajectoryStarted){
-            trajectoryStarted = true; // massive hack here woo
-            zeroSensors(trajectory.getInitialPose());
-        }
         mTrajectoryIndex = 0;
         updateRobotState();
         mDriveControlState = DriveControlState.TRAJECTORY_FOLLOWING;
