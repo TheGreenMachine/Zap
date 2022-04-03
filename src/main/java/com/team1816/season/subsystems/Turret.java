@@ -35,7 +35,7 @@ public class Turret extends Subsystem implements PidProvider {
     // Constants
     private static final int kPrimaryCloseLoop = 0;
     private static final int kPIDGyroIDx = 0;
-    private static final int kPIDVisionIDx = 0;
+    private static final int kPIDVisionIDx = 1;
     public static int TURRET_ABS_ENCODER_PPR = 4096;
     public final int TURRET_PPR;
     private final int TURRET_MASK;
@@ -225,7 +225,7 @@ public class Turret extends Subsystem implements PidProvider {
     public synchronized void setTurretAngle(double angle) {
         setControlMode(ControlMode.POSITION);
         setTurretPosition(convertTurretDegreesToTicks(angle));
-//        outputsChanged = true;
+        //        outputsChanged = true;
     }
 
     public synchronized void setFollowingAngle(double angle) {
@@ -301,8 +301,8 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     private int cameraFollowingOffset() {
-        var angle = -camera.getDeltaXAngle();
-        return ((int) (angle * 14.5)) - ABS_TICKS_SOUTH;
+        var delta = -camera.getDeltaX();
+        return ((int) (delta * 10)) - ABS_TICKS_SOUTH;
     }
 
     private int fieldFollowingOffset() {
@@ -312,14 +312,14 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     private int centerFollowingOffset() {
-        double opposite = Constants.fieldCenterY - robotState.getFieldToTurretPos().getY();
-        double adjacent = Constants.fieldCenterX - robotState.getFieldToTurretPos().getX();
+        double opposite =
+            Constants.fieldCenterY - robotState.getFieldToTurretPos().getY();
+        double adjacent =
+            Constants.fieldCenterX - robotState.getFieldToTurretPos().getX();
         double turretAngle = 0;
         turretAngle = Math.atan(opposite / adjacent);
         if (adjacent < 0) turretAngle += Math.PI;
-        return convertTurretDegreesToTicks(
-            Units.radiansToDegrees(turretAngle)
-        );
+        return convertTurretDegreesToTicks(Units.radiansToDegrees(turretAngle));
     }
 
     private int motionOffset() {
@@ -337,9 +337,7 @@ public class Turret extends Subsystem implements PidProvider {
         if (motionOffsetAngle > Math.PI) {
             motionOffsetAngle -= Math.PI * 2;
         }
-        return convertTurretDegreesToTicks(
-            Units.radiansToDegrees(motionOffsetAngle)
-        );
+        return convertTurretDegreesToTicks(Units.radiansToDegrees(motionOffsetAngle));
     }
 
     private void autoHome() {
@@ -373,7 +371,8 @@ public class Turret extends Subsystem implements PidProvider {
         int fieldTickOffset = fieldFollowingOffset();
         int centerOffset = centerFollowingOffset();
 
-        int adj = (desiredTurretPos + fieldTickOffset + centerOffset + visionCorroboration);
+        int adj =
+            (desiredTurretPos + fieldTickOffset + centerOffset + visionCorroboration);
         if (adj != followingTurretPos) {
             followingTurretPos = adj;
             outputsChanged = true;
@@ -394,7 +393,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     private void positionControl(int rawPos) {
         int adjPos = (rawPos + ABS_TICKS_SOUTH + ZERO_OFFSET) % TURRET_MASK;
-        if(adjPos < 0){
+        if (adjPos < 0) {
             adjPos += TURRET_MASK;
         }
         if (outputsChanged) {
@@ -405,17 +404,17 @@ public class Turret extends Subsystem implements PidProvider {
 
     private void manualControl() {
         if (outputsChanged) {
-//            if (turretSpeed == 0) {
-//                turret.set(
-//                    com.ctre.phoenix.motorcontrol.ControlMode.Position,
-//                    getActualTurretPositionTicks() + 200 * turret.getMotorOutputPercent()
-//                );
-//            } else {
-                turret.set(
-                    com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput,
-                    turretSpeed
-                );
-//            }
+            //            if (turretSpeed == 0) {
+            //                turret.set(
+            //                    com.ctre.phoenix.motorcontrol.ControlMode.Position,
+            //                    getActualTurretPositionTicks() + 200 * turret.getMotorOutputPercent()
+            //                );
+            //            } else {
+            turret.set(
+                com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput,
+                turretSpeed
+            );
+            //            }
             outputsChanged = false;
         }
     }
@@ -424,20 +423,19 @@ public class Turret extends Subsystem implements PidProvider {
         double dot = (a.getNorm() * b.getNorm() == 0)
             ? 0
             : Math.acos(
-            (a.getX() * b.getX() + a.getY() * b.getY()) / (a.getNorm() * b.getNorm())
-        );
+                (a.getX() * b.getX() + a.getY() * b.getY()) / (a.getNorm() * b.getNorm())
+            );
         double cross = crossProduct(a, b);
-        if(cross > 0) {
-            dot*=-1;
+        if (cross > 0) {
+            dot *= -1;
         }
         return dot;
     }
 
     private static double crossProduct(Translation2d a, Translation2d b) {
-        double [] vect_A = {a.getX(), a.getY(), 0};
-        double [] vect_B = {b.getX(), b.getY(), 0};
-        double cross_P = vect_A[0] * vect_B[1]
-            - vect_A[1] * vect_B[0];
+        double[] vect_A = { a.getX(), a.getY(), 0 };
+        double[] vect_B = { b.getX(), b.getY(), 0 };
+        double cross_P = vect_A[0] * vect_B[1] - vect_A[1] * vect_B[0];
         return cross_P;
     }
 

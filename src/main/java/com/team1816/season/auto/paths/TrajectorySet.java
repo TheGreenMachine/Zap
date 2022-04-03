@@ -24,7 +24,6 @@ public class TrajectorySet {
     public static Trajectory FOUR_BALL_C2;
     public static Trajectory FOUR_BALL_C3;
 
-
     public static Trajectory FIVE_BALL_A;
     public static Trajectory FIVE_BALL_B;
     public static Trajectory FIVE_BALL_C;
@@ -65,7 +64,6 @@ public class TrajectorySet {
         FIVE_BALL_B = new FiveBallAutoB().generateTrajectory();
         FIVE_BALL_C = new FiveBallAutoC().generateTrajectory();
         FIVE_BALL_D = new FiveBallAutoD().generateTrajectory();
-
 
         // Heading lists
         LIVING_ROOM_HEADINGS = new LivingRoomPath().generateHeadings();

@@ -5,6 +5,7 @@ import static com.team1816.season.controlboard.ControlUtils.*;
 import badlog.lib.BadLog;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.team1816.lib.Infrastructure;
 import com.team1816.lib.LibModule;
 import com.team1816.lib.auto.AutoModeExecutor;
 import com.team1816.lib.auto.modes.AutoModeBase;
@@ -14,11 +15,10 @@ import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.Drive;
 import com.team1816.lib.subsystems.DrivetrainLogger;
-import com.team1816.lib.Infrastructure;
 import com.team1816.lib.subsystems.SubsystemManager;
 import com.team1816.season.auto.AutoModeSelector;
-import com.team1816.season.controlboard.ActionManager;
 import com.team1816.season.auto.paths.TrajectorySet;
+import com.team1816.season.controlboard.ActionManager;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.states.Superstructure;
 import com.team1816.season.subsystems.*;
@@ -78,7 +78,8 @@ public class Robot extends TimedRobot {
     private AsyncTimer blinkTimer;
 
     // private PowerDistributionPanel pdp = new PowerDistributionPanel();
-    private final Turret.ControlMode defaultTurretControlMode = Turret.ControlMode.CENTER_FOLLOWING;
+    private final Turret.ControlMode defaultTurretControlMode =
+        Turret.ControlMode.CENTER_FOLLOWING;
     private boolean faulted;
 
     Robot() {
@@ -167,7 +168,11 @@ public class Robot extends TimedRobot {
 
                 DrivetrainLogger.init(mDrive);
                 if (RobotBase.isReal()) {
-                    BadLog.createTopic("PDP/Current", "Amps", mInfrastructure.getPdh()::getTotalCurrent);
+                    BadLog.createTopic(
+                        "PDP/Current",
+                        "Amps",
+                        mInfrastructure.getPdh()::getTotalCurrent
+                    );
 
                     mDrive.CreateBadLogValue("Drivetrain PID", mDrive.pidToString());
                     mTurret.CreateBadLogValue("Turret PID", mTurret.pidToString());
@@ -177,7 +182,7 @@ public class Robot extends TimedRobot {
                         BadLog.createTopic(
                             "Vision/DeltaXAngle",
                             "Degrees",
-                            mCamera::getDeltaXAngle
+                            mCamera::getDeltaX
                         );
                         BadLog.createTopic(
                             "Vision/Distance",
@@ -300,14 +305,14 @@ public class Robot extends TimedRobot {
             actionManager =
                 new ActionManager(
                     // Driver Gamepad
-//                    createAction(
-//                        mControlBoard::getCollectorToggle,
-//                        () -> mSuperstructure.setCollecting(true)
-//                    ),
-//                    createAction(
-//                        mControlBoard::getCollectorBackspin,
-//                        () -> mSuperstructure.setCollecting(false)
-//                    ),
+                    //                    createAction(
+                    //                        mControlBoard::getCollectorToggle,
+                    //                        () -> mSuperstructure.setCollecting(true)
+                    //                    ),
+                    //                    createAction(
+                    //                        mControlBoard::getCollectorBackspin,
+                    //                        () -> mSuperstructure.setCollecting(false)
+                    //                    ),
                     createHoldAction(
                         mControlBoard::getCollectorToggle,
                         pressed -> {
@@ -328,24 +333,15 @@ public class Robot extends TimedRobot {
                             }
                         }
                     ),
-                    createAction(
-                        mControlBoard::getUnlockClimber,
-                        mClimber::setUnlocked
-                    ),
+                    createAction(mControlBoard::getUnlockClimber, mClimber::setUnlocked),
                     createAction(
                         mControlBoard::getZeroPose, // line up against ally field wall and point turret forward -> zero
                         () -> {
                             mDrive.zeroSensors(Constants.ZeroPose);
                         }
                     ),
-                    createHoldAction(
-                        mControlBoard::getSlowMode,
-                        mDrive::setSlowMode
-                    ),
-                    createHoldAction(
-                        mControlBoard::getBrakeMode,
-                        mDrive::setBrakeMode
-                    ),
+                    createHoldAction(mControlBoard::getSlowMode, mDrive::setSlowMode),
+                    createHoldAction(mControlBoard::getBrakeMode, mDrive::setBrakeMode),
                     // Operator Gamepad
                     createHoldAction(
                         mControlBoard::getAutoAim,
@@ -360,10 +356,7 @@ public class Robot extends TimedRobot {
                             }
                         }
                     ),
-                    createAction(
-                        mControlBoard::getCameraToggle,
-                        mCamera::setEnabled
-                    ),
+                    createAction(mControlBoard::getCameraToggle, mCamera::setEnabled),
                     createHoldAction(
                         mControlBoard::getYeetShot,
                         yeet -> {
@@ -385,10 +378,7 @@ public class Robot extends TimedRobot {
                             mSuperstructure.setFiring(shooting);
                         }
                     ),
-                    createAction(
-                        mControlBoard::getHood,
-                        mShooter::setHood
-                    ),
+                    createAction(mControlBoard::getHood, mShooter::setHood),
                     createHoldAction(
                         mControlBoard::getTurretJogLeft,
                         moving ->
@@ -407,14 +397,8 @@ public class Robot extends TimedRobot {
                         mControlBoard::getClimberDown,
                         moving -> mClimber.setClimberPower(moving ? 1 : 0)
                     ),
-                    createAction(
-                        mControlBoard::getTopClamp,
-                        mClimber::setTopClamp
-                    ),
-                    createAction(
-                        mControlBoard::getBottomClamp,
-                        mClimber::setBottomClamp
-                    ),
+                    createAction(mControlBoard::getTopClamp, mClimber::setTopClamp),
+                    createAction(mControlBoard::getBottomClamp, mClimber::setBottomClamp),
                     createAction(
                         mControlBoard::getAutoClimb,
                         () -> {
@@ -484,8 +468,7 @@ public class Robot extends TimedRobot {
                 mAutoModeExecutor.start();
             }
             mEnabledLooper.start();
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             throw t;
         }
     }

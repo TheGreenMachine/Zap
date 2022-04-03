@@ -61,7 +61,10 @@ public class AutoModeSelector {
         SmartDashboard.putData("Auto mode", mModeChooser);
 
         // Debugging / Tuning
-        mModeChooser.addOption("Tune Drivetrain - FOR TESTING", DesiredMode.TUNE_DRIVETRAIN);
+        mModeChooser.addOption(
+            "Tune Drivetrain - FOR TESTING",
+            DesiredMode.TUNE_DRIVETRAIN
+        );
         mModeChooser.addOption("Do Nothing", DesiredMode.DO_NOTHING);
         mModeChooser.addOption("Living Room - FOR TESTING", DesiredMode.LIVING_ROOM);
 

@@ -2,8 +2,8 @@ package com.team1816.lib.subsystems;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.team1816.season.auto.AutoModeSelector;
 import com.team1816.season.Constants;
+import com.team1816.season.auto.AutoModeSelector;
 import com.team254.lib.util.DriveSignal;
 import com.team254.lib.util.SwerveDriveHelper;
 import com.team254.lib.util.SwerveDriveSignal;
@@ -65,9 +65,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             ); // TODO get swerve max speed in meters/s
             for (int i = 0; i < 4; i++) {
                 swerveModules[i].setDesiredState(
-                    mPeriodicIO.desiredModuleStates[i],
-                    true
-                );
+                        mPeriodicIO.desiredModuleStates[i],
+                        true
+                    );
             }
         }
     }
@@ -147,7 +147,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         mTrajectoryStart = 0;
         mTrajectory = trajectory;
         mHeadings = headings;
-        if(!trajectoryStarted){
+        if (!trajectoryStarted) {
             trajectoryStarted = true; // massive hack here woo
             zeroSensors(trajectory.getInitialPose());
         }
@@ -252,11 +252,17 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     public synchronized void setBrakeMode(boolean on) {
         super.setBrakeMode(on);
         for (int i = 0; i < swerveModules.length; i++) {
-            if(on){
-                if(i == 0 || i == 3){
-                    swerveModules[i].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)), false);
+            if (on) {
+                if (i == 0 || i == 3) {
+                    swerveModules[i].setDesiredState(
+                            new SwerveModuleState(0, Rotation2d.fromDegrees(45)),
+                            false
+                        );
                 } else {
-                    swerveModules[i].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)), false);
+                    swerveModules[i].setDesiredState(
+                            new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),
+                            false
+                        );
                 }
             }
             swerveModules[i].setDriveBrakeMode(on);

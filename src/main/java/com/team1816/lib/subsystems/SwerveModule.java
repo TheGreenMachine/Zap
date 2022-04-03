@@ -8,7 +8,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.team1816.lib.math.DriveConversions;
-import com.team1816.lib.subsystems.ISwerveModule;
 import com.team1816.lib.util.ModuleState;
 import com.team1816.season.Constants;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -165,8 +164,8 @@ public class SwerveModule implements ISwerveModule {
     }
 
     public synchronized void setDriveBrakeMode(boolean brake_mode) {
-//        mDriveMotor.setNeutralMode(brake_mode ? NeutralMode.Brake : NeutralMode.Coast);
-        if(brake_mode){
+        //        mDriveMotor.setNeutralMode(brake_mode ? NeutralMode.Brake : NeutralMode.Coast);
+        if (brake_mode) {
             mDriveMotor.set(ControlMode.Velocity, 0);
         }
         isBrakeMode = brake_mode;
