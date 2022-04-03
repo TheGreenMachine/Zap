@@ -6,12 +6,12 @@ import static org.mockito.Mockito.when;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.team1816.lib.LibModule;
-import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.hardware.components.motor.GhostMotorControllerEnhanced;
+import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
-import com.team1816.season.states.RobotState;
 import com.team1816.season.SeasonModule;
+import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import org.junit.Assert;
@@ -174,7 +174,10 @@ public class TurretTest {
         mTurret = new Turret();
         mTurret.zeroSensors();
         Assert.assertEquals(
-            mTurret.TURRET_PPR / 2.0 - mTurret.TURRET_PPR == mTurret.TURRET_ABS_ENCODER_PPR
+            mTurret.TURRET_PPR /
+                2.0 -
+                mTurret.TURRET_PPR ==
+                mTurret.TURRET_ABS_ENCODER_PPR
                 ? 0
                 : absInit,
             mTurret.getActualTurretPositionTicks(),

@@ -656,7 +656,7 @@ public class LazySparkMax implements IMotorControllerEnhanced {
     }
 
     @Override
-    public double getOutputCurrent(){
+    public double getOutputCurrent() {
         return mMotor.getOutputCurrent();
     }
 

@@ -1,14 +1,14 @@
 package com.team1816.season.subsystems;
 
+import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
+import static com.ctre.phoenix.motorcontrol.ControlMode.Position;
+
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
 import edu.wpi.first.wpilibj.Timer;
-
-import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
-import static com.ctre.phoenix.motorcontrol.ControlMode.Position;
 
 public class Climber extends Subsystem {
 
@@ -44,7 +44,13 @@ public class Climber extends Subsystem {
     public Climber() {
         super(NAME);
         spinner = factory.getMotor(NAME, "spinner");
-        spinnerFollower = (IMotorControllerEnhanced) factory.getMotor(NAME, "spinnerFollower", spinner, true);
+        spinnerFollower =
+            (IMotorControllerEnhanced) factory.getMotor(
+                NAME,
+                "spinnerFollower",
+                spinner,
+                true
+            );
         topClamp = factory.getSolenoid(NAME, "topClamp");
         bottomClamp = factory.getSolenoid(NAME, "bottomClamp");
 
@@ -68,41 +74,63 @@ public class Climber extends Subsystem {
         currentStage = 0;
         unlocked = false;
 
-        stages = new Stage[]{
-            new Stage(factory.getConstant(NAME, "startPos", 0), true, false, false), // just here as an init value
-            new Stage(factory.getConstant(NAME, "unlockPos", -20), true, false, false),
-            new Stage(factory.getConstant(NAME, "startPos", 0), true, false, false),
-            new Stage(factory.getConstant(NAME, "firstToSecondRungPos", -63), false, true, true),
-            new Stage(factory.getConstant(NAME, "secondToLastRungPos", -153), true, false, false),
-            new Stage(factory.getConstant(NAME, "lastPos", -180), false, true, true)
-        };
+        stages =
+            new Stage[] {
+                new Stage(factory.getConstant(NAME, "startPos", 0), true, false, false), // just here as an init value
+                new Stage(
+                    factory.getConstant(NAME, "unlockPos", -20),
+                    true,
+                    false,
+                    false
+                ),
+                new Stage(factory.getConstant(NAME, "startPos", 0), true, false, false),
+                new Stage(
+                    factory.getConstant(NAME, "firstToSecondRungPos", -63),
+                    false,
+                    true,
+                    true
+                ),
+                new Stage(
+                    factory.getConstant(NAME, "secondToLastRungPos", -153),
+                    true,
+                    false,
+                    false
+                ),
+                new Stage(factory.getConstant(NAME, "lastPos", -180), false, true, true),
+            };
     }
 
-    public void setUnlocked(){
+    public void setUnlocked() {
         unlocked = !unlocked;
     }
 
-    public void incrementClimberStage(){ // we can't go backwards (descend rungs) using this logic, but it shouldn't really matter
-        if(!unlocked){
+    public void incrementClimberStage() { // we can't go backwards (descend rungs) using this logic, but it shouldn't really matter
+        if (!unlocked) {
             System.out.println("climber not unlocked!");
             return;
         }
-        if(currentStage < stages.length - 1 && !needsOverShoot) {
+        if (currentStage < stages.length - 1 && !needsOverShoot) {
             if (controlMode != ControlMode.POSITION) {
                 controlMode = ControlMode.POSITION;
             }
-            System.out.println("incrementing climber to stage " + currentStage + " .....");
+            System.out.println(
+                "incrementing climber to stage " + currentStage + " ....."
+            );
             currentStage++;
             needsOverShoot = true;
             needsClamp = true;
             outputsChanged = true;
         } else {
-            System.out.println("climber not safely at stage " + currentStage + " - not incrementing stage!");
+            System.out.println(
+                "climber not safely at stage " +
+                currentStage +
+                " - not incrementing stage!"
+            );
         }
     }
 
-    public void setClimberPower(double power){
-        if(!unlocked){
+    public void setClimberPower(double power) {
+        if (!unlocked) {
             System.out.println("climber not unlocked!");
             return;
         }
@@ -114,11 +142,11 @@ public class Climber extends Subsystem {
     }
 
     public void setTopClamp() {
-        if(!unlocked){
+        if (!unlocked) {
             System.out.println("climber not unlocked!");
             return;
         }
-        if(controlMode != ControlMode.MANUAL){
+        if (controlMode != ControlMode.MANUAL) {
             controlMode = ControlMode.MANUAL;
         }
         topClamped = !topClamped;
@@ -127,11 +155,11 @@ public class Climber extends Subsystem {
     }
 
     public void setBottomClamp() {
-        if(!unlocked){
+        if (!unlocked) {
             System.out.println("climber not unlocked!");
             return;
         }
-        if(controlMode != ControlMode.MANUAL){
+        if (controlMode != ControlMode.MANUAL) {
             controlMode = ControlMode.MANUAL;
         }
         bottomClamped = !bottomClamped;
@@ -141,7 +169,7 @@ public class Climber extends Subsystem {
     }
 
     private void positionControl(double position) {
-        if(needsOverShoot) { // keep looping if we aren't past the overshoot value
+        if (needsOverShoot) { // keep looping if we aren't past the overshoot value
             spinner.set(Position, position);
             if (Math.abs(error) < 5) {
                 needsOverShoot = false;
@@ -153,9 +181,9 @@ public class Climber extends Subsystem {
     }
 
     private void setClamps(boolean topClamped, boolean bottomClamped, boolean topFirst) {
-        if(needsClamp){
+        if (needsClamp) {
             needsClamp = false;
-            if(topFirst){
+            if (topFirst) {
                 topClamp.set(topClamped);
                 Timer.delay(.25);
                 bottomClamp.set(bottomClamped);
@@ -174,7 +202,7 @@ public class Climber extends Subsystem {
         error = spinner.getSelectedSensorPosition(0) - stages[currentStage].position;
         climberPosition = spinner.getSelectedSensorPosition(0);
         currentDraw = spinner.getOutputCurrent();
-//        System.out.println("climber position = " + climberPosition);
+        //        System.out.println("climber position = " + climberPosition);
     }
 
     @Override
@@ -192,11 +220,11 @@ public class Climber extends Subsystem {
         }
     }
 
-    public double getClimberPosition(){
+    public double getClimberPosition() {
         return climberPosition;
     }
 
-    public double getCurrentDraw(){
+    public double getCurrentDraw() {
         return currentDraw;
     }
 

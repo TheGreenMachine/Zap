@@ -30,7 +30,10 @@ public class TurretAction implements Action {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(turret.getPositionError()) < turret.ALLOWABLE_ERROR_TICKS && turret.getControlMode() == Turret.ControlMode.POSITION;
+        return (
+            Math.abs(turret.getPositionError()) < turret.ALLOWABLE_ERROR_TICKS &&
+            turret.getControlMode() == Turret.ControlMode.POSITION
+        );
     }
 
     @Override

@@ -4,10 +4,8 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.subsystems.Drive;
 import com.team1816.season.Constants;
-import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.*;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
@@ -93,7 +91,7 @@ public class Superstructure {
                 spindexer.setDesiredState(Spindexer.SPIN_STATE.COLLECT);
             }
         } else {
-            if(!revving){
+            if (!revving) {
                 collector.setDesiredState(Collector.COLLECTOR_STATE.STOP);
             }
             collector.setDesiredState(Collector.COLLECTOR_STATE.STOP);
@@ -109,7 +107,7 @@ public class Superstructure {
         System.out.println("struct - rev " + revving);
         if (revving) {
             shooter.setDesiredState(Shooter.SHOOTER_STATE.REVVING);
-            if  (Camera.cameraEnabled || usePoseTrack) {
+            if (Camera.cameraEnabled || usePoseTrack) {
                 if (turret.getControlMode() == Turret.ControlMode.ABSOLUTE_MADNESS) {
                     shooter.setVelocity(getShooterVelAdj());
                 } else {
@@ -119,25 +117,25 @@ public class Superstructure {
             } else {
                 shooter.setVelocity(shooterVel);
             }
-            if(!collecting){
+            if (!collecting) {
                 collector.setDesiredState(Collector.COLLECTOR_STATE.REVVING);
-                if(!firing){
+                if (!firing) {
                     spindexer.setDesiredState(Spindexer.SPIN_STATE.INDEX);
                 }
             }
-            if(!firing){
+            if (!firing) {
                 elevator.setDesiredState(Elevator.ELEVATOR_STATE.FLUSH);
             }
         } else {
             shooter.setDesiredState(Shooter.SHOOTER_STATE.COASTING);
-            if(!collecting){
+            if (!collecting) {
                 collector.setDesiredState(Collector.COLLECTOR_STATE.STOP);
-                if(!firing){
+                if (!firing) {
                     spindexer.setDesiredState(Spindexer.SPIN_STATE.STOP);
                 }
             }
 
-            if(!firing){
+            if (!firing) {
                 elevator.setDesiredState(Elevator.ELEVATOR_STATE.STOP);
             }
         }
@@ -154,9 +152,9 @@ public class Superstructure {
                 shooter.setHood(false);
             }
             // not needed because override pow is same as default pow
-//            if (Camera.cameraEnabled || usePoseTrack) {
-//                elevator.overridePower(getDistance(DistanceManager.SUBSYSTEM.ELEVATOR));
-//            }
+            //            if (Camera.cameraEnabled || usePoseTrack) {
+            //                elevator.overridePower(getDistance(DistanceManager.SUBSYSTEM.ELEVATOR));
+            //            }
         } else {
             if (!collecting) {
                 spindexer.setDesiredState(Spindexer.SPIN_STATE.STOP);
@@ -166,11 +164,11 @@ public class Superstructure {
     }
 
     public double getDistance(DistanceManager.SUBSYSTEM subsystem) {
-        if(useVision){
+        if (useVision) {
             double camDis = camera.getDistance();
             System.out.println("tracked camera distance is . . . " + camDis);
             return distanceManager.getOutput(camDis, subsystem);
-        } else if(usePoseTrack){
+        } else if (usePoseTrack) {
             System.out.println("using position to plan shooter velocity");
             return distanceManager.getOutput(calculateDistanceToGoal(), subsystem);
         } else {
@@ -179,8 +177,10 @@ public class Superstructure {
         }
     }
 
-    public double calculateDistanceToGoal(){
-        double distanceToGoalMeters = robotState.field_to_vehicle.getTranslation().getDistance(Constants.targetPos.getTranslation());
+    public double calculateDistanceToGoal() {
+        double distanceToGoalMeters = robotState.field_to_vehicle
+            .getTranslation()
+            .getDistance(Constants.targetPos.getTranslation());
         return Units.metersToInches(distanceToGoalMeters) / 1.2;
     }
 
@@ -197,24 +197,22 @@ public class Superstructure {
 
         // setting velocity
         return convertShooterMetersToTicksPerSecond(
-                getBallVel(cameraDist) - //get velocity of ball
-                    chassisVelocity.getNorm() *
-                        Math.cos(
-                            getAngleBetween(
-                                chassisVelocity,
-                                shooterDirection
-                            )
-                        )
-            );
+            getBallVel(cameraDist) - //get velocity of ball
+            chassisVelocity.getNorm() *
+            Math.cos(getAngleBetween(chassisVelocity, shooterDirection))
+        );
     }
 
     public double getBallVel(double distance) {
-        return 0.0248*distance - 0.53;
+        return 0.0248 * distance - 0.53;
     }
 
     public double convertShooterMetersToTicksPerSecond(double metersPerSecond) {
-        double cameraDist = (metersPerSecond + 0.53)/0.0248;
-        double shooterOutput = distanceManager.getOutput(cameraDist, DistanceManager.SUBSYSTEM.SHOOTER);
+        double cameraDist = (metersPerSecond + 0.53) / 0.0248;
+        double shooterOutput = distanceManager.getOutput(
+            cameraDist,
+            DistanceManager.SUBSYSTEM.SHOOTER
+        );
         return shooterOutput;
     }
 
@@ -222,29 +220,38 @@ public class Superstructure {
         double dot = (a.getNorm() * b.getNorm() == 0)
             ? 0
             : Math.acos(
-            (a.getX() * b.getX() + a.getY() * b.getY()) / (a.getNorm() * b.getNorm())
-        );
+                (a.getX() * b.getX() + a.getY() * b.getY()) / (a.getNorm() * b.getNorm())
+            );
         double cross = crossProduct(a, b);
-        if(cross > 0) {
-            dot*=-1;
+        if (cross > 0) {
+            dot *= -1;
         }
         return dot;
     }
 
     private static double crossProduct(Translation2d a, Translation2d b) {
-        double [] vect_A = {a.getX(), a.getY(), 0};
-        double [] vect_B = {b.getX(), b.getY(), 0};
-        return vect_A[0] * vect_B[1]
-            - vect_A[1] * vect_B[0];
+        double[] vect_A = { a.getX(), a.getY(), 0 };
+        double[] vect_B = { b.getX(), b.getY(), 0 };
+        return vect_A[0] * vect_B[1] - vect_A[1] * vect_B[0];
     }
 
     public void updatePoseWithCamera() {
         double cameraDist = camera.getDistance();
         // 26.56 = radius of center hub - - 5629 = square of height of hub
-        double distanceToCenterMeters = Units.inchesToMeters(26.56 + (Math.sqrt((cameraDist * cameraDist) - 5629.5)));
+        double distanceToCenterMeters = Units.inchesToMeters(
+            26.56 + (Math.sqrt((cameraDist * cameraDist) - 5629.5))
+        );
 
-        Translation2d deltaToHub = new Translation2d(distanceToCenterMeters, robotState.getLatestFieldToTurret());
-        Pose2d newRobotPose = Constants.targetPos.transformBy(new Transform2d(deltaToHub.unaryMinus(), robotState.field_to_vehicle.getRotation())); //
+        Translation2d deltaToHub = new Translation2d(
+            distanceToCenterMeters,
+            robotState.getLatestFieldToTurret()
+        );
+        Pose2d newRobotPose = Constants.targetPos.transformBy(
+            new Transform2d(
+                deltaToHub.unaryMinus(),
+                robotState.field_to_vehicle.getRotation()
+            )
+        ); //
         drive.resetOdometry(newRobotPose);
     }
 

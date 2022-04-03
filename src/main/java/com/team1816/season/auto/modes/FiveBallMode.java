@@ -14,7 +14,6 @@ public class FiveBallMode extends AutoModeBase {
     private final TrajectoryAction trajectory2;
     private final TrajectoryAction trajectory3;
 
-
     public FiveBallMode() {
         trajectory =
             new TrajectoryAction(

@@ -48,7 +48,7 @@ public class Spindexer extends Subsystem {
         spindexer.set(ControlMode.PercentOutput, spindexerPower);
     }
 
-    private void lockToShooter(){ // bear in mind this might never fire if shooter not implemented - not rly important tho
+    private void lockToShooter() { // bear in mind this might never fire if shooter not implemented - not rly important tho
         if (robotState.shooterState == Shooter.SHOOTER_STATE.REVVING) {
             setSpindexer(FIRE);
         } else {
@@ -71,20 +71,19 @@ public class Spindexer extends Subsystem {
 
     @Override
     public void readFromHardware() {
-        if(state != robotState.spinState){
-//            double actualVel = spindexer.getSelectedSensorVelocity(0);
+        if (state != robotState.spinState) {
+            //            double actualVel = spindexer.getSelectedSensorVelocity(0);
 
-//            if(state == SPIN_STATE.COLLECT || state == SPIN_STATE.INDEX){ // logic not yet made for collect / index
-//                robotState.spinState = state;
-//            } else if(Math.abs(spindexerPower) < POWER_THRESHOLD) {
-//                robotState.spinState = SPIN_STATE.STOP;
-//            } else if (spindexerPower > POWER_THRESHOLD) {
-//                robotState.spinState = SPIN_STATE.FIRE;
-//            } else if(spindexerPower < -POWER_THRESHOLD){
-//                robotState.spinState = SPIN_STATE.FLUSH;
-//            }
+            //            if(state == SPIN_STATE.COLLECT || state == SPIN_STATE.INDEX){ // logic not yet made for collect / index
+            //                robotState.spinState = state;
+            //            } else if(Math.abs(spindexerPower) < POWER_THRESHOLD) {
+            //                robotState.spinState = SPIN_STATE.STOP;
+            //            } else if (spindexerPower > POWER_THRESHOLD) {
+            //                robotState.spinState = SPIN_STATE.FIRE;
+            //            } else if(spindexerPower < -POWER_THRESHOLD){
+            //                robotState.spinState = SPIN_STATE.FLUSH;
+            //            }
             robotState.spinState = state;
-
 
             System.out.println("ACTUAL SPINDEXER STATE = " + robotState.spinState);
         }
