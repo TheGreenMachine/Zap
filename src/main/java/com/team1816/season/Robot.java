@@ -406,7 +406,16 @@ public class Robot extends TimedRobot {
                     createAction(
                         mControlBoard::getAutoClimb,
                         () -> {
-                            mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
+                            if (mClimber.getCurrentStage() == 0)
+                            {
+                                mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
+                            }
+                            else
+                            {
+                                mTurret.setTurretAngle(Turret.CARDINAL_SOUTH-40);
+                                // TODO: If possible, set drivetrain wheels to be inline with climb direction and put in coast mode
+                            }
+
                             mClimber.incrementClimberStage();
                         }
                     )

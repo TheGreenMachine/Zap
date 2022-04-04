@@ -7,10 +7,10 @@ import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
 import edu.wpi.first.wpilibj.Timer;
 
+import javax.naming.ldap.Control;
 import javax.swing.*;
 
-import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
-import static com.ctre.phoenix.motorcontrol.ControlMode.Position;
+import static com.ctre.phoenix.motorcontrol.ControlMode.*;
 
 public class Climber extends Subsystem {
 
@@ -201,6 +201,8 @@ public class Climber extends Subsystem {
     public double getCurrentDraw(){
         return currentDraw;
     }
+
+    public int getCurrentStage() { return currentStage; }
 
     @Override
     public void zeroSensors() {
