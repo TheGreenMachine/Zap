@@ -339,7 +339,7 @@ public class Robot extends TimedRobot {
                                     Turret.ControlMode.CAMERA_FOLLOWING
                                 );
                             } else {
-                                mSuperstructure.updatePoseWithCamera();
+                                mSuperstructure.calculatePoseWithCamera();
                                 mTurret.setControlMode(defaultTurretControlMode); // this gets called when the robot inits - this could be bad?
                             }
                         }

@@ -20,17 +20,15 @@ public class TwoBallModeB extends AutoModeBase {
     @Override
     protected void routine() throws AutoModeEndedException {
         System.out.println("Running Two Ball B Mode");
-        runAction(new WaitAction(1));
+        runAction(new WaitAction(.5));
         runAction(
             new SeriesAction(
                 new ParallelAction(
                     new TurretAction(Turret.CARDINAL_NORTH + 25), // to be changed
-                    new WaitAction(8),
-                    new AutoAimAction(10),
-                    new CollectAction(true),
-                    new RampUpShooterAction(13000) // make actual shooting vel
+                    new CollectAction(true)
                 ),
                 trajectory,
+                new AutoAimAndRev(2, 11000),
                 new ShootAction(true, true),
                 new WaitAction(3)
             )

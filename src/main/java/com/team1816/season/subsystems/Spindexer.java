@@ -17,7 +17,7 @@ public class Spindexer extends Subsystem {
     private final IMotorControllerEnhanced spindexer;
 
     // State
-    private SPIN_STATE state = SPIN_STATE.STOP;
+    private STATE state = STATE.STOP;
     private boolean feederFlapOut = false; // leave for future addition if needed
     private boolean distanceManaged = false;
     private double spindexerPower;
@@ -49,7 +49,7 @@ public class Spindexer extends Subsystem {
     }
 
     private void lockToShooter() { // bear in mind this might never fire if shooter not implemented - not rly important tho
-        if (robotState.shooterState == Shooter.SHOOTER_STATE.REVVING) {
+        if (robotState.shooterState == Shooter.STATE.REVVING) {
             setSpindexer(FIRE);
         } else {
             outputsChanged = true; // keep looping through writeToHardWare if shooter not up to speed
@@ -61,7 +61,7 @@ public class Spindexer extends Subsystem {
         outputsChanged = true;
     }
 
-    public void setDesiredState(SPIN_STATE state) {
+    public void setDesiredState(STATE state) {
         if (this.state != state) {
             this.state = state;
             outputsChanged = true;
@@ -126,7 +126,7 @@ public class Spindexer extends Subsystem {
         return true;
     }
 
-    public enum SPIN_STATE {
+    public enum STATE {
         STOP,
         COLLECT,
         INDEX,

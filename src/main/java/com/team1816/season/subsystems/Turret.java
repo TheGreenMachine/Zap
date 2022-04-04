@@ -6,6 +6,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IMotorSensor;
+import com.team1816.lib.math.PoseUtil;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
@@ -327,7 +328,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     private int motionOffset() {
         Translation2d shooterAxis = new Translation2d(
-            robotState.getCurrentShooterSpeedMetersPerSecond(),
+            robotState.shooterSpeed,
             robotState.getLatestFieldToTurret()
         );
         Translation2d driveAxis = new Translation2d(
@@ -335,7 +336,10 @@ public class Turret extends Subsystem implements PidProvider {
             robotState.chassis_speeds.vyMetersPerSecond
         );
         Translation2d predictedTrajectory = driveAxis.unaryMinus().plus(shooterAxis);
-        double motionOffsetAngle = getAngleBetween(predictedTrajectory, shooterAxis);
+        double motionOffsetAngle = PoseUtil.getAngleBetween(
+            predictedTrajectory,
+            shooterAxis
+        );
 
         if (motionOffsetAngle > Math.PI) {
             motionOffsetAngle -= Math.PI * 2;
@@ -420,26 +424,6 @@ public class Turret extends Subsystem implements PidProvider {
             //            }
             outputsChanged = false;
         }
-    }
-
-    private double getAngleBetween(Translation2d a, Translation2d b) {
-        double dot = (a.getNorm() * b.getNorm() == 0)
-            ? 0
-            : Math.acos(
-                (a.getX() * b.getX() + a.getY() * b.getY()) / (a.getNorm() * b.getNorm())
-            );
-        double cross = crossProduct(a, b);
-        if (cross > 0) {
-            dot *= -1;
-        }
-        return dot;
-    }
-
-    private static double crossProduct(Translation2d a, Translation2d b) {
-        double[] vect_A = { a.getX(), a.getY(), 0 };
-        double[] vect_B = { b.getX(), b.getY(), 0 };
-        double cross_P = vect_A[0] * vect_B[1] - vect_A[1] * vect_B[0];
-        return cross_P;
     }
 
     @Override

@@ -32,7 +32,7 @@ public class Camera extends Subsystem {
     // private static final double CAMERA_FOV = 87.0; // deg
     private static final double CAMERA_FOCAL_LENGTH = 350; // px
     private static final double VIDEO_WIDTH = 672.0; // px
-    public static final double ALLOWABLE_AIM_ERROR = 0.2; // deg
+    public static final double ALLOWABLE_AIM_ERROR = 1; // deg
     private int loops = 0;
     //    private Queue<Double> distances = new PriorityQueue<Double>();
     private ArrayList<Double> distances = new ArrayList<>();
@@ -43,7 +43,7 @@ public class Camera extends Subsystem {
     }
 
     private double parseDeltaX(double x) {
-        if (Math.abs(x) > 672) {
+        if (Math.abs(x) > 672) { // ignore if x bigger than max allowed value
             return 0;
         }
         double deltaXPixels = (x - (VIDEO_WIDTH / 2)); // Calculate deltaX from center of screen

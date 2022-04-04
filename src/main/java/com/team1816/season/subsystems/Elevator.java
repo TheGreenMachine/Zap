@@ -18,7 +18,7 @@ public class Elevator extends Subsystem {
     // State
     private double elevatorOutput;
     private boolean outputsChanged;
-    private ELEVATOR_STATE state = ELEVATOR_STATE.STOP;
+    private STATE state = STATE.STOP;
 
     // Constants
     private final double MAX_TICKS;
@@ -62,14 +62,14 @@ public class Elevator extends Subsystem {
     }
 
     private void lockToShooter() {
-        if (robotState.shooterState == Shooter.SHOOTER_STATE.REVVING) {
+        if (robotState.shooterState == Shooter.STATE.REVVING) {
             setElevator(FIRE);
         } else {
             outputsChanged = true; // keep looping through writeToHardware if shooter not up to speed
         }
     }
 
-    public void setDesiredState(ELEVATOR_STATE state) {
+    public void setDesiredState(STATE state) {
         if (this.state != state) {
             this.state = state;
             outputsChanged = true;
@@ -136,7 +136,7 @@ public class Elevator extends Subsystem {
         return true;
     }
 
-    public enum ELEVATOR_STATE {
+    public enum STATE {
         STOP,
         FIRE,
         FLUSH,

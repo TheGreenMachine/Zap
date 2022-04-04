@@ -8,7 +8,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.team1816.lib.math.DriveConversions;
-import com.team1816.lib.util.ModuleState;
+import com.team1816.lib.math.SwerveKinematics;
 import com.team1816.season.Constants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -91,7 +91,7 @@ public class SwerveModule implements ISwerveModule {
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
-        SwerveModuleState desired_state = ModuleState.optimize(
+        SwerveModuleState desired_state = SwerveKinematics.optimize(
             desiredState,
             getState().angle
         ); // desiredState; //

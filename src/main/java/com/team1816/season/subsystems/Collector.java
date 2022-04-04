@@ -22,7 +22,7 @@ public class Collector extends Subsystem {
     private boolean outputsChanged = false;
     private double velocityDemand;
     private double actualVelocity;
-    private COLLECTOR_STATE state = COLLECTOR_STATE.STOP;
+    private STATE state = STATE.STOP;
 
     private final double COLLECTING;
     private final double FLUSH;
@@ -59,7 +59,7 @@ public class Collector extends Subsystem {
         return velocityDemand;
     }
 
-    public void setDesiredState(COLLECTOR_STATE state) {
+    public void setDesiredState(STATE state) {
         if (this.state != state) {
             this.state = state;
             System.out.println("desired collector " + state);
@@ -108,7 +108,7 @@ public class Collector extends Subsystem {
         return true;
     }
 
-    public enum COLLECTOR_STATE {
+    public enum STATE {
         STOP,
         COLLECTING,
         REVVING,
