@@ -23,7 +23,6 @@ public class TurretAction implements Action {
     public void start() {
         turret.setTurretAngle(turretAngle);
         System.out.println("setting turret angle to " + turretAngle);
-        // turret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
     }
 
     @Override
@@ -31,7 +30,10 @@ public class TurretAction implements Action {
 
     @Override
     public boolean isFinished() {
-        return true;
+        return (
+            Math.abs(turret.getPositionError()) < turret.ALLOWABLE_ERROR_TICKS &&
+            turret.getControlMode() == Turret.ControlMode.POSITION
+        );
     }
 
     @Override

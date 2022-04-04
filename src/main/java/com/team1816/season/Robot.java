@@ -457,9 +457,8 @@ public class Robot extends TimedRobot {
             mDrive.zeroSensors();
             mTurret.zeroSensors();
 
-            mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
-
             mSuperstructure.setStopped(false);
+            mCamera.setCameraEnabled(false);
 
             mDrive.setControlState(Drive.DriveControlState.TRAJECTORY_FOLLOWING);
 

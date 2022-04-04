@@ -239,7 +239,7 @@ public abstract class Drive
         PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
         defaultPIDConfig.kP = 0.0;
 
-        return (!factory.getSubsystem(NAME).implemented)
+        return (factory.getSubsystem(NAME).implemented)
             ? factory
                 .getSubsystem(NAME)
                 .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
@@ -251,7 +251,7 @@ public abstract class Drive
     public double getKI() {
         PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
         defaultPIDConfig.kI = 0.0;
-        return (!factory.getSubsystem(NAME).implemented)
+        return (factory.getSubsystem(NAME).implemented)
             ? factory
                 .getSubsystem(NAME)
                 .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
@@ -263,7 +263,7 @@ public abstract class Drive
     public double getKD() {
         PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
         defaultPIDConfig.kD = 0.0;
-        return (!factory.getSubsystem(NAME).implemented)
+        return (factory.getSubsystem(NAME).implemented)
             ? factory
                 .getSubsystem(NAME)
                 .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
@@ -275,7 +275,7 @@ public abstract class Drive
     public double getKF() {
         PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
         defaultPIDConfig.kF = 0.0;
-        return (!factory.getSubsystem(NAME).implemented)
+        return (factory.getSubsystem(NAME).implemented)
             ? factory
                 .getSubsystem(NAME)
                 .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)

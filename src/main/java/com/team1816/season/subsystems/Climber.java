@@ -9,7 +9,6 @@ import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
 import edu.wpi.first.wpilibj.Timer;
-import javax.swing.*;
 
 public class Climber extends Subsystem {
 
@@ -17,8 +16,8 @@ public class Climber extends Subsystem {
     private static final String NAME = "climber";
 
     // Components
-    private final IMotorControllerEnhanced elevator;
-    private final IMotorControllerEnhanced elevatorFollower;
+    private final IMotorControllerEnhanced spinner;
+    private final IMotorControllerEnhanced spinnerFollower;
     private final ISolenoid topClamp;
     private final ISolenoid bottomClamp;
 
@@ -44,12 +43,12 @@ public class Climber extends Subsystem {
 
     public Climber() {
         super(NAME);
-        elevator = factory.getMotor(NAME, "elevator");
-        elevatorFollower =
+        spinner = factory.getMotor(NAME, "spinner");
+        spinnerFollower =
             (IMotorControllerEnhanced) factory.getMotor(
                 NAME,
-                "elevatorFollower",
-                elevator,
+                "spinnerFollower",
+                spinner,
                 true
             );
         topClamp = factory.getSolenoid(NAME, "topClamp");
@@ -59,18 +58,18 @@ public class Climber extends Subsystem {
 
         ALLOWABLE_ERROR = config.allowableError;
 
-        elevator.config_kP(0, config.kP, 100);
-        elevator.config_kI(0, config.kI, 100);
-        elevator.config_kD(0, config.kD, 100);
-        elevator.config_kF(0, config.kF, 100);
+        spinner.config_kP(0, config.kP, 100);
+        spinner.config_kI(0, config.kI, 100);
+        spinner.config_kD(0, config.kD, 100);
+        spinner.config_kF(0, config.kF, 100);
 
-        elevatorFollower.config_kP(0, config.kP, 100);
-        elevatorFollower.config_kI(0, config.kI, 100);
-        elevatorFollower.config_kD(0, config.kD, 100);
-        elevatorFollower.config_kF(0, config.kF, 100);
+        spinnerFollower.config_kP(0, config.kP, 100);
+        spinnerFollower.config_kI(0, config.kI, 100);
+        spinnerFollower.config_kD(0, config.kD, 100);
+        spinnerFollower.config_kF(0, config.kF, 100);
 
-        elevator.configClosedloopRamp(.20, Constants.kCANTimeoutMs);
-        elevatorFollower.configClosedloopRamp(.20, Constants.kCANTimeoutMs);
+        spinner.configClosedloopRamp(.20, Constants.kCANTimeoutMs);
+        spinnerFollower.configClosedloopRamp(.20, Constants.kCANTimeoutMs);
 
         currentStage = 0;
         unlocked = false;
@@ -171,13 +170,13 @@ public class Climber extends Subsystem {
 
     private void positionControl(double position) {
         if (needsOverShoot) { // keep looping if we aren't past the overshoot value
-            elevator.set(Position, position);
+            spinner.set(Position, position);
             if (Math.abs(error) < 5) {
                 needsOverShoot = false;
             }
             outputsChanged = true;
         } else {
-            elevator.set(PercentOutput, 0); // coast so that the climber falls down to lock
+            spinner.set(PercentOutput, 0); // coast so that the climber falls down to lock
         }
     }
 
@@ -200,9 +199,9 @@ public class Climber extends Subsystem {
 
     @Override
     public void readFromHardware() {
-        error = elevator.getSelectedSensorPosition(0) - stages[currentStage].position;
-        climberPosition = elevator.getSelectedSensorPosition(0);
-        currentDraw = elevator.getOutputCurrent();
+        error = spinner.getSelectedSensorPosition(0) - stages[currentStage].position;
+        climberPosition = spinner.getSelectedSensorPosition(0);
+        currentDraw = spinner.getOutputCurrent();
         //        System.out.println("climber position = " + climberPosition);
     }
 
@@ -216,7 +215,7 @@ public class Climber extends Subsystem {
                 positionControl(stages[currentStage].position);
             } else {
                 setClamps(topClamped, bottomClamped, false);
-                elevator.set(PercentOutput, climberPower);
+                spinner.set(PercentOutput, climberPower);
             }
         }
     }
@@ -232,11 +231,7 @@ public class Climber extends Subsystem {
     @Override
     public void zeroSensors() {
         currentStage = 0;
-        elevator.setSelectedSensorPosition(
-            stages[0].position,
-            0,
-            Constants.kCANTimeoutMs
-        );
+        spinner.setSelectedSensorPosition(stages[0].position, 0, Constants.kCANTimeoutMs);
     }
 
     @Override

@@ -1,6 +1,6 @@
 subsystems:
     drivetrain:
-        implemented: true
+        implemented: false
         falcons:
             FLDr: 7
             FRDr: 10 #1
@@ -129,7 +129,7 @@ subsystems:
                 kI: 0.0003
                 kD: 13.0 # 11 - 4.5
                 kF: 0.0477
-                allowableError: 100
+                allowableError: 75
         constants:
             usingPoseForSpeed: 0
             maxTicks: 20700 #
@@ -145,8 +145,8 @@ subsystems:
     climber:
         implemented: true
         sparkmaxes:
-            elevator: 34 #20
-            elevatorFollower: 35 #-1
+            spinner: 34 #20
+            spinnerFollower: 35 #-1
         solenoids:
             topClamp: 7
             bottomClamp: 6
@@ -168,10 +168,21 @@ subsystems:
         implemented: true
         talons:
             elevator: 32
+        pidConfig:
+            slot0:
+                kP: 0.05 #tunned at 4000
+                kI: 0.0001
+                kD: 1.5
+                kF: 0.05
+                allowableError: 100
+        invertMotor:
+            - elevator
         constants:
+            isVelocity: 1
+            maxTicks: 20000 # tune
             ballSensor: 0
             firePow: 0.5
-            flushPow: -0.5
+            flushPow: -0.3
     spindexer:
         implemented: true
         talons:
@@ -179,10 +190,10 @@ subsystems:
         solenoids:
             feederFlap: -1
         constants:
-            collectPow: 0.38
+            collectPow: 0.30
             indexPow: -0.25
             flushPow: -1
-            firePow: .38
+            firePow: .30
     collector:
         implemented: true
         sparkmaxes:
@@ -231,6 +242,7 @@ constants:
     configStatusFrames: 0 # 0 or 1
     verbose: 0 # 0 or 1
     ## General ##
+    useCameraInAuto: 0
     teleopFieldCentric: 1 # 0 or 1
     compressorEnabled: 1 # 0 or 1
     kLooperDt: .050 # seconds

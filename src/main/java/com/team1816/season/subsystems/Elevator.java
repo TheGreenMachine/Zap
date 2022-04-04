@@ -16,14 +16,15 @@ public class Elevator extends Subsystem {
     //    private final DigitalInput ballSensor;
 
     // State
-    private double elevatorPower;
+    private double elevatorOutput;
     private boolean outputsChanged;
     private ELEVATOR_STATE state = ELEVATOR_STATE.STOP;
 
     // Constants
+    private final double MAX_TICKS;
     private final double FLUSH;
-    private final double POWER_THRESHOLD;
     private double FIRE; // bear in mind this is overridden
+    private final boolean isVelocity;
 
     public Elevator() {
         super(NAME);
@@ -32,9 +33,16 @@ public class Elevator extends Subsystem {
         //        this.ballSensor =
         //            new DigitalInput((int) factory.getConstant(NAME, "ballSensor", 0));
 
-        FLUSH = factory.getConstant(NAME, "flushPow", -0.5);
-        FIRE = factory.getConstant(NAME, "firePow", 0.5);
-        POWER_THRESHOLD = .1;
+        isVelocity = factory.getConstant(NAME, "isVelocity", 0) > 0;
+
+        MAX_TICKS = factory.getConstant(NAME, "maxTicks", 0);
+        if (!isVelocity) {
+            FLUSH = factory.getConstant(NAME, "flushPow", -0.5);
+            FIRE = factory.getConstant(NAME, "firePow", 0.5);
+        } else {
+            FLUSH = factory.getConstant(NAME, "flushPow", -0.5) * MAX_TICKS;
+            FIRE = factory.getConstant(NAME, "firePow", 0.5) * MAX_TICKS;
+        }
     }
 
     public void overridePower(double newFirePow) {
@@ -42,9 +50,15 @@ public class Elevator extends Subsystem {
     }
 
     private void setElevator(double elevatorOutput) {
-        this.elevatorPower = elevatorOutput;
-        System.out.println(elevatorPower + " = elevator power");
-        this.elevator.set(ControlMode.PercentOutput, -elevatorPower);
+        this.elevatorOutput = elevatorOutput;
+
+        if (isVelocity) {
+            System.out.println(elevatorOutput + " = elevator velocity");
+            this.elevator.set(ControlMode.Velocity, elevatorOutput);
+        } else {
+            System.out.println(elevatorOutput + " = elevator power");
+            this.elevator.set(ControlMode.PercentOutput, elevatorOutput);
+        }
     }
 
     private void lockToShooter() {
