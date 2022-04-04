@@ -23,12 +23,6 @@ public class SwerveModule implements ISwerveModule {
     public double mVelDemand;
     public double mAzmDemand;
 
-    // Module Indicies
-    public static final int kFrontLeft = 0;
-    public static final int kFrontRight = 1;
-    public static final int kBackLeft = 2;
-    public static final int kBackRight = 3;
-
     // State
     private boolean isBrakeMode = false;
 

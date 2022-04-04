@@ -66,7 +66,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             for (int i = 0; i < 4; i++) {
                 swerveModules[i].setDesiredState(
                     mPeriodicIO.desiredModuleStates[i],
-                    true
+                    !mIsBrakeMode
                 );
             }
         }
@@ -208,12 +208,17 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             System.out.println("switching to open loop");
             System.out.println(signal);
             mDriveControlState = DriveControlState.OPEN_LOOP;
-            for (int i = 0; i < 4; i++) {
-                swerveModules[i].setDesiredState(new SwerveModuleState(), false);
-                mPeriodicIO.desiredModuleStates[i] = new SwerveModuleState();
-                mPeriodicIO.chassisSpeed = new ChassisSpeeds();
-            }
         }
+        SwerveModuleState[] states = new SwerveModuleState[4];
+        for (int i = 0; i < 4; i++) {
+            states[i] =
+                new SwerveModuleState(
+                    ((SwerveDriveSignal) signal).getWheelSpeeds()[i],
+                    ((SwerveDriveSignal) signal).getWheelAzimuths()[i]
+                );
+        }
+
+        mPeriodicIO.desiredModuleStates = states;
     }
 
     @Override
@@ -236,16 +241,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             true,
             use_heading_controller
         );
-        SwerveModuleState[] states = new SwerveModuleState[4];
-        for (int i = 0; i < 4; i++) {
-            states[i] =
-                new SwerveModuleState(
-                    signal.getWheelSpeeds()[i],
-                    signal.getWheelAzimuths()[i]
-                );
-        }
 
-        mPeriodicIO.desiredModuleStates = states;
+        setOpenLoop(signal);
     }
 
     @Override
