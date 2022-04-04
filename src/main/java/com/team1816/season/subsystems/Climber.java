@@ -228,6 +228,8 @@ public class Climber extends Subsystem {
         return currentDraw;
     }
 
+    public int getCurrentStage() { return currentStage; }
+
     @Override
     public void zeroSensors() {
         currentStage = 0;
