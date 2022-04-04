@@ -14,9 +14,14 @@ import static com.team1816.lib.math.DriveConversions.inchesPerSecondToTicksPer10
 public class SwerveDriveSignal extends DriveSignal {
     public static final double[] ZERO_SPEED = new double[]{0, 0, 0, 0};
     public static final Rotation2d[] ZERO_AZIMUTH = new Rotation2d[]{new Rotation2d(), new Rotation2d(), new Rotation2d(), new Rotation2d()};
+    public static final Rotation2d[] AZIMUTH_90_DEGREES = new Rotation2d[]{
+        Rotation2d.fromDegrees(90), Rotation2d.fromDegrees(90), Rotation2d.fromDegrees(90), Rotation2d.fromDegrees(90)
+    };
 
     public static final SwerveDriveSignal NEUTRAL = new SwerveDriveSignal(ZERO_SPEED, ZERO_AZIMUTH, false);
     public static final SwerveDriveSignal BRAKE = new SwerveDriveSignal(ZERO_SPEED, ZERO_AZIMUTH, true);
+    public static final SwerveDriveSignal SET_CLIMB = new SwerveDriveSignal(ZERO_SPEED, AZIMUTH_90_DEGREES, false);
+
 
     private double[] mWheelSpeeds;
     private Rotation2d[] mWheelAzimuths; // Radians!

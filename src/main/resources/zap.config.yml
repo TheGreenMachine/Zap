@@ -152,16 +152,16 @@ subsystems:
             bottomClamp: 6
         pidConfig:
             slot0:
-                kP: 0.075 #tunned at 4000
-                kI: 0.0
+                kP: 0.075 #0.075 #tunned at 4000
+                kI: 0.01
                 kD: 0.006
-                kF: 0.000
+                kF: 0.0
                 allowableError: 10
         constants:
             maxTicks: 1 # TODO set this value
             unlockPos: -12
             startPos: 0
-            firstToSecondRungPos: 86.5
+            firstToSecondRungPos: 80 #86.5
             secondToLastRungPos: 166.5
             lastPos: 190
     elevator:
@@ -211,7 +211,7 @@ subsystems:
                 allowableError: 10
         constants:
             revving: 0.5 #.05
-            collecting: -4000 #-0.35
+            collecting: -5000 #-5500
             flush: 4000 #.35
     camera:
         implemented: true

@@ -78,35 +78,6 @@ public class Constants {
         "openLoopRampRate"
     );
 
-    private static final double moduleDeltaX =
-        Units.inches_to_meters(kDriveWheelbaseLengthInches) / 2.0;
-    private static final double moduleDeltaY =
-        Units.inches_to_meters(kDriveWheelTrackWidthInches) / 2.0;
-
-    public static final Translation2d kFrontLeftModulePosition = new Translation2d(
-        moduleDeltaX,
-        moduleDeltaY
-    );
-    public static final Translation2d kFrontRightModulePosition = new Translation2d(
-        moduleDeltaX,
-        -moduleDeltaY
-    );
-    public static final Translation2d kBackLeftModulePosition = new Translation2d(
-        -moduleDeltaX,
-        moduleDeltaY
-    );
-    public static final Translation2d kBackRightModulePosition = new Translation2d(
-        -moduleDeltaX,
-        -moduleDeltaY
-    );
-
-    public static final Translation2d[] kModulePositions = {
-        kFrontLeftModulePosition,
-        kFrontRightModulePosition,
-        kBackRightModulePosition,
-        kBackLeftModulePosition,
-    };
-
     public static class Swerve {
 
         public String kName = "Name";
@@ -156,6 +127,12 @@ public class Constants {
             kDriveWheelTrackWidthMeters / 2.0
         );
 
+        // Module Indicies
+        public static final int kFrontLeft = 0;
+        public static final int kFrontRight = 1;
+        public static final int kBackLeft = 2;
+        public static final int kBackRight = 3;
+
         public static final Translation2d kFrontLeftModulePosition = new Translation2d(
             moduleDeltaX,
             moduleDeltaY
@@ -173,6 +150,13 @@ public class Constants {
             -moduleDeltaY
         );
 
+        public static final Translation2d[] kModulePositions = {
+            kFrontLeftModulePosition,
+            kFrontRightModulePosition,
+            kBackRightModulePosition,
+            kBackLeftModulePosition,
+        };
+
         // See https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/swerve-drive-kinematics.html
         public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
             kFrontLeftModulePosition,
@@ -180,11 +164,6 @@ public class Constants {
             kBackLeftModulePosition,
             kBackRightModulePosition
         );
-
-        public static final int kFrontLeft = 0;
-        public static final int kFrontRight = 1;
-        public static final int kBackLeft = 2;
-        public static final int kBackRight = 3;
     }
 
     // reset button
