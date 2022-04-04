@@ -81,25 +81,8 @@ public class Superstructure {
 
     public void setCollecting(boolean collecting, boolean backSpin) {
         this.collecting = collecting;
-        if (collecting) {
-            if (backSpin) {
-                collector.setDesiredState(Collector.STATE.FLUSH);
-            } else {
-                collector.setDesiredState(Collector.STATE.COLLECTING);
-            }
-            if (!firing) {
-                spindexer.setDesiredState(Spindexer.STATE.COLLECT);
-            }
-        } else {
-            if (!revving) {
-                collector.setDesiredState(Collector.STATE.STOP);
-            }
-            collector.setDesiredState(Collector.STATE.STOP);
-            if (!firing) {
-                spindexer.setDesiredState(Spindexer.STATE.STOP);
-                spindexer.setDesiredState(Spindexer.STATE.STOP);
-            }
-        }
+        updateDesiredSpindexer();
+        updateDesiredCollector(backSpin);
     }
 
     public void setRevving(boolean revving, double shooterVel) {
@@ -117,48 +100,53 @@ public class Superstructure {
             } else {
                 shooter.setVelocity(shooterVel);
             }
-            if (!collecting) {
-                collector.setDesiredState(Collector.STATE.REVVING);
-                if (!firing) {
-                    spindexer.setDesiredState(Spindexer.STATE.INDEX);
-                }
-            }
-            if (!firing) {
-                elevator.setDesiredState(Elevator.STATE.FLUSH);
-            }
         } else {
             shooter.setDesiredState(Shooter.STATE.COASTING);
-            if (!collecting) {
-                collector.setDesiredState(Collector.STATE.STOP);
-                if (!firing) {
-                    spindexer.setDesiredState(Spindexer.STATE.STOP);
-                }
-            }
-
-            if (!firing) {
-                elevator.setDesiredState(Elevator.STATE.STOP);
-            }
         }
+        updateDesiredSpindexer();
+        updateDesiredCollector(false);
     }
 
     public void setFiring(boolean firing) {
         this.firing = firing;
         System.out.println("struct - fire " + firing);
-        if (firing) {
-            spindexer.setDesiredState(Spindexer.STATE.FIRE);
-            elevator.setDesiredState(Elevator.STATE.FIRE);
+        updateDesiredSpindexer();
+        updateDesiredElevator();
+        updateDesiredCollector(false);
+    }
 
-            if (!elevator.colorOfBall()) { // spit out ball if wrong color
-                shooter.setHood(false);
+    public void updateDesiredCollector(boolean backspin){
+        if(collecting){
+            if(backspin){
+                collector.setDesiredState(Collector.STATE.FLUSH);
+            } else {
+                collector.setDesiredState(Collector.STATE.COLLECTING);
             }
-            // not needed because override pow is same as default pow
-            //            if (Camera.cameraEnabled || usePoseTrack) {
-            //                elevator.overridePower(getDistance(DistanceManager.SUBSYSTEM.ELEVATOR));
-            //            }
+        } else if (revving) {
+            collector.setDesiredState(Collector.STATE.REVVING);
         } else {
-            if (!collecting) {
-                spindexer.setDesiredState(Spindexer.STATE.STOP);
-            }
+            collector.setDesiredState(Collector.STATE.STOP);
+        }
+    }
+
+    public void updateDesiredSpindexer(){
+        if(firing){
+            spindexer.setDesiredState(Spindexer.STATE.FIRE);
+        } else if (collecting) {
+            spindexer.setDesiredState(Spindexer.STATE.COLLECT);
+        } else if (revving) {
+            spindexer.setDesiredState(Spindexer.STATE.INDEX);
+        } else {
+            spindexer.setDesiredState(Spindexer.STATE.STOP);
+        }
+    }
+
+    public void updateDesiredElevator(){
+        if(firing){
+            elevator.setDesiredState(Elevator.STATE.FIRE);
+        } else if(revving) {
+            elevator.setDesiredState(Elevator.STATE.FLUSH);
+        } else {
             elevator.setDesiredState(Elevator.STATE.STOP);
         }
     }
