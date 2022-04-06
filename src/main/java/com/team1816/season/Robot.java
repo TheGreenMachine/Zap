@@ -12,7 +12,6 @@ import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.auto.modes.AutoModeBase;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
-import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.Drive;
 import com.team1816.lib.subsystems.DrivetrainLogger;
@@ -76,7 +75,6 @@ public class Robot extends TimedRobot {
     private boolean mHasBeenEnabled = false;
 
     private ActionManager actionManager;
-    private AsyncTimer blinkTimer;
 
     // private PowerDistributionPanel pdp = new PowerDistributionPanel();
     private final Turret.ControlMode defaultTurretControlMode =
@@ -533,8 +531,6 @@ public class Robot extends TimedRobot {
             mDisabledLooper.start();
             mTurret.zeroSensors();
             mDrive.zeroSensors();
-
-            blinkTimer.reset();
 
             mLedManager.blinkStatus(LedManager.RobotStatus.DISABLED);
 

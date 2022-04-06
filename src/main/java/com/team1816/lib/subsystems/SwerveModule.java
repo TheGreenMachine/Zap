@@ -1,5 +1,6 @@
 package com.team1816.lib.subsystems;
 
+import static com.team1816.lib.subsystems.Drive.NAME;
 import static com.team1816.lib.subsystems.Drive.factory;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -12,6 +13,7 @@ import com.team1816.lib.math.SwerveKinematics;
 import com.team1816.season.Constants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.Timer;
 
 public class SwerveModule implements ISwerveModule {
 
@@ -27,6 +29,7 @@ public class SwerveModule implements ISwerveModule {
 
     // Constants
     private final Constants.Swerve mConstants;
+    private final double allowableError;
 
     public SwerveModule(
         String subsystemName,
@@ -77,6 +80,8 @@ public class SwerveModule implements ISwerveModule {
             constants.kAzimuthClosedLoopAllowableError,
             Constants.kLongCANTimeoutMs
         );
+
+        allowableError = 5; // TODO this is a dummy value for checkSystem
 
         /* Angle Encoder Config */
         mCanCoder = canCoder;
@@ -163,6 +168,47 @@ public class SwerveModule implements ISwerveModule {
             mDriveMotor.set(ControlMode.Velocity, 0);
         }
         isBrakeMode = brake_mode;
+    }
+
+    public boolean checkSystem() {
+        boolean checkDrive = true;
+        double actualMaxTicks = factory.getConstant(NAME, "maxTicks") / 0.8; // if this isn't calculated right this test will fail
+        mDriveMotor.set(ControlMode.PercentOutput, 0.2);
+        Timer.delay(1);
+        if (
+            Math.abs(mDriveMotor.getSelectedSensorVelocity(0) - 0.2 * actualMaxTicks) >
+            actualMaxTicks /
+            50
+        ) {
+            checkDrive = false;
+        }
+        mDriveMotor.set(ControlMode.PercentOutput, -0.2);
+        Timer.delay(1);
+        if (
+            Math.abs(mDriveMotor.getSelectedSensorVelocity(0) + 0.2 * actualMaxTicks) >
+            actualMaxTicks /
+            50
+        ) {
+            checkDrive = false;
+        }
+
+        boolean checkAzimuth = true;
+        double setPoint = mConstants.kAzimuthEncoderHomeOffset;
+        Timer.delay(1);
+        for (int i = 0; i < 4; i++) {
+            mAzimuthMotor.set(ControlMode.Position, setPoint);
+            Timer.delay(1);
+            if (
+                Math.abs(mAzimuthMotor.getSelectedSensorPosition(0) - setPoint) >
+                allowableError
+            ) {
+                checkAzimuth = false;
+                break;
+            }
+            setPoint += DriveConversions.convertRadiansToTicks(Math.PI / 2);
+        }
+
+        return checkDrive && checkAzimuth;
     }
 
     @Override

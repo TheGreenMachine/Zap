@@ -84,12 +84,12 @@ public class Constants {
         public String kDriveMotorName = "";
         public String kAzimuthMotorName = "";
 
-        public static final int AZIMUTH_TICK_MASK = (int) factory.getConstant(
+        public static final int kAzimuthPPR = (int) factory.getConstant(
             "drive",
             "azimuthEncPPR",
             4096
-        ) -
-        1;
+        );
+        public static final int AZIMUTH_TICK_MASK = kAzimuthPPR - 1;
         public static final double AZIMUTH_ADJUSTMENT_OFFSET_DEGREES = factory.getConstant(
             "drive",
             "azimuthHomeAdjustmentDegrees",
@@ -188,7 +188,6 @@ public class Constants {
         "maxVelPathFollowing"
     );
     public static double kOpenLoopMaxVelMeters = factory.getConstant("maxVelOpenLoop");
-    public static final double kTicksPerRevolution = 4096; // make into yaml constant
 
     public static final double kPXController = 10;
     public static final double kPYController = 10;

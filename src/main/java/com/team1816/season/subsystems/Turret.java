@@ -42,7 +42,6 @@ public class Turret extends Subsystem implements PidProvider {
     private final int TURRET_MASK;
     private final double TURRET_ENC_RATIO;
     public final int ALLOWABLE_ERROR_TICKS;
-    private static Turret INSTANCE;
 
     // Components
     private final IMotorControllerEnhanced turret;
@@ -139,7 +138,10 @@ public class Turret extends Subsystem implements PidProvider {
             var offset = ZERO_OFFSET - absSensorVal + HALF_ABS_ENCPPR;
 
             // It is safe to reset quadrature if turret enc reads ~0 (on startup)
-            if (Math.abs(sensors.getQuadraturePosition()) < HALF_ABS_ENCPPR) {
+            if (
+                Math.abs(sensors.getQuadraturePosition()) < HALF_ABS_ENCPPR ||
+                (int) TURRET_ENC_RATIO == 1
+            ) {
                 //second check - don't zero if abs enc not in viable range
                 if (absSensorVal > -1 && absSensorVal < TURRET_ABS_ENCODER_PPR) {
                     sensors.setQuadraturePosition(offset);

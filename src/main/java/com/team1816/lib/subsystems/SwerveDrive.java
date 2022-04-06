@@ -301,12 +301,17 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     @Override
     public boolean checkSystem() {
         setBrakeMode(false);
-
         boolean modulesPassed = true;
+        for (SwerveModule swerveModule : swerveModules) {
+            if (!swerveModule.checkSystem()) {
+                modulesPassed = false;
+                break;
+            }
+        }
 
-        boolean checkPigeon = mPigeon == null;
+        boolean checkPigeon = mPigeon != null;
 
-        return true; // not actually doing anything
+        return modulesPassed && checkPigeon; // not actually doing anything
     }
 
     @Override
