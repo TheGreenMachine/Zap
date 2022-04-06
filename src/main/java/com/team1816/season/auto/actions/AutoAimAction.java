@@ -54,6 +54,8 @@ public class AutoAimAction implements Action {
 
     @Override
     public void done() {
-        turret.setControlMode(prevControlMode);
+        if (Constants.kUseCameraInAuto) {
+            turret.setControlMode(prevControlMode);
+        }
     }
 }

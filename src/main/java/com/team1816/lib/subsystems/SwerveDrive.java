@@ -2,8 +2,8 @@ package com.team1816.lib.subsystems;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.team1816.season.auto.AutoModeSelector;
 import com.team1816.season.Constants;
+import com.team1816.season.auto.AutoModeSelector;
 import com.team254.lib.util.DriveSignal;
 import com.team254.lib.util.SwerveDriveHelper;
 import com.team254.lib.util.SwerveDriveSignal;
@@ -58,16 +58,16 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     @Override
     public synchronized void writeToHardware() {
-        if (mDriveControlState == DriveControlState.OPEN_LOOP && !mIsBrakeMode) { // autonomous (Trajectory_Following) loop is in setModuleStates
+        if (mDriveControlState == DriveControlState.OPEN_LOOP) { // autonomous (Trajectory_Following) loop is in setModuleStates
             SwerveDriveKinematics.desaturateWheelSpeeds(
                 mPeriodicIO.desiredModuleStates,
                 Constants.kOpenLoopMaxVelMeters
             ); // TODO get swerve max speed in meters/s
             for (int i = 0; i < 4; i++) {
                 swerveModules[i].setDesiredState(
-                    mPeriodicIO.desiredModuleStates[i],
-                    !mIsBrakeMode
-                );
+                        mPeriodicIO.desiredModuleStates[i],
+                        !mIsBrakeMode
+                    );
             }
         }
     }
@@ -147,14 +147,13 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         mTrajectoryStart = 0;
         mTrajectory = trajectory;
         mHeadings = headings;
-        if(!trajectoryStarted){
+        if (!trajectoryStarted) {
             trajectoryStarted = true; // massive hack here woo
             zeroSensors(trajectory.getInitialPose());
         }
         mTrajectoryIndex = 0;
         updateRobotState();
         mDriveControlState = DriveControlState.TRAJECTORY_FOLLOWING;
-        setBrakeMode(true);
         mOverrideTrajectory = false;
     }
 
@@ -249,12 +248,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     public synchronized void setBrakeMode(boolean on) {
         super.setBrakeMode(on);
         for (int i = 0; i < swerveModules.length; i++) {
-            if(on){
-                if(i == 0 || i == 3){
-                    swerveModules[i].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)), false);
-                } else {
-                    swerveModules[i].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)), false);
-                }
+            if (on) {
+                setOpenLoop(DriveSignal.BRAKE);
             }
             swerveModules[i].setDriveBrakeMode(on);
         }

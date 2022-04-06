@@ -2,7 +2,6 @@ package com.team1816.lib.math;
 
 import com.google.inject.Inject;
 import com.team1816.lib.subsystems.Drive;
-import com.team1816.lib.subsystems.SwerveModule;
 import com.team1816.season.Constants;
 import com.team254.lib.util.SwerveDriveSignal;
 import edu.wpi.first.math.geometry.*;
@@ -23,7 +22,8 @@ public class SwerveKinematics {
     @Inject
     private static Drive.Factory mDriveFactory;
 
-    private static Translation2d[] moduleRelativePositions = Constants.Swerve.kModulePositions;
+    private static Translation2d[] moduleRelativePositions =
+        Constants.Swerve.kModulePositions;
     private static List<Translation2d> moduleRotationDirections = updateRotationDirections();
 
     private static List<Translation2d> updateRotationDirections() {
@@ -192,10 +192,13 @@ public class SwerveKinematics {
         Rotation2d[] wheel_azimuths = new Rotation2d[4];
 
         if (forward != 0 || strafe != 0 || rotation != 0) {
-            wheel_azimuths[Constants.Swerve.kFrontLeft] = new Rotation2d(Math.atan2(A, D));
-            wheel_azimuths[Constants.Swerve.kFrontRight] = new Rotation2d(Math.atan2(A, C));
+            wheel_azimuths[Constants.Swerve.kFrontLeft] =
+                new Rotation2d(Math.atan2(A, D));
+            wheel_azimuths[Constants.Swerve.kFrontRight] =
+                new Rotation2d(Math.atan2(A, C));
             wheel_azimuths[Constants.Swerve.kBackLeft] = new Rotation2d(Math.atan2(B, D));
-            wheel_azimuths[Constants.Swerve.kBackRight] = new Rotation2d(Math.atan2(B, C));
+            wheel_azimuths[Constants.Swerve.kBackRight] =
+                new Rotation2d(Math.atan2(B, C));
 
             prev_wheel_azimuths = wheel_azimuths;
         } else {

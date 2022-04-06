@@ -115,9 +115,9 @@ public class Superstructure {
         updateDesiredCollector(false);
     }
 
-    public void updateDesiredCollector(boolean backspin){
-        if(collecting){
-            if(backspin){
+    public void updateDesiredCollector(boolean backspin) {
+        if (collecting) {
+            if (backspin) {
                 collector.setDesiredState(Collector.STATE.FLUSH);
             } else {
                 collector.setDesiredState(Collector.STATE.COLLECTING);
@@ -129,8 +129,8 @@ public class Superstructure {
         }
     }
 
-    public void updateDesiredSpindexer(){
-        if(firing){
+    public void updateDesiredSpindexer() {
+        if (firing) {
             spindexer.setDesiredState(Spindexer.STATE.FIRE);
         } else if (collecting) {
             spindexer.setDesiredState(Spindexer.STATE.COLLECT);
@@ -141,10 +141,10 @@ public class Superstructure {
         }
     }
 
-    public void updateDesiredElevator(){
-        if(firing){
+    public void updateDesiredElevator() {
+        if (firing) {
             elevator.setDesiredState(Elevator.STATE.FIRE);
-        } else if(revving) {
+        } else if (revving) {
             elevator.setDesiredState(Elevator.STATE.FLUSH);
         } else {
             elevator.setDesiredState(Elevator.STATE.STOP);

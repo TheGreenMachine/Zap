@@ -238,49 +238,54 @@ public abstract class Drive
     public double getKP() {
         PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
         defaultPIDConfig.kP = 0.0;
-
-        return (factory.getSubsystem(NAME).implemented)
-            ? factory
-                .getSubsystem(NAME)
-                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
-                .kP
-            : 0.0;
+        // this needs to be removed in the future
+        // swerve has no actual pid values for just slot0, so this method is failing on robot startup
+        return 0;
+        //        return (factory.getSubsystem(NAME).implemented)
+        //            ? factory
+        //                .getSubsystem(NAME)
+        //                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+        //                .kP
+        //            : 0.0;
     }
 
     @Override
     public double getKI() {
         PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
         defaultPIDConfig.kI = 0.0;
-        return (factory.getSubsystem(NAME).implemented)
-            ? factory
-                .getSubsystem(NAME)
-                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
-                .kI
-            : 0.0;
+        return 0;
+        //        return (factory.getSubsystem(NAME).implemented)
+        //            ? factory
+        //                .getSubsystem(NAME)
+        //                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+        //                .kI
+        //            : 0.0;
     }
 
     @Override
     public double getKD() {
         PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
         defaultPIDConfig.kD = 0.0;
-        return (factory.getSubsystem(NAME).implemented)
-            ? factory
-                .getSubsystem(NAME)
-                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
-                .kD
-            : 0.0;
+        return 0;
+        //        return (factory.getSubsystem(NAME).implemented)
+        //            ? factory
+        //                .getSubsystem(NAME)
+        //                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+        //                .kD
+        //            : 0.0;
     }
 
     @Override
     public double getKF() {
         PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
         defaultPIDConfig.kF = 0.0;
-        return (factory.getSubsystem(NAME).implemented)
-            ? factory
-                .getSubsystem(NAME)
-                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
-                .kF
-            : 0.0;
+        return 0;
+        //        return (factory.getSubsystem(NAME).implemented)
+        //            ? factory
+        //                .getSubsystem(NAME)
+        //                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+        //                .kF
+        //            : 0.0;
     }
 
     @Override

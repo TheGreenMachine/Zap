@@ -81,7 +81,7 @@ public class RobotState {
         double distanceToGoalMeters = field_to_vehicle
             .getTranslation()
             .getDistance(Constants.targetPos.getTranslation());
-        return Units.metersToInches(distanceToGoalMeters) / 1.2;
+        return Units.metersToInches(distanceToGoalMeters);
     }
 
     public synchronized void outputToSmartDashboard() {

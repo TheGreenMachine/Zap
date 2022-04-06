@@ -59,11 +59,11 @@ subsystems:
                     kF: 0.0499
             azimuthPID:
                 slot0:
-                    kP: 3.75 # 6.0
-                    kI: 0.0005
+                    kP: 3.65 # 6.0
+                    kI: 0.00075
                     kD: 77
                     kF: 0
-                    allowableError: 5
+                    allowableError: 10
         constants:
             maxTicks: 12275.7 # ticks per 100ms
             kP: 0.1 # 0.18 # TODO: tune PID, these are temporary PID values from Zeta
@@ -91,7 +91,7 @@ subsystems:
             cameraLed: 1
             maxLevel: 255
     turret:
-        implemented: true
+        implemented: false
         pidConfig:
             slot0:
                 kP: 0.85
@@ -115,7 +115,7 @@ subsystems:
             encPPR: 4096
             turretPPR: 53248 # 4096 * 13
     shooter:
-        implemented: true
+        implemented: false
         falcons:
             shooterMain: 21
             shooterFollower: -1
@@ -144,26 +144,26 @@ subsystems:
             coast: 6000
     climber:
         implemented: true
-        sparkmaxes:
-            spinner: 34 #20
-            spinnerFollower: 35 #-1
+        falcons:
+            climber: 34 #20
+            climberFollower: 35 #-1
         solenoids:
             topClamp: 7
             bottomClamp: 6
         pidConfig:
-            slot0:
+            slot0: #TODO Change this
                 kP: 0.075 #0.075 #tunned at 4000
                 kI: 0.01
                 kD: 0.006
                 kF: 0.0
-                allowableError: 10
+                allowableError: 5000
         constants:
             maxTicks: 1 # TODO set this value
-            unlockPos: -12
-            startPos: 0
-            firstToSecondRungPos: 80 #86.5
-            secondToLastRungPos: 166.5
-            lastPos: 190
+            unlockPos: -23400 #TODO set this value
+            startPos: 0  #TODO set this value
+            firstToSecondRungPos: 130127 #86.5 #TODO set this value
+            secondToLastRungPos: 320610 #TODO set this value
+            lastPos: 371790 #TODO set this value
     elevator:
         implemented: true
         talons:
@@ -214,7 +214,7 @@ subsystems:
             collecting: -5000 #-5500
             flush: 4000 #.35
     camera:
-        implemented: true
+        implemented: false
         constants:
             debug: 0
             useShuffleboard: 0
@@ -242,7 +242,7 @@ constants:
     configStatusFrames: 0 # 0 or 1
     verbose: 0 # 0 or 1
     ## General ##
-    useCameraInAuto: 0
+    useCameraInAuto: 1
     teleopFieldCentric: 1 # 0 or 1
     compressorEnabled: 1 # 0 or 1
     kLooperDt: .050 # seconds
