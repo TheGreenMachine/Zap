@@ -2,6 +2,7 @@ package com.team1816.lib.subsystems;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.season.Constants;
 import com.team1816.season.auto.AutoModeSelector;
 import com.team254.lib.util.DriveSignal;
@@ -148,8 +149,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         mTrajectory = trajectory;
         mHeadings = headings;
         if (!trajectoryStarted) {
-            trajectoryStarted = true; // massive hack here woo
             zeroSensors(trajectory.getInitialPose());
+            trajectoryStarted = true; // massive hack here woo
         }
         mTrajectoryIndex = 0;
         updateRobotState();
@@ -276,36 +277,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     @Override
-    public double getLeftVelocityNativeUnits() {
-        return 0;
-    }
-
-    @Override
-    public double getRightVelocityNativeUnits() {
-        return 0;
-    }
-
-    @Override
-    public double getLeftVelocityDemand() {
-        return 0;
-    }
-
-    @Override
-    public double getRightVelocityDemand() {
-        return 0;
-    }
-
-    @Override
-    public double getLeftVelocityError() {
-        return 0;
-    }
-
-    @Override
-    public double getRightVelocityError() {
-        return 0;
-    }
-
-    @Override
     public double getDesiredHeading() {
         return getDesiredRotation2d().getDegrees();
     }
@@ -319,6 +290,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     @Override
     public void zeroSensors(Pose2d pose) {
         System.out.println("Zeroing drive sensors!");
+        trajectoryStarted = false; // massive hack here woo
         setBrakeMode(false);
         resetPigeon();
         resetOdometry(pose);
@@ -372,5 +344,54 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         //                },
         //                EntryListenerFlags.kNew | EntryListenerFlags.kUpdate
         //            );
+    }
+
+    // getters
+    @Override
+    public double getKP() {
+        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
+        defaultPIDConfig.kP = 0.0;
+        return (factory.getSubsystem(NAME).implemented)
+            ? factory
+                .getSubsystem(NAME)
+                .swerveModules.drivePID.getOrDefault(pidSlot, defaultPIDConfig)
+                .kP
+            : 0.0;
+    }
+
+    @Override
+    public double getKI() {
+        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
+        defaultPIDConfig.kI = 0.0;
+        return (factory.getSubsystem(NAME).implemented)
+            ? factory
+                .getSubsystem(NAME)
+                .swerveModules.drivePID.getOrDefault(pidSlot, defaultPIDConfig)
+                .kI
+            : 0.0;
+    }
+
+    @Override
+    public double getKD() {
+        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
+        defaultPIDConfig.kD = 0.0;
+        return (factory.getSubsystem(NAME).implemented)
+            ? factory
+                .getSubsystem(NAME)
+                .swerveModules.drivePID.getOrDefault(pidSlot, defaultPIDConfig)
+                .kD
+            : 0.0;
+    }
+
+    @Override
+    public double getKF() {
+        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
+        defaultPIDConfig.kF = 0.0;
+        return (factory.getSubsystem(NAME).implemented)
+            ? factory
+                .getSubsystem(NAME)
+                .swerveModules.drivePID.getOrDefault(pidSlot, defaultPIDConfig)
+                .kF
+            : 0.0;
     }
 }

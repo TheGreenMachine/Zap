@@ -64,8 +64,8 @@ public class ControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getFeederToTrenchSpline() {
-        return mDriveControlBoard.getFeederToTrenchSpline();
+    public boolean getRunAutoModeInTeleop() {
+        return mDriveControlBoard.getRunAutoModeInTeleop();
     }
 
     @Override

@@ -17,7 +17,7 @@ public interface IDriveControlBoard {
 
     boolean getCollectorBackspin();
 
-    boolean getFeederToTrenchSpline();
+    boolean getRunAutoModeInTeleop();
 
     boolean getZeroPose();
 

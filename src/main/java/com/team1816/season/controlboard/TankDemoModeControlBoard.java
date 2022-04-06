@@ -192,7 +192,7 @@ public class TankDemoModeControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getFeederToTrenchSpline() {
+    public boolean getRunAutoModeInTeleop() {
         return false;
     }
 

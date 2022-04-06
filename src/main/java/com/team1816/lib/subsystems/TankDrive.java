@@ -6,6 +6,7 @@ import static com.team1816.lib.math.DriveConversions.rotationsToInches;
 import com.ctre.phoenix.motorcontrol.*;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.util.EnhancedMotorChecker;
 import com.team1816.season.Constants;
 import com.team1816.season.auto.AutoModeSelector;
@@ -420,5 +421,54 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     @Override
     public double getRightVelocityError() {
         return mPeriodicIO.right_error;
+    }
+
+    // getters
+    @Override
+    public double getKP() {
+        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
+        defaultPIDConfig.kP = 0.0;
+        return (factory.getSubsystem(NAME).implemented)
+            ? factory
+                .getSubsystem(NAME)
+                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+                .kP
+            : 0.0;
+    }
+
+    @Override
+    public double getKI() {
+        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
+        defaultPIDConfig.kI = 0.0;
+        return (factory.getSubsystem(NAME).implemented)
+            ? factory
+                .getSubsystem(NAME)
+                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+                .kI
+            : 0.0;
+    }
+
+    @Override
+    public double getKD() {
+        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
+        defaultPIDConfig.kD = 0.0;
+        return (factory.getSubsystem(NAME).implemented)
+            ? factory
+                .getSubsystem(NAME)
+                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+                .kD
+            : 0.0;
+    }
+
+    @Override
+    public double getKF() {
+        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
+        defaultPIDConfig.kF = 0.0;
+        return (factory.getSubsystem(NAME).implemented)
+            ? factory
+                .getSubsystem(NAME)
+                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+                .kF
+            : 0.0;
     }
 }

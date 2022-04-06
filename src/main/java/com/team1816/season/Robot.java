@@ -8,6 +8,7 @@ import com.google.inject.Injector;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.LibModule;
 import com.team1816.lib.auto.AutoModeExecutor;
+import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.auto.modes.AutoModeBase;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
@@ -27,6 +28,7 @@ import com.team254.lib.util.SwerveDriveSignal;
 import com.team254.lib.util.TimeDelayedBoolean;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -56,12 +58,11 @@ public class Robot extends TimedRobot {
     private final Collector mCollector;
     private final Shooter mShooter;
     private final Turret mTurret;
-    // private final Spinner spinner = Spinner.getInstance();
     private final Spindexer mSpindexer;
     private final Elevator mElevator;
     private final Climber mClimber;
     private final Camera mCamera;
-    private final LedManager mLedManager; //    private final Compressor compressor;
+    private final LedManager mLedManager;
 
     private LatchedBoolean mWantsAutoExecution = new LatchedBoolean();
     private LatchedBoolean mWantsAutoInterrupt = new LatchedBoolean();
@@ -313,6 +314,21 @@ public class Robot extends TimedRobot {
                     //                        mControlBoard::getCollectorBackspin,
                     //                        () -> mSuperstructure.setCollecting(false)
                     //                    ),
+                    createAction(
+                        mControlBoard::getRunAutoModeInTeleop,
+                        () -> {
+                            System.out.println("Running trajectory !");
+                            SmartDashboard.putString("Teleop Spline", "TWO_BALL_B");
+                            var trajectory = new TrajectoryAction(
+                                TrajectorySet.TWO_BALL_B,
+                                TrajectorySet.TWO_BALL_B_HEADINGS
+                            );
+                            mDrive.zeroSensors(
+                                trajectory.getTrajectory().getInitialPose()
+                            );
+                            trajectory.start();
+                        }
+                    ),
                     createHoldAction(
                         mControlBoard::getCollectorToggle,
                         pressed -> mSuperstructure.setCollecting(pressed, true)
@@ -323,7 +339,7 @@ public class Robot extends TimedRobot {
                     ),
                     createAction(mControlBoard::getUnlockClimber, mClimber::setUnlocked),
                     createAction(
-                        mControlBoard::getZeroPose, // line up against ally field wall and point turret forward -> zero
+                        mControlBoard::getZeroPose, // line up against ally field wall -> zero
                         () -> {
                             mDrive.zeroSensors(Constants.ZeroPose);
                         }
