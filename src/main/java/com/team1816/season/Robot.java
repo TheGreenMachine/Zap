@@ -394,7 +394,7 @@ public class Robot extends TimedRobot {
                                 mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
                             } else {
                                 mDrive.setOpenLoop(SwerveDriveSignal.SET_CLIMB);
-                                mTurret.setTurretAngle(Turret.CARDINAL_SOUTH - 40);
+                                mTurret.setTurretAngle(Turret.CARDINAL_SOUTH - 30);
                                 // TODO: If possible, set drivetrain wheels to be inline with climb direction and put in coast mode
                             }
 

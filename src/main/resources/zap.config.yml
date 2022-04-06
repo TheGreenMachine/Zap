@@ -59,11 +59,11 @@ subsystems:
                     kF: 0.0499
             azimuthPID:
                 slot0:
-                    kP: 3.65 # 6.0
+                    kP: 3.5 # 6.0
                     kI: 0.00075
                     kD: 77
                     kF: 0
-                    allowableError: 10
+                    allowableError: 3
         constants:
             maxTicks: 12275.7 # ticks per 100ms
             kP: 0.1 # 0.18 # TODO: tune PID, these are temporary PID values from Zeta
@@ -91,7 +91,7 @@ subsystems:
             cameraLed: 1
             maxLevel: 255
     turret:
-        implemented: false
+        implemented: true
         pidConfig:
             slot0:
                 kP: 0.85
@@ -115,7 +115,7 @@ subsystems:
             encPPR: 4096
             turretPPR: 53248 # 4096 * 13
     shooter:
-        implemented: false
+        implemented: true
         falcons:
             shooterMain: 21
             shooterFollower: -1
@@ -152,7 +152,7 @@ subsystems:
             bottomClamp: 6
         pidConfig:
             slot0: #TODO Change this
-                kP: 0.075 #0.075 #tunned at 4000
+                kP: 0.025 #0.075 #tunned at 4000
                 kI: 0.01
                 kD: 0.006
                 kF: 0.0
@@ -214,7 +214,7 @@ subsystems:
             collecting: -5000 #-5500
             flush: 4000 #.35
     camera:
-        implemented: false
+        implemented: true
         constants:
             debug: 0
             useShuffleboard: 0

@@ -166,6 +166,7 @@ public class Turret extends Subsystem implements PidProvider {
             if (controlMode == ControlMode.CAMERA_FOLLOWING) {
                 if (Constants.kUseVision) {
                     this.controlMode = controlMode;
+                    followingTurretPos = desiredTurretPos;
                     turret.selectProfileSlot(kPIDVisionIDx, 0);
                     camera.setCameraEnabled(true);
                     led.indicateStatus(LedManager.RobotStatus.SEEN_TARGET);
