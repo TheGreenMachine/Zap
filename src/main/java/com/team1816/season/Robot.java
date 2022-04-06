@@ -299,7 +299,6 @@ public class Robot extends TimedRobot {
 
             // Robot starts forwards.
             mRobotState.reset();
-            mDrive.setHeading(new Rotation2d());
 
             mAutoModeSelector.updateModeCreator();
 

@@ -42,7 +42,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     private DifferentialDriveOdometry odometry;
 
-    @Override
     public void updateTrajectoryVelocities(Double leftVel, Double rightVel) {
         // Velocities are in m/sec comes from trajectory command
         var signal = new DriveSignal(
@@ -50,16 +49,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             metersPerSecondToTicksPer100ms(rightVel)
         );
         setVelocity(signal, DriveSignal.NEUTRAL);
-    }
-
-    @Override
-    public Rotation2d getTrajectoryHeadings() {
-        return Constants.EmptyRotation;
-    }
-
-    @Override
-    public Pose2d getPose() {
-        return robotState.field_to_vehicle;
     }
 
     private void updateRobotPose() {
@@ -137,11 +126,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     }
 
     @Override
-    public double getDesiredHeading() {
-        return getDesiredRotation2d().getDegrees();
-    }
-
-    @Override
     public synchronized void readFromHardware() {
         if (RobotBase.isSimulation()) {
             double leftAdjDemand = mPeriodicIO.left_demand;
@@ -168,7 +152,9 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
                 ) /
                 robotWidthTicks;
             mPeriodicIO.gyro_heading_no_offset =
-                getDesiredRotation2d().rotateBy(Rotation2d.fromDegrees(gyroDrift * .3));
+                mPeriodicIO.desired_heading.rotateBy(
+                    Rotation2d.fromDegrees(gyroDrift * .3)
+                );
         } else {
             mPeriodicIO.left_position_ticks = mLeftMaster.getSelectedSensorPosition(0);
             mPeriodicIO.right_position_ticks = mRightMaster.getSelectedSensorPosition(0);
@@ -178,8 +164,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
                 mRightMaster.getSelectedSensorVelocity(0);
             mPeriodicIO.gyro_heading_no_offset = Rotation2d.fromDegrees(mPigeon.getYaw());
         }
-        mPeriodicIO.gyro_heading =
-            mPeriodicIO.gyro_heading_no_offset.rotateBy(mGyroOffset);
+        mPeriodicIO.gyro_heading = mPeriodicIO.gyro_heading_no_offset;
         if (mDriveControlState == DriveControlState.OPEN_LOOP) {
             mPeriodicIO.left_error = 0;
             mPeriodicIO.right_error = 0;
@@ -346,7 +331,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     public void zeroSensors(Pose2d pose) {
         System.out.println("Zeroing drive sensors!");
         resetPigeon();
-        setHeading(Constants.EmptyRotation);
         resetEncoders();
         //        if (mPigeon.getLastError() != ErrorCode.OK) {
         //            // BadLog.createValue("PigeonErrorDetected", "true");

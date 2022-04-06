@@ -55,7 +55,6 @@ public abstract class Drive
     // hardware states
     protected String pidSlot = "slot0";
     protected boolean mIsBrakeMode;
-    protected Rotation2d mGyroOffset = Constants.EmptyRotation;
 
     protected PeriodicIO mPeriodicIO;
     protected boolean mOverrideTrajectory = false;
@@ -177,24 +176,16 @@ public abstract class Drive
         List<Rotation2d> headings
     );
 
-    //tank auto
-    public abstract void updateTrajectoryVelocities(Double aDouble, Double aDouble1);
-
-    // swerve auto
-    public abstract Rotation2d getTrajectoryHeadings();
-
-    public void setModuleStates(SwerveModuleState[] desiredStates) {}
-
-    public abstract Pose2d getPose();
+    public Pose2d getPose() {
+        return robotState.field_to_vehicle;
+    }
 
     public void updateTrajectoryPeriodic(double timestamp) {
-        if (mDriveControlState != DriveControlState.TRAJECTORY_FOLLOWING) {
-            //            zeroSensors();
-        }
         if (mTrajectoryStart == 0) mTrajectoryStart = timestamp;
         // update desired pose from trajectory
         mPeriodicIO.desired_pose =
             mTrajectory.sample(timestamp - mTrajectoryStart).poseMeters;
+        mPeriodicIO.desired_heading = mPeriodicIO.desired_pose.getRotation();
     }
 
     protected abstract void updateOpenLoopPeriodic();
@@ -213,16 +204,6 @@ public abstract class Drive
         boolean low_power,
         boolean use_heading_controller
     );
-
-    public synchronized void setHeading(Rotation2d heading) {
-        System.out.println("set heading: " + heading.getDegrees());
-
-        mGyroOffset =
-            heading.rotateBy(Rotation2d.fromDegrees(mPigeon.getYaw()).unaryMinus());
-        System.out.println("gyro offset: " + mGyroOffset.getDegrees());
-
-        mPeriodicIO.desired_heading = heading;
-    }
 
     public void setControlState(DriveControlState driveControlState) {
         mDriveControlState = driveControlState;
@@ -246,13 +227,8 @@ public abstract class Drive
     public abstract double getKF();
 
     @Override
-    public abstract double getDesiredHeading();
-
-    public Rotation2d getDesiredRotation2d() {
-        if (mDriveControlState == DriveControlState.TRAJECTORY_FOLLOWING) {
-            return mPeriodicIO.desired_pose.getRotation();
-        }
-        return mPeriodicIO.desired_heading;
+    public double getDesiredHeading() {
+        return mPeriodicIO.desired_heading.getDegrees();
     }
 
     public synchronized Rotation2d getHeading() {
@@ -268,7 +244,7 @@ public abstract class Drive
         return mPeriodicIO.gyro_heading_no_offset;
     }
 
-    public DriveControlState getDriveControlState() {
+    public DriveControlState getControlState() {
         return mDriveControlState;
     }
 
@@ -338,7 +314,7 @@ public abstract class Drive
     public void initSendable(SendableBuilder builder) {
         builder.addStringProperty(
             "Drive/ControlState",
-            () -> this.getDriveControlState().toString(),
+            () -> this.getControlState().toString(),
             null
         );
         SmartDashboard.putNumber("Drive/Vector Direction", 0);

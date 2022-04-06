@@ -57,9 +57,10 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getHeading());
     }
 
+    // autonomous (Trajectory_Following) loop is in setModuleStates
     @Override
     public synchronized void writeToHardware() {
-        if (mDriveControlState == DriveControlState.OPEN_LOOP) { // autonomous (Trajectory_Following) loop is in setModuleStates
+        if (mDriveControlState == DriveControlState.OPEN_LOOP) {
             SwerveDriveKinematics.desaturateWheelSpeeds(
                 mPeriodicIO.desiredModuleStates,
                 Constants.kOpenLoopMaxVelMeters
@@ -75,12 +76,13 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     @Override
     public synchronized void readFromHardware() {
-        SwerveModuleState[] states = new SwerveModuleState[4]; // why do we create 4 new states in every single loop through the readPeriodic?
+        SwerveModuleState[] states = new SwerveModuleState[4];
         for (int i = 0; i < 4; i++) {
             states[i] = swerveModules[i].getState();
         }
         mPeriodicIO.chassisSpeed =
             Constants.Swerve.swerveKinematics.toChassisSpeeds(states);
+
         if (RobotBase.isSimulation()) { // calculate rotation based on actualModeStates
             // simulates rotation by computing the rotational motion per interval
             mPeriodicIO.gyro_heading_no_offset =
@@ -100,14 +102,12 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         } else {
             mPeriodicIO.gyro_heading_no_offset = Rotation2d.fromDegrees(mPigeon.getYaw());
         }
-        mPeriodicIO.gyro_heading =
-            mPeriodicIO.gyro_heading_no_offset.rotateBy(mGyroOffset);
 
+        mPeriodicIO.gyro_heading = mPeriodicIO.gyro_heading_no_offset;
         swerveOdometry.update(mPeriodicIO.gyro_heading, states);
         updateRobotState();
     }
 
-    @Override
     public Rotation2d getTrajectoryHeadings() {
         if (mHeadings == null) {
             System.out.println("headings are empty!");
@@ -158,9 +158,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         mOverrideTrajectory = false;
     }
 
-    @Override // not used in swerve
-    public void updateTrajectoryVelocities(Double aDouble, Double aDouble1) {}
-
     /* Used by SwerveControllerCommand in Auto */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         mDriveControlState = DriveControlState.TRAJECTORY_FOLLOWING;
@@ -172,10 +169,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         for (int i = 0; i < 4; i++) {
             swerveModules[i].setDesiredState(desiredStates[i], false);
         }
-    }
-
-    public Pose2d getPose() {
-        return robotState.field_to_vehicle; // swerveOdometry.getPoseMeters();
     }
 
     private void updateRobotState() {
@@ -203,7 +196,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     // general setters
     @Override
-    public void setOpenLoop(DriveSignal signal) { // currently just sets azimuths to forward and stops drivetrain
+    public void setOpenLoop(DriveSignal signal) {
         if (mDriveControlState != DriveControlState.OPEN_LOOP) {
             System.out.println("switching to open loop");
             System.out.println(signal);
@@ -269,23 +262,10 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     @Override
-    public Rotation2d getDesiredRotation2d() {
-        if (mDriveControlState == DriveControlState.TRAJECTORY_FOLLOWING) {
-            return getTrajectoryHeadings();
-        }
-        return mPeriodicIO.desired_heading;
-    }
-
-    @Override
-    public double getDesiredHeading() {
-        return getDesiredRotation2d().getDegrees();
-    }
-
-    @Override
     public void resetOdometry(Pose2d pose) {
         swerveOdometry.resetPosition(pose, getHeading());
         robotState.field_to_vehicle = pose;
-    } // resetPosition says we don't need to account for offset here so getHeading() should work
+    }
 
     @Override
     public void zeroSensors(Pose2d pose) {
