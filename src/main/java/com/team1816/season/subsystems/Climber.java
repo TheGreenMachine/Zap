@@ -69,7 +69,7 @@ public class Climber extends Subsystem {
                     false,
                     false
                 ),
-                new Stage(factory.getConstant(NAME, "startPos", 0), true, false, false),
+                new Stage(factory.getConstant(NAME, "returnPos", 0), true, false, false),
                 new Stage(
                     factory.getConstant(NAME, "firstToSecondRungPos", -63),
                     false,
