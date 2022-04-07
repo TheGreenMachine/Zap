@@ -42,6 +42,7 @@ public class FourBallModeC extends AutoModeBase {
                     new RampUpShooterAction(12500) // make actual shooting vel
                 ),
                 trajectory,
+                new AutoAimAndRev(2, 13500), // make actual shooting vel
                 new ShootAction(true, true),
                 new WaitAction(2),
                 new ShootAction(false, true),
@@ -49,6 +50,7 @@ public class FourBallModeC extends AutoModeBase {
                 new WaitAction(1),
                 new TurretAction(Turret.CARDINAL_SOUTH), // this is in dead zone so tune heading or turret angle
                 trajectory2,
+                new AutoAimAndRev(2, 13500), // make actual shooting vel
                 new ShootAction(true, true),
                 new WaitAction(3)
             )
