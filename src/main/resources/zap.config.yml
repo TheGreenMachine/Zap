@@ -161,6 +161,7 @@ subsystems:
             maxTicks: 1 # TODO set this value
             unlockPos: -23400 #TODO set this value
             startPos: 0  #TODO set this value
+            returnPos: -8000
             firstToSecondRungPos: 130127 #86.5 #TODO set this value
             secondToLastRungPos: 320610 #TODO set this value
             lastPos: 371790 #TODO set this value
