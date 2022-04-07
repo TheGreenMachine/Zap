@@ -25,10 +25,10 @@ public class TwoBallModeC extends AutoModeBase {
             new SeriesAction(
                 new ParallelAction(
                     new TurretAction(Turret.CARDINAL_NORTH - 10), // to be changed
-                    new CollectAction(true),
-                    new RampUpShooterAction(12500) // make actual shooting vel
+                    new CollectAction(true)
                 ),
                 trajectory,
+                new AutoAimAndRev(3, 11000),
                 new ShootAction(true, true),
                 new WaitAction(4)
             )
