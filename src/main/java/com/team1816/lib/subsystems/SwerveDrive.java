@@ -203,7 +203,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             mDriveControlState = DriveControlState.OPEN_LOOP;
         }
         SwerveModuleState[] states = new SwerveModuleState[4];
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < states.length; i++) {
             states[i] =
                 new SwerveModuleState(
                     ((SwerveDriveSignal) signal).getWheelSpeeds()[i],
@@ -243,7 +243,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         super.setBrakeMode(on);
         for (int i = 0; i < swerveModules.length; i++) {
             if (on) {
-                setOpenLoop(DriveSignal.BRAKE);
+                setOpenLoop(SwerveDriveSignal.BRAKE);
             }
             swerveModules[i].setDriveBrakeMode(on);
         }

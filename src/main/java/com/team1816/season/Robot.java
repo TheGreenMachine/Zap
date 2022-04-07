@@ -8,7 +8,6 @@ import com.google.inject.Injector;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.LibModule;
 import com.team1816.lib.auto.AutoModeExecutor;
-import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.auto.modes.AutoModeBase;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
@@ -27,7 +26,6 @@ import com.team254.lib.util.SwerveDriveSignal;
 import com.team254.lib.util.TimeDelayedBoolean;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.*;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -311,21 +309,21 @@ public class Robot extends TimedRobot {
                     //                        mControlBoard::getCollectorBackspin,
                     //                        () -> mSuperstructure.setCollecting(false)
                     //                    ),
-                    createAction(
-                        mControlBoard::getRunAutoModeInTeleop,
-                        () -> {
-                            System.out.println("Running trajectory !");
-                            SmartDashboard.putString("Teleop Spline", "TWO_BALL_B");
-                            var trajectory = new TrajectoryAction(
-                                TrajectorySet.TWO_BALL_B,
-                                TrajectorySet.TWO_BALL_B_HEADINGS
-                            );
-                            mDrive.zeroSensors(
-                                trajectory.getTrajectory().getInitialPose()
-                            );
-                            trajectory.start();
-                        }
-                    ),
+                    //                    createAction(
+                    //                        mControlBoard::getRunAutoModeInTeleop,
+                    //                        () -> {
+                    //                            System.out.println("Running trajectory !");
+                    //                            SmartDashboard.putString("Teleop Spline", "TWO_BALL_B");
+                    //                            var trajectory = new TrajectoryAction(
+                    //                                TrajectorySet.TWO_BALL_B,
+                    //                                TrajectorySet.TWO_BALL_B_HEADINGS
+                    //                            );
+                    //                            mDrive.zeroSensors(
+                    //                                trajectory.getTrajectory().getInitialPose()
+                    //                            );
+                    //                            trajectory.start();
+                    //                        }
+                    //                    ),
                     createHoldAction(
                         mControlBoard::getCollectorToggle,
                         pressed -> mSuperstructure.setCollecting(pressed, true)

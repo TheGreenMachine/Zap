@@ -352,6 +352,11 @@ public class Turret extends Subsystem implements PidProvider {
     private void autoHome() {
         var cameraOffset = cameraFollowingOffset();
         int adj = followingTurretPos + cameraOffset;
+        if (adj > TURRET_LIMIT_FORWARD) {
+            adj = TURRET_LIMIT_FORWARD;
+        } else if (adj < TURRET_LIMIT_REVERSE) {
+            adj = TURRET_LIMIT_REVERSE;
+        }
         if (adj != followingTurretPos) {
             followingTurretPos = adj;
             outputsChanged = true;
