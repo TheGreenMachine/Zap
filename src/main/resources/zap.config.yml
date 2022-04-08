@@ -28,7 +28,7 @@ subsystems:
                     azimuth: FLAz
                     canCoder: FLEnc
                     constants:
-                        encoderOffset: 2101
+                        encoderOffset: 8567 #2101
                         invertSensorPhase: 1
                 frontRight:
                     drive: FRDr
