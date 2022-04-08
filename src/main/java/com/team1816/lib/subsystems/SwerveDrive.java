@@ -148,10 +148,10 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         mTrajectoryStart = 0;
         mTrajectory = trajectory;
         mHeadings = headings;
-        if (!trajectoryStarted) {
-            zeroSensors(trajectory.getInitialPose());
-            trajectoryStarted = true; // massive hack here woo
-        }
+        //        if (!trajectoryStarted) {
+        //            zeroSensors(trajectory.getInitialPose());
+        //            trajectoryStarted = true; // massive hack here woo
+        //        }
         mTrajectoryIndex = 0;
         updateRobotState();
         mDriveControlState = DriveControlState.TRAJECTORY_FOLLOWING;
@@ -264,7 +264,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     @Override
     public void resetOdometry(Pose2d pose) {
         swerveOdometry.resetPosition(pose, getHeading());
-        robotState.field_to_vehicle = pose;
+        //        robotState.field_to_vehicle = pose;
     }
 
     @Override
@@ -272,7 +272,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         System.out.println("Zeroing drive sensors!");
         trajectoryStarted = false; // massive hack here woo
         setBrakeMode(false);
-        resetPigeon();
         resetOdometry(pose);
         for (int i = 0; i < 4; i++) {
             swerveModules[i].setDesiredState(new SwerveModuleState(), true);

@@ -330,7 +330,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     @Override
     public void zeroSensors(Pose2d pose) {
         System.out.println("Zeroing drive sensors!");
-        resetPigeon();
         resetEncoders();
         //        if (mPigeon.getLastError() != ErrorCode.OK) {
         //            // BadLog.createValue("PigeonErrorDetected", "true");

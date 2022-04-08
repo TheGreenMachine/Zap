@@ -287,13 +287,6 @@ public abstract class Drive
         mIsBrakeMode = on;
     }
 
-    public synchronized void resetPigeon() {
-        System.out.println("resetting Pigeon  - - ");
-        mPigeon.setYaw(0);
-        mPigeon.setFusedHeading(0);
-        mPigeon.setAccumZAngle(0);
-    }
-
     public abstract void resetOdometry(Pose2d pose);
 
     @Override

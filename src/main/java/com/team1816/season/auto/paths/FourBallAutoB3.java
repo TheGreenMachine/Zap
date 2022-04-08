@@ -10,7 +10,7 @@ public class FourBallAutoB3 implements PathContainer {
     @Override
     public List<Pose2d> buildWaypoints() {
         return List.of(
-            new Pose2d(60, 60, Rotation2d.fromDegrees(0)), // -160
+            new Pose2d(55, 55, Rotation2d.fromDegrees(0)), // -160
             new Pose2d(198, 77, Rotation2d.fromDegrees(0))
         );
     }

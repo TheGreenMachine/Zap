@@ -52,6 +52,13 @@ public class Infrastructure {
         }
     }
 
+    public void resetPigeon() {
+        System.out.println("resetting Pigeon  - - ");
+        mPigeon.setYaw(0);
+        mPigeon.setFusedHeading(0);
+        mPigeon.setAccumZAngle(0);
+    }
+
     public IPigeonIMU getPigeon() {
         return mPigeon;
     }

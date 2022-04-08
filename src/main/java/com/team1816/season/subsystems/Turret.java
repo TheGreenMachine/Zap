@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.Timer;
 @Singleton
 public class Turret extends Subsystem implements PidProvider {
 
-    public static final double TURRET_JOG_SPEED = 0.04;
+    public static final double TURRET_JOG_SPEED = 0.15;
     public static final double CARDINAL_SOUTH = 0; // deg
     public static final double CARDINAL_EAST = 270; // deg
     public static final double CARDINAL_NORTH = 180; // deg
@@ -270,6 +270,9 @@ public class Turret extends Subsystem implements PidProvider {
 
     @Override
     public void readFromHardware() {
+        //        desiredTurretPos %= TURRET_PPR;
+        //        followingTurretPos %= TURRET_PPR;
+
         robotState.vehicle_to_turret =
             Rotation2d.fromDegrees(getActualTurretPositionDegrees());
     }
@@ -351,12 +354,15 @@ public class Turret extends Subsystem implements PidProvider {
 
     private void autoHome() {
         var cameraOffset = cameraFollowingOffset();
+        //        if (cameraOffset > TURRET_PPR / 3) {
+        //            cameraOffset = 0;
+        //        }
         int adj = followingTurretPos + cameraOffset;
-        if (adj > TURRET_LIMIT_FORWARD) {
-            adj = TURRET_LIMIT_FORWARD;
-        } else if (adj < TURRET_LIMIT_REVERSE) {
-            adj = TURRET_LIMIT_REVERSE;
-        }
+        //        if (adj > TURRET_LIMIT_FORWARD - ZERO_OFFSET) {
+        //            adj = TURRET_LIMIT_FORWARD - ZERO_OFFSET;
+        //        } else if (adj < TURRET_LIMIT_REVERSE - ZERO_OFFSET) {
+        //            adj = TURRET_LIMIT_REVERSE - ZERO_OFFSET;
+        //        }
         if (adj != followingTurretPos) {
             followingTurretPos = adj;
             outputsChanged = true;

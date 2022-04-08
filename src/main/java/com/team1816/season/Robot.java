@@ -336,6 +336,8 @@ public class Robot extends TimedRobot {
                     createAction(
                         mControlBoard::getZeroPose, // line up against ally field wall -> zero
                         () -> {
+                            mInfrastructure.resetPigeon();
+                            mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
                             mDrive.zeroSensors(Constants.ZeroPose);
                         }
                     ),
@@ -390,11 +392,11 @@ public class Robot extends TimedRobot {
                     ),
                     createHoldAction(
                         mControlBoard::getClimberUp,
-                        moving -> mClimber.setClimberPower(moving ? -1 : 0)
+                        moving -> mClimber.setClimberPower(moving ? -.5 : 0)
                     ),
                     createHoldAction(
                         mControlBoard::getClimberDown,
-                        moving -> mClimber.setClimberPower(moving ? 1 : 0)
+                        moving -> mClimber.setClimberPower(moving ? .5 : 0)
                     ),
                     createAction(mControlBoard::getTopClamp, mClimber::setTopClamp),
                     createAction(mControlBoard::getBottomClamp, mClimber::setBottomClamp),
@@ -414,6 +416,7 @@ public class Robot extends TimedRobot {
                         }
                     )
                 );
+            mInfrastructure.resetPigeon();
             mDrive.zeroSensors();
         } catch (Throwable t) {
             faulted = true;
@@ -461,6 +464,7 @@ public class Robot extends TimedRobot {
 
             mHasBeenEnabled = true;
 
+            mInfrastructure.resetPigeon();
             mDrive.zeroSensors();
             mTurret.zeroSensors();
 
@@ -489,9 +493,9 @@ public class Robot extends TimedRobot {
                 mAutoModeExecutor.stop();
             }
 
+            mDrive.zeroSensors(Constants.prevDrivePose);
             mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
             mTurret.zeroSensors();
-            mDrive.zeroSensors(Constants.prevDrivePose);
             mClimber.zeroSensors();
 
             mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);

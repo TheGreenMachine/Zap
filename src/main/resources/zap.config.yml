@@ -96,7 +96,7 @@ subsystems:
             slot0:
                 kP: 0.85
                 kI: 0.0003
-                kD: 22.5
+                kD: 20 # 22.5
                 kF: 0 # Should be 0 for position control
                 allowableError: 40
             slot1: # used for vision aiming
@@ -108,7 +108,7 @@ subsystems:
         talons:
             turret: 33 # need to set to pdp port number
         constants:
-            revLimit: 7800 # adjusted for zero-offset
+            revLimit: 8800 # adjusted for zero-offset
             fwdLimit: 40000 # adjusted for zero-offset
             absPosTicksSouth: 0 # absolute
             zeroOffset: 12639 # (turretPPR - non-adjusted fwdLimit - non-adjusted revlimit) / 2
@@ -154,16 +154,16 @@ subsystems:
             slot0: #TODO Change this
                 kP: 0.025 #0.075 #tunned at 4000
                 kI: 0.01
-                kD: 0.006
+                kD: 0.6
                 kF: 0.0
                 allowableError: 5000
         constants:
             maxTicks: 1 # TODO set this value
-            unlockPos: -23400 #TODO set this value
+            unlockPos: -14400 #TODO set this value
             startPos: 0  #TODO set this value
-            returnPos: -15000
-            firstToSecondRungPos: 130127 #86.5 #TODO set this value
-            secondToLastRungPos: 320610 #TODO set this value
+            returnPos: 0
+            firstToSecondRungPos: 140127 #86.5 #TODO set this value
+            secondToLastRungPos: 330610 #TODO set this value
             lastPos: 371790 #TODO set this value
     elevator:
         implemented: true
@@ -211,15 +211,15 @@ subsystems:
                 kF: 0.0001
                 allowableError: 10
         constants:
-            revving: 0.5 #.05
-            collecting: -5000 #-5500
-            flush: 4000 #.35
+            revving: -1000 #.05
+            collecting: -3600 #-5000
+            flush: 5000 #.35
     camera:
         implemented: true
         constants:
-            debug: 0
+            debug: 1
             useShuffleboard: 0
-            deviation: 0
+            deviation: -10
 pcm: 2
 canivoreBusName: highSpeed
 constants:
