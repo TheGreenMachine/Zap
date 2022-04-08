@@ -159,7 +159,7 @@ public class SwerveKinematics {
         Drive mDrive = mDriveFactory.getInstance();
 
         if (field_relative) {
-            Rotation2d gyroHeading = mDrive.getHeading();
+            Rotation2d gyroHeading = mDrive.getPose().getRotation();
             double temp = forward * gyroHeading.getCos() + strafe * gyroHeading.getSin();
             strafe = -forward * gyroHeading.getSin() + strafe * gyroHeading.getCos();
             forward = temp;

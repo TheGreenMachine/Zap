@@ -272,14 +272,13 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     @Override
     public void resetOdometry(Pose2d pose) {
-        swerveOdometry.resetPosition(pose, getHeading());
+        swerveOdometry.resetPosition(pose, mPeriodicIO.gyro_heading);
     }
 
     @Override
     public void zeroSensors(Pose2d pose) {
         System.out.println("Zeroing drive sensors!");
         setBrakeMode(false);
-        //        mInfrastructure.resetPigeon(pose.getRotation());
         mPeriodicIO.gyro_heading = Rotation2d.fromDegrees(mInfrastructure.getYaw());
         resetOdometry(pose);
         for (int i = 0; i < 4; i++) {

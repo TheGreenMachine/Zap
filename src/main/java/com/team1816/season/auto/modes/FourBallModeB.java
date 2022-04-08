@@ -40,7 +40,7 @@ public class FourBallModeB extends AutoModeBase {
                     new CollectAction(true)
                 ),
                 trajectory,
-                new AutoAimAndRev(1.5, 11000),
+                new AutoAimAndRev(1.7, 11000),
                 new ShootAction(true, true),
                 new WaitAction(2),
                 new ShootAction(false, true),
@@ -48,7 +48,7 @@ public class FourBallModeB extends AutoModeBase {
                 new WaitAction(1),
                 new TurretAction(Turret.CARDINAL_SOUTH + 28),
                 trajectory2,
-                new AutoAimAndRev(1.5, 11000),
+                new AutoAimAndRev(1.7, 11000),
                 new ShootAction(true, true),
                 new WaitAction(3)
             )

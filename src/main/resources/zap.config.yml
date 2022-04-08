@@ -59,11 +59,11 @@ subsystems:
                     kF: 0.0499
             azimuthPID:
                 slot0:
-                    kP: 3.5 # 6.0
+                    kP: 3.8 # 6.0
                     kI: 0.00075
                     kD: 77
                     kF: 0
-                    allowableError: 3
+                    allowableError: 5
         constants:
             maxTicks: 12275.7 # ticks per 100ms
             kP: 0.1 # 0.18 # TODO: tune PID, these are temporary PID values from Zeta
@@ -125,11 +125,11 @@ subsystems:
             hood: 0
         pidConfig:
             slot0:
-                kP: 0.38 #.45
-                kI: 0.001
-                kD: 14.0 # 11 - 4.5
-                kF: 0.0477
-                allowableError: 42
+                kP: 0.4 #.45
+                kI: 0.0002
+                kD: 12.0 # 11 - 4.5
+                kF: 0.0487
+                allowableError: 45
         constants:
             usingPoseForSpeed: 0
             maxTicks: 20700 #
@@ -164,7 +164,7 @@ subsystems:
             returnPos: 0
             firstToSecondRungPos: 140127 #86.5 #TODO set this value
             secondToLastRungPos: 330610 #TODO set this value
-            lastPos: 373790 #TODO set this value
+            lastPos: 374790 #TODO set this value
     elevator:
         implemented: true
         talons:

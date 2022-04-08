@@ -113,7 +113,7 @@ public class DistanceManager {
         } else if (distance < 165) {
             return 27.5 * distance + 5187.5;
         } else if (distance < 175) {
-            return 47.5 * distance + 2287.5;
+            return 47.5 * distance + 2197.5;
         } else if (distance < 190) {
             return 20 * distance + 6700;
         } else if (distance < 200) {
