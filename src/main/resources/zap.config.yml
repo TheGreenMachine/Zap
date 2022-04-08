@@ -28,7 +28,7 @@ subsystems:
                     azimuth: FLAz
                     canCoder: FLEnc
                     constants:
-                        encoderOffset: 8567 #2101
+                        encoderOffset: 2101
                         invertSensorPhase: 1
                 frontRight:
                     drive: FRDr
@@ -42,14 +42,14 @@ subsystems:
                     azimuth: RLAz
                     canCoder: RLEnc
                     constants:
-                        encoderOffset: 534
+                        encoderOffset: 3100 #1539
                         invertSensorPhase: 1
                 backRight:
                     drive: RRDr
                     azimuth: RRAz
                     canCoder: RREnc
                     constants:
-                        encoderOffset: 2861
+                        encoderOffset: 798
                         invertSensorPhase: 1
             drivePID:
                 slot0:
@@ -125,11 +125,11 @@ subsystems:
             hood: 0
         pidConfig:
             slot0:
-                kP: 0.40 #.45
-                kI: 0.0003
-                kD: 13.0 # 11 - 4.5
+                kP: 0.38 #.45
+                kI: 0.001
+                kD: 14.0 # 11 - 4.5
                 kF: 0.0477
-                allowableError: 50
+                allowableError: 42
         constants:
             usingPoseForSpeed: 0
             maxTicks: 20700 #
@@ -164,7 +164,7 @@ subsystems:
             returnPos: 0
             firstToSecondRungPos: 140127 #86.5 #TODO set this value
             secondToLastRungPos: 330610 #TODO set this value
-            lastPos: 371790 #TODO set this value
+            lastPos: 373790 #TODO set this value
     elevator:
         implemented: true
         talons:
@@ -234,7 +234,7 @@ constants:
     wheelDiameter: 4
     kTrackScrubFactor: 1.0
     maxVelOpenLoop: 3 # 160 # 240 # inches/s # 22560 native units ---30
-    maxVelPathFollowing: 2 # 160 # 240 # inches/s # 22560 native units ---30
+    maxVelPathFollowing: 2.2 # 160 # 240 # inches/s # 22560 native units ---30
     maxAccel: 100 # inches/s^ 2
     ## Logging ##
     logTeleOp: 1 # 0 or 1

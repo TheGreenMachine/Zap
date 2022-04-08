@@ -319,7 +319,7 @@ public abstract class Drive
             .addListener(
                 entryNotification -> {
                     if (entryNotification.value.getBoolean()) {
-                        mInfrastructure.resetPigeon();
+                        mInfrastructure.resetPigeon(Constants.EmptyRotation);
                         zeroSensors(Constants.ZeroPose);
                         Constants.prevDrivePose = Constants.ZeroPose;
                         entryNotification.getEntry().setBoolean(false);

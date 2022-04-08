@@ -100,7 +100,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                     Rotation2d.fromDegrees(gyroDrift)
                 );
         } else {
-            mPeriodicIO.gyro_heading_no_offset = Rotation2d.fromDegrees(mPigeon.getYaw());
+            mPeriodicIO.gyro_heading_no_offset =
+                Rotation2d.fromDegrees(mInfrastructure.getYaw());
         }
 
         mPeriodicIO.gyro_heading = mPeriodicIO.gyro_heading_no_offset;
@@ -172,6 +173,14 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     private void updateRobotState() {
+        //        System.out.println(
+        //            mInfrastructure.getYaw() +
+        //            " = robot pigeon - diff = " +
+        //            (
+        //                mInfrastructure.getYaw() -
+        //                robotState.field_to_vehicle.getRotation().getDegrees()
+        //            )
+        //        );
         robotState.field_to_vehicle = swerveOdometry.getPoseMeters();
         robotState.chassis_speeds =
             new ChassisSpeeds(
@@ -264,14 +273,14 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     @Override
     public void resetOdometry(Pose2d pose) {
         swerveOdometry.resetPosition(pose, getHeading());
-        //        robotState.field_to_vehicle = pose;
     }
 
     @Override
     public void zeroSensors(Pose2d pose) {
         System.out.println("Zeroing drive sensors!");
-        trajectoryStarted = false; // massive hack here woo
         setBrakeMode(false);
+        //        mInfrastructure.resetPigeon(pose.getRotation());
+        mPeriodicIO.gyro_heading = Rotation2d.fromDegrees(mInfrastructure.getYaw());
         resetOdometry(pose);
         for (int i = 0; i < 4; i++) {
             swerveModules[i].setDesiredState(new SwerveModuleState(), true);
@@ -279,15 +288,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             mPeriodicIO.chassisSpeed = new ChassisSpeeds();
         }
         autoModeSelector.setHardwareFailure(false);
-        //        if (mPigeon.getLastError() != ErrorCode.OK) {
-        //            // BadLog.createValue("PigeonErrorDetected", "true");
-        //            System.out.println(
-        //                "Error detected with Pigeon IMU - check if the sensor is present and plugged in!"
-        //            );
-        //            System.out.println("Defaulting to drive straight mode");
-        //            AutoModeSelector.getInstance().setHardwareFailure(true);
-        //        } else {
-        //        }
     }
 
     @Override
@@ -308,9 +308,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             }
         }
 
-        boolean checkPigeon = mPigeon != null;
-
-        return modulesPassed && checkPigeon; // not actually doing anything
+        return modulesPassed; // not actually doing anything
     }
 
     @Override

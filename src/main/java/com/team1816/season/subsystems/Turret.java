@@ -270,8 +270,8 @@ public class Turret extends Subsystem implements PidProvider {
 
     @Override
     public void readFromHardware() {
-        //        desiredTurretPos %= TURRET_PPR;
-        //        followingTurretPos %= TURRET_PPR;
+        desiredTurretPos %= TURRET_PPR;
+        followingTurretPos %= TURRET_PPR;
 
         robotState.vehicle_to_turret =
             Rotation2d.fromDegrees(getActualTurretPositionDegrees());
@@ -354,9 +354,9 @@ public class Turret extends Subsystem implements PidProvider {
 
     private void autoHome() {
         var cameraOffset = cameraFollowingOffset();
-        //        if (cameraOffset > TURRET_PPR / 3) {
-        //            cameraOffset = 0;
-        //        }
+        if (cameraOffset > TURRET_PPR / 3) {
+            cameraOffset = 0;
+        }
         int adj = followingTurretPos + cameraOffset;
         //        if (adj > TURRET_LIMIT_FORWARD - ZERO_OFFSET) {
         //            adj = TURRET_LIMIT_FORWARD - ZERO_OFFSET;

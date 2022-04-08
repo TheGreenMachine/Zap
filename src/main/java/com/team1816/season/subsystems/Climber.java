@@ -88,7 +88,7 @@ public class Climber extends Subsystem {
     }
 
     public void setUnlocked() {
-        unlocked = !unlocked;
+        unlocked = true;
     }
 
     public void incrementClimberStage() { // we can't go backwards (descend rungs) using this logic, but it shouldn't really matter
@@ -227,6 +227,7 @@ public class Climber extends Subsystem {
     @Override
     public void zeroSensors() {
         currentStage = 0;
+        unlocked = false;
         needsClamp = false;
         climbDelay = false;
         needsOverShoot = false;

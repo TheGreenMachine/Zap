@@ -336,7 +336,6 @@ public class Robot extends TimedRobot {
                     createAction(
                         mControlBoard::getZeroPose, // line up against ally field wall -> zero
                         () -> {
-                            mInfrastructure.resetPigeon();
                             mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
                             mDrive.zeroSensors(Constants.ZeroPose);
                         }
@@ -416,7 +415,6 @@ public class Robot extends TimedRobot {
                         }
                     )
                 );
-            mInfrastructure.resetPigeon();
             mDrive.zeroSensors();
         } catch (Throwable t) {
             faulted = true;
@@ -464,7 +462,6 @@ public class Robot extends TimedRobot {
 
             mHasBeenEnabled = true;
 
-            mInfrastructure.resetPigeon();
             mDrive.zeroSensors();
             mTurret.zeroSensors();
 
@@ -493,7 +490,7 @@ public class Robot extends TimedRobot {
                 mAutoModeExecutor.stop();
             }
 
-            mDrive.zeroSensors(Constants.prevDrivePose);
+            //            mDrive.zeroSensors(Constants.prevDrivePose);
             mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
             mTurret.zeroSensors();
             mClimber.zeroSensors();
@@ -568,7 +565,7 @@ public class Robot extends TimedRobot {
         try {
             if (RobotController.getUserButton() && !mHasBeenEnabled) {
                 System.out.println("Zeroing Robot!");
-                mDrive.zeroSensors(Constants.ZeroPose);
+                //                mDrive.zeroSensors(Constants.ZeroPose);
                 mLedManager.indicateStatus(LedManager.RobotStatus.SEEN_TARGET);
             } else {
                 if (faulted) {
@@ -590,8 +587,8 @@ public class Robot extends TimedRobot {
                 mRobotState.field.getObject("Trajectory");
                 mAutoModeExecutor.setAutoMode(auto);
                 Constants.StartingPose = auto.getTrajectory().getInitialPose();
-                mRobotState.reset(Constants.StartingPose);
-                mDrive.zeroSensors();
+                //                mRobotState.reset(Constants.StartingPose);
+                //                mDrive.zeroSensors();
             }
         } catch (Throwable t) {
             faulted = true;

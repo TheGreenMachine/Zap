@@ -19,6 +19,7 @@ import java.util.*;
 public class CtreMotorFactory {
 
     private static final int kTimeoutMs = RobotBase.isSimulation() ? 0 : 100;
+    private static final int kTimeoutMsLONG = RobotBase.isSimulation() ? 0 : 200;
 
     public static class Configuration {
 
@@ -177,8 +178,11 @@ public class CtreMotorFactory {
 
     public static CANCoder createCanCoder(int canCoderID, boolean invertCanCoder) {
         CANCoder canCoder = new CANCoder(canCoderID);
-        canCoder.configFactoryDefault();
-        canCoder.configAllSettings(configureCanCoder(invertCanCoder));
+        if (factory.getConstant("resetFactoryDefaults", 0) > 0) {
+            canCoder.configFactoryDefault(kTimeoutMs);
+        }
+        canCoder.configAllSettings(configureCanCoder(invertCanCoder), kTimeoutMsLONG);
+        //        canCoder.configSensorInitializationStrategy(SensorInitializationStrategy.BootToAbsolutePosition, kTimeoutMs);
         return canCoder;
     }
 

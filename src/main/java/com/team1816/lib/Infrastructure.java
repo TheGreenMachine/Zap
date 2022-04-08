@@ -6,6 +6,7 @@ import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.components.IPigeonIMU;
 import com.team1816.lib.hardware.components.pcm.ICompressor;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.PowerDistribution;
 
 /**
@@ -52,15 +53,17 @@ public class Infrastructure {
         }
     }
 
-    public void resetPigeon() {
+    public void resetPigeon(Rotation2d angle) {
         System.out.println("resetting Pigeon  - - ");
-        mPigeon.setYaw(0);
-        mPigeon.setFusedHeading(0);
-        mPigeon.setAccumZAngle(0);
+        mPigeon.setYaw(angle.getDegrees());
     }
 
     public IPigeonIMU getPigeon() {
         return mPigeon;
+    }
+
+    public double getYaw() {
+        return mPigeon.getYaw();
     }
 
     public PowerDistribution getPdh() {

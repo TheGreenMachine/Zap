@@ -212,7 +212,9 @@ public class Superstructure {
                 robotState.field_to_vehicle.getRotation()
             )
         ); //
+        System.out.println(newRobotPose + " = new robot pose");
         drive.resetOdometry(newRobotPose);
+        robotState.field_to_vehicle = newRobotPose;
     }
 
     public double getPredictedDistance(DistanceManager.SUBSYSTEM subsystem) {
