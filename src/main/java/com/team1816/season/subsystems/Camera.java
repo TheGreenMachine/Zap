@@ -7,6 +7,7 @@ import com.team1816.lib.vision.VisionSocket;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 
@@ -33,9 +34,13 @@ public class Camera extends Subsystem {
     private static final double CAMERA_FOCAL_LENGTH = 350; // px
     private static final double VIDEO_WIDTH = 672.0; // px
     public static final double ALLOWABLE_AIM_ERROR = 1; // deg
-    private int loops = 0;
     //    private Queue<Double> distances = new PriorityQueue<Double>();
     private ArrayList<Double> distances = new ArrayList<>();
+    private final double MAX_DIST = factory.getConstant(NAME, "maxDist", 260);
+    private final double MAX_DELTA_X = factory.getConstant(NAME, "maxDeltaX", 672);
+
+    // state
+    private int loops = 0;
 
     public Camera() {
         super(NAME);
@@ -43,7 +48,7 @@ public class Camera extends Subsystem {
     }
 
     private double parseDeltaX(double x) {
-        if (Math.abs(x) > 672) { // ignore if x bigger than max allowed value
+        if (Math.abs(x) > MAX_DELTA_X) { // ignore if x bigger than max allowed value
             return 0;
         }
         double deltaXPixels = (x - (VIDEO_WIDTH / 2)); // Calculate deltaX from center of screen
@@ -69,17 +74,17 @@ public class Camera extends Subsystem {
     }
 
     public void setCameraEnabled(boolean cameraEnabled) {
-        Camera.cameraEnabled = cameraEnabled;
-        led.setCameraLed(cameraEnabled);
-        socket.setEnabled(cameraEnabled);
+        if (this.isImplemented()) {
+            Camera.cameraEnabled = cameraEnabled;
+            led.setCameraLed(cameraEnabled);
+            socket.setEnabled(cameraEnabled);
+        } else {
+            System.out.println("not enabling camera because camera not implemented...");
+        }
     }
 
     public void setEnabled() {
         setCameraEnabled(!cameraEnabled);
-    }
-
-    public boolean checkSystem() {
-        return true;
     }
 
     private void cachePoint() {
@@ -93,13 +98,13 @@ public class Camera extends Subsystem {
         state.visionPoint.cY = Double.parseDouble(data[2]);
 
         double dis = Double.parseDouble(data[3]);
-        if (dis > 0) {
+        if (dis > 0 && dis < MAX_DIST) {
             distances.add(dis);
         }
 
-        if (distances.size() > 5) {
+        if (distances.size() > 4) { // note - this number was 5 before!
             double distanceSum = 0;
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < distances.size(); i++) {
                 distanceSum += distances.get(i);
             }
             state.visionPoint.dist = distanceSum / distances.size();
@@ -120,6 +125,22 @@ public class Camera extends Subsystem {
             cachePoint();
         }
         loops++;
+    }
+
+    public boolean checkSystem() {
+        if (this.isImplemented()) {
+            setCameraEnabled(true);
+            Timer.delay(2);
+            if (getDistance() < 0 || getDistance() > MAX_DIST) {
+                System.out.println("getDistance failed test!");
+                return false;
+            } else if (getDeltaX() > MAX_DELTA_X) {
+                System.out.println("getDeltaX failed test!");
+                return false;
+            }
+            setCameraEnabled(false);
+        }
+        return true;
     }
 
     @Override

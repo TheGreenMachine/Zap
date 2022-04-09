@@ -302,14 +302,6 @@ public class Robot extends TimedRobot {
                 new ActionManager(
                     // Driver Gamepad
                     //                    createAction(
-                    //                        mControlBoard::getCollectorToggle,
-                    //                        () -> mSuperstructure.setCollecting(true)
-                    //                    ),
-                    //                    createAction(
-                    //                        mControlBoard::getCollectorBackspin,
-                    //                        () -> mSuperstructure.setCollecting(false)
-                    //                    ),
-                    //                    createAction(
                     //                        mControlBoard::getRunAutoModeInTeleop,
                     //                        () -> {
                     //                            System.out.println("Running trajectory !");
@@ -374,7 +366,7 @@ public class Robot extends TimedRobot {
                         mControlBoard::getShoot,
                         shooting -> {
                             mShooter.setHood(true);
-                            mSuperstructure.setRevving(shooting, 11920); // TODO TUNE
+                            mSuperstructure.setRevving(shooting, 11000); // TODO TUNE
                             mSuperstructure.setFiring(shooting);
                         }
                     ),
@@ -425,7 +417,6 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         try {
-            Constants.prevDrivePose = mDrive.getPose();
             mEnabledLooper.stop();
 
             mLedManager.setDefaultStatus(LedManager.RobotStatus.DISABLED);

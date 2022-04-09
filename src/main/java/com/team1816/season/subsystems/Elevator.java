@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.google.inject.Singleton;
 import com.team1816.lib.subsystems.Subsystem;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.Timer;
 
 @Singleton
 public class Elevator extends Subsystem {
@@ -133,6 +134,12 @@ public class Elevator extends Subsystem {
 
     @Override
     public boolean checkSystem() {
+        boolean passed = true;
+        elevator.set(ControlMode.PercentOutput, 0.2);
+        Timer.delay(1);
+        elevator.set(ControlMode.PercentOutput, -0.2);
+        Timer.delay(1);
+        elevator.set(ControlMode.PercentOutput, 0);
         return true;
     }
 

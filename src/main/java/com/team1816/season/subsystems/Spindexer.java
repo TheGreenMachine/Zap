@@ -6,6 +6,7 @@ import com.google.inject.Singleton;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.Timer;
 
 @Singleton
 public class Spindexer extends Subsystem {
@@ -123,6 +124,11 @@ public class Spindexer extends Subsystem {
 
     @Override
     public boolean checkSystem() {
+        spindexer.set(ControlMode.PercentOutput, .3);
+        Timer.delay(1);
+        spindexer.set(ControlMode.PercentOutput, -.3);
+        Timer.delay(1);
+        spindexer.set(ControlMode.PercentOutput, 0);
         return true;
     }
 

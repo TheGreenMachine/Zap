@@ -220,6 +220,8 @@ subsystems:
             debug: 1
             useShuffleboard: 0
             deviation: -10
+            maxDist: 260
+            maxDeltaX: 672
 pcm: 2
 canivoreBusName: highSpeed
 constants:

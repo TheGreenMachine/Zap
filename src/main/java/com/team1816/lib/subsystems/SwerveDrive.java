@@ -173,14 +173,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     private void updateRobotState() {
-        //        System.out.println(
-        //            mInfrastructure.getYaw() +
-        //            " = robot pigeon - diff = " +
-        //            (
-        //                mInfrastructure.getYaw() -
-        //                robotState.field_to_vehicle.getRotation().getDegrees()
-        //            )
-        //        );
         robotState.field_to_vehicle = swerveOdometry.getPoseMeters();
         robotState.chassis_speeds =
             new ChassisSpeeds(
