@@ -42,13 +42,13 @@ public class FourBallModeC extends AutoModeBase {
                 trajectory,
                 new AutoAimAndRev(1.7, 11000),
                 new ShootAction(true, true),
-                new WaitAction(2),
+                new WaitAction(1.75),
                 new ShootAction(false, true),
                 trajectory1,
                 new WaitAction(1),
                 new TurretAction(Turret.CARDINAL_SOUTH), // this is in dead zone so tune heading or turret angle
                 trajectory2,
-                new AutoAimAndRev(1.7, 11000),
+                new AutoAimAndRev(1, 11000),
                 new ShootAction(true, true),
                 new WaitAction(3)
             )
