@@ -1,5 +1,6 @@
 package com.team1816.season.states;
 
+import static com.team1816.lib.subsystems.Subsystem.factory;
 import static com.team1816.lib.subsystems.Subsystem.robotState;
 
 import com.google.inject.Inject;
@@ -50,6 +51,7 @@ public class Superstructure {
     private boolean firing;
     private final boolean useVision;
     private final boolean usePoseTrack;
+    private double maxAllowablePoseError = factory.getConstant("maxAllowablePoseError", 0.2);
 
     public Superstructure() {
         drive = driveFactory.getInstance();
@@ -181,8 +183,8 @@ public class Superstructure {
         double extrapolatedShooterOutput = distanceManager.getOutput(
             shooter.convertShooterMetersToTicksPerSecond(
                 getBallVel(currentCamDist) - //get velocity of ball
-                chassisVelocity.getNorm() *
-                Math.cos(PoseUtil.getAngleBetween(chassisVelocity, shooterDirection))
+                    chassisVelocity.getNorm() *
+                        Math.cos(PoseUtil.getAngleBetween(chassisVelocity, shooterDirection))
             ),
             DistanceManager.SUBSYSTEM.SHOOTER
         );
@@ -195,7 +197,7 @@ public class Superstructure {
         return 0.0248 * distance - 0.53;
     }
 
-    public void calculatePoseWithCamera() {
+    public void updatePoseWithCamera() {
         double cameraDist = camera.getDistance();
         // 26.56 = radius of center hub - - 5629 = square of height of hub
         double distanceToCenterMeters = Units.inchesToMeters(
@@ -212,9 +214,18 @@ public class Superstructure {
                 robotState.field_to_vehicle.getRotation()
             )
         ); //
-        System.out.println(newRobotPose + " = new robot pose");
-        drive.resetOdometry(newRobotPose);
-        robotState.field_to_vehicle = newRobotPose;
+        if (
+            Math.abs(
+                Math.hypot(
+                    robotState.field_to_vehicle.getX() - newRobotPose.getX(),
+                    robotState.field_to_vehicle.getY() - newRobotPose.getY()
+                )
+            )
+            > maxAllowablePoseError) {
+            System.out.println(newRobotPose + " = new robot pose");
+            drive.resetOdometry(newRobotPose);
+            robotState.field_to_vehicle = newRobotPose;
+        }
     }
 
     public double getPredictedDistance(DistanceManager.SUBSYSTEM subsystem) {

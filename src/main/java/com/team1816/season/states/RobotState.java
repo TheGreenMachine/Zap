@@ -16,6 +16,7 @@ public class RobotState {
 
     public final Field2d field = new Field2d();
     public Pose2d field_to_vehicle = Constants.EmptyPose;
+    public Pose2d estimated_field_to_vehicle = Constants.EmptyPose;
     public Pose2d field_to_turret_pos = Constants.EmptyPose;
     public Rotation2d vehicle_to_turret = Constants.EmptyRotation;
     public Twist2d delta_field_to_vehicle = new Twist2d();
