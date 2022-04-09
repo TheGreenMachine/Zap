@@ -10,7 +10,7 @@ public class AutoAimAndRev extends ParallelAction {
         super(
             new AutoAimAction(visionDuration),
             new SeriesAction(
-                new WaitAction(visionDuration - 1.2),
+                new WaitAction(visionDuration - 1.4),
                 new RampUpShooterAction(defaultShootVel)
             )
         );
