@@ -29,7 +29,7 @@ public class TwoBallModeC extends AutoModeBase {
                     new RampUpShooterAction(10000) // TODO tune
                 ),
                 trajectory,
-                new AutoAimAction(4),
+                new AutoAimAction(2),
                 new ShootAction(true, true),
                 new WaitAction(4)
             )

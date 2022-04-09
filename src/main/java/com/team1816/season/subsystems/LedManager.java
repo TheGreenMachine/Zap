@@ -73,7 +73,7 @@ public class LedManager extends Subsystem {
 
     public void setCameraLed(boolean cameraOn) {
         if (cameraLedOn != cameraOn) {
-            cameraLedChanged = cameraOn;
+            cameraLedChanged = true;
             cameraLedOn = cameraOn;
             // if the LED is turned off we need to update the main 8 to match the others
             outputsChanged = true;
@@ -137,7 +137,7 @@ public class LedManager extends Subsystem {
                 cameraUpdated = true;
                 candle.setLEDs(0, 255, 0, 0, 0, 8);
             }
-            if (!cameraUpdated && outputsChanged) {
+            if (outputsChanged) {
                 if (factory.getConstant("pdIsRev") > 0) { // TODO this is a hack because currently not using candle
                     mInfraStructure.getPdh().setSwitchableChannel(cameraLedOn); // cameraLedOn
                 }

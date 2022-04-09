@@ -217,7 +217,7 @@ subsystems:
     camera:
         implemented: true
         constants:
-            debug: 1
+            debug: 0
             useShuffleboard: 0
             deviation: -10
 pcm: 2

@@ -154,6 +154,9 @@ public class Shooter extends Subsystem implements PidProvider {
     @Override
     public void readFromHardware() {
         actualShooterVelocity = shooterMain.getSelectedSensorVelocity(0);
+        System.out.println(
+            velocityDemand + " = velocityDemand, act vel = " + actualShooterVelocity
+        );
         robotState.shooterSpeed =
             convertShooterTicksToMetersPerSecond(actualShooterVelocity);
 
