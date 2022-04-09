@@ -17,7 +17,7 @@ subsystems:
             RREnc: 16
         invertMotor:
             - FRDr
-            #- RRDr
+            - RRDr
         invertCanCoder:
             - FREnc
             - BREnc
@@ -49,7 +49,7 @@ subsystems:
                     azimuth: RRAz
                     canCoder: RREnc
                     constants:
-                        encoderOffset: 798
+                        encoderOffset: 2861
                         invertSensorPhase: 1
             drivePID:
                 slot0:
@@ -128,7 +128,7 @@ subsystems:
                 kP: 0.40 #.45
                 kI: 0.0002
                 kD: 12.50 # 11 - 4.5
-                kF: 0.049
+                kF: 0.0499
                 allowableError: 45
         constants:
             usingPoseForSpeed: 0
