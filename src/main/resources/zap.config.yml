@@ -222,6 +222,7 @@ subsystems:
             deviation: -10
             maxDist: 260
             maxDeltaX: 672
+            distanceError: 50
 pcm: 2
 canivoreBusName: highSpeed
 constants:
