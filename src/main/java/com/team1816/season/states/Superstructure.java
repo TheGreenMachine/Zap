@@ -51,7 +51,10 @@ public class Superstructure {
     private boolean firing;
     private final boolean useVision;
     private final boolean usePoseTrack;
-    private double maxAllowablePoseError = factory.getConstant("maxAllowablePoseError", 0.2);
+    private double maxAllowablePoseError = factory.getConstant(
+        "maxAllowablePoseError",
+        0.2
+    );
 
     public Superstructure() {
         drive = driveFactory.getInstance();
@@ -183,8 +186,8 @@ public class Superstructure {
         double extrapolatedShooterOutput = distanceManager.getOutput(
             shooter.convertShooterMetersToTicksPerSecond(
                 getBallVel(currentCamDist) - //get velocity of ball
-                    chassisVelocity.getNorm() *
-                        Math.cos(PoseUtil.getAngleBetween(chassisVelocity, shooterDirection))
+                chassisVelocity.getNorm() *
+                Math.cos(PoseUtil.getAngleBetween(chassisVelocity, shooterDirection))
             ),
             DistanceManager.SUBSYSTEM.SHOOTER
         );
@@ -220,8 +223,9 @@ public class Superstructure {
                     robotState.field_to_vehicle.getX() - newRobotPose.getX(),
                     robotState.field_to_vehicle.getY() - newRobotPose.getY()
                 )
-            )
-            > maxAllowablePoseError) {
+            ) >
+            maxAllowablePoseError
+        ) {
             System.out.println(newRobotPose + " = new robot pose");
             drive.resetOdometry(newRobotPose);
             robotState.field_to_vehicle = newRobotPose;
