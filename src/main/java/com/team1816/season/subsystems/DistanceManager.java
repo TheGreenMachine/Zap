@@ -5,60 +5,47 @@ import java.util.ArrayList;
 public class DistanceManager {
 
     // State
-    private final Entry[] buckets;
+    public static ArrayList<Double[]> coordinates;
+    public static ArrayList<ArrayList<Double>> coefficients = new ArrayList<>();
 
     // Constants
     public DistanceManager() {
-        buckets = distance_buckets;
+        coordinates = shooterMap;
+        calculateLinearizedSpline();
+        calculateNaturalCubicSpline();
     }
 
-    public static ArrayList<Double[]> coordinates = new ArrayList<>() {
+    public static ArrayList<Double[]> shooterMap = new ArrayList<>() {
         {
-            add(new Double[] {2.0, 2.0});
+            add(new Double[] { 97.0, 7200.0 });
+            add(new Double[] { 105.0, 7700.0 });
+            add(new Double[] { 115.0, 8200.0 });
+            add(new Double[] { 125.0, 8700.0 });
+            add(new Double[] { 135.0, 8900.0 });
+            add(new Double[] { 140.0, 9000.0 });
+            add(new Double[] { 145.0, 9200.0 });
+            add(new Double[] { 155.0, 9450.0 });
+            add(new Double[] { 165.0, 9725.0 });
+            add(new Double[] { 175.0, 10200.0 });
+            add(new Double[] { 190.0, 10500.0 });
+            add(new Double[] { 200.0, 11140.0 });
+            add(new Double[] { 210.0, 11875.0 });
+            add(new Double[] { 220.0, 12400.0 });
         }
     }; // TODO: this needs to be initialized properly
-    public static ArrayList<ArrayList<Double>> coefficients = new ArrayList<>();
-
-    static class Entry {
-
-        public final double distance;
-        public final double spindexerOutput;
-        public final double elevatorOutput;
-        public final double shooterVelocity;
-        public final double hoodRetracted;
-
-        Entry(
-            double distance,
-            double spindexerOutput,
-            double elevatorOutput,
-            double shooterVelocity,
-            double hoodRetracted
-        ) {
-            this.distance = distance;
-            this.spindexerOutput = spindexerOutput;
-            this.elevatorOutput = elevatorOutput;
-            this.shooterVelocity = shooterVelocity;
-            this.hoodRetracted = hoodRetracted;
-        }
-
-        Entry() {
-            this(0, 0, 0, 0, 0);
-        }
-    }
-
-    private final Entry[] distance_buckets = new Entry[]{
-        new Entry(133, .85, 1, 10700, 0),
-        new Entry(250, 1.7, 1, 10100, 0),
-        new Entry(280, 1.6, 1, 10300, 0),
-        new Entry(340, 1.5, 1, 10700, 0),
-    };
 
     private void calculateLinearizedSpline() {
         ArrayList<ArrayList<Double>> lCoefficients = new ArrayList<>();
         for (int i = 1; i < coordinates.size(); i++) {
             ArrayList<Double> tempCoefficients = new ArrayList<>();
-            double constant = coordinates.get(i - 1)[1] - coordinates.get(i - 1)[0] * (coordinates.get(i)[1] - coordinates.get(i - 1)[1]) / (coordinates.get(i)[0] - coordinates.get(i - 1)[0]);
-            double slope = (coordinates.get(i)[1] - coordinates.get(i - 1)[1]) / (coordinates.get(i)[0] - coordinates.get(i - 1)[0]);
+            double constant =
+                coordinates.get(i - 1)[1] -
+                coordinates.get(i - 1)[0] *
+                (coordinates.get(i)[1] - coordinates.get(i - 1)[1]) /
+                (coordinates.get(i)[0] - coordinates.get(i - 1)[0]);
+            double slope =
+                (coordinates.get(i)[1] - coordinates.get(i - 1)[1]) /
+                (coordinates.get(i)[0] - coordinates.get(i - 1)[0]);
             tempCoefficients.add(constant);
             tempCoefficients.add(slope);
             lCoefficients.add(tempCoefficients);
@@ -70,15 +57,17 @@ public class DistanceManager {
         int n = coordinates.size();
         ArrayList<ArrayList<Double>> nCoefficients = new ArrayList<>();
         // creating a tridiagonal matrix equation to solve for spline coefficients
-        double[] constant = new double[n - 1], linear = new double[n - 1], quadratic = new double[n - 1], cubic = new double[n - 1]; // absolute coefficients
-        double[] d = new double[n - 1], c = new double[n - 1], b = new double[n - 1], a = new double[n - 1]; // relative coefficients d + c * (x - xi) + b * (x - xi)^2 + a * (x - xi)^3
+        double[] constant = new double[n - 1], linear = new double[n -
+        1], quadratic = new double[n - 1], cubic = new double[n - 1]; // absolute coefficients
+        double[] d = new double[n - 1], c = new double[n - 1], b = new double[n -
+        1], a = new double[n - 1]; // relative coefficients d + c * (x - xi) + b * (x - xi)^2 + a * (x - xi)^3
         double[] si = new double[n], siTemp = new double[n - 2];
         si[0] = 0;
-        si[n] = 0;
+        si[n - 1] = 0;
         double[][] matrix = new double[n - 2][n - 1];
         double[] h = new double[n - 1], y = new double[n];
         for (int i = 1; i < coordinates.size(); i++) {
-            h[i] = coordinates.get(i)[0] - coordinates.get(i - 1)[0];
+            h[i - 1] = coordinates.get(i)[0] - coordinates.get(i - 1)[0];
         }
         for (int i = 0; i < coordinates.size(); i++) {
             y[i] = coordinates.get(i)[1];
@@ -92,8 +81,22 @@ public class DistanceManager {
         for (int i = 1; i < coordinates.size(); i++) { // compression to limit floating point calculation
             ArrayList<Double> tempCoefficients = new ArrayList<>();
 
-            constant[i - 1] = d[i - 1] - c[i - 1] * coordinates.get(i - 1)[0] + b[i - 1] * Math.pow(coordinates.get(i - 1)[0], 2) - c[i - 1] * Math.pow(coordinates.get(i - 1)[0], 3);
-            linear[i - 1] = c[i - 1] - 2 * b[i - 1] * coordinates.get(i - 1)[0] + 3 * a[i - 1] * Math.pow(coordinates.get(i - 1)[0], 2);
+            constant[i - 1] =
+                d[i - 1] -
+                c[i - 1] *
+                coordinates.get(i - 1)[0] +
+                b[i - 1] *
+                Math.pow(coordinates.get(i - 1)[0], 2) -
+                c[i - 1] *
+                Math.pow(coordinates.get(i - 1)[0], 3);
+            linear[i - 1] =
+                c[i - 1] -
+                2 *
+                b[i - 1] *
+                coordinates.get(i - 1)[0] +
+                3 *
+                a[i - 1] *
+                Math.pow(coordinates.get(i - 1)[0], 2);
             quadratic[i - 1] = b[i - 1] - 3 * a[i - 1] * coordinates.get(i - 1)[0];
             cubic[i - 1] = a[i - 1];
 
@@ -127,7 +130,16 @@ public class DistanceManager {
         }
     }
 
-    private void cubicSplineCalculate(int n, double h[], double sig[], double y[], double a[], double b[], double c[], double d[]) { // h, a, b, c, d are of size n, sig and y are of size n+1
+    private void cubicSplineCalculate(
+        int n,
+        double h[],
+        double sig[],
+        double y[],
+        double a[],
+        double b[],
+        double c[],
+        double d[]
+    ) { // h, a, b, c, d are of size n, sig and y are of size n+1
         int i;
         for (i = 0; i < n; i++) {
             d[i] = y[i];
@@ -148,14 +160,17 @@ public class DistanceManager {
             a[i + 1][i] = h[i + 1];
         }
         for (i = 1; i < n; i++) {
-            a[i - 1][n - 1] = (y[i + 1] - y[i]) * 6 / (double) h[i] - (y[i] - y[i - 1]) * 6 / (double) h[i - 1];
+            a[i - 1][n - 1] =
+                (y[i + 1] - y[i]) *
+                6 /
+                (double) h[i] -
+                (y[i] - y[i - 1]) *
+                6 /
+                (double) h[i - 1];
         }
     }
 
     private double getSpindexerOutput(double distance) {
-        //        if(distance < 110){
-        //            return 0;
-        //        }
         return .38;
     }
 
@@ -195,7 +210,7 @@ public class DistanceManager {
         }
     }
 
-    private double getShooterOutputAlt(double distance) {
+    private double getShooterOutput(double distance) {
         for (int i = 0; i < coordinates.size() - 1; i++) {
             if (distance < coordinates.get(i + 1)[0]) { // this is because we will only generate n polynomials for n+1 points
                 double output = 0;
