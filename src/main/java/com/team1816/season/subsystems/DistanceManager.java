@@ -21,8 +21,7 @@ public class DistanceManager {
             add(new Double[] { 105.0, 7700.0 });
             add(new Double[] { 115.0, 8200.0 });
             add(new Double[] { 125.0, 8700.0 });
-            add(new Double[] { 135.0, 8900.0 });
-            add(new Double[] { 140.0, 9000.0 });
+            add(new Double[] { 137.0, 8900.0 });
             add(new Double[] { 145.0, 9200.0 });
             add(new Double[] { 155.0, 9450.0 });
             add(new Double[] { 165.0, 9725.0 });
