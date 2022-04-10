@@ -219,6 +219,9 @@ subsystems:
         constants:
             debug: 0
             useShuffleboard: 0
+            maxDist: 230
+            maxDeltaX: 670
+            allowableDistanceError: 50
             deviation: -12.5
 pcm: 2
 canivoreBusName: highSpeed

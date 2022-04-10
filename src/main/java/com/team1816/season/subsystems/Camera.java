@@ -35,7 +35,7 @@ public class Camera extends Subsystem {
     private static final double VIDEO_WIDTH = 672.0; // px
     public static final double ALLOWABLE_DISTANCE_ERROR = factory.getConstant(
         NAME,
-        "distanceError",
+        "allowableDistanceError",
         50
     ); // deg
     //    private Queue<Double> distances = new PriorityQueue<Double>();
