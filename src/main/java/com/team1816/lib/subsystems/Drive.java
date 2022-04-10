@@ -321,7 +321,6 @@ public abstract class Drive
                     if (entryNotification.value.getBoolean()) {
                         mInfrastructure.resetPigeon(Constants.EmptyRotation);
                         zeroSensors(Constants.ZeroPose);
-                        Constants.prevDrivePose = Constants.ZeroPose;
                         entryNotification.getEntry().setBoolean(false);
                     }
                 },

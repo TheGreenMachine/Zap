@@ -67,7 +67,6 @@ public class Constants {
 
     public static final Pose2d ZeroPose = new Pose2d(0.5, fieldCenterY, EmptyRotation);
     public static Pose2d StartingPose = new Pose2d(0.5, fieldCenterY, EmptyRotation);
-    public static Pose2d prevDrivePose = new Pose2d(0.5, fieldCenterY, EmptyRotation);
 
     // CAN Timeouts
     public static final int kCANTimeoutMs = 10; // use for important on the fly updates

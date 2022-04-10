@@ -376,7 +376,7 @@ public class Robot extends TimedRobot {
                         mControlBoard::getShoot,
                         shooting -> {
                             mShooter.setHood(true);
-                            mSuperstructure.setRevving(shooting, 11920); // TODO TUNE
+                            mSuperstructure.setRevving(shooting, 10150); // TODO TUNE
                             mSuperstructure.setFiring(shooting);
                         }
                     ),
@@ -427,7 +427,6 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         try {
-            Constants.prevDrivePose = mDrive.getPose();
             mEnabledLooper.stop();
 
             mLedManager.setDefaultStatus(LedManager.RobotStatus.DISABLED);
