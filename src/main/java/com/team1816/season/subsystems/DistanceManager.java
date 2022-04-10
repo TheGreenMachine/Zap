@@ -55,7 +55,7 @@ public class DistanceManager {
     private void calculateNaturalCubicSpline() { // this allows for continuous differentiability to the second degree and similar invertibility
         int n = coordinates.size();
         ArrayList<ArrayList<Double>> nCoefficients = new ArrayList<>();
-        // creating a tridiagonal matrix equation to solve for spline coefficients
+        // creating a tri-diagonal matrix equation to solve for spline coefficients
         double[] constant = new double[n - 1], linear = new double[n -
         1], quadratic = new double[n - 1], cubic = new double[n - 1]; // absolute coefficients
         double[] d = new double[n - 1], c = new double[n - 1], b = new double[n -
