@@ -9,7 +9,6 @@ import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import java.util.ArrayList;
 
 @Singleton
@@ -34,7 +33,11 @@ public class Camera extends Subsystem {
     // private static final double CAMERA_FOV = 87.0; // deg
     private static final double CAMERA_FOCAL_LENGTH = 350; // px
     private static final double VIDEO_WIDTH = 672.0; // px
-    public static final double ALLOWABLE_DISTANCE_ERROR = factory.getConstant(NAME, "distanceError", 50); // deg
+    public static final double ALLOWABLE_DISTANCE_ERROR = factory.getConstant(
+        NAME,
+        "distanceError",
+        50
+    ); // deg
     //    private Queue<Double> distances = new PriorityQueue<Double>();
     private ArrayList<Double> distances = new ArrayList<>();
     private final double MAX_DIST = factory.getConstant(NAME, "maxDist", 260);
@@ -100,7 +103,11 @@ public class Camera extends Subsystem {
         state.visionPoint.cY = Double.parseDouble(data[2]);
 
         double dis = Double.parseDouble(data[3]);
-        if (dis > 0 && dis < MAX_DIST && Math.abs(dis - lastDistance) < ALLOWABLE_DISTANCE_ERROR) {
+        if (
+            dis > 0 &&
+            dis < MAX_DIST &&
+            Math.abs(dis - lastDistance) < ALLOWABLE_DISTANCE_ERROR
+        ) {
             distances.add(dis);
         }
 
