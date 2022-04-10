@@ -12,7 +12,11 @@ public class DistanceManager {
         buckets = distance_buckets;
     }
 
-    public static ArrayList<Double[]> coordinates = new ArrayList<>(); // TODO: this needs to be initialized
+    public static ArrayList<Double[]> coordinates = new ArrayList<>() {
+        {
+            add(new Double[] {2.0, 2.0});
+        }
+    }; // TODO: this needs to be initialized properly
     public static ArrayList<ArrayList<Double>> coefficients = new ArrayList<>();
 
     static class Entry {
