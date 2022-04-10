@@ -77,7 +77,7 @@ public class DistanceManager {
         for (int i = 1; i < coordinates.size() - 1; i++) {
             si[i] = siTemp[i - 1];
         }
-        cubicSplineCalculate(n - 1, h, si, y, a, b, c, d);
+        calculateCubicSplineOffsetedCoefficients(n - 1, h, si, y, a, b, c, d);
         for (int i = 1; i < coordinates.size(); i++) { // compression to limit floating point calculation
             ArrayList<Double> tempCoefficients = new ArrayList<>();
 
@@ -87,7 +87,7 @@ public class DistanceManager {
                 coordinates.get(i - 1)[0] +
                 b[i - 1] *
                 Math.pow(coordinates.get(i - 1)[0], 2) -
-                c[i - 1] *
+                a[i - 1] *
                 Math.pow(coordinates.get(i - 1)[0], 3);
             linear[i - 1] =
                 c[i - 1] -
@@ -130,7 +130,7 @@ public class DistanceManager {
         }
     }
 
-    private void cubicSplineCalculate(
+    private void calculateCubicSplineOffsetedCoefficients(
         int n,
         double h[],
         double sig[],
