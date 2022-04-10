@@ -17,7 +17,7 @@ subsystems:
             RREnc: 16
         invertMotor:
             - FRDr
-            - RRDr
+            #- RRDr
         invertCanCoder:
             - FREnc
             - BREnc
@@ -49,7 +49,7 @@ subsystems:
                     azimuth: RRAz
                     canCoder: RREnc
                     constants:
-                        encoderOffset: 2861
+                        encoderOffset: 798
                         invertSensorPhase: 1
             drivePID:
                 slot0:
@@ -128,7 +128,7 @@ subsystems:
                 kP: 0.40 #.45
                 kI: 0.0002
                 kD: 12.50 # 11 - 4.5
-                kF: 0.0499
+                kF: 0.049
                 allowableError: 45
         constants:
             usingPoseForSpeed: 0
@@ -217,12 +217,9 @@ subsystems:
     camera:
         implemented: true
         constants:
-            debug: 1
+            debug: 0
             useShuffleboard: 0
-            deviation: -10
-            maxDist: 260
-            maxDeltaX: 672
-            distanceError: 50
+            deviation: -12.5
 pcm: 2
 canivoreBusName: highSpeed
 constants:
