@@ -79,7 +79,7 @@ public class DistanceManager {
         calculateCubicSplineOffsetedCoefficients(n - 1, h, si, y, a, b, c, d);
         for (int i = 1; i < coordinates.size(); i++) { // compression to limit floating point calculation
             ArrayList<Double> tempCoefficients = new ArrayList<>();
-
+            // converting to ax^3+bx^2+cx+d form
             constant[i - 1] =
                 d[i - 1] -
                 c[i - 1] *
