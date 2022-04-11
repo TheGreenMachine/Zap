@@ -1,5 +1,7 @@
 package com.team1816.season.subsystems;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class DistanceManager {
 
     // State
@@ -19,12 +21,7 @@ public class DistanceManager {
         public final double constant;
         public double bumpOffset;
 
-        Entry(
-            double distance,
-            double multiplier,
-            double constant,
-            double bumpOffset
-        ) {
+        Entry(double distance, double multiplier, double constant, double bumpOffset) {
             this.distance = distance;
             this.multiplier = multiplier;
             this.constant = constant;
@@ -33,6 +30,10 @@ public class DistanceManager {
 
         Entry() {
             this(0, 0, 0, 0);
+        }
+
+        public double calculate(double distance) {
+            return multiplier * distance + constant + bumpOffset;
         }
     }
 
@@ -55,29 +56,41 @@ public class DistanceManager {
     private double getShooterVelocity(double distance) {
         allowBucketBump = true;
 
-        for(int i = 0; i < distance_buckets.length; i++) {
+        for (int i = 0; i < distance_buckets.length; i++) {
             Entry bucket = distance_buckets[i];
-            if(distance < bucket.distance) {
+            if (distance < bucket.distance) {
                 lastBucketIndex = i;
-                return bucket.multiplier * distance + bucket.constant + bucket.bumpOffset;
+                return bucket.calculate(distance);
             }
         }
         return 52.5 * distance + 850; // this was the else statement at the end
     }
 
     public void incrementBucket(double incrVal) {
-        if(allowBucketBump){
+        if (allowBucketBump) {
             allowBucketBump = false;
             distance_buckets[lastBucketIndex].bumpOffset += incrVal;
-            System.out.println("incrementing bucket " + lastBucketIndex + " offset to " + distance_buckets[lastBucketIndex].bumpOffset);
+            System.out.println(
+                "incrementing bucket " +
+                lastBucketIndex +
+                " offset to " +
+                distance_buckets[lastBucketIndex].bumpOffset
+            );
+            outputCurrentBucketOffset();
         } else {
             System.out.println("not incrementing bucket...");
         }
     }
 
     // these are either not being called or aren't currently useful - tune later if needed
-    private double getSpindexerOutput(double distance) { return .38; }
-    private double getElevatorOutput(double distance) { return .5; }
+    private double getSpindexerOutput(double distance) {
+        return .38;
+    }
+
+    private double getElevatorOutput(double distance) {
+        return .5;
+    }
+
     private double getHoodRetracted(double distance) {
         if (distance < 90) {
             return 0;
@@ -105,5 +118,21 @@ public class DistanceManager {
         ELEVATOR,
         SHOOTER,
         HOOD,
+    }
+
+    public void outputBucketOffsets() {
+        for (int i = 0; i < distance_buckets.length; i++) {
+            SmartDashboard.putNumber(
+                "Buckets/Bucket #" + distance_buckets[i].distance,
+                distance_buckets[i].bumpOffset
+            );
+        }
+    }
+
+    public void outputCurrentBucketOffset() {
+        SmartDashboard.putNumber(
+            "Buckets/Bucket #" + distance_buckets[lastBucketIndex].distance,
+            distance_buckets[lastBucketIndex].bumpOffset
+        );
     }
 }

@@ -14,7 +14,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.RobotBase;
 import java.util.List;
 
@@ -300,23 +299,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
 
         return modulesPassed; // not actually doing anything
-    }
-
-    @Override
-    public void initSendable(SendableBuilder builder) {
-        super.initSendable(builder);
-        //        SmartDashboard.putBoolean(
-        //            "Drive/TeleopFieldCentric",
-        //            this.mPeriodicIO.field_relative
-        //        );
-        //        SmartDashboard
-        //            .getEntry("Drive/TeleopFieldCentric")
-        //            .addListener(
-        //                notification -> {
-        //                    this.mPeriodicIO.field_relative = notification.value.getBoolean();
-        //                },
-        //                EntryListenerFlags.kNew | EntryListenerFlags.kUpdate
-        //            );
     }
 
     // getters

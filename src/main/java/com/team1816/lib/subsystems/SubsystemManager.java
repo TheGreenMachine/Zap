@@ -19,8 +19,6 @@ public class SubsystemManager implements ILooper {
 
     public SubsystemManager() {}
 
-    public void outputToSmartDashboard() {}
-
     public boolean checkSubsystems() {
         boolean ret_val = true;
 
@@ -31,6 +29,8 @@ public class SubsystemManager implements ILooper {
 
         return ret_val;
     }
+
+    public void outputToSmartDashboard() {}
 
     public void stop() {
         mAllSubsystems.forEach(Subsystem::stop);

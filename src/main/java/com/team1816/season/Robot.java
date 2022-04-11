@@ -288,6 +288,7 @@ public class Robot extends TimedRobot {
             mTurret.zeroSensors();
             mClimber.zeroSensors();
             mSuperstructure.setStopped(true); // bool statement is for shooter state (stop or coast)
+            mDistanceManager.outputBucketOffsets();
 
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mSubsystemManager.registerDisabledLoops(mDisabledLooper);
@@ -327,11 +328,22 @@ public class Robot extends TimedRobot {
                         pressed -> mSuperstructure.setCollecting(pressed, false)
                     ),
                     createAction(mControlBoard::getUnlockClimber, mClimber::setUnlocked),
-                    createAction(mControlBoard::getRaiseBucket, () -> mDistanceManager.incrementBucket(100)),
-                    createAction(mControlBoard::getLowerBucket, () -> mDistanceManager.incrementBucket(-100)),
-                    createAction(mControlBoard::getIncrementCamDeviation, () -> mCamera.incrementDeviation(5)),
-                    createAction(mControlBoard::getDecrementCamDeviation, () -> mCamera.incrementDeviation(-5)),
-
+                    createAction(
+                        mControlBoard::getRaiseBucket,
+                        () -> mDistanceManager.incrementBucket(100)
+                    ),
+                    createAction(
+                        mControlBoard::getLowerBucket,
+                        () -> mDistanceManager.incrementBucket(-100)
+                    ),
+                    createAction(
+                        mControlBoard::getIncrementCamDeviation,
+                        () -> mCamera.incrementDeviation(5)
+                    ),
+                    createAction(
+                        mControlBoard::getDecrementCamDeviation,
+                        () -> mCamera.incrementDeviation(-5)
+                    ),
                     createAction(
                         mControlBoard::getZeroPose, // line up against ally field wall -> zero
                         () -> {

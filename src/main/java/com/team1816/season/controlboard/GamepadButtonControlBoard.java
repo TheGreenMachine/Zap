@@ -79,7 +79,9 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
 
     @Override
     public boolean getLowerBucket() {
-        return mController.getDPad() == 180 && !mController.getButton(Controller.Button.A);
+        return (
+            mController.getDPad() == 180 && !mController.getButton(Controller.Button.A)
+        );
     }
 
     @Override
