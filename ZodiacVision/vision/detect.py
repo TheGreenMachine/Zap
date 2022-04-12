@@ -1,6 +1,7 @@
 import cv2
 import yaml
 import numpy as np
+
 path = 'vision.yml'
 with open(path, 'r') as file:
     data = yaml.safe_load(file)
@@ -8,8 +9,11 @@ print(data)
 if data['zed']:
     import pyzed.sl as sl
 import math
+
+
 def midpoint(x1, y1, x2, y2):
-    return (x1 + x2)/2, (y1 + y2)/2
+    return (x1 + x2) / 2, (y1 + y2) / 2
+
 
 class Detector:
     def __init__(self, vs):
@@ -23,10 +27,11 @@ class Detector:
         lower_color = (lower['H'], lower['S'], lower['V'])
         upper_color = (upper['H'], upper['S'], upper['V'])
         h, w, _ = frame.shape
-        # image = frame[0:int(0.7 * h), 0:w]
+        frame = frame[0:int(0.7 * h), 0:w]
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         mask = cv2.inRange(hsv, lower_color, upper_color)
         return mask
+
     def findTargetZED(self, mask, zed, point_cloud, frame):
         # Returns contour
         contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -55,7 +60,7 @@ class Detector:
                 self.vs.updateSavedDistance(-1)
                 self.vs.updateSavedCenter(cx_real, cy_real)
                 return largest, second
-            #with open('/home/jetson/ZodiacVision/distanceout.txt', 'a') as f:
+            # with open('/home/jetson/ZodiacVision/distanceout.txt', 'a') as f:
             #    f.write(str(round(distance)) + '\n')
             self.vs.updateSavedDistance(round(distance))
             self.vs.updateSavedCenter(cx_real, cy_real)
@@ -63,6 +68,7 @@ class Detector:
         self.vs.updateSavedDistance(-1)
         self.vs.updateSavedCenter(-1, -1)
         return -1, -1
+
     def findTarget(self, mask):
         contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         if len(contours) > 1:
@@ -71,8 +77,9 @@ class Detector:
             second = cnts[-2]
             return largest, second
         return -1, -1
+
     def postProcess(self, frame, largest, second_largest):
-        drawn_frame = cv2.line(frame, (int(672/2), 0),  (int(672/2), 376), color=(255, 255, 0), thickness=1)
+        drawn_frame = cv2.line(frame, (int(672 / 2), 0), (int(672 / 2), 376), color=(255, 255, 0), thickness=1)
         if second_largest is -1 or largest is -1:
             return frame
         x, y, w, h = cv2.boundingRect(largest)
