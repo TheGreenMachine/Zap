@@ -17,7 +17,7 @@ subsystems:
             RREnc: 16
         invertMotor:
             - FRDr
-            - RRDr
+            #- RRDr
         invertCanCoder:
             - FREnc
             - BREnc
@@ -42,14 +42,14 @@ subsystems:
                     azimuth: RLAz
                     canCoder: RLEnc
                     constants:
-                        encoderOffset: 534
+                        encoderOffset: 3100 #1539
                         invertSensorPhase: 1
                 backRight:
                     drive: RRDr
                     azimuth: RRAz
                     canCoder: RREnc
                     constants:
-                        encoderOffset: 2861
+                        encoderOffset: 798
                         invertSensorPhase: 1
             drivePID:
                 slot0:
@@ -59,11 +59,11 @@ subsystems:
                     kF: 0.0499
             azimuthPID:
                 slot0:
-                    kP: 3.5 # 6.0
+                    kP: 3.8 # 6.0
                     kI: 0.00075
                     kD: 77
                     kF: 0
-                    allowableError: 3
+                    allowableError: 5
         constants:
             maxTicks: 12275.7 # ticks per 100ms
             kP: 0.1 # 0.18 # TODO: tune PID, these are temporary PID values from Zeta
@@ -96,7 +96,7 @@ subsystems:
             slot0:
                 kP: 0.85
                 kI: 0.0003
-                kD: 22.5
+                kD: 20 # 22.5
                 kF: 0 # Should be 0 for position control
                 allowableError: 40
             slot1: # used for vision aiming
@@ -108,7 +108,7 @@ subsystems:
         talons:
             turret: 33 # need to set to pdp port number
         constants:
-            revLimit: 7800 # adjusted for zero-offset
+            revLimit: 8800 # adjusted for zero-offset
             fwdLimit: 40000 # adjusted for zero-offset
             absPosTicksSouth: 0 # absolute
             zeroOffset: 12639 # (turretPPR - non-adjusted fwdLimit - non-adjusted revlimit) / 2
@@ -126,10 +126,10 @@ subsystems:
         pidConfig:
             slot0:
                 kP: 0.40 #.45
-                kI: 0.0003
-                kD: 13.0 # 11 - 4.5
-                kF: 0.0477
-                allowableError: 50
+                kI: 0.0002
+                kD: 12.50 # 11 - 4.5
+                kF: 0.049
+                allowableError: 45
         constants:
             usingPoseForSpeed: 0
             maxTicks: 20700 #
@@ -154,16 +154,17 @@ subsystems:
             slot0: #TODO Change this
                 kP: 0.025 #0.075 #tunned at 4000
                 kI: 0.01
-                kD: 0.006
+                kD: 0.6
                 kF: 0.0
                 allowableError: 5000
         constants:
             maxTicks: 1 # TODO set this value
-            unlockPos: -23400 #TODO set this value
+            unlockPos: -14400 #TODO set this value
             startPos: 0  #TODO set this value
-            firstToSecondRungPos: 130127 #86.5 #TODO set this value
-            secondToLastRungPos: 320610 #TODO set this value
-            lastPos: 371790 #TODO set this value
+            returnPos: 0
+            firstToSecondRungPos: 140127 #86.5 #TODO set this value
+            secondToLastRungPos: 330610 #TODO set this value
+            lastPos: 374790 #TODO set this value
     elevator:
         implemented: true
         talons:
@@ -210,15 +211,18 @@ subsystems:
                 kF: 0.0001
                 allowableError: 10
         constants:
-            revving: 0.5 #.05
-            collecting: -5000 #-5500
-            flush: 4000 #.35
+            revving: -1000 #.05
+            collecting: -3600 #-5000
+            flush: 5000 #.35
     camera:
         implemented: true
         constants:
             debug: 0
             useShuffleboard: 0
-            deviation: 0
+            maxDist: 230
+            maxDeltaX: 670
+            allowableDistanceError: 50
+            deviation: -12.5
 pcm: 2
 canivoreBusName: highSpeed
 constants:
@@ -233,8 +237,9 @@ constants:
     wheelDiameter: 4
     kTrackScrubFactor: 1.0
     maxVelOpenLoop: 3 # 160 # 240 # inches/s # 22560 native units ---30
-    maxVelPathFollowing: 2 # 160 # 240 # inches/s # 22560 native units ---30
+    maxVelPathFollowing: 2.2 # 160 # 240 # inches/s # 22560 native units ---30
     maxAccel: 100 # inches/s^ 2
+    maxAllowablePoseError: 0.1
     ## Logging ##
     logTeleOp: 1 # 0 or 1
     logAuto: 1 # 0 or 1

@@ -29,7 +29,7 @@ public class AutoAimAction implements Action {
                 new AsyncTimer(
                     duration,
                     () -> turret.setControlMode(Turret.ControlMode.CAMERA_FOLLOWING),
-                    () -> turret.setControlMode(prevControlMode)
+                    () -> turret.lockTurret()
                 );
             aimTimer.update();
             turret.setControlMode(Turret.ControlMode.CAMERA_FOLLOWING);
@@ -55,7 +55,7 @@ public class AutoAimAction implements Action {
     @Override
     public void done() {
         if (Constants.kUseCameraInAuto) {
-            turret.setControlMode(prevControlMode);
+            turret.lockTurret();
         }
     }
 }

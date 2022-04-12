@@ -94,7 +94,7 @@ public class DistanceManager {
         //            return 0.05446281000419161* Math.pow(distance, 3) - 35.94545460276647* Math.pow(distance, 2) + 7955.053731608204* distance - 577871.81910454;
         //        }
 
-        if (distance < 90) {
+        if (distance < 80) {
             return Shooter.NEAR_VELOCITY;
         } else if (distance < 105) {
             return 62.5 * distance + 1137.5;
@@ -113,7 +113,7 @@ public class DistanceManager {
         } else if (distance < 165) {
             return 27.5 * distance + 5187.5;
         } else if (distance < 175) {
-            return 47.5 * distance + 1887.5;
+            return 47.5 * distance + 2197.5;
         } else if (distance < 190) {
             return 20 * distance + 6700;
         } else if (distance < 200) {

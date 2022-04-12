@@ -8,7 +8,6 @@ import com.google.inject.Injector;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.LibModule;
 import com.team1816.lib.auto.AutoModeExecutor;
-import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.lib.auto.modes.AutoModeBase;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
@@ -27,7 +26,6 @@ import com.team254.lib.util.SwerveDriveSignal;
 import com.team254.lib.util.TimeDelayedBoolean;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.*;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -78,7 +76,7 @@ public class Robot extends TimedRobot {
 
     // private PowerDistributionPanel pdp = new PowerDistributionPanel();
     private final Turret.ControlMode defaultTurretControlMode =
-        Turret.ControlMode.CENTER_FOLLOWING;
+        Turret.ControlMode.FIELD_FOLLOWING;
     private boolean faulted;
 
     Robot() {
@@ -311,21 +309,21 @@ public class Robot extends TimedRobot {
                     //                        mControlBoard::getCollectorBackspin,
                     //                        () -> mSuperstructure.setCollecting(false)
                     //                    ),
-                    createAction(
-                        mControlBoard::getRunAutoModeInTeleop,
-                        () -> {
-                            System.out.println("Running trajectory !");
-                            SmartDashboard.putString("Teleop Spline", "TWO_BALL_B");
-                            var trajectory = new TrajectoryAction(
-                                TrajectorySet.TWO_BALL_B,
-                                TrajectorySet.TWO_BALL_B_HEADINGS
-                            );
-                            mDrive.zeroSensors(
-                                trajectory.getTrajectory().getInitialPose()
-                            );
-                            trajectory.start();
-                        }
-                    ),
+                    //                    createAction(
+                    //                        mControlBoard::getRunAutoModeInTeleop,
+                    //                        () -> {
+                    //                            System.out.println("Running trajectory !");
+                    //                            SmartDashboard.putString("Teleop Spline", "TWO_BALL_B");
+                    //                            var trajectory = new TrajectoryAction(
+                    //                                TrajectorySet.TWO_BALL_B,
+                    //                                TrajectorySet.TWO_BALL_B_HEADINGS
+                    //                            );
+                    //                            mDrive.zeroSensors(
+                    //                                trajectory.getTrajectory().getInitialPose()
+                    //                            );
+                    //                            trajectory.start();
+                    //                        }
+                    //                    ),
                     createHoldAction(
                         mControlBoard::getCollectorToggle,
                         pressed -> mSuperstructure.setCollecting(pressed, true)
@@ -338,6 +336,7 @@ public class Robot extends TimedRobot {
                     createAction(
                         mControlBoard::getZeroPose, // line up against ally field wall -> zero
                         () -> {
+                            mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
                             mDrive.zeroSensors(Constants.ZeroPose);
                         }
                     ),
@@ -352,7 +351,9 @@ public class Robot extends TimedRobot {
                                     Turret.ControlMode.CAMERA_FOLLOWING
                                 );
                             } else {
-                                mSuperstructure.calculatePoseWithCamera();
+                                if (!RobotBase.isSimulation()) {
+                                    mSuperstructure.updatePoseWithCamera();
+                                }
                                 mTurret.setControlMode(defaultTurretControlMode); // this gets called when the robot inits - this could be bad?
                             }
                         }
@@ -375,7 +376,7 @@ public class Robot extends TimedRobot {
                         mControlBoard::getShoot,
                         shooting -> {
                             mShooter.setHood(true);
-                            mSuperstructure.setRevving(shooting, 11920); // TODO TUNE
+                            mSuperstructure.setRevving(shooting, 10150); // TODO TUNE
                             mSuperstructure.setFiring(shooting);
                         }
                     ),
@@ -392,11 +393,11 @@ public class Robot extends TimedRobot {
                     ),
                     createHoldAction(
                         mControlBoard::getClimberUp,
-                        moving -> mClimber.setClimberPower(moving ? -1 : 0)
+                        moving -> mClimber.setClimberPower(moving ? -.5 : 0)
                     ),
                     createHoldAction(
                         mControlBoard::getClimberDown,
-                        moving -> mClimber.setClimberPower(moving ? 1 : 0)
+                        moving -> mClimber.setClimberPower(moving ? .5 : 0)
                     ),
                     createAction(mControlBoard::getTopClamp, mClimber::setTopClamp),
                     createAction(mControlBoard::getBottomClamp, mClimber::setBottomClamp),
@@ -426,7 +427,6 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         try {
-            Constants.prevDrivePose = mDrive.getPose();
             mEnabledLooper.stop();
 
             mLedManager.setDefaultStatus(LedManager.RobotStatus.DISABLED);
@@ -491,9 +491,9 @@ public class Robot extends TimedRobot {
                 mAutoModeExecutor.stop();
             }
 
+            //            mDrive.zeroSensors(Constants.prevDrivePose);
             mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
             mTurret.zeroSensors();
-            mDrive.zeroSensors(Constants.prevDrivePose);
             mClimber.zeroSensors();
 
             mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
@@ -566,7 +566,7 @@ public class Robot extends TimedRobot {
         try {
             if (RobotController.getUserButton() && !mHasBeenEnabled) {
                 System.out.println("Zeroing Robot!");
-                mDrive.zeroSensors(Constants.ZeroPose);
+                //                mDrive.zeroSensors(Constants.ZeroPose);
                 mLedManager.indicateStatus(LedManager.RobotStatus.SEEN_TARGET);
             } else {
                 if (faulted) {
@@ -588,8 +588,8 @@ public class Robot extends TimedRobot {
                 mRobotState.field.getObject("Trajectory");
                 mAutoModeExecutor.setAutoMode(auto);
                 Constants.StartingPose = auto.getTrajectory().getInitialPose();
-                mRobotState.reset(Constants.StartingPose);
-                mDrive.zeroSensors();
+                //                mRobotState.reset(Constants.StartingPose);
+                //                mDrive.zeroSensors();
             }
         } catch (Throwable t) {
             faulted = true;

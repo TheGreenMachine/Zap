@@ -28,7 +28,7 @@ public class TwoBallModeA extends AutoModeBase {
                     new CollectAction(true)
                 ),
                 trajectory,
-                new AutoAimAndRev(2, 11000), // TODO tune the default value
+                new AutoAimAndRev(3, 11000), // TODO tune the default value
                 new ShootAction(true, true),
                 new WaitAction(4)
             )

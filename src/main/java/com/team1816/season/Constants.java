@@ -67,7 +67,6 @@ public class Constants {
 
     public static final Pose2d ZeroPose = new Pose2d(0.5, fieldCenterY, EmptyRotation);
     public static Pose2d StartingPose = new Pose2d(0.5, fieldCenterY, EmptyRotation);
-    public static Pose2d prevDrivePose = new Pose2d(0.5, fieldCenterY, EmptyRotation);
 
     // CAN Timeouts
     public static final int kCANTimeoutMs = 10; // use for important on the fly updates
@@ -191,7 +190,7 @@ public class Constants {
 
     public static final double kPXController = 10;
     public static final double kPYController = 10;
-    public static final double kPThetaController = 700; // find why this is so big (700)
+    public static final double kPThetaController = 600; // find why this is so big (700)
     public static final double kDThetaController = 0; // 2000;
     public static double kMaxAngularSpeed = factory.getConstant("maxRotVel"); // rad/sec
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI;

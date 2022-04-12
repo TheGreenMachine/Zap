@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.Timer;
 @Singleton
 public class Turret extends Subsystem implements PidProvider {
 
-    public static final double TURRET_JOG_SPEED = 0.04;
+    public static final double TURRET_JOG_SPEED = 0.15;
     public static final double CARDINAL_SOUTH = 0; // deg
     public static final double CARDINAL_EAST = 270; // deg
     public static final double CARDINAL_NORTH = 180; // deg
@@ -38,7 +38,7 @@ public class Turret extends Subsystem implements PidProvider {
     private static final int kPIDGyroIDx = 0;
     private static final int kPIDVisionIDx = 1;
     public static int TURRET_ABS_ENCODER_PPR = 4096;
-    public final int TURRET_PPR;
+    public static int TURRET_PPR;
     private final int TURRET_MASK;
     private final double TURRET_ENC_RATIO;
     public final int ALLOWABLE_ERROR_TICKS;
@@ -119,7 +119,7 @@ public class Turret extends Subsystem implements PidProvider {
     /**
      * converts 0-360 to 0-TURRET_ENCODER_PPR with zero offset
      */
-    public int convertTurretDegreesToTicks(double degrees) {
+    public static int convertTurretDegreesToTicks(double degrees) {
         return ((int) (((degrees) / 360.0) * TURRET_PPR));
     }
 
@@ -270,6 +270,9 @@ public class Turret extends Subsystem implements PidProvider {
 
     @Override
     public void readFromHardware() {
+        desiredTurretPos %= TURRET_PPR;
+        followingTurretPos %= TURRET_PPR;
+
         robotState.vehicle_to_turret =
             Rotation2d.fromDegrees(getActualTurretPositionDegrees());
     }
@@ -351,7 +354,15 @@ public class Turret extends Subsystem implements PidProvider {
 
     private void autoHome() {
         var cameraOffset = cameraFollowingOffset();
+        if (cameraOffset > TURRET_PPR / 3) {
+            cameraOffset = 0;
+        }
         int adj = followingTurretPos + cameraOffset;
+        //        if (adj > TURRET_LIMIT_FORWARD - ZERO_OFFSET) {
+        //            adj = TURRET_LIMIT_FORWARD - ZERO_OFFSET;
+        //        } else if (adj < TURRET_LIMIT_REVERSE - ZERO_OFFSET) {
+        //            adj = TURRET_LIMIT_REVERSE - ZERO_OFFSET;
+        //        }
         if (adj != followingTurretPos) {
             followingTurretPos = adj;
             outputsChanged = true;

@@ -6,6 +6,7 @@ import com.google.inject.Singleton;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
+import edu.wpi.first.wpilibj.Timer;
 
 @Singleton
 public class Collector extends Subsystem {
@@ -105,6 +106,16 @@ public class Collector extends Subsystem {
 
     @Override
     public boolean checkSystem() {
+        setDesiredState(STATE.COLLECTING);
+        Timer.delay(1);
+        if (
+            armDown != armPiston.get() &&
+            Math.abs(intake.getSelectedSensorVelocity(0) - intakeVel) > 1000
+        ) {
+            return false;
+        }
+        setDesiredState(STATE.STOP);
+
         return true;
     }
 

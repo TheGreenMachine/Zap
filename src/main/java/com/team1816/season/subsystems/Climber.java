@@ -26,6 +26,7 @@ public class Climber extends Subsystem {
     private double error;
     private boolean unlocked;
     private boolean needsOverShoot = false;
+    private boolean climbDelay = false;
     private boolean needsClamp = false;
     // Position
     private int currentStage;
@@ -87,7 +88,7 @@ public class Climber extends Subsystem {
     }
 
     public void setUnlocked() {
-        unlocked = !unlocked;
+        unlocked = true;
     }
 
     public void incrementClimberStage() { // we can't go backwards (descend rungs) using this logic, but it shouldn't really matter
@@ -104,6 +105,7 @@ public class Climber extends Subsystem {
             );
             currentStage++;
             needsOverShoot = true;
+            climbDelay = true;
             needsClamp = true;
             outputsChanged = true;
         } else {
@@ -157,6 +159,10 @@ public class Climber extends Subsystem {
     private void positionControl(double position) {
         if (needsOverShoot) { // keep looping if we aren't past the overshoot value
             climber.set(Position, position);
+            if (climbDelay) {
+                climbDelay = false;
+                Timer.delay(1);
+            }
             if (Math.abs(error) < ALLOWABLE_ERROR) {
                 needsOverShoot = false;
             }
@@ -221,7 +227,9 @@ public class Climber extends Subsystem {
     @Override
     public void zeroSensors() {
         currentStage = 0;
+        unlocked = false;
         needsClamp = false;
+        climbDelay = false;
         needsOverShoot = false;
         climber.setSelectedSensorPosition(stages[0].position, 0, Constants.kCANTimeoutMs);
     }
@@ -231,6 +239,16 @@ public class Climber extends Subsystem {
 
     @Override
     public boolean checkSystem() {
+        // currently just running the climber in percent output to make sure it can unclamp and spin
+        // WARNING - pos/neg values may be inverted!
+        climber.set(PercentOutput, 0.2);
+        Timer.delay(.5);
+        climber.set(PercentOutput, 0);
+        Timer.delay(1);
+        climber.set(PercentOutput, -0.2);
+        Timer.delay(2);
+        climber.set(PercentOutput, 0);
+
         return true;
     }
 
