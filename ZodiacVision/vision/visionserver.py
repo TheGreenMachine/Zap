@@ -111,4 +111,5 @@ class ThreadedVisionServer(object):
         elif key == "SAVE":
             dumpYML()
         print(self.yml_data)
+        dumpYML()
 

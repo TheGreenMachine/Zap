@@ -240,6 +240,7 @@ constants:
     maxVelOpenLoop: 3 # 160 # 240 # inches/s # 22560 native units ---30
     maxVelPathFollowing: 2.2 # 160 # 240 # inches/s # 22560 native units ---30
     maxAccel: 100 # inches/s^ 2
+    maxAllowablePoseError: 0.1
     ## Logging ##
     logTeleOp: 1 # 0 or 1
     logAuto: 1 # 0 or 1

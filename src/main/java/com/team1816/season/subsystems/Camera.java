@@ -4,9 +4,11 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.vision.VisionSocket;
+import com.team1816.season.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
@@ -63,6 +65,25 @@ public class Camera extends Subsystem {
     }
 
     public double getDeltaX() {
+        if (RobotBase.isSimulation()) { //simulate feedback loop
+            double opposite =
+                Constants.fieldCenterY - robotState.getFieldToTurretPos().getY();
+            double adjacent =
+                Constants.fieldCenterX - robotState.getFieldToTurretPos().getX();
+            double targetTurretAngle = Math.atan(opposite / adjacent);
+            if (adjacent < 0) {
+                targetTurretAngle += Math.PI;
+            }
+            targetTurretAngle *= 180 / Math.PI;
+            double currentTurretAngle = robotState
+                .getFieldToTurretPos()
+                .getRotation()
+                .getDegrees();
+            if (currentTurretAngle < 0 && adjacent < 0) {
+                currentTurretAngle += 360;
+            }
+            return (.5 * (currentTurretAngle - targetTurretAngle)); //scaling for the feedback loop
+        }
         return state.visionPoint.deltaX;
     }
 

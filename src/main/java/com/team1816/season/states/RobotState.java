@@ -16,7 +16,7 @@ public class RobotState {
 
     public final Field2d field = new Field2d();
     public Pose2d field_to_vehicle = Constants.EmptyPose;
-    public Pose2d field_to_turret_pos = Constants.EmptyPose;
+    public Pose2d estimated_field_to_vehicle = Constants.EmptyPose;
     public Rotation2d vehicle_to_turret = Constants.EmptyRotation;
     public Twist2d delta_field_to_vehicle = new Twist2d();
     public ChassisSpeeds chassis_speeds = new ChassisSpeeds();
@@ -73,15 +73,13 @@ public class RobotState {
         );
     }
 
-    public Twist2d getDeltaPoseToCenter() {
-        return delta_field_to_vehicle; // make conversion from field relative deltaPose to center relative deltaPose
-    }
-
     public double getEstimatedDistanceToGoal() {
         double distanceToGoalMeters = field_to_vehicle
             .getTranslation()
             .getDistance(Constants.targetPos.getTranslation());
-        return Units.metersToInches(distanceToGoalMeters);
+        return Math.sqrt(
+            Math.pow(Units.metersToInches(distanceToGoalMeters), 2) + 5629.5
+        );
     }
 
     public synchronized void outputToSmartDashboard() {
