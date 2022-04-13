@@ -55,9 +55,9 @@ public class Camera extends Subsystem {
     }
 
     private double parseDeltaX(double x) {
-        if (Math.abs(x) > MAX_DELTA_X) { // ignore if x bigger than max allowed value
-            return 0;
-        }
+        //        if (Math.abs(x) > MAX_DELTA_X) { // ignore if x bigger than max allowed value
+        //            return 0;
+        //        }
         double deltaXPixels = (x - (VIDEO_WIDTH / 2)); // Calculate deltaX from center of screen
         double base =
             Math.toDegrees(Math.atan2(deltaXPixels, CAMERA_FOCAL_LENGTH)) * 0.64;
@@ -84,6 +84,7 @@ public class Camera extends Subsystem {
             }
             return (.5 * (currentTurretAngle - targetTurretAngle)); //scaling for the feedback loop
         }
+        System.out.println("delta x = " + state.visionPoint.deltaX);
         return state.visionPoint.deltaX;
     }
 
@@ -122,6 +123,7 @@ public class Camera extends Subsystem {
         }
         state.visionPoint.cX = Double.parseDouble(data[1]);
         state.visionPoint.cY = Double.parseDouble(data[2]);
+        System.out.println(state.visionPoint.cX);
 
         double dis = Double.parseDouble(data[3]);
         if (
@@ -132,7 +134,7 @@ public class Camera extends Subsystem {
             distances.add(dis);
         }
 
-        if (distances.size() > 4) { // note - this number was 5 before!
+        if (distances.size() > 2) { // note - this number was 5 before!
             double distanceSum = 0;
             for (int i = 0; i < distances.size(); i++) {
                 distanceSum += distances.get(i);
@@ -152,7 +154,7 @@ public class Camera extends Subsystem {
         if (socket.shouldReconnect()) {
             socket.connect();
         }
-        if (socket.isConnected() && loops % 2 == 0) {
+        if (socket.isConnected()) {
             cachePoint();
         }
         loops++;

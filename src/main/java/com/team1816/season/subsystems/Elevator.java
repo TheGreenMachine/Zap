@@ -100,7 +100,7 @@ public class Elevator extends Subsystem {
     @Override
     public void readFromHardware() {
         if (state != robotState.elevatorState) {
-            if(isVelocity){
+            if (isVelocity) {
                 actualOutput = elevator.getSelectedSensorVelocity(0);
                 if (Math.abs(elevatorOutput) == 0) {
                     robotState.elevatorState = STATE.STOP;

@@ -100,9 +100,9 @@ subsystems:
                 kF: 0 # Should be 0 for position control
                 allowableError: 40
             slot1: # used for vision aiming
-                kP: 0.85
+                kP: 1.25
                 kI: 0.0003
-                kD: 22.5
+                kD: 40.5
                 kF: 0 # Should be 0 for position control
                 allowableError: 40
         talons:
@@ -175,7 +175,7 @@ subsystems:
                 kI: 0
                 kD: 2
                 kF: 0.05
-                allowableError: 100
+                allowableError: 750
         invertMotor:
             - elevator
         constants:
@@ -191,8 +191,8 @@ subsystems:
         solenoids:
             feederFlap: -1
         constants:
-            collectPow: -0.10
-            indexPow: -0.3
+            collectPow: -0.05
+            indexPow: -0.1
             flushPow: -1
             coastPow: -0.05
             firePow: 0.30
@@ -212,7 +212,7 @@ subsystems:
                 kF: 0.0001
                 allowableError: 10
         constants:
-            revving: -1000 #.05
+            revving: 1000 #.05
             collecting: -3600 #-5000
             flush: 5000 #.35
     camera:
@@ -223,7 +223,7 @@ subsystems:
             maxDist: 230
             maxDeltaX: 670
             allowableDistanceError: 50
-            deviation: -12.5
+            deviation: 0
 pcm: 2
 canivoreBusName: highSpeed
 constants:
@@ -251,7 +251,7 @@ constants:
     useCameraInAuto: 1
     teleopFieldCentric: 1 # 0 or 1
     compressorEnabled: 1 # 0 or 1
-    kLooperDt: .050 # seconds
+    kLooperDt: .035 # seconds
     pdIsRev: 1 # power distribution
     phIsRev: 0 # pneumatics control
     resetFactoryDefaults: 0 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret
