@@ -232,16 +232,4 @@ public class Superstructure {
             robotState.field_to_vehicle = newRobotPose;
         }
     }
-
-    public double getPredictedDistance(DistanceManager.SUBSYSTEM subsystem) {
-        Translation2d shooterDist = new Translation2d(
-            distanceManager.getOutput(camera.getDistance(), subsystem),
-            robotState.getLatestFieldToTurret()
-        );
-        Translation2d motionBuffer = new Translation2d(
-            robotState.delta_field_to_vehicle.dx,
-            robotState.delta_field_to_vehicle.dy
-        );
-        return (motionBuffer.plus(shooterDist)).getNorm();
-    }
 }

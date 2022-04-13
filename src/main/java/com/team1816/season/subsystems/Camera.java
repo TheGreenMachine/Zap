@@ -66,29 +66,16 @@ public class Camera extends Subsystem {
 
     public double getDeltaX() {
         if (RobotBase.isSimulation()) { //simulate feedback loop
-            double opposite =
-                Constants.fieldCenterY - robotState.getFieldToTurretPos().getY();
-            double adjacent =
-                Constants.fieldCenterX - robotState.getFieldToTurretPos().getX();
-            double targetTurretAngle = Math.atan(opposite / adjacent);
-            if (adjacent < 0) {
-                targetTurretAngle += Math.PI;
-            }
-            targetTurretAngle *= 180 / Math.PI;
-            double currentTurretAngle = robotState
-                .getFieldToTurretPos()
-                .getRotation()
-                .getDegrees();
-            if (currentTurretAngle < 0 && adjacent < 0) {
-                currentTurretAngle += 360;
-            }
-            return (.5 * (currentTurretAngle - targetTurretAngle)); //scaling for the feedback loop
+            return simulateDeltaX();
+        } else {
+            return state.visionPoint.deltaX;
         }
-        System.out.println("delta x = " + state.visionPoint.deltaX);
-        return state.visionPoint.deltaX;
     }
 
     public double getDistance() {
+        if (RobotBase.isSimulation()) {
+            return robotState.getEstimatedDistanceToGoal();
+        }
         if (factory.getConstant(NAME, "useShuffleboard", 0) > 0) {
             return shuffleBoardDistance;
         }
@@ -190,5 +177,25 @@ public class Camera extends Subsystem {
     public void setShuffleBoardDistance(double shuffleBoardDistance) {
         this.shuffleBoardDistance = shuffleBoardDistance;
         System.out.println("setting camera dummy distance to " + shuffleBoardDistance);
+    }
+
+    public double simulateDeltaX() {
+        double opposite =
+            Constants.fieldCenterY - robotState.getFieldToTurretPos().getY();
+        double adjacent =
+            Constants.fieldCenterX - robotState.getFieldToTurretPos().getX();
+        double targetTurretAngle = Math.atan(opposite / adjacent);
+        if (adjacent < 0) {
+            targetTurretAngle += Math.PI;
+        }
+        targetTurretAngle *= 180 / Math.PI;
+        double currentTurretAngle = robotState
+            .getFieldToTurretPos()
+            .getRotation()
+            .getDegrees();
+        if (currentTurretAngle < 0 && adjacent < 0) {
+            currentTurretAngle += 360;
+        }
+        return (.5 * (currentTurretAngle - targetTurretAngle)); //scaling for the feedback loop
     }
 }
