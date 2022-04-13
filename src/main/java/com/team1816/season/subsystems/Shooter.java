@@ -133,6 +133,7 @@ public class Shooter extends Subsystem implements PidProvider {
 
     public void setVelocity(double velocity) {
         velocityDemand = velocity;
+        System.out.println("velocity shooter demand = " + velocityDemand);
         shooterMain.set(ControlMode.Velocity, velocityDemand);
     }
 
@@ -189,7 +190,6 @@ public class Shooter extends Subsystem implements PidProvider {
                     break;
             }
             hood.set(hoodOut);
-            System.out.println("velocity shooter demand = " + velocityDemand);
         }
     }
 

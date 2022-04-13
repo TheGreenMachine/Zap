@@ -175,7 +175,7 @@ subsystems:
                 kI: 0
                 kD: 2
                 kF: 0.05
-                allowableError: 750
+                allowableError: 1000 # 750
         invertMotor:
             - elevator
         constants:
@@ -191,11 +191,11 @@ subsystems:
         solenoids:
             feederFlap: -1
         constants:
-            collectPow: -0.05
-            indexPow: -0.1
+            collectPow: -0.1
+            indexPow: -0.25
             flushPow: -1
-            coastPow: -0.05
-            firePow: 0.30
+            coastPow: -0.1
+            firePow: 0.50
     collector:
         implemented: true
         sparkmaxes:

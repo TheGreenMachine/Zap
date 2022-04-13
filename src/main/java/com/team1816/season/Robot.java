@@ -312,14 +312,6 @@ public class Robot extends TimedRobot {
                 new ActionManager(
                     // Driver Gamepad
                     //                    createAction(
-                    //                        mControlBoard::getCollectorToggle,
-                    //                        () -> mSuperstructure.setCollecting(true)
-                    //                    ),
-                    //                    createAction(
-                    //                        mControlBoard::getCollectorBackspin,
-                    //                        () -> mSuperstructure.setCollecting(false)
-                    //                    ),
-                    //                    createAction(
                     //                        mControlBoard::getRunAutoModeInTeleop,
                     //                        () -> {
                     //                            System.out.println("Running trajectory !");
@@ -344,6 +336,16 @@ public class Robot extends TimedRobot {
                     ),
                     createAction(mControlBoard::getUnlockClimber, mClimber::setUnlocked),
                     createAction(
+                        mControlBoard::getZeroPose, // line up against ally field wall -> zero
+                        () -> {
+                            mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
+                            mDrive.zeroSensors(Constants.ZeroPose);
+                        }
+                    ),
+                    createHoldAction(mControlBoard::getSlowMode, mDrive::setSlowMode),
+                    createHoldAction(mControlBoard::getBrakeMode, mDrive::setBrakeMode),
+                    // Operator Gamepad
+                    createAction(
                         mControlBoard::getRaiseBucket,
                         () -> mDistanceManager.incrementBucket(100)
                     ),
@@ -359,16 +361,6 @@ public class Robot extends TimedRobot {
                         mControlBoard::getDecrementCamDeviation,
                         () -> mCamera.incrementDeviation(-5)
                     ),
-                    createAction(
-                        mControlBoard::getZeroPose, // line up against ally field wall -> zero
-                        () -> {
-                            mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
-                            mDrive.zeroSensors(Constants.ZeroPose);
-                        }
-                    ),
-                    createHoldAction(mControlBoard::getSlowMode, mDrive::setSlowMode),
-                    createHoldAction(mControlBoard::getBrakeMode, mDrive::setBrakeMode),
-                    // Operator Gamepad
                     createHoldAction(
                         mControlBoard::getAutoAim,
                         pressed -> {
@@ -436,7 +428,6 @@ public class Robot extends TimedRobot {
                             } else {
                                 mDrive.setOpenLoop(SwerveDriveSignal.SET_CLIMB);
                                 mTurret.setTurretAngle(Turret.CARDINAL_SOUTH - 30);
-                                // TODO: If possible, set drivetrain wheels to be inline with climb direction and put in coast mode
                             }
 
                             mClimber.incrementClimberStage();

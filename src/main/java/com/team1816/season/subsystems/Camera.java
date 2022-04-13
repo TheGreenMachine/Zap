@@ -11,7 +11,6 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import java.util.ArrayList;
 
 @Singleton
@@ -52,9 +51,6 @@ public class Camera extends Subsystem {
     }
 
     private double parseDeltaX(double x) {
-        //        if (Math.abs(x) > MAX_DELTA_X) { // ignore if x bigger than max allowed value
-        //            return 0;
-        //        }
         double deltaXPixels = (x - (VIDEO_WIDTH / 2)); // Calculate deltaX from center of screen
         double base =
             Math.toDegrees(Math.atan2(deltaXPixels, CAMERA_FOCAL_LENGTH)) * 0.64;
@@ -132,6 +128,9 @@ public class Camera extends Subsystem {
     }
 
     public void readFromHardware() {
+        if (RobotBase.isSimulation()) {
+            return;
+        }
         if (socket.shouldReconnect()) {
             socket.connect();
         }

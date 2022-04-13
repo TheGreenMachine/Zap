@@ -70,11 +70,11 @@ public class DistanceManager {
 
     public void incrementBucket(double incrVal) {
         if (allowBucketOffset) {
-            allowBucketOffset = false;
+//            allowBucketOffset = false;
             distance_buckets[lastBucketIndex].bumpOffset += incrVal;
             System.out.println(
-                "incrementing bucket " +
-                lastBucketIndex +
+                "incrementing bucket #" +
+                    distance_buckets[lastBucketIndex].distance +
                 " offset to " +
                 distance_buckets[lastBucketIndex].bumpOffset
             );
