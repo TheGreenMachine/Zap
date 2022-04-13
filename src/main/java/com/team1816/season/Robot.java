@@ -60,6 +60,7 @@ public class Robot extends TimedRobot {
     private final Climber mClimber;
     private final Camera mCamera;
     private final LedManager mLedManager;
+    private final DistanceManager mDistanceManager;
 
     private LatchedBoolean mWantsAutoExecution = new LatchedBoolean();
     private LatchedBoolean mWantsAutoInterrupt = new LatchedBoolean();
@@ -94,6 +95,7 @@ public class Robot extends TimedRobot {
         mShooter = injector.getInstance(Shooter.class);
         mRobotState = injector.getInstance(RobotState.class);
         mInfrastructure = injector.getInstance(Infrastructure.class);
+        mDistanceManager = injector.getInstance(DistanceManager.class);
         mLedManager = injector.getInstance(LedManager.class);
         mSubsystemManager = injector.getInstance(SubsystemManager.class);
         mAutoModeSelector = injector.getInstance(AutoModeSelector.class);
@@ -293,6 +295,7 @@ public class Robot extends TimedRobot {
             mTurret.zeroSensors();
             mClimber.zeroSensors();
             mSuperstructure.setStopped(true); // bool statement is for shooter state (stop or coast)
+            mDistanceManager.outputBucketOffsets();
 
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mSubsystemManager.registerDisabledLoops(mDisabledLooper);
@@ -340,6 +343,22 @@ public class Robot extends TimedRobot {
                         pressed -> mSuperstructure.setCollecting(pressed, false)
                     ),
                     createAction(mControlBoard::getUnlockClimber, mClimber::setUnlocked),
+                    createAction(
+                        mControlBoard::getRaiseBucket,
+                        () -> mDistanceManager.incrementBucket(100)
+                    ),
+                    createAction(
+                        mControlBoard::getLowerBucket,
+                        () -> mDistanceManager.incrementBucket(-100)
+                    ),
+                    createAction(
+                        mControlBoard::getIncrementCamDeviation,
+                        () -> mCamera.incrementDeviation(5)
+                    ),
+                    createAction(
+                        mControlBoard::getDecrementCamDeviation,
+                        () -> mCamera.incrementDeviation(-5)
+                    ),
                     createAction(
                         mControlBoard::getZeroPose, // line up against ally field wall -> zero
                         () -> {

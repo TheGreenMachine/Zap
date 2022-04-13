@@ -310,8 +310,6 @@ public abstract class Drive
             () -> this.getControlState().toString(),
             null
         );
-        SmartDashboard.putNumber("Drive/Vector Direction", 0);
-        SmartDashboard.putNumber("Drive/Robot Velocity", 0);
 
         SmartDashboard.putBoolean("Drive/Zero Sensors", false);
         SmartDashboard
@@ -319,7 +317,7 @@ public abstract class Drive
             .addListener(
                 entryNotification -> {
                     if (entryNotification.value.getBoolean()) {
-                        mInfrastructure.resetPigeon(Constants.EmptyRotation);
+                        //                        mInfrastructure.resetPigeon(Constants.EmptyRotation);
                         zeroSensors(Constants.ZeroPose);
                         entryNotification.getEntry().setBoolean(false);
                     }

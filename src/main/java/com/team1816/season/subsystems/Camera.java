@@ -11,18 +11,11 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import java.util.ArrayList;
 
 @Singleton
 public class Camera extends Subsystem {
-
-    private static final String NAME = "camera";
-
-    public final VisionSocket socket = new VisionSocket();
-
-    public static boolean cameraEnabled;
-
-    public double shuffleBoardDistance = -1;
 
     // Components
     @Inject
@@ -31,8 +24,10 @@ public class Camera extends Subsystem {
     @Inject
     static LedManager led;
 
+    public final VisionSocket socket = new VisionSocket();
     // Constants
     // private static final double CAMERA_FOV = 87.0; // deg
+    private static final String NAME = "camera";
     private static final double CAMERA_FOCAL_LENGTH = 700; // px
     private static final double VIDEO_WIDTH = 1280; // px
     public static final double ALLOWABLE_DISTANCE_ERROR = factory.getConstant(
@@ -41,13 +36,15 @@ public class Camera extends Subsystem {
         50
     ); // deg
     //    private Queue<Double> distances = new PriorityQueue<Double>();
-    private ArrayList<Double> distances = new ArrayList<>();
     private final double MAX_DIST = factory.getConstant(NAME, "maxDist", 260);
     private final double MAX_DELTA_X = factory.getConstant(NAME, "maxDeltaX", 672);
 
     // state
+    private ArrayList<Double> distances = new ArrayList<>();
+    public static boolean cameraEnabled;
     private int loops = 0;
     private double lastDistance = 0;
+    private double deviation = factory.getConstant(NAME, "deviation", 0);
 
     public Camera() {
         super(NAME);
@@ -75,9 +72,6 @@ public class Camera extends Subsystem {
     public double getDistance() {
         if (RobotBase.isSimulation()) {
             return robotState.getEstimatedDistanceToGoal();
-        }
-        if (factory.getConstant(NAME, "useShuffleboard", 0) > 0) {
-            return shuffleBoardDistance;
         }
         double deviation = factory.getConstant(NAME, "deviation", 0);
         return state.visionPoint.dist + deviation;
@@ -165,18 +159,22 @@ public class Camera extends Subsystem {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        SmartDashboard.putNumber("Dummy Camera Distance", this.shuffleBoardDistance);
+        SmartDashboard.putNumber("Camera/Camera Deviation", deviation);
         SmartDashboard
-            .getEntry("Dummy Camera Distance")
+            .getEntry("Camera Deviation")
             .addListener(
-                notification -> setShuffleBoardDistance(notification.value.getDouble()),
+                notification -> setCameraDeviation(notification.value.getDouble()),
                 EntryListenerFlags.kNew | EntryListenerFlags.kUpdate
             );
     }
 
-    public void setShuffleBoardDistance(double shuffleBoardDistance) {
-        this.shuffleBoardDistance = shuffleBoardDistance;
-        System.out.println("setting camera dummy distance to " + shuffleBoardDistance);
+    public void setCameraDeviation(double shuffleboardDeviation) {
+        deviation = shuffleboardDeviation;
+        System.out.println("setting camera deviation to " + shuffleboardDeviation);
+    }
+
+    public void incrementDeviation(double incrVal) {
+        deviation += incrVal;
     }
 
     public double simulateDeltaX() {

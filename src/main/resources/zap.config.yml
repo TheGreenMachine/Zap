@@ -109,7 +109,7 @@ subsystems:
             turret: 33 # need to set to pdp port number
         constants:
             revLimit: 8800 # adjusted for zero-offset
-            fwdLimit: 43000 # adjusted for zero-offset
+            fwdLimit: 42500 # adjusted for zero-offset
             absPosTicksSouth: 0 # absolute
             zeroOffset: 12639 # (turretPPR - non-adjusted fwdLimit - non-adjusted revlimit) / 2
             encPPR: 4096

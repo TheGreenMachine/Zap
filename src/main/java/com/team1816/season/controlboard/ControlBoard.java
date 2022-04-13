@@ -125,8 +125,23 @@ public class ControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getFeederFlapIn() {
-        return mButtonControlBoard.getFeederFlapIn();
+    public boolean getRaiseBucket() {
+        return mButtonControlBoard.getRaiseBucket();
+    }
+
+    @Override
+    public boolean getLowerBucket() {
+        return mButtonControlBoard.getLowerBucket();
+    }
+
+    @Override
+    public boolean getIncrementCamDeviation() {
+        return mButtonControlBoard.getIncrementCamDeviation();
+    }
+
+    @Override
+    public boolean getDecrementCamDeviation() {
+        return mButtonControlBoard.getDecrementCamDeviation();
     }
 
     @Override
