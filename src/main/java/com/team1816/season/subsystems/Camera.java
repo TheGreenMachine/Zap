@@ -148,7 +148,7 @@ public class Camera extends Subsystem {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        SmartDashboard.putNumber("Camera Deviation", deviation);
+        SmartDashboard.putNumber("Camera/Camera Deviation", deviation);
         SmartDashboard
             .getEntry("Camera Deviation")
             .addListener(

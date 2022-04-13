@@ -6,12 +6,13 @@ public class DistanceManager {
 
     // State
     private int lastBucketIndex;
-    private boolean allowBucketBump;
+    private boolean allowBucketOffset;
 
     // Constants
     public DistanceManager() {
         lastBucketIndex = 0;
-        allowBucketBump = false;
+        allowBucketOffset = false;
+        distance_buckets[lastBucketIndex].calculateAndUpdate(0);
     }
 
     static class Entry {
@@ -32,7 +33,8 @@ public class DistanceManager {
             this(0, 0, 0, 0);
         }
 
-        public double calculate(double distance) {
+        public double calculateAndUpdate(double distance) {
+            SmartDashboard.putNumber("Camera/Last Distance", distance);
             return multiplier * distance + constant + bumpOffset;
         }
     }
@@ -54,21 +56,21 @@ public class DistanceManager {
     };
 
     private double getShooterVelocity(double distance) {
-        allowBucketBump = true;
+        allowBucketOffset = true;
 
         for (int i = 0; i < distance_buckets.length; i++) {
             Entry bucket = distance_buckets[i];
             if (distance < bucket.distance) {
                 lastBucketIndex = i;
-                return bucket.calculate(distance);
+                return bucket.calculateAndUpdate(distance);
             }
         }
         return 52.5 * distance + 850; // this was the else statement at the end
     }
 
     public void incrementBucket(double incrVal) {
-        if (allowBucketBump) {
-            allowBucketBump = false;
+        if (allowBucketOffset) {
+            allowBucketOffset = false;
             distance_buckets[lastBucketIndex].bumpOffset += incrVal;
             System.out.println(
                 "incrementing bucket " +

@@ -219,7 +219,7 @@ subsystems:
         constants:
             debug: 1
             useShuffleboard: 0
-            deviation: -10
+            deviation: 0
             maxDist: 260
             maxDeltaX: 672
             distanceError: 50
