@@ -163,7 +163,7 @@ public class Climber extends Subsystem {
                 climbDelay = false;
                 Timer.delay(1);
             }
-            if (Math.abs(error) < ALLOWABLE_ERROR) {
+            if (Math.abs(error) < ALLOWABLE_ERROR && currentStage != 2) {
                 needsOverShoot = false;
             }
             outputsChanged = true;

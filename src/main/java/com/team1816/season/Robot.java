@@ -425,6 +425,8 @@ public class Robot extends TimedRobot {
                             if (mClimber.getCurrentStage() == 0) {
                                 mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
                                 mSuperstructure.setStopped(true);
+                                mClimber.incrementClimberStage();
+                                Timer.delay(1.5);
                             } else {
                                 mDrive.setOpenLoop(SwerveDriveSignal.SET_CLIMB);
                                 mTurret.setTurretAngle(Turret.CARDINAL_SOUTH - 30);

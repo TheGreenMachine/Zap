@@ -41,7 +41,7 @@ public class Spindexer extends Subsystem {
         INDEX = factory.getConstant(NAME, "indexPow", -0.25);
         FLUSH = factory.getConstant(NAME, "flushPow", -1);
         FIRE = factory.getConstant(NAME, "firePow", 1);
-        COAST = factory.getConstant(NAME, "firePow", -.1);
+        COAST = factory.getConstant(NAME, "coastPow", -.1);
         POWER_THRESHOLD = .1;
     }
 

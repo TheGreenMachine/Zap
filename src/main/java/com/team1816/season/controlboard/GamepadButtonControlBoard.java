@@ -74,24 +74,24 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
 
     @Override
     public boolean getRaiseBucket() {
-        return mController.getDPad() == 0 && !mController.getButton(Controller.Button.A);
+        return mController.getDPad() == 0; // && !mController.getButton(Controller.Button.A);
     }
 
     @Override
     public boolean getLowerBucket() {
         return (
-            mController.getDPad() == 180 && !mController.getButton(Controller.Button.A)
+            mController.getDPad() == 180 // && !mController.getButton(Controller.Button.A)
         );
     }
 
     @Override
     public boolean getIncrementCamDeviation() {
-        return mController.getDPad() == 0 && mController.getButton(Controller.Button.A);
+        return false; // mController.getDPad() == 0 && mController.getButton(Controller.Button.A);
     }
 
     @Override
     public boolean getDecrementCamDeviation() {
-        return mController.getDPad() == 180 && mController.getButton(Controller.Button.A);
+        return false; //mController.getDPad() == 180 && mController.getButton(Controller.Button.A);
     }
 
     @Override

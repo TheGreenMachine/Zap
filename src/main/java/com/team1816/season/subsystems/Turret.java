@@ -36,7 +36,7 @@ public class Turret extends Subsystem implements PidProvider {
     // Constants
     private static final int kPrimaryCloseLoop = 0;
     private static final int kPIDGyroIDx = 0;
-    private static final int kPIDVisionIDx = 1;
+    private static final int kPIDVisionIDx = 0;
     public static int TURRET_ABS_ENCODER_PPR = 4096;
     public static int TURRET_PPR;
     private final int TURRET_MASK;
@@ -311,7 +311,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     private int cameraFollowingOffset() {
         var delta = -camera.getDeltaX();
-        return ((int) (delta * 28)) - ABS_TICKS_SOUTH;
+        return ((int) (delta * 26)) - ABS_TICKS_SOUTH;
     }
 
     private int fieldFollowingOffset() {

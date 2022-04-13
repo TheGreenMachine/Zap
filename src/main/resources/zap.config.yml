@@ -94,22 +94,16 @@ subsystems:
         implemented: true
         pidConfig:
             slot0:
-                kP: 0.85
-                kI: 0.0003
-                kD: 20 # 22.5
-                kF: 0 # Should be 0 for position control
-                allowableError: 40
-            slot1: # used for vision aiming
                 kP: 1.25
-                kI: 0.0003
-                kD: 40.5
-                kF: 0 # Should be 0 for position control
-                allowableError: 40
+                    kI: 0.0003
+                    kD: 40.5
+                    kF: 0 # Should be 0 for position control
+                    allowableError: 40
         talons:
             turret: 33 # need to set to pdp port number
         constants:
             revLimit: 8800 # adjusted for zero-offset
-            fwdLimit: 42500 # adjusted for zero-offset
+            fwdLimit: 41500 # adjusted for zero-offset
             absPosTicksSouth: 0 # absolute
             zeroOffset: 12639 # (turretPPR - non-adjusted fwdLimit - non-adjusted revlimit) / 2
             encPPR: 4096
@@ -191,11 +185,11 @@ subsystems:
         solenoids:
             feederFlap: -1
         constants:
-            collectPow: -0.1
-            indexPow: -0.25
+            collectPow: 0.5
+            indexPow: -0.5
             flushPow: -1
-            coastPow: -0.1
-            firePow: 0.50
+            coastPow: 0.00
+            firePow: 0.30
     collector:
         implemented: true
         sparkmaxes:
@@ -212,14 +206,13 @@ subsystems:
                 kF: 0.0001
                 allowableError: 10
         constants:
-            revving: 1000 #.05
+            revving: 2000 #.05
             collecting: -3600 #-5000
             flush: 5000 #.35
     camera:
         implemented: true
         constants:
             debug: 0
-            useShuffleboard: 0
             maxDist: 230
             maxDeltaX: 670
             allowableDistanceError: 50

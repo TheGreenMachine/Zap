@@ -97,11 +97,11 @@ public class Superstructure {
         if (revving) {
             shooter.setDesiredState(Shooter.STATE.REVVING);
             if (Camera.cameraEnabled || usePoseTrack) {
-                if (turret.getControlMode() == Turret.ControlMode.ABSOLUTE_MADNESS) {
-                    shootWhileMoving(camera.getDistance());
-                } else {
-                    shooter.setVelocity(getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
-                }
+                //                if (turret.getControlMode() == Turret.ControlMode.ABSOLUTE_MADNESS) {
+                //                    shootWhileMoving(camera.getDistance());
+                //                } else {
+                shooter.setVelocity(getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
+                //                }
                 shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) > 0);
             } else {
                 shooter.setVelocity(shooterVel);
@@ -162,12 +162,6 @@ public class Superstructure {
             double camDis = camera.getDistance();
             System.out.println("tracked camera distance is . . . " + camDis);
             return distanceManager.getOutput(camDis, subsystem);
-        } else if (usePoseTrack) {
-            System.out.println("using position to plan shooter velocity");
-            return distanceManager.getOutput(
-                robotState.getEstimatedDistanceToGoal(),
-                subsystem
-            );
         } else {
             System.out.println("using neither poseTracking nor vision ! - not intended");
             return -1;
