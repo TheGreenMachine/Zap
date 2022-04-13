@@ -31,8 +31,8 @@ public class Camera extends Subsystem {
 
     // Constants
     // private static final double CAMERA_FOV = 87.0; // deg
-    private static final double CAMERA_FOCAL_LENGTH = 350; // px
-    private static final double VIDEO_WIDTH = 672.0; // px
+    private static final double CAMERA_FOCAL_LENGTH = 700; // px
+    private static final double VIDEO_WIDTH = 1280; // px
     public static final double ALLOWABLE_DISTANCE_ERROR = factory.getConstant(
         NAME,
         "allowableDistanceError",

@@ -76,7 +76,7 @@ public class Robot extends TimedRobot {
 
     // private PowerDistributionPanel pdp = new PowerDistributionPanel();
     private final Turret.ControlMode defaultTurretControlMode =
-        Turret.ControlMode.CENTER_FOLLOWING;
+        Turret.ControlMode.FIELD_FOLLOWING;
     private boolean faulted;
 
     Robot() {
@@ -263,6 +263,13 @@ public class Robot extends TimedRobot {
                     "Turret/TurretAngle",
                     "Degrees",
                     mTurret::getActualTurretPositionDegrees,
+                    "hide",
+                    "join:Tracking/Angles"
+                );
+                mElevator.CreateBadLogTopic(
+                    "Elevator/ElevatorVel",
+                    "NativeUnits",
+                    mElevator::getActualOutput,
                     "hide",
                     "join:Tracking/Angles"
                 );

@@ -182,7 +182,6 @@ public class CtreMotorFactory {
             canCoder.configFactoryDefault(kTimeoutMs);
         }
         canCoder.configAllSettings(configureCanCoder(invertCanCoder), kTimeoutMsLONG);
-        //        canCoder.configSensorInitializationStrategy(SensorInitializationStrategy.BootToAbsolutePosition, kTimeoutMs);
         return canCoder;
     }
 

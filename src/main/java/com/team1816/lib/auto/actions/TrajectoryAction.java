@@ -49,7 +49,7 @@ public class TrajectoryAction implements Action {
         } else if (mDrive instanceof SwerveDrive) {
             var thetaController = new ProfiledPIDController(
                 Constants.kPThetaController,
-                0,
+                Constants.kIThetaController,
                 Constants.kDThetaController,
                 Constants.kThetaControllerConstraints
             );

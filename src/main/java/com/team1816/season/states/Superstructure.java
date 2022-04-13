@@ -62,12 +62,13 @@ public class Superstructure {
 
     public void setStopped(boolean notCoasting) {
         collector.setDesiredState(Collector.STATE.STOP); // stop states auto-set subsystems to stop moving
-        spindexer.setDesiredState(Spindexer.STATE.STOP);
         elevator.setDesiredState(Elevator.STATE.STOP);
         if (notCoasting) {
             shooter.setDesiredState(Shooter.STATE.STOP);
+            spindexer.setDesiredState(Spindexer.STATE.STOP);
         } else {
             shooter.setDesiredState(Shooter.STATE.COASTING);
+            spindexer.setDesiredState(Spindexer.STATE.COAST);
         }
         collecting = false;
         revving = false;
@@ -137,7 +138,7 @@ public class Superstructure {
         } else if (revving) {
             spindexer.setDesiredState(Spindexer.STATE.INDEX);
         } else {
-            spindexer.setDesiredState(Spindexer.STATE.STOP);
+            spindexer.setDesiredState(Spindexer.STATE.COAST);
         }
     }
 

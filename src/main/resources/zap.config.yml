@@ -17,7 +17,7 @@ subsystems:
             RREnc: 16
         invertMotor:
             - FRDr
-            #- RRDr
+            - RRDr
         invertCanCoder:
             - FREnc
             - BREnc
@@ -28,28 +28,28 @@ subsystems:
                     azimuth: FLAz
                     canCoder: FLEnc
                     constants:
-                        encoderOffset: 2101
+                        encoderOffset: 1593
                         invertSensorPhase: 1
                 frontRight:
                     drive: FRDr
                     azimuth: FRAz
                     canCoder: FREnc
                     constants:
-                        encoderOffset: 1716
+                        encoderOffset: 1621
                         invertSensorPhase: 1
                 backLeft:
                     drive: RLDr
                     azimuth: RLAz
                     canCoder: RLEnc
                     constants:
-                        encoderOffset: 3100 #1539
+                        encoderOffset: 3114 #1539
                         invertSensorPhase: 1
                 backRight:
                     drive: RRDr
                     azimuth: RRAz
                     canCoder: RREnc
                     constants:
-                        encoderOffset: 798
+                        encoderOffset: 2842
                         invertSensorPhase: 1
             drivePID:
                 slot0:
@@ -109,7 +109,7 @@ subsystems:
             turret: 33 # need to set to pdp port number
         constants:
             revLimit: 8800 # adjusted for zero-offset
-            fwdLimit: 40000 # adjusted for zero-offset
+            fwdLimit: 43000 # adjusted for zero-offset
             absPosTicksSouth: 0 # absolute
             zeroOffset: 12639 # (turretPPR - non-adjusted fwdLimit - non-adjusted revlimit) / 2
             encPPR: 4096
@@ -125,11 +125,11 @@ subsystems:
             hood: 0
         pidConfig:
             slot0:
-                kP: 0.40 #.45
+                kP: 0.38 #.45
                 kI: 0.0002
-                kD: 12.50 # 11 - 4.5
-                kF: 0.049
-                allowableError: 45
+                kD: 13.5 # 11 - 4.5
+                kF: 0.0487
+                allowableError: 50
         constants:
             usingPoseForSpeed: 0
             maxTicks: 20700 #
@@ -171,9 +171,9 @@ subsystems:
             elevator: 32
         pidConfig:
             slot0:
-                kP: 0.05 #tunned at 4000
-                kI: 0.0001
-                kD: 1.5
+                kP: 0.060 #tunned at 4000  - .05
+                kI: 0
+                kD: 2
                 kF: 0.05
                 allowableError: 100
         invertMotor:
@@ -191,10 +191,11 @@ subsystems:
         solenoids:
             feederFlap: -1
         constants:
-            collectPow: 0.30
-            indexPow: -0.25
+            collectPow: -0.10
+            indexPow: -0.3
             flushPow: -1
-            firePow: .30
+            coastPow: -0.05
+            firePow: 0.30
     collector:
         implemented: true
         sparkmaxes:
