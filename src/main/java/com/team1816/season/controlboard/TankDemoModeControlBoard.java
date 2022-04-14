@@ -207,7 +207,7 @@ public class TankDemoModeControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getRunAutoModeInTeleop() {
+    public boolean getUseManualShoot() {
         return false;
     }
 

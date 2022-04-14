@@ -15,7 +15,7 @@ public class DistanceManager {
     // Constants
     public DistanceManager() {
         lastBucketIndex = 0;
-        flatBuckets = true;
+        flatBuckets = true; // set here whether to use flat bucket values
         //        allowBucketOffset = false;
         if (flatBuckets) {
             buckets = flat_buckets;

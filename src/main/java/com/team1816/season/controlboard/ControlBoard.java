@@ -64,8 +64,8 @@ public class ControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getRunAutoModeInTeleop() {
-        return mDriveControlBoard.getRunAutoModeInTeleop();
+    public boolean getUseManualShoot() {
+        return mDriveControlBoard.getUseManualShoot();
     }
 
     @Override

@@ -79,6 +79,7 @@ public class Robot extends TimedRobot {
     private final Turret.ControlMode defaultTurretControlMode =
         Turret.ControlMode.FIELD_FOLLOWING;
     private boolean faulted;
+    private boolean useManualShoot = false;
 
     Robot() {
         super();
@@ -330,6 +331,10 @@ public class Robot extends TimedRobot {
                         pressed -> mSuperstructure.setCollecting(pressed, false)
                     ),
                     createAction(mControlBoard::getUnlockClimber, mClimber::setUnlocked),
+                    createAction(mControlBoard::getUseManualShoot, () -> {
+                        useManualShoot = true;
+                        }
+                    ),
                     createAction(
                         mControlBoard::getZeroPose, // line up against ally field wall -> zero
                         () -> {
@@ -340,33 +345,13 @@ public class Robot extends TimedRobot {
                     createHoldAction(mControlBoard::getSlowMode, mDrive::setSlowMode),
                     createHoldAction(mControlBoard::getBrakeMode, mDrive::setBrakeMode),
                     // Operator Gamepad
-                    createHoldAction(
+                    createAction(
                         mControlBoard::getRaiseBucket,
-                        firingOrRaising -> {
-                            if (!Constants.kEnableBucketTuning) {
-                                mSuperstructure.setRevving(
-                                    firingOrRaising,
-                                    Shooter.MID_VELOCITY,
-                                    true
-                                ); // Tarmac
-                            } else {
-                                mDistanceManager.incrementBucket(-200);
-                            }
-                        }
+                        () -> mDistanceManager.incrementBucket(100)
                     ),
-                    createHoldAction(
+                    createAction(
                         mControlBoard::getLowerBucket,
-                        firingOrLowering -> {
-                            if (!Constants.kEnableBucketTuning) {
-                                mSuperstructure.setRevving(
-                                    firingOrLowering,
-                                    Shooter.FAR_VELOCITY,
-                                    true
-                                ); // Launchpad
-                            } else {
-                                mDistanceManager.incrementBucket(-200);
-                            }
-                        }
+                        () -> mDistanceManager.incrementBucket(-100)
                     ),
                     createHoldAction(
                         mControlBoard::getAutoAim,
@@ -385,7 +370,7 @@ public class Robot extends TimedRobot {
                         mControlBoard::getYeetShot,
                         yeet -> {
                             mShooter.setHood(false);
-                            mSuperstructure.setRevving(yeet, Shooter.MID_VELOCITY); // Tarmac
+                            mSuperstructure.setRevving(yeet, Shooter.MID_VELOCITY, true); // Tarmac
                             mSuperstructure.setFiring(yeet);
                         }
                     ),
@@ -393,7 +378,7 @@ public class Robot extends TimedRobot {
                         mControlBoard::getShoot,
                         shooting -> {
                             mShooter.setHood(true);
-                            mSuperstructure.setRevving(shooting, Shooter.FAR_VELOCITY); // Launchpad
+                            mSuperstructure.setRevving(shooting, Shooter.FAR_VELOCITY, useManualShoot); // Launchpad
                             mSuperstructure.setFiring(shooting);
                         }
                     ),
@@ -425,7 +410,7 @@ public class Robot extends TimedRobot {
                                 mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
                                 mSuperstructure.setStopped(true);
                                 mClimber.incrementClimberStage();
-                                Timer.delay(2);
+                                Timer.delay(3);
                             } else {
                                 mDrive.setOpenLoop(SwerveDriveSignal.SET_CLIMB);
                                 mTurret.setTurretAngle(Turret.CARDINAL_SOUTH - 30);
