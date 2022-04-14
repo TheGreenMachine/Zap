@@ -1,12 +1,15 @@
 package com.team1816.season.util;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Collections;
+import java.util.HashMap;
 
 public class Spline {
     public static ArrayList<Double[]> coordinates;
 
     public Spline(ArrayList<Double[]> knotPoints) {
-        coordinates = knotPoints;
+        coordinates = sort(knotPoints);
     }
 
     public ArrayList<ArrayList<Double>> calculateLinearizedSpline() {
@@ -124,7 +127,7 @@ public class Spline {
         }
     }
 
-    private void generateTridiagonalMatrix(int n, double h[], double a[][], double y[]) { //h is of size n, a is of size n-1 by n, y is of size n+1
+    private void generateTridiagonalMatrix(int n, double h[], double a[][], double y[]) { // h is of size n, a is of size n-1 by n, y is of size n+1
         int i;
         //int n = h.length;
         for (i = 0; i < n - 1; i++) {
@@ -143,5 +146,19 @@ public class Spline {
                         6 /
                         (double) h[i - 1];
         }
+    }
+
+    private ArrayList<Double[]> sort(ArrayList<Double[]> points) { // avoid edge cases, if done optimally O(nLog(n)) and given the minuscule number of points, it's acceptable
+        ArrayList<Double[]> sorted = new ArrayList<>();
+        HashMap<Double, Double[]> map = new HashMap<>();
+        for (Double[] point : points) {
+            map.put(point[0], point);
+        }
+        List<Double> keys = (List<Double>) map.keySet();
+        Collections.sort(keys);
+        for (int i = 0; i < points.size(); i++) {
+            sorted.add(map.get(keys.get(i)));
+        }
+        return sorted;
     }
 }
