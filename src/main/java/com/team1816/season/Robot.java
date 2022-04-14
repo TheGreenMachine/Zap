@@ -331,8 +331,11 @@ public class Robot extends TimedRobot {
                         pressed -> mSuperstructure.setCollecting(pressed, false)
                     ),
                     createAction(mControlBoard::getUnlockClimber, mClimber::setUnlocked),
-                    createAction(mControlBoard::getUseManualShoot, () -> {
-                        useManualShoot = true;
+                    createHoldAction(
+                        mControlBoard::getUseManualShoot,
+                        manual -> {
+                            useManualShoot = manual;
+                            System.out.println("manual shooting!");
                         }
                     ),
                     createAction(
@@ -378,7 +381,11 @@ public class Robot extends TimedRobot {
                         mControlBoard::getShoot,
                         shooting -> {
                             mShooter.setHood(true);
-                            mSuperstructure.setRevving(shooting, Shooter.FAR_VELOCITY, useManualShoot); // Launchpad
+                            mSuperstructure.setRevving(
+                                shooting,
+                                Shooter.FAR_VELOCITY,
+                                useManualShoot
+                            ); // Launchpad
                             mSuperstructure.setFiring(shooting);
                         }
                     ),
@@ -409,10 +416,7 @@ public class Robot extends TimedRobot {
                             if (mClimber.getCurrentStage() == 0) {
                                 mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
                                 mSuperstructure.setStopped(true);
-                                mClimber.incrementClimberStage();
-                                Timer.delay(3);
                             } else {
-                                mDrive.setOpenLoop(SwerveDriveSignal.SET_CLIMB);
                                 mTurret.setTurretAngle(Turret.CARDINAL_SOUTH - 30);
                             }
 

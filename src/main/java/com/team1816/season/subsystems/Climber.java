@@ -181,11 +181,11 @@ public class Climber extends Subsystem {
                 bottomClamp.set(bottomClamped);
             } else {
                 bottomClamp.set(bottomClamped);
-                Timer.delay(.25);
+                Timer.delay(.15);
                 topClamp.set(topClamped);
             }
             System.out.println("setting climber clamps!");
-            Timer.delay(.25);
+            Timer.delay(.15);
         }
     }
 
