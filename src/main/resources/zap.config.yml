@@ -158,7 +158,7 @@ subsystems:
             returnPos: 0
             firstToSecondRungPos: 140127 #86.5 #TODO set this value
             secondToLastRungPos: 330610 #TODO set this value
-            lastPos: 379790 #TODO set this value
+            lastPos: 389790 #TODO set this value
     elevator:
         implemented: true
         talons:
