@@ -79,6 +79,7 @@ public class DistanceManager {
         new Entry(190, 0, 10500, -600),
         new Entry(200, 0, 11140, -700),
         new Entry(210, 0, 11875, -700),
+        new Entry(250, 0, 11875, 0),
     };
 
     private double getShooterVelocity(double distance) {
@@ -97,7 +98,7 @@ public class DistanceManager {
 
     public void incrementBucket(double incrVal) {
         if (allowBucketOffset) {
-            //            allowBucketOffset = false;
+            allowBucketOffset = false;
             buckets[lastBucketIndex].bumpOffset += incrVal;
             System.out.println(
                 "incrementing bucket #" +

@@ -95,10 +95,10 @@ subsystems:
         pidConfig:
             slot0:
                 kP: 1.25
-                    kI: 0.0003
-                    kD: 40.5
-                    kF: 0 # Should be 0 for position control
-                    allowableError: 40
+                kI: 0.0003
+                kD: 40.5
+                kF: 0 # Should be 0 for position control
+                allowableError: 40
         talons:
             turret: 33 # need to set to pdp port number
         constants:
@@ -132,8 +132,8 @@ subsystems:
             rpmFloorCheck: 2000
             rpmEpsilonCheck: 60
             nearVel: 4500
-            midVel: 12000
-            farVel: 15000
+            midVel: 8600
+            farVel: 10150
             maxVel: 16500
             coast: 6000
     climber:
@@ -213,7 +213,7 @@ subsystems:
         implemented: true
         constants:
             debug: 0
-            maxDist: 230
+            maxDist: 400
             maxDeltaX: 670
             allowableDistanceError: 50
             deviation: 0
@@ -241,7 +241,7 @@ constants:
     configStatusFrames: 0 # 0 or 1
     verbose: 0 # 0 or 1
     ## General ##
-    useCameraInAuto: 1
+    EnableBucketTuning: 1
     teleopFieldCentric: 1 # 0 or 1
     compressorEnabled: 1 # 0 or 1
     kLooperDt: .035 # seconds

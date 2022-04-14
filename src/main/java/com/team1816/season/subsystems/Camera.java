@@ -111,7 +111,7 @@ public class Camera extends Subsystem {
             distances.add(dis);
         }
 
-        if (distances.size() > 2) { // note - this number was 5 before!
+        if (distances.size() > 8) { // note - this number was 5 before!
             double distanceSum = 0;
             for (int i = 0; i < distances.size(); i++) {
                 distanceSum += distances.get(i);

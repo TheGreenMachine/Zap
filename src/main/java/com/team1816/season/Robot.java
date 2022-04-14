@@ -202,11 +202,6 @@ public class Robot extends TimedRobot {
                     "hide",
                     "join:Tracking/Angles"
                 );
-                BadLog.createTopic(
-                    "ClimberCurrentDraw",
-                    "Amps",
-                    mClimber::getCurrentDraw
-                );
                 mShooter.CreateBadLogTopic(
                     "Shooter/ActVel",
                     "NativeUnits",
@@ -345,21 +340,33 @@ public class Robot extends TimedRobot {
                     createHoldAction(mControlBoard::getSlowMode, mDrive::setSlowMode),
                     createHoldAction(mControlBoard::getBrakeMode, mDrive::setBrakeMode),
                     // Operator Gamepad
-                    createAction(
+                    createHoldAction(
                         mControlBoard::getRaiseBucket,
-                        () -> mDistanceManager.incrementBucket(100)
+                        firingOrRaising -> {
+                            if (!Constants.kEnableBucketTuning) {
+                                mSuperstructure.setRevving(
+                                    firingOrRaising,
+                                    Shooter.MID_VELOCITY,
+                                    true
+                                ); // Tarmac
+                            } else {
+                                mDistanceManager.incrementBucket(-200);
+                            }
+                        }
                     ),
-                    createAction(
+                    createHoldAction(
                         mControlBoard::getLowerBucket,
-                        () -> mDistanceManager.incrementBucket(-100)
-                    ),
-                    createAction(
-                        mControlBoard::getIncrementCamDeviation,
-                        () -> mCamera.incrementDeviation(5)
-                    ),
-                    createAction(
-                        mControlBoard::getDecrementCamDeviation,
-                        () -> mCamera.incrementDeviation(-5)
+                        firingOrLowering -> {
+                            if (!Constants.kEnableBucketTuning) {
+                                mSuperstructure.setRevving(
+                                    firingOrLowering,
+                                    Shooter.FAR_VELOCITY,
+                                    true
+                                ); // Launchpad
+                            } else {
+                                mDistanceManager.incrementBucket(-200);
+                            }
+                        }
                     ),
                     createHoldAction(
                         mControlBoard::getAutoAim,
@@ -369,9 +376,6 @@ public class Robot extends TimedRobot {
                                     Turret.ControlMode.CAMERA_FOLLOWING
                                 );
                             } else {
-                                //                                if (!RobotBase.isSimulation()) {
-                                //                                    mSuperstructure.updatePoseWithCamera();
-                                //                                }
                                 mTurret.setControlMode(defaultTurretControlMode); // this gets called when the robot inits - this could be bad?
                             }
                         }
@@ -380,13 +384,8 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         mControlBoard::getYeetShot,
                         yeet -> {
-                            if (yeet) {
-                                mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
-                            } else {
-                                mTurret.setControlMode(defaultTurretControlMode); // this gets called when the robot inits - this could be bad?
-                            }
                             mShooter.setHood(false);
-                            mSuperstructure.setRevving(yeet, Shooter.NEAR_VELOCITY);
+                            mSuperstructure.setRevving(yeet, Shooter.MID_VELOCITY); // Tarmac
                             mSuperstructure.setFiring(yeet);
                         }
                     ),
@@ -394,7 +393,7 @@ public class Robot extends TimedRobot {
                         mControlBoard::getShoot,
                         shooting -> {
                             mShooter.setHood(true);
-                            mSuperstructure.setRevving(shooting, 10150); // TODO TUNE
+                            mSuperstructure.setRevving(shooting, Shooter.FAR_VELOCITY); // Launchpad
                             mSuperstructure.setFiring(shooting);
                         }
                     ),
@@ -426,7 +425,7 @@ public class Robot extends TimedRobot {
                                 mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
                                 mSuperstructure.setStopped(true);
                                 mClimber.incrementClimberStage();
-                                Timer.delay(1.5);
+                                Timer.delay(2);
                             } else {
                                 mDrive.setOpenLoop(SwerveDriveSignal.SET_CLIMB);
                                 mTurret.setTurretAngle(Turret.CARDINAL_SOUTH - 30);

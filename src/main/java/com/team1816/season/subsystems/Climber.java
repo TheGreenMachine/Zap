@@ -96,7 +96,7 @@ public class Climber extends Subsystem {
             System.out.println("climber not unlocked!");
             return;
         }
-        if (currentStage < stages.length - 1 && !needsOverShoot) {
+        if (currentStage < stages.length - 1 && (!needsOverShoot || currentStage == 2)) {
             if (controlMode != ControlMode.POSITION) {
                 controlMode = ControlMode.POSITION;
             }

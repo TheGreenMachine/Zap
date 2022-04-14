@@ -92,16 +92,16 @@ public class Superstructure {
     }
 
     public void setRevving(boolean revving, double shooterVel) {
+        setRevving(revving, shooterVel, false);
+    }
+
+    public void setRevving(boolean revving, double shooterVel, boolean manual) {
         this.revving = revving;
         System.out.println("struct - rev " + revving);
         if (revving) {
             shooter.setDesiredState(Shooter.STATE.REVVING);
-            if (Camera.cameraEnabled || usePoseTrack) {
-                //                if (turret.getControlMode() == Turret.ControlMode.ABSOLUTE_MADNESS) {
-                //                    shootWhileMoving(camera.getDistance());
-                //                } else {
+            if (Camera.cameraEnabled && !manual) {
                 shooter.setVelocity(getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
-                //                }
                 shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) > 0);
             } else {
                 shooter.setVelocity(shooterVel);

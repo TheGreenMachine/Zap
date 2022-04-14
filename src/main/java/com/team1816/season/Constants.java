@@ -211,8 +211,8 @@ public class Constants {
     public static final boolean kUsePoseTrack =
         factory.getConstant("shooter", "usingPoseForSpeed", 0) > 0;
     public static final boolean kUseVision = factory.getSubsystem("camera").implemented;
-    public static final boolean kUseCameraInAuto =
-        factory.getConstant("useCameraInAuto", 0) > 0;
+    public static final boolean kEnableBucketTuning =
+        factory.getConstant("enableBucketTuning", 0) > 0;
     // Do not change anything after this line unless you rewire the robot and
     // update the spreadsheet!
     // Port assignments should match up with the spreadsheet here:
