@@ -6,6 +6,7 @@ import com.google.inject.Singleton;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.Timer;
 
 @Singleton
 public class Spindexer extends Subsystem {
@@ -17,7 +18,7 @@ public class Spindexer extends Subsystem {
     private final IMotorControllerEnhanced spindexer;
 
     // State
-    private SPIN_STATE state = SPIN_STATE.STOP;
+    private STATE state = STATE.STOP;
     private boolean feederFlapOut = false; // leave for future addition if needed
     private boolean distanceManaged = false;
     private double spindexerPower;
@@ -29,6 +30,7 @@ public class Spindexer extends Subsystem {
     private final double FLUSH;
     private final double FIRE;
     private final double POWER_THRESHOLD;
+    private final double COAST;
 
     public Spindexer() {
         super(NAME);
@@ -39,6 +41,7 @@ public class Spindexer extends Subsystem {
         INDEX = factory.getConstant(NAME, "indexPow", -0.25);
         FLUSH = factory.getConstant(NAME, "flushPow", -1);
         FIRE = factory.getConstant(NAME, "firePow", 1);
+        COAST = factory.getConstant(NAME, "coastPow", -.1);
         POWER_THRESHOLD = .1;
     }
 
@@ -48,8 +51,8 @@ public class Spindexer extends Subsystem {
         spindexer.set(ControlMode.PercentOutput, spindexerPower);
     }
 
-    private void lockToShooter() { // bear in mind this might never fire if shooter not implemented - not rly important tho
-        if (robotState.shooterState == Shooter.SHOOTER_STATE.REVVING) {
+    private void lockToElevator() { // bear in mind this might never fire if shooter not implemented - not rly important tho
+        if (robotState.elevatorState == Elevator.STATE.FIRE) {
             setSpindexer(FIRE);
         } else {
             outputsChanged = true; // keep looping through writeToHardWare if shooter not up to speed
@@ -61,7 +64,7 @@ public class Spindexer extends Subsystem {
         outputsChanged = true;
     }
 
-    public void setDesiredState(SPIN_STATE state) {
+    public void setDesiredState(STATE state) {
         if (this.state != state) {
             this.state = state;
             outputsChanged = true;
@@ -107,7 +110,10 @@ public class Spindexer extends Subsystem {
                     setSpindexer(FLUSH);
                     break;
                 case FIRE:
-                    lockToShooter();
+                    lockToElevator();
+                    break;
+                case COAST:
+                    setSpindexer(COAST);
                     break;
             }
             this.feederFlap.set(feederFlapOut);
@@ -123,14 +129,20 @@ public class Spindexer extends Subsystem {
 
     @Override
     public boolean checkSystem() {
+        spindexer.set(ControlMode.PercentOutput, .3);
+        Timer.delay(1);
+        spindexer.set(ControlMode.PercentOutput, -.3);
+        Timer.delay(1);
+        spindexer.set(ControlMode.PercentOutput, 0);
         return true;
     }
 
-    public enum SPIN_STATE {
+    public enum STATE {
         STOP,
         COLLECT,
         INDEX,
         FLUSH,
         FIRE,
+        COAST,
     }
 }

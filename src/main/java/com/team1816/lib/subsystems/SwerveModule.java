@@ -1,5 +1,6 @@
 package com.team1816.lib.subsystems;
 
+import static com.team1816.lib.subsystems.Drive.NAME;
 import static com.team1816.lib.subsystems.Drive.factory;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -8,10 +9,11 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.team1816.lib.math.DriveConversions;
-import com.team1816.lib.util.ModuleState;
+import com.team1816.lib.math.SwerveKinematics;
 import com.team1816.season.Constants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.Timer;
 
 public class SwerveModule implements ISwerveModule {
 
@@ -22,17 +24,12 @@ public class SwerveModule implements ISwerveModule {
     public double mVelDemand;
     public double mAzmDemand;
 
-    // Module Indicies
-    public static final int kFrontLeft = 0;
-    public static final int kFrontRight = 1;
-    public static final int kBackLeft = 2;
-    public static final int kBackRight = 3;
-
     // State
     private boolean isBrakeMode = false;
 
     // Constants
     private final Constants.Swerve mConstants;
+    private final double allowableError;
 
     public SwerveModule(
         String subsystemName,
@@ -66,7 +63,7 @@ public class SwerveModule implements ISwerveModule {
                 canCoder.getDeviceID()
             );
 
-        mDriveMotor.configOpenloopRamp(.5, Constants.kCANTimeoutMs);
+        mDriveMotor.configOpenloopRamp(0.25, Constants.kCANTimeoutMs);
         mAzimuthMotor.configSupplyCurrentLimit(
             new SupplyCurrentLimitConfiguration(true, 18, 28, 1),
             Constants.kLongCANTimeoutMs
@@ -84,6 +81,8 @@ public class SwerveModule implements ISwerveModule {
             Constants.kLongCANTimeoutMs
         );
 
+        allowableError = 5; // TODO this is a dummy value for checkSystem
+
         /* Angle Encoder Config */
         mCanCoder = canCoder;
 
@@ -91,7 +90,7 @@ public class SwerveModule implements ISwerveModule {
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
-        SwerveModuleState desired_state = ModuleState.optimize(
+        SwerveModuleState desired_state = SwerveKinematics.optimize(
             desiredState,
             getState().angle
         ); // desiredState; //
@@ -169,6 +168,47 @@ public class SwerveModule implements ISwerveModule {
             mDriveMotor.set(ControlMode.Velocity, 0);
         }
         isBrakeMode = brake_mode;
+    }
+
+    public boolean checkSystem() {
+        boolean checkDrive = true;
+        double actualMaxTicks = factory.getConstant(NAME, "maxTicks"); // if this isn't calculated right this test will fail
+        mDriveMotor.set(ControlMode.PercentOutput, 0.2);
+        Timer.delay(1);
+        if (
+            Math.abs(mDriveMotor.getSelectedSensorVelocity(0) - 0.2 * actualMaxTicks) >
+            actualMaxTicks /
+            50
+        ) {
+            checkDrive = false;
+        }
+        mDriveMotor.set(ControlMode.PercentOutput, -0.2);
+        Timer.delay(1);
+        if (
+            Math.abs(mDriveMotor.getSelectedSensorVelocity(0) + 0.2 * actualMaxTicks) >
+            actualMaxTicks /
+            50
+        ) {
+            checkDrive = false;
+        }
+
+        boolean checkAzimuth = true;
+        double setPoint = mConstants.kAzimuthEncoderHomeOffset;
+        Timer.delay(1);
+        for (int i = 0; i < 4; i++) {
+            mAzimuthMotor.set(ControlMode.Position, setPoint);
+            Timer.delay(1);
+            if (
+                Math.abs(mAzimuthMotor.getSelectedSensorPosition(0) - setPoint) >
+                allowableError
+            ) {
+                checkAzimuth = false;
+                break;
+            }
+            setPoint += DriveConversions.convertRadiansToTicks(Math.PI / 2);
+        }
+
+        return checkDrive && checkAzimuth;
     }
 
     @Override

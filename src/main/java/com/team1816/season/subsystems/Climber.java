@@ -16,8 +16,8 @@ public class Climber extends Subsystem {
     private static final String NAME = "climber";
 
     // Components
-    private final IMotorControllerEnhanced spinner;
-    private final IMotorControllerEnhanced spinnerFollower;
+    private final IMotorControllerEnhanced climber;
+    private final IMotorControllerEnhanced climberFollower;
     private final ISolenoid topClamp;
     private final ISolenoid bottomClamp;
 
@@ -26,6 +26,7 @@ public class Climber extends Subsystem {
     private double error;
     private boolean unlocked;
     private boolean needsOverShoot = false;
+    private boolean climbDelay = false;
     private boolean needsClamp = false;
     // Position
     private int currentStage;
@@ -43,14 +44,10 @@ public class Climber extends Subsystem {
 
     public Climber() {
         super(NAME);
-        spinner = factory.getMotor(NAME, "spinner");
-        spinnerFollower =
-            (IMotorControllerEnhanced) factory.getMotor(
-                NAME,
-                "spinnerFollower",
-                spinner,
-                true
-            );
+        climber = factory.getMotor(NAME, "climber");
+        climberFollower =
+            (IMotorControllerEnhanced) factory.getMotor(NAME, "climberFollower", climber);
+        climberFollower.setInverted(true);
         topClamp = factory.getSolenoid(NAME, "topClamp");
         bottomClamp = factory.getSolenoid(NAME, "bottomClamp");
 
@@ -58,18 +55,8 @@ public class Climber extends Subsystem {
 
         ALLOWABLE_ERROR = config.allowableError;
 
-        spinner.config_kP(0, config.kP, 100);
-        spinner.config_kI(0, config.kI, 100);
-        spinner.config_kD(0, config.kD, 100);
-        spinner.config_kF(0, config.kF, 100);
-
-        spinnerFollower.config_kP(0, config.kP, 100);
-        spinnerFollower.config_kI(0, config.kI, 100);
-        spinnerFollower.config_kD(0, config.kD, 100);
-        spinnerFollower.config_kF(0, config.kF, 100);
-
-        spinner.configClosedloopRamp(.20, Constants.kCANTimeoutMs);
-        spinnerFollower.configClosedloopRamp(.20, Constants.kCANTimeoutMs);
+        climber.configClosedloopRamp(.20, Constants.kCANTimeoutMs);
+        climberFollower.configClosedloopRamp(.20, Constants.kCANTimeoutMs);
 
         currentStage = 0;
         unlocked = false;
@@ -83,7 +70,7 @@ public class Climber extends Subsystem {
                     false,
                     false
                 ),
-                new Stage(factory.getConstant(NAME, "startPos", 0), true, false, false),
+                new Stage(factory.getConstant(NAME, "returnPos", 0), true, false, false),
                 new Stage(
                     factory.getConstant(NAME, "firstToSecondRungPos", -63),
                     false,
@@ -101,7 +88,7 @@ public class Climber extends Subsystem {
     }
 
     public void setUnlocked() {
-        unlocked = !unlocked;
+        unlocked = true;
     }
 
     public void incrementClimberStage() { // we can't go backwards (descend rungs) using this logic, but it shouldn't really matter
@@ -109,7 +96,7 @@ public class Climber extends Subsystem {
             System.out.println("climber not unlocked!");
             return;
         }
-        if (currentStage < stages.length - 1 && !needsOverShoot) {
+        if (currentStage < stages.length - 1 && (!needsOverShoot || currentStage == 2)) {
             if (controlMode != ControlMode.POSITION) {
                 controlMode = ControlMode.POSITION;
             }
@@ -118,6 +105,7 @@ public class Climber extends Subsystem {
             );
             currentStage++;
             needsOverShoot = true;
+            climbDelay = true;
             needsClamp = true;
             outputsChanged = true;
         } else {
@@ -170,13 +158,17 @@ public class Climber extends Subsystem {
 
     private void positionControl(double position) {
         if (needsOverShoot) { // keep looping if we aren't past the overshoot value
-            spinner.set(Position, position);
-            if (Math.abs(error) < 5) {
+            climber.set(Position, position);
+            if (climbDelay) {
+                climbDelay = false;
+                Timer.delay(1);
+            }
+            if (Math.abs(error) < ALLOWABLE_ERROR && currentStage != 2) {
                 needsOverShoot = false;
             }
             outputsChanged = true;
         } else {
-            spinner.set(PercentOutput, 0); // coast so that the climber falls down to lock
+            climber.set(PercentOutput, 0); // coast so that the climber falls down to lock
         }
     }
 
@@ -189,19 +181,19 @@ public class Climber extends Subsystem {
                 bottomClamp.set(bottomClamped);
             } else {
                 bottomClamp.set(bottomClamped);
-                Timer.delay(.25);
+                Timer.delay(.15);
                 topClamp.set(topClamped);
             }
             System.out.println("setting climber clamps!");
-            Timer.delay(.25);
+            Timer.delay(.15);
         }
     }
 
     @Override
     public void readFromHardware() {
-        error = spinner.getSelectedSensorPosition(0) - stages[currentStage].position;
-        climberPosition = spinner.getSelectedSensorPosition(0);
-        currentDraw = spinner.getOutputCurrent();
+        error = climber.getSelectedSensorPosition(0) - stages[currentStage].position;
+        climberPosition = climber.getSelectedSensorPosition(0);
+        currentDraw = climber.getOutputCurrent();
         //        System.out.println("climber position = " + climberPosition);
     }
 
@@ -215,7 +207,7 @@ public class Climber extends Subsystem {
                 positionControl(stages[currentStage].position);
             } else {
                 setClamps(topClamped, bottomClamped, false);
-                spinner.set(PercentOutput, climberPower);
+                climber.set(PercentOutput, climberPower);
             }
         }
     }
@@ -228,10 +220,18 @@ public class Climber extends Subsystem {
         return currentDraw;
     }
 
+    public int getCurrentStage() {
+        return currentStage;
+    }
+
     @Override
     public void zeroSensors() {
         currentStage = 0;
-        spinner.setSelectedSensorPosition(stages[0].position, 0, Constants.kCANTimeoutMs);
+        unlocked = false;
+        needsClamp = false;
+        climbDelay = false;
+        needsOverShoot = false;
+        climber.setSelectedSensorPosition(stages[0].position, 0, Constants.kCANTimeoutMs);
     }
 
     @Override
@@ -239,6 +239,16 @@ public class Climber extends Subsystem {
 
     @Override
     public boolean checkSystem() {
+        // currently just running the climber in percent output to make sure it can unclamp and spin
+        // WARNING - pos/neg values may be inverted!
+        climber.set(PercentOutput, 0.2);
+        Timer.delay(.5);
+        climber.set(PercentOutput, 0);
+        Timer.delay(1);
+        climber.set(PercentOutput, -0.2);
+        Timer.delay(2);
+        climber.set(PercentOutput, 0);
+
         return true;
     }
 

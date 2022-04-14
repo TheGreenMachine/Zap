@@ -11,7 +11,6 @@ import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.util.EnhancedMotorChecker;
 import com.team1816.season.Constants;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.SendableBuilder;
 
 @Singleton
@@ -47,7 +46,7 @@ public class Shooter extends Subsystem implements PidProvider {
 
     // tune this and make changeable with a button in shooter itself
     public final int VELOCITY_THRESHOLD;
-    private SHOOTER_STATE state = SHOOTER_STATE.STOP;
+    private STATE state = STATE.STOP;
 
     public Shooter() {
         super(NAME);
@@ -122,30 +121,6 @@ public class Shooter extends Subsystem implements PidProvider {
         return Math.abs(actualShooterVelocity - velocityDemand);
     }
 
-    public void setVelocityAlt(double velocity) {
-        Translation2d chassisVelocity = new Translation2d(
-            robotState.chassis_speeds.vxMetersPerSecond,
-            robotState.chassis_speeds.vyMetersPerSecond
-        );
-        Translation2d shooterDirection = new Translation2d( //important to make sure that this is a unit vector
-            1,
-            robotState.getLatestFieldToTurret()
-        );
-        // setting velocity
-        velocityDemand =
-            convertShooterMetersToTicksPerSecond(
-                convertShooterTicksToMetersPerSecond(velocity) -
-                chassisVelocity.getNorm() *
-                Math.cos(getAngleBetween(chassisVelocity, shooterDirection))
-            );
-        /*convertShooterMetersToTicksPerSecond( //alternate
-                chassisVelocity.getX() *
-                shooterDirection.getX() +
-                chassisVelocity.getY() *
-                shooterDirection.getY()
-            );*/
-    }
-
     public void setHood(boolean in) {
         hoodOut = in;
         this.outputsChanged = true;
@@ -158,10 +133,11 @@ public class Shooter extends Subsystem implements PidProvider {
 
     public void setVelocity(double velocity) {
         velocityDemand = velocity;
+        System.out.println("velocity shooter demand = " + velocityDemand);
         shooterMain.set(ControlMode.Velocity, velocityDemand);
     }
 
-    public void setDesiredState(SHOOTER_STATE state) {
+    public void setDesiredState(STATE state) {
         // no checker for state because we may tell the shooter to set to the same state but different vel
         this.state = state;
         outputsChanged = true;
@@ -172,25 +148,26 @@ public class Shooter extends Subsystem implements PidProvider {
         //        System.out.println("checking if shooter up to speed - " + velocityDemand + " = velocity demand"  + actualShooterVelocity + " = act vel");
         return (
             Math.abs(velocityDemand - actualShooterVelocity) < VELOCITY_THRESHOLD &&
-            state != SHOOTER_STATE.COASTING
+            state != STATE.COASTING
         );
     }
 
     @Override
     public void readFromHardware() {
         actualShooterVelocity = shooterMain.getSelectedSensorVelocity(0);
+
         robotState.shooterSpeed =
             convertShooterTicksToMetersPerSecond(actualShooterVelocity);
 
         if (state != robotState.shooterState) {
             if (actualShooterVelocity < VELOCITY_THRESHOLD) {
-                robotState.shooterState = SHOOTER_STATE.STOP;
+                robotState.shooterState = STATE.STOP;
             } else if (isVelocityNearTarget()) {
-                robotState.shooterState = SHOOTER_STATE.REVVING;
+                robotState.shooterState = STATE.REVVING;
             } else {
-                robotState.shooterState = SHOOTER_STATE.COASTING;
+                robotState.shooterState = STATE.COASTING;
             }
-            if (state == SHOOTER_STATE.REVVING) {
+            if (state == STATE.REVVING) {
                 System.out.println(
                     "shooter not at speed! actual state = " + robotState.shooterState
                 );
@@ -213,7 +190,6 @@ public class Shooter extends Subsystem implements PidProvider {
                     break;
             }
             hood.set(hoodOut);
-            System.out.println("velocity shooter demand = " + velocityDemand);
         }
     }
 
@@ -222,26 +198,7 @@ public class Shooter extends Subsystem implements PidProvider {
     }
 
     public double convertShooterMetersToTicksPerSecond(double metersPerSecond) {
-        return 5121.21 * metersPerSecond; //TODO: verify conversion
-    }
-
-    private double getAngleBetween(Translation2d a, Translation2d b) {
-        double dot = (a.getNorm() * b.getNorm() == 0)
-            ? 0
-            : Math.acos(
-                (a.getX() * b.getX() + a.getY() * b.getY()) / (a.getNorm() * b.getNorm())
-            );
-        double cross = crossProduct(a, b);
-        if (cross > 0) {
-            dot *= -1;
-        }
-        return dot;
-    }
-
-    private static double crossProduct(Translation2d a, Translation2d b) {
-        double[] vect_A = { a.getX(), a.getY(), 0 };
-        double[] vect_B = { b.getX(), b.getY(), 0 };
-        return vect_A[0] * vect_B[1] - vect_A[1] * vect_B[0];
+        return (metersPerSecond + 0.53) / 0.0248;
     }
 
     @Override
@@ -267,7 +224,7 @@ public class Shooter extends Subsystem implements PidProvider {
         return checkShooter;
     }
 
-    public enum SHOOTER_STATE {
+    public enum STATE {
         STOP,
         COASTING,
         REVVING,

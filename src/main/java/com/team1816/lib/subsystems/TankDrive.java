@@ -6,6 +6,7 @@ import static com.team1816.lib.math.DriveConversions.rotationsToInches;
 import com.ctre.phoenix.motorcontrol.*;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.util.EnhancedMotorChecker;
 import com.team1816.season.Constants;
 import com.team1816.season.auto.AutoModeSelector;
@@ -41,7 +42,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     private DifferentialDriveOdometry odometry;
 
-    @Override
     public void updateTrajectoryVelocities(Double leftVel, Double rightVel) {
         // Velocities are in m/sec comes from trajectory command
         var signal = new DriveSignal(
@@ -49,16 +49,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             metersPerSecondToTicksPer100ms(rightVel)
         );
         setVelocity(signal, DriveSignal.NEUTRAL);
-    }
-
-    @Override
-    public Rotation2d getTrajectoryHeadings() {
-        return Constants.EmptyRotation;
-    }
-
-    @Override
-    public Pose2d getPose() {
-        return robotState.field_to_vehicle;
     }
 
     private void updateRobotPose() {
@@ -136,11 +126,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     }
 
     @Override
-    public double getDesiredHeading() {
-        return getDesiredRotation2d().getDegrees();
-    }
-
-    @Override
     public synchronized void readFromHardware() {
         if (RobotBase.isSimulation()) {
             double leftAdjDemand = mPeriodicIO.left_demand;
@@ -167,7 +152,9 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
                 ) /
                 robotWidthTicks;
             mPeriodicIO.gyro_heading_no_offset =
-                getDesiredRotation2d().rotateBy(Rotation2d.fromDegrees(gyroDrift * .3));
+                mPeriodicIO.desired_heading.rotateBy(
+                    Rotation2d.fromDegrees(gyroDrift * .3)
+                );
         } else {
             mPeriodicIO.left_position_ticks = mLeftMaster.getSelectedSensorPosition(0);
             mPeriodicIO.right_position_ticks = mRightMaster.getSelectedSensorPosition(0);
@@ -177,8 +164,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
                 mRightMaster.getSelectedSensorVelocity(0);
             mPeriodicIO.gyro_heading_no_offset = Rotation2d.fromDegrees(mPigeon.getYaw());
         }
-        mPeriodicIO.gyro_heading =
-            mPeriodicIO.gyro_heading_no_offset.rotateBy(mGyroOffset);
+        mPeriodicIO.gyro_heading = mPeriodicIO.gyro_heading_no_offset;
         if (mDriveControlState == DriveControlState.OPEN_LOOP) {
             mPeriodicIO.left_error = 0;
             mPeriodicIO.right_error = 0;
@@ -344,8 +330,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     @Override
     public void zeroSensors(Pose2d pose) {
         System.out.println("Zeroing drive sensors!");
-        resetPigeon();
-        setHeading(Constants.EmptyRotation);
         resetEncoders();
         //        if (mPigeon.getLastError() != ErrorCode.OK) {
         //            // BadLog.createValue("PigeonErrorDetected", "true");
@@ -420,5 +404,54 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     @Override
     public double getRightVelocityError() {
         return mPeriodicIO.right_error;
+    }
+
+    // getters
+    @Override
+    public double getKP() {
+        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
+        defaultPIDConfig.kP = 0.0;
+        return (factory.getSubsystem(NAME).implemented)
+            ? factory
+                .getSubsystem(NAME)
+                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+                .kP
+            : 0.0;
+    }
+
+    @Override
+    public double getKI() {
+        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
+        defaultPIDConfig.kI = 0.0;
+        return (factory.getSubsystem(NAME).implemented)
+            ? factory
+                .getSubsystem(NAME)
+                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+                .kI
+            : 0.0;
+    }
+
+    @Override
+    public double getKD() {
+        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
+        defaultPIDConfig.kD = 0.0;
+        return (factory.getSubsystem(NAME).implemented)
+            ? factory
+                .getSubsystem(NAME)
+                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+                .kD
+            : 0.0;
+    }
+
+    @Override
+    public double getKF() {
+        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
+        defaultPIDConfig.kF = 0.0;
+        return (factory.getSubsystem(NAME).implemented)
+            ? factory
+                .getSubsystem(NAME)
+                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+                .kF
+            : 0.0;
     }
 }

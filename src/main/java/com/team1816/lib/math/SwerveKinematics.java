@@ -2,10 +2,10 @@ package com.team1816.lib.math;
 
 import com.google.inject.Inject;
 import com.team1816.lib.subsystems.Drive;
-import com.team1816.lib.subsystems.SwerveModule;
 import com.team1816.season.Constants;
 import com.team254.lib.util.SwerveDriveSignal;
 import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +22,8 @@ public class SwerveKinematics {
     @Inject
     private static Drive.Factory mDriveFactory;
 
-    private static Translation2d[] moduleRelativePositions = Constants.kModulePositions;
+    private static Translation2d[] moduleRelativePositions =
+        Constants.Swerve.kModulePositions;
     private static List<Translation2d> moduleRotationDirections = updateRotationDirections();
 
     private static List<Translation2d> updateRotationDirections() {
@@ -158,7 +159,7 @@ public class SwerveKinematics {
         Drive mDrive = mDriveFactory.getInstance();
 
         if (field_relative) {
-            Rotation2d gyroHeading = mDrive.getHeading();
+            Rotation2d gyroHeading = mDrive.getPose().getRotation();
             double temp = forward * gyroHeading.getCos() + strafe * gyroHeading.getSin();
             strafe = -forward * gyroHeading.getSin() + strafe * gyroHeading.getCos();
             forward = temp;
@@ -170,10 +171,10 @@ public class SwerveKinematics {
         double D = forward + rotation * W / R;
 
         double[] wheel_speeds = new double[4];
-        wheel_speeds[SwerveModule.kFrontLeft] = Math.hypot(A, D);
-        wheel_speeds[SwerveModule.kFrontRight] = Math.hypot(A, C);
-        wheel_speeds[SwerveModule.kBackLeft] = Math.hypot(B, D);
-        wheel_speeds[SwerveModule.kBackRight] = Math.hypot(B, C);
+        wheel_speeds[Constants.Swerve.kFrontLeft] = Math.hypot(A, D);
+        wheel_speeds[Constants.Swerve.kFrontRight] = Math.hypot(A, C);
+        wheel_speeds[Constants.Swerve.kBackLeft] = Math.hypot(B, D);
+        wheel_speeds[Constants.Swerve.kBackRight] = Math.hypot(B, C);
 
         // normalize wheel speeds if above 1
         if (normalize_outputs) {
@@ -191,10 +192,13 @@ public class SwerveKinematics {
         Rotation2d[] wheel_azimuths = new Rotation2d[4];
 
         if (forward != 0 || strafe != 0 || rotation != 0) {
-            wheel_azimuths[SwerveModule.kFrontLeft] = new Rotation2d(Math.atan2(A, D));
-            wheel_azimuths[SwerveModule.kFrontRight] = new Rotation2d(Math.atan2(A, C));
-            wheel_azimuths[SwerveModule.kBackLeft] = new Rotation2d(Math.atan2(B, D));
-            wheel_azimuths[SwerveModule.kBackRight] = new Rotation2d(Math.atan2(B, C));
+            wheel_azimuths[Constants.Swerve.kFrontLeft] =
+                new Rotation2d(Math.atan2(A, D));
+            wheel_azimuths[Constants.Swerve.kFrontRight] =
+                new Rotation2d(Math.atan2(A, C));
+            wheel_azimuths[Constants.Swerve.kBackLeft] = new Rotation2d(Math.atan2(B, D));
+            wheel_azimuths[Constants.Swerve.kBackRight] =
+                new Rotation2d(Math.atan2(B, C));
 
             prev_wheel_azimuths = wheel_azimuths;
         } else {
@@ -244,5 +248,63 @@ public class SwerveKinematics {
             driveVectors.set(i, driveVector.times(1.0 / maxMagnitude));
         }
         return driveVectors;
+    }
+
+    /**
+     * Minimize the change in heading the desired swerve module state would require by potentially
+     * reversing the direction the wheel spins. Customized from WPILib's version to include placing
+     * in appropriate scope for CTRE onboard control.
+     *
+     * @param desiredState The desired state.
+     * @param currentAngle The current module angle.
+     */
+    public static SwerveModuleState optimize(
+        SwerveModuleState desiredState,
+        Rotation2d currentAngle
+    ) {
+        double targetAngle = placeInAppropriate0To360Scope(
+            currentAngle.getDegrees(),
+            desiredState.angle.getDegrees()
+        );
+        double targetSpeed = desiredState.speedMetersPerSecond;
+        double delta = targetAngle - currentAngle.getDegrees();
+        if (Math.abs(delta) > 90) {
+            targetSpeed = -targetSpeed;
+            targetAngle = delta > 90 ? (targetAngle -= 180) : (targetAngle += 180);
+        }
+        return new SwerveModuleState(targetSpeed, Rotation2d.fromDegrees(targetAngle));
+    }
+
+    /**
+     * @param scopeReference Current Angle
+     * @param newAngle Target Angle
+     * @return Closest angle within scope
+     */
+    private static double placeInAppropriate0To360Scope(
+        double scopeReference,
+        double newAngle
+    ) {
+        double lowerBound;
+        double upperBound;
+        double lowerOffset = scopeReference % 360;
+        if (lowerOffset >= 0) {
+            lowerBound = scopeReference - lowerOffset;
+            upperBound = scopeReference + (360 - lowerOffset);
+        } else {
+            upperBound = scopeReference - lowerOffset;
+            lowerBound = scopeReference - (360 + lowerOffset);
+        }
+        while (newAngle < lowerBound) {
+            newAngle += 360;
+        }
+        while (newAngle > upperBound) {
+            newAngle -= 360;
+        }
+        if (newAngle - scopeReference > 180) {
+            newAngle -= 360;
+        } else if (newAngle - scopeReference < -180) {
+            newAngle += 360;
+        }
+        return newAngle;
     }
 }

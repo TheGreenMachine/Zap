@@ -73,8 +73,25 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
     }
 
     @Override
-    public boolean getFeederFlapIn() {
-        return mController.getButton(Controller.Button.A);
+    public boolean getRaiseBucket() {
+        return mController.getDPad() == 0; // && !mController.getButton(Controller.Button.A);
+    }
+
+    @Override
+    public boolean getLowerBucket() {
+        return (
+            mController.getDPad() == 180 // && !mController.getButton(Controller.Button.A)
+        );
+    }
+
+    @Override
+    public boolean getIncrementCamDeviation() {
+        return false; // mController.getDPad() == 0 && mController.getButton(Controller.Button.A);
+    }
+
+    @Override
+    public boolean getDecrementCamDeviation() {
+        return false; //mController.getDPad() == 180 && mController.getButton(Controller.Button.A);
     }
 
     @Override
@@ -84,12 +101,12 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
 
     @Override
     public boolean getClimberUp() {
-        return mController.getDPad() == 0;
+        return mController.getJoystick(Controller.Axis.RIGHT_Y) > 0.5;
     }
 
     @Override
     public boolean getClimberDown() {
-        return mController.getDPad() == 180;
+        return mController.getJoystick(Controller.Axis.RIGHT_Y) < -0.5;
     }
 
     @Override

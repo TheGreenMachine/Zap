@@ -71,7 +71,22 @@ public class TankDemoModeControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getFeederFlapIn() {
+    public boolean getRaiseBucket() {
+        return false;
+    }
+
+    @Override
+    public boolean getLowerBucket() {
+        return false;
+    }
+
+    @Override
+    public boolean getIncrementCamDeviation() {
+        return false;
+    }
+
+    @Override
+    public boolean getDecrementCamDeviation() {
         return false;
     }
 
@@ -192,7 +207,7 @@ public class TankDemoModeControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getFeederToTrenchSpline() {
+    public boolean getUseManualShoot() {
         return false;
     }
 

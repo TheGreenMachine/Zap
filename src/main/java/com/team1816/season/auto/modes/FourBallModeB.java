@@ -33,22 +33,23 @@ public class FourBallModeB extends AutoModeBase {
     @Override
     protected void routine() throws AutoModeEndedException {
         System.out.println("Running Two Ball B Mode");
-        runAction(new WaitAction(1));
         runAction(
             new SeriesAction(
                 new ParallelAction(
-                    new TurretAction(Turret.CARDINAL_NORTH), // to be changed
+                    new TurretAction(Turret.CARDINAL_NORTH + 5), // to be changed
                     new CollectAction(true),
-                    new RampUpShooterAction(13500) // make actual shooting vel
+                    new RampUpShooterAction(8650)
                 ),
                 trajectory,
+                //                new AutoAimAction(1.5),
                 new ShootAction(true, true),
-                new WaitAction(2),
+                new WaitAction(1.75),
                 new ShootAction(false, true),
                 trajectory1,
                 new WaitAction(1),
-                new TurretAction(Turret.CARDINAL_SOUTH + 28),
+                new TurretAction(Turret.CARDINAL_SOUTH + 32),
                 trajectory2,
+                //                new AutoAimAction(1.5),
                 new ShootAction(true, true),
                 new WaitAction(3)
             )

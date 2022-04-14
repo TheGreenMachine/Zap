@@ -6,6 +6,7 @@ import com.google.inject.Singleton;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
+import edu.wpi.first.wpilibj.Timer;
 
 @Singleton
 public class Collector extends Subsystem {
@@ -22,7 +23,7 @@ public class Collector extends Subsystem {
     private boolean outputsChanged = false;
     private double velocityDemand;
     private double actualVelocity;
-    private COLLECTOR_STATE state = COLLECTOR_STATE.STOP;
+    private STATE state = STATE.STOP;
 
     private final double COLLECTING;
     private final double FLUSH;
@@ -59,7 +60,7 @@ public class Collector extends Subsystem {
         return velocityDemand;
     }
 
-    public void setDesiredState(COLLECTOR_STATE state) {
+    public void setDesiredState(STATE state) {
         if (this.state != state) {
             this.state = state;
             System.out.println("desired collector " + state);
@@ -105,10 +106,20 @@ public class Collector extends Subsystem {
 
     @Override
     public boolean checkSystem() {
+        setDesiredState(STATE.COLLECTING);
+        Timer.delay(1);
+        if (
+            armDown != armPiston.get() &&
+            Math.abs(intake.getSelectedSensorVelocity(0) - intakeVel) > 1000
+        ) {
+            return false;
+        }
+        setDesiredState(STATE.STOP);
+
         return true;
     }
 
-    public enum COLLECTOR_STATE {
+    public enum STATE {
         STOP,
         COLLECTING,
         REVVING,

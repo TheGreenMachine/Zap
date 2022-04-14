@@ -8,7 +8,7 @@ import edu.wpi.first.math.util.Units;
 
 public class DriveConversions {
 
-    private static final double ticksPerRevolution = Constants.kTicksPerRevolution;
+    private static final double azimuthPPR = Constants.Swerve.kAzimuthPPR;
     private static final double wheelCircumferenceInches =
         Constants.kWheelCircumferenceInches;
     private static final double DRIVE_ENCODER_PPR = Drive.DRIVE_ENCODER_PPR;
@@ -19,7 +19,7 @@ public class DriveConversions {
     }
 
     public static double convertInchesToTicks(double inches) {
-        return inches / Math.PI * ticksPerRevolution / wheelCircumferenceInches;
+        return inches / Math.PI * azimuthPPR / wheelCircumferenceInches;
     }
 
     public static double convertMetersToTicks(double meters) {
@@ -35,11 +35,11 @@ public class DriveConversions {
     }
 
     public static double convertTicksToRadians(double ticks) {
-        return ticks / ticksPerRevolution * 2 * Math.PI;
+        return ticks / azimuthPPR * 2 * Math.PI;
     }
 
     public static double convertRadiansToTicks(double radians) {
-        return radians / (Math.PI * 2) * ticksPerRevolution;
+        return radians / (Math.PI * 2) * azimuthPPR;
     }
 
     public static double convertTicksToDegrees(double ticks) {

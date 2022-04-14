@@ -5,7 +5,6 @@ import static com.team1816.lib.math.DriveConversions.inchesPerSecondToTicksPer10
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
-import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.IPigeonIMU;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.lib.loops.Loop;
@@ -56,7 +55,6 @@ public abstract class Drive
     // hardware states
     protected String pidSlot = "slot0";
     protected boolean mIsBrakeMode;
-    protected Rotation2d mGyroOffset = Constants.EmptyRotation;
 
     protected PeriodicIO mPeriodicIO;
     protected boolean mOverrideTrajectory = false;
@@ -178,24 +176,16 @@ public abstract class Drive
         List<Rotation2d> headings
     );
 
-    //tank auto
-    public abstract void updateTrajectoryVelocities(Double aDouble, Double aDouble1);
-
-    // swerve auto
-    public abstract Rotation2d getTrajectoryHeadings();
-
-    public void setModuleStates(SwerveModuleState[] desiredStates) {}
-
-    public abstract Pose2d getPose();
+    public Pose2d getPose() {
+        return robotState.field_to_vehicle;
+    }
 
     public void updateTrajectoryPeriodic(double timestamp) {
-        if (mDriveControlState != DriveControlState.TRAJECTORY_FOLLOWING) {
-            //            zeroSensors();
-        }
         if (mTrajectoryStart == 0) mTrajectoryStart = timestamp;
         // update desired pose from trajectory
         mPeriodicIO.desired_pose =
             mTrajectory.sample(timestamp - mTrajectoryStart).poseMeters;
+        mPeriodicIO.desired_heading = mPeriodicIO.desired_pose.getRotation();
     }
 
     protected abstract void updateOpenLoopPeriodic();
@@ -215,16 +205,6 @@ public abstract class Drive
         boolean use_heading_controller
     );
 
-    public synchronized void setHeading(Rotation2d heading) {
-        System.out.println("set heading: " + heading.getDegrees());
-
-        mGyroOffset =
-            heading.rotateBy(Rotation2d.fromDegrees(mPigeon.getYaw()).unaryMinus());
-        System.out.println("gyro offset: " + mGyroOffset.getDegrees());
-
-        mPeriodicIO.desired_heading = heading;
-    }
-
     public void setControlState(DriveControlState driveControlState) {
         mDriveControlState = driveControlState;
     }
@@ -235,62 +215,20 @@ public abstract class Drive
 
     // getters
     @Override
-    public double getKP() {
-        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
-        defaultPIDConfig.kP = 0.0;
-
-        return (factory.getSubsystem(NAME).implemented)
-            ? factory
-                .getSubsystem(NAME)
-                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
-                .kP
-            : 0.0;
-    }
+    public abstract double getKP();
 
     @Override
-    public double getKI() {
-        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
-        defaultPIDConfig.kI = 0.0;
-        return (factory.getSubsystem(NAME).implemented)
-            ? factory
-                .getSubsystem(NAME)
-                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
-                .kI
-            : 0.0;
-    }
+    public abstract double getKI();
 
     @Override
-    public double getKD() {
-        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
-        defaultPIDConfig.kD = 0.0;
-        return (factory.getSubsystem(NAME).implemented)
-            ? factory
-                .getSubsystem(NAME)
-                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
-                .kD
-            : 0.0;
-    }
+    public abstract double getKD();
 
     @Override
-    public double getKF() {
-        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
-        defaultPIDConfig.kF = 0.0;
-        return (factory.getSubsystem(NAME).implemented)
-            ? factory
-                .getSubsystem(NAME)
-                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
-                .kF
-            : 0.0;
-    }
+    public abstract double getKF();
 
     @Override
-    public abstract double getDesiredHeading();
-
-    public Rotation2d getDesiredRotation2d() {
-        if (mDriveControlState == DriveControlState.TRAJECTORY_FOLLOWING) {
-            return mPeriodicIO.desired_pose.getRotation();
-        }
-        return mPeriodicIO.desired_heading;
+    public double getDesiredHeading() {
+        return mPeriodicIO.desired_heading.getDegrees();
     }
 
     public synchronized Rotation2d getHeading() {
@@ -306,7 +244,7 @@ public abstract class Drive
         return mPeriodicIO.gyro_heading_no_offset;
     }
 
-    public DriveControlState getDriveControlState() {
+    public DriveControlState getControlState() {
         return mDriveControlState;
     }
 
@@ -349,13 +287,6 @@ public abstract class Drive
         mIsBrakeMode = on;
     }
 
-    public synchronized void resetPigeon() {
-        System.out.println("resetting Pigeon  - - ");
-        mPigeon.setYaw(0);
-        mPigeon.setFusedHeading(0);
-        mPigeon.setAccumZAngle(0);
-    }
-
     public abstract void resetOdometry(Pose2d pose);
 
     @Override
@@ -376,11 +307,9 @@ public abstract class Drive
     public void initSendable(SendableBuilder builder) {
         builder.addStringProperty(
             "Drive/ControlState",
-            () -> this.getDriveControlState().toString(),
+            () -> this.getControlState().toString(),
             null
         );
-        SmartDashboard.putNumber("Drive/Vector Direction", 0);
-        SmartDashboard.putNumber("Drive/Robot Velocity", 0);
 
         SmartDashboard.putBoolean("Drive/Zero Sensors", false);
         SmartDashboard
@@ -388,8 +317,8 @@ public abstract class Drive
             .addListener(
                 entryNotification -> {
                     if (entryNotification.value.getBoolean()) {
-                        zeroSensors();
-                        Constants.prevDrivePose = Constants.ZeroPose;
+                        //                        mInfrastructure.resetPigeon(Constants.EmptyRotation);
+                        zeroSensors(Constants.ZeroPose);
                         entryNotification.getEntry().setBoolean(false);
                     }
                 },

@@ -5,6 +5,7 @@ import com.team1816.season.Constants;
 import com.team1816.season.subsystems.*;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -15,7 +16,7 @@ public class RobotState {
 
     public final Field2d field = new Field2d();
     public Pose2d field_to_vehicle = Constants.EmptyPose;
-    public Pose2d field_to_turret_pos = Constants.EmptyPose;
+    public Pose2d estimated_field_to_vehicle = Constants.EmptyPose;
     public Rotation2d vehicle_to_turret = Constants.EmptyRotation;
     public Twist2d delta_field_to_vehicle = new Twist2d();
     public ChassisSpeeds chassis_speeds = new ChassisSpeeds();
@@ -23,10 +24,10 @@ public class RobotState {
 
     // Superstructure ACTUAL states
     public Point visionPoint = new Point();
-    public Collector.COLLECTOR_STATE collectorState = Collector.COLLECTOR_STATE.STOP;
-    public Shooter.SHOOTER_STATE shooterState = Shooter.SHOOTER_STATE.STOP;
-    public Spindexer.SPIN_STATE spinState = Spindexer.SPIN_STATE.STOP;
-    public Elevator.ELEVATOR_STATE elevatorState = Elevator.ELEVATOR_STATE.STOP;
+    public Collector.STATE collectorState = Collector.STATE.STOP;
+    public Shooter.STATE shooterState = Shooter.STATE.STOP;
+    public Spindexer.STATE spinState = Spindexer.STATE.STOP;
+    public Elevator.STATE elevatorState = Elevator.STATE.STOP;
 
     public RobotState() {
         SmartDashboard.putData("Field", field);
@@ -46,7 +47,6 @@ public class RobotState {
 
     public synchronized void reset(Pose2d initial_field_to_vehicle) {
         field_to_vehicle = initial_field_to_vehicle;
-        //        field.setRobotPose(initial_field_to_vehicle);
     }
 
     public synchronized void reset() {
@@ -73,19 +73,12 @@ public class RobotState {
         );
     }
 
-    public Twist2d getDeltaPoseToCenter() {
-        return delta_field_to_vehicle; // make conversion from field relative deltaPose to center relative deltaPose
-    }
-
-    public double getCurrentShooterSpeedMetersPerSecond() {
-        return shooterSpeed;
-    }
-
-    public boolean isStationary() {
-        return (
-            delta_field_to_vehicle.dx == 0 &&
-            delta_field_to_vehicle.dy == 0 &&
-            delta_field_to_vehicle.dtheta == 0
+    public double getEstimatedDistanceToGoal() {
+        double distanceToGoalMeters = field_to_vehicle
+            .getTranslation()
+            .getDistance(Constants.targetPos.getTranslation());
+        return Math.sqrt(
+            Math.pow(Units.metersToInches(distanceToGoalMeters), 2) + 5629.5
         );
     }
 
@@ -95,6 +88,7 @@ public class RobotState {
         field.getObject(Turret.NAME).setPose(getFieldToTurretPos());
     }
 
+    // Camera state
     public class Point {
 
         public double cX;

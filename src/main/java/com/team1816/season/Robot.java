@@ -11,7 +11,6 @@ import com.team1816.lib.auto.AutoModeExecutor;
 import com.team1816.lib.auto.modes.AutoModeBase;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
-import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.Drive;
 import com.team1816.lib.subsystems.DrivetrainLogger;
@@ -56,12 +55,12 @@ public class Robot extends TimedRobot {
     private final Collector mCollector;
     private final Shooter mShooter;
     private final Turret mTurret;
-    // private final Spinner spinner = Spinner.getInstance();
     private final Spindexer mSpindexer;
     private final Elevator mElevator;
     private final Climber mClimber;
     private final Camera mCamera;
-    private final LedManager mLedManager; //    private final Compressor compressor;
+    private final LedManager mLedManager;
+    private final DistanceManager mDistanceManager;
 
     private LatchedBoolean mWantsAutoExecution = new LatchedBoolean();
     private LatchedBoolean mWantsAutoInterrupt = new LatchedBoolean();
@@ -75,12 +74,12 @@ public class Robot extends TimedRobot {
     private boolean mHasBeenEnabled = false;
 
     private ActionManager actionManager;
-    private AsyncTimer blinkTimer;
 
     // private PowerDistributionPanel pdp = new PowerDistributionPanel();
     private final Turret.ControlMode defaultTurretControlMode =
-        Turret.ControlMode.CENTER_FOLLOWING;
+        Turret.ControlMode.FIELD_FOLLOWING;
     private boolean faulted;
+    private boolean useManualShoot = false;
 
     Robot() {
         super();
@@ -97,6 +96,7 @@ public class Robot extends TimedRobot {
         mShooter = injector.getInstance(Shooter.class);
         mRobotState = injector.getInstance(RobotState.class);
         mInfrastructure = injector.getInstance(Infrastructure.class);
+        mDistanceManager = injector.getInstance(DistanceManager.class);
         mLedManager = injector.getInstance(LedManager.class);
         mSubsystemManager = injector.getInstance(SubsystemManager.class);
         mAutoModeSelector = injector.getInstance(AutoModeSelector.class);
@@ -203,11 +203,6 @@ public class Robot extends TimedRobot {
                     "hide",
                     "join:Tracking/Angles"
                 );
-                BadLog.createTopic(
-                    "ClimberCurrentDraw",
-                    "Amps",
-                    mClimber::getCurrentDraw
-                );
                 mShooter.CreateBadLogTopic(
                     "Shooter/ActVel",
                     "NativeUnits",
@@ -269,6 +264,13 @@ public class Robot extends TimedRobot {
                     "hide",
                     "join:Tracking/Angles"
                 );
+                mElevator.CreateBadLogTopic(
+                    "Elevator/ElevatorVel",
+                    "NativeUnits",
+                    mElevator::getActualOutput,
+                    "hide",
+                    "join:Tracking/Angles"
+                );
             }
 
             logger.finishInitialization();
@@ -289,6 +291,7 @@ public class Robot extends TimedRobot {
             mTurret.zeroSensors();
             mClimber.zeroSensors();
             mSuperstructure.setStopped(true); // bool statement is for shooter state (stop or coast)
+            mDistanceManager.outputBucketOffsets();
 
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mSubsystemManager.registerDisabledLoops(mDisabledLooper);
@@ -298,7 +301,6 @@ public class Robot extends TimedRobot {
 
             // Robot starts forwards.
             mRobotState.reset();
-            mDrive.setHeading(new Rotation2d());
 
             mAutoModeSelector.updateModeCreator();
 
@@ -306,12 +308,19 @@ public class Robot extends TimedRobot {
                 new ActionManager(
                     // Driver Gamepad
                     //                    createAction(
-                    //                        mControlBoard::getCollectorToggle,
-                    //                        () -> mSuperstructure.setCollecting(true)
-                    //                    ),
-                    //                    createAction(
-                    //                        mControlBoard::getCollectorBackspin,
-                    //                        () -> mSuperstructure.setCollecting(false)
+                    //                        mControlBoard::getRunAutoModeInTeleop,
+                    //                        () -> {
+                    //                            System.out.println("Running trajectory !");
+                    //                            SmartDashboard.putString("Teleop Spline", "TWO_BALL_B");
+                    //                            var trajectory = new TrajectoryAction(
+                    //                                TrajectorySet.TWO_BALL_B,
+                    //                                TrajectorySet.TWO_BALL_B_HEADINGS
+                    //                            );
+                    //                            mDrive.zeroSensors(
+                    //                                trajectory.getTrajectory().getInitialPose()
+                    //                            );
+                    //                            trajectory.start();
+                    //                        }
                     //                    ),
                     createHoldAction(
                         mControlBoard::getCollectorToggle,
@@ -322,15 +331,31 @@ public class Robot extends TimedRobot {
                         pressed -> mSuperstructure.setCollecting(pressed, false)
                     ),
                     createAction(mControlBoard::getUnlockClimber, mClimber::setUnlocked),
+                    createHoldAction(
+                        mControlBoard::getUseManualShoot,
+                        manual -> {
+                            useManualShoot = manual;
+                            System.out.println("manual shooting!");
+                        }
+                    ),
                     createAction(
-                        mControlBoard::getZeroPose, // line up against ally field wall and point turret forward -> zero
+                        mControlBoard::getZeroPose, // line up against ally field wall -> zero
                         () -> {
+                            mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
                             mDrive.zeroSensors(Constants.ZeroPose);
                         }
                     ),
                     createHoldAction(mControlBoard::getSlowMode, mDrive::setSlowMode),
                     createHoldAction(mControlBoard::getBrakeMode, mDrive::setBrakeMode),
                     // Operator Gamepad
+                    createAction(
+                        mControlBoard::getRaiseBucket,
+                        () -> mDistanceManager.incrementBucket(100)
+                    ),
+                    createAction(
+                        mControlBoard::getLowerBucket,
+                        () -> mDistanceManager.incrementBucket(-100)
+                    ),
                     createHoldAction(
                         mControlBoard::getAutoAim,
                         pressed -> {
@@ -339,7 +364,6 @@ public class Robot extends TimedRobot {
                                     Turret.ControlMode.CAMERA_FOLLOWING
                                 );
                             } else {
-                                mSuperstructure.updatePoseWithCamera();
                                 mTurret.setControlMode(defaultTurretControlMode); // this gets called when the robot inits - this could be bad?
                             }
                         }
@@ -348,13 +372,8 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         mControlBoard::getYeetShot,
                         yeet -> {
-                            if (yeet) {
-                                mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
-                            } else {
-                                mTurret.setControlMode(defaultTurretControlMode); // this gets called when the robot inits - this could be bad?
-                            }
                             mShooter.setHood(false);
-                            mSuperstructure.setRevving(yeet, Shooter.NEAR_VELOCITY);
+                            mSuperstructure.setRevving(yeet, Shooter.MID_VELOCITY, true); // Tarmac
                             mSuperstructure.setFiring(yeet);
                         }
                     ),
@@ -362,7 +381,11 @@ public class Robot extends TimedRobot {
                         mControlBoard::getShoot,
                         shooting -> {
                             mShooter.setHood(true);
-                            mSuperstructure.setRevving(shooting, 11920); // TODO TUNE
+                            mSuperstructure.setRevving(
+                                shooting,
+                                Shooter.FAR_VELOCITY,
+                                useManualShoot
+                            ); // Launchpad
                             mSuperstructure.setFiring(shooting);
                         }
                     ),
@@ -379,18 +402,24 @@ public class Robot extends TimedRobot {
                     ),
                     createHoldAction(
                         mControlBoard::getClimberUp,
-                        moving -> mClimber.setClimberPower(moving ? -1 : 0)
+                        moving -> mClimber.setClimberPower(moving ? -.5 : 0)
                     ),
                     createHoldAction(
                         mControlBoard::getClimberDown,
-                        moving -> mClimber.setClimberPower(moving ? 1 : 0)
+                        moving -> mClimber.setClimberPower(moving ? .5 : 0)
                     ),
                     createAction(mControlBoard::getTopClamp, mClimber::setTopClamp),
                     createAction(mControlBoard::getBottomClamp, mClimber::setBottomClamp),
                     createAction(
                         mControlBoard::getAutoClimb,
                         () -> {
-                            mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
+                            if (mClimber.getCurrentStage() == 0) {
+                                mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
+                                mSuperstructure.setStopped(true);
+                            } else {
+                                mTurret.setTurretAngle(Turret.CARDINAL_SOUTH - 30);
+                            }
+
                             mClimber.incrementClimberStage();
                         }
                     )
@@ -405,7 +434,6 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         try {
-            Constants.prevDrivePose = mDrive.getPose();
             mEnabledLooper.stop();
 
             mLedManager.setDefaultStatus(LedManager.RobotStatus.DISABLED);
@@ -470,9 +498,9 @@ public class Robot extends TimedRobot {
                 mAutoModeExecutor.stop();
             }
 
+            //            mDrive.zeroSensors(Constants.prevDrivePose);
             mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
             mTurret.zeroSensors();
-            mDrive.zeroSensors(Constants.prevDrivePose);
             mClimber.zeroSensors();
 
             mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
@@ -512,8 +540,6 @@ public class Robot extends TimedRobot {
             mTurret.zeroSensors();
             mDrive.zeroSensors();
 
-            blinkTimer.reset();
-
             mLedManager.blinkStatus(LedManager.RobotStatus.DISABLED);
 
             if (mSubsystemManager.checkSubsystems()) {
@@ -547,7 +573,7 @@ public class Robot extends TimedRobot {
         try {
             if (RobotController.getUserButton() && !mHasBeenEnabled) {
                 System.out.println("Zeroing Robot!");
-                mDrive.zeroSensors(Constants.ZeroPose);
+                //                mDrive.zeroSensors(Constants.ZeroPose);
                 mLedManager.indicateStatus(LedManager.RobotStatus.SEEN_TARGET);
             } else {
                 if (faulted) {
@@ -569,8 +595,8 @@ public class Robot extends TimedRobot {
                 mRobotState.field.getObject("Trajectory");
                 mAutoModeExecutor.setAutoMode(auto);
                 Constants.StartingPose = auto.getTrajectory().getInitialPose();
-                mRobotState.reset(Constants.StartingPose);
-                mDrive.zeroSensors();
+                //                mRobotState.reset(Constants.StartingPose);
+                //                mDrive.zeroSensors();
             }
         } catch (Throwable t) {
             faulted = true;
