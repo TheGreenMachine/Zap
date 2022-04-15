@@ -3,6 +3,7 @@ package com.team1816.season.util;
 import java.util.ArrayList;
 
 public class FloorFunctionSpline extends Spline {
+
     public static ArrayList<Double[]> coordinates;
     private static ArrayList<ArrayList<Double>> coefficients;
 

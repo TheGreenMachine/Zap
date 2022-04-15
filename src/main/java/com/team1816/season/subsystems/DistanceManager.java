@@ -1,12 +1,11 @@
 package com.team1816.season.subsystems;
 
 import com.google.inject.Singleton;
-import com.team1816.season.util.Spline;
 import com.team1816.season.util.FloorFunctionSpline;
 import com.team1816.season.util.LinearPiecewiseSpline;
 import com.team1816.season.util.NaturalCubicSpline;
+import com.team1816.season.util.Spline;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import java.util.ArrayList;
 
 @Singleton
@@ -70,7 +69,7 @@ public class DistanceManager {
     private double getShooterOutput(double distance) {
         allowBucketOffset = true;
         for (int i = 0; i < coordinates.size(); i++) {
-            if(distance < coordinates.get(i)[0]) {
+            if (distance < coordinates.get(i)[0]) {
                 lastBucketIndex = i;
                 break;
             }
@@ -84,9 +83,9 @@ public class DistanceManager {
             coordinates.get(lastBucketIndex)[2] += incrementVal;
             System.out.println(
                 "incrementing bucket " +
-                    lastBucketIndex +
-                    " offset by " +
-                    coordinates.get(lastBucketIndex)[2]
+                lastBucketIndex +
+                " offset by " +
+                coordinates.get(lastBucketIndex)[2]
             );
             outputCurrentBucketOffset();
         } else {
@@ -131,6 +130,7 @@ public class DistanceManager {
             );
         }
     }
+
     public void outputCurrentBucketOffset() {
         SmartDashboard.putNumber(
             "Buckets/Bucket #" + coordinates.get(lastBucketIndex)[0],

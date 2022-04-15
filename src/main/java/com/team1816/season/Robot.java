@@ -284,6 +284,8 @@ public class Robot extends TimedRobot {
                 mLedManager
             );
 
+            mDistanceManager.outputBucketOffsets();
+
             mDrive.zeroSensors();
             mTurret.zeroSensors();
             mClimber.zeroSensors();
