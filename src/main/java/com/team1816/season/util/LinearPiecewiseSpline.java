@@ -9,6 +9,7 @@ public class LinearPiecewiseSpline extends Spline {
 
     public LinearPiecewiseSpline(ArrayList<Double[]> knotPoints) {
         super(knotPoints);
+        coordinates = sort(knotPoints);
         coefficients = generateCoefficients();
     }
 

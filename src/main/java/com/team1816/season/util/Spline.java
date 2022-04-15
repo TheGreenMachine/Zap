@@ -37,7 +37,7 @@ public abstract class Spline {
                 map.put(point[0], point);
             }
         }
-        List<Double> keys = (List<Double>) map.keySet();
+        List<Double> keys = new ArrayList<Double>(map.keySet());
         Collections.sort(keys);
         for (int i = 0; i < points.size(); i++) {
             sorted.add(map.get(keys.get(i)));

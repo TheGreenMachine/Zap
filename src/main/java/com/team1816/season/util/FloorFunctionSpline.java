@@ -9,6 +9,7 @@ public class FloorFunctionSpline extends Spline {
 
     public FloorFunctionSpline(ArrayList<Double[]> knotPoints) {
         super(knotPoints);
+        coordinates = sort(knotPoints);
         coefficients = generateCoefficients();
     }
 

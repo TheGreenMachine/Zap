@@ -9,6 +9,7 @@ public class NaturalCubicSpline extends Spline {
 
     public NaturalCubicSpline(ArrayList<Double[]> knotPoints) {
         super(knotPoints);
+        coordinates = sort(knotPoints);
         coefficients = generateCoefficients();
     }
 
