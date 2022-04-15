@@ -60,6 +60,7 @@ public class Robot extends TimedRobot {
     private final Climber mClimber;
     private final Camera mCamera;
     private final LedManager mLedManager;
+    private final DistanceManager mDistanceManager;
 
     private LatchedBoolean mWantsAutoExecution = new LatchedBoolean();
     private LatchedBoolean mWantsAutoInterrupt = new LatchedBoolean();
@@ -95,6 +96,7 @@ public class Robot extends TimedRobot {
         mRobotState = injector.getInstance(RobotState.class);
         mInfrastructure = injector.getInstance(Infrastructure.class);
         mLedManager = injector.getInstance(LedManager.class);
+        mDistanceManager = injector.getInstance(DistanceManager.class);
         mSubsystemManager = injector.getInstance(SubsystemManager.class);
         mAutoModeSelector = injector.getInstance(AutoModeSelector.class);
         trajectorySet = injector.getInstance(TrajectorySet.class);
@@ -335,6 +337,14 @@ public class Robot extends TimedRobot {
                     createHoldAction(mControlBoard::getSlowMode, mDrive::setSlowMode),
                     createHoldAction(mControlBoard::getBrakeMode, mDrive::setBrakeMode),
                     // Operator Gamepad
+                    createAction(
+                        mControlBoard::getRaiseBucket,
+                        () -> mDistanceManager.incrementBucket(100)
+                    ),
+                    createAction(
+                        mControlBoard::getLowerBucket,
+                        () -> mDistanceManager.incrementBucket(-100)
+                    ),
                     createHoldAction(
                         mControlBoard::getAutoAim,
                         pressed -> {

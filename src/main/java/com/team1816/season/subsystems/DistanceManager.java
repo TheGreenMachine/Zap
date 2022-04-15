@@ -1,48 +1,62 @@
 package com.team1816.season.subsystems;
 
+import com.google.inject.Singleton;
 import com.team1816.season.util.Spline;
+import com.team1816.season.util.FloorFunctionSpline;
+import com.team1816.season.util.LinearPiecewiseSpline;
+import com.team1816.season.util.NaturalCubicSpline;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.ArrayList;
 
+@Singleton
 public class DistanceManager {
 
     // State
-    public static ArrayList<Double[]> coordinates;
-    public static ArrayList<ArrayList<Double>> coefficients = new ArrayList<>();
+    public ArrayList<Double[]> coordinates;
+    public Spline shooterOutput;
+
+    private int lastBucketIndex;
+    private boolean allowBucketOffset;
 
     // Constants
-    public static ArrayList<Double[]> shooterMap = new ArrayList<>() {
+    public static ArrayList<Double[]> shooterMap = new ArrayList<>() { // format: {distance, output, offset}
         {
-            add(new Double[] { 97.0, 7200.0 });
-            add(new Double[] { 105.0, 7700.0 });
-            add(new Double[] { 115.0, 8200.0 });
-            add(new Double[] { 125.0, 8700.0 });
-            add(new Double[] { 137.0, 8900.0 });
-            add(new Double[] { 145.0, 9200.0 });
-            add(new Double[] { 155.0, 9450.0 });
-            add(new Double[] { 165.0, 9725.0 });
-            add(new Double[] { 175.0, 10200.0 });
-            add(new Double[] { 190.0, 10500.0 });
-            add(new Double[] { 200.0, 11140.0 });
-            add(new Double[] { 210.0, 11875.0 });
-            add(new Double[] { 220.0, 12400.0 });
+            add(new Double[] { 97.0, 7200.0, 0.0 });
+            add(new Double[] { 105.0, 7700.0, 0.0 });
+            add(new Double[] { 115.0, 8200.0, 0.0 });
+            add(new Double[] { 125.0, 8700.0, 0.0 });
+            add(new Double[] { 137.0, 8900.0, 0.0 });
+            add(new Double[] { 145.0, 9200.0, 0.0 });
+            add(new Double[] { 155.0, 9450.0, 0.0 });
+            add(new Double[] { 165.0, 9725.0, 0.0 });
+            add(new Double[] { 175.0, 10200.0, 0.0 });
+            add(new Double[] { 190.0, 10500.0, 0.0 });
+            add(new Double[] { 200.0, 11140.0, 0.0 });
+            add(new Double[] { 210.0, 11875.0, 0.0 });
+            add(new Double[] { 220.0, 12400.0, 0.0 });
         }
     };
 
     public DistanceManager() {
         coordinates = shooterMap;
+        lastBucketIndex = 0;
+        allowBucketOffset = false;
+        calculateFloorFunctionSpline();
         calculateLinearizedSpline();
         calculateNaturalCubicSpline();
     }
 
+    private void calculateFloorFunctionSpline() {
+        shooterOutput = new FloorFunctionSpline(coordinates);
+    }
+
     private void calculateLinearizedSpline() {
-        Spline spline = new Spline(coordinates);
-        coefficients = spline.calculateLinearizedSpline();
+        shooterOutput = new LinearPiecewiseSpline(coordinates);
     }
 
     private void calculateNaturalCubicSpline() {
-        Spline spline = new Spline(coordinates);
-        coefficients = spline.calculateNaturalCubicSpline();
+        shooterOutput = new NaturalCubicSpline(coordinates);
     }
 
     private double getSpindexerOutput(double distance) {
@@ -54,16 +68,30 @@ public class DistanceManager {
     }
 
     private double getShooterOutput(double distance) {
-        for (int i = 0; i < coordinates.size() - 1; i++) {
-            if (distance < coordinates.get(i + 1)[0]) { // this is because we will only generate n polynomials for n+1 points
-                double output = 0;
-                for (int j = 0; j < coefficients.get(i).size(); j++) {
-                    output += Math.pow(distance, j) * coefficients.get(i).get(j);
-                }
-                return output;
+        allowBucketOffset = true;
+        for (int i = 0; i < coordinates.size(); i++) {
+            if(distance < coordinates.get(i)[0]) {
+                lastBucketIndex = i;
+                break;
             }
         }
-        return coordinates.get(coordinates.size()-1)[1]; // dummy return might have to change later
+        return shooterOutput.getValue(distance);
+    }
+
+    public void incrementBucket(double incrementVal) {
+        if (allowBucketOffset) {
+            allowBucketOffset = false;
+            coordinates.get(lastBucketIndex)[2] += incrementVal;
+            System.out.println(
+                "incrementing bucket " +
+                    lastBucketIndex +
+                    " offset by " +
+                    coordinates.get(lastBucketIndex)[2]
+            );
+            outputCurrentBucketOffset();
+        } else {
+            System.out.println("not incrementing bucket...");
+        }
     }
 
     private double getHoodRetracted(double distance) {
@@ -93,5 +121,20 @@ public class DistanceManager {
         ELEVATOR,
         SHOOTER,
         HOOD,
+    }
+
+    public void outputBucketOffsets() {
+        for (int i = 0; i < coordinates.size(); i++) {
+            SmartDashboard.putNumber(
+                "Buckets/Bucket #" + coordinates.get(i)[0],
+                coordinates.get(i)[2]
+            );
+        }
+    }
+    public void outputCurrentBucketOffset() {
+        SmartDashboard.putNumber(
+            "Buckets/Bucket #" + coordinates.get(lastBucketIndex)[0],
+            coordinates.get(lastBucketIndex)[2]
+        );
     }
 }

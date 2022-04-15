@@ -13,6 +13,14 @@ public interface IButtonControlBoard {
 
     boolean getHood();
 
+    boolean getRaiseBucket();
+
+    boolean getLowerBucket();
+
+    boolean getIncrementCamDeviation();
+
+    boolean getDecrementCamDeviation();
+
     boolean getClimberUp();
 
     boolean getClimberDown();
