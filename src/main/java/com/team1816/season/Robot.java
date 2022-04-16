@@ -331,10 +331,10 @@ public class Robot extends TimedRobot {
                         pressed -> mSuperstructure.setCollecting(pressed, false)
                     ),
                     createAction(mControlBoard::getUnlockClimber, mClimber::setUnlocked),
-                    createHoldAction(
+                    createAction(
                         mControlBoard::getUseManualShoot,
-                        manual -> {
-                            useManualShoot = manual;
+                        () -> {
+                            useManualShoot = !useManualShoot;
                             System.out.println("manual shooting!");
                         }
                     ),
@@ -373,7 +373,19 @@ public class Robot extends TimedRobot {
                         mControlBoard::getYeetShot,
                         yeet -> {
                             mShooter.setHood(false);
-                            mSuperstructure.setRevving(yeet, Shooter.MID_VELOCITY, true); // Tarmac
+                            if (useManualShoot) {
+                                mSuperstructure.setRevving(
+                                    yeet,
+                                    Shooter.MID_VELOCITY,
+                                    true
+                                ); // Tarmac
+                            } else {
+                                mSuperstructure.setRevving(
+                                    yeet,
+                                    Shooter.NEAR_VELOCITY,
+                                    true
+                                ); // Barf shot
+                            }
                             mSuperstructure.setFiring(yeet);
                         }
                     ),
@@ -393,12 +405,12 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         mControlBoard::getTurretJogLeft,
                         moving ->
-                            mTurret.setTurretSpeed(moving ? -Turret.TURRET_JOG_SPEED : 0)
+                            mTurret.setTurretSpeed(moving ? Turret.TURRET_JOG_SPEED : 0)
                     ),
                     createHoldAction(
                         mControlBoard::getTurretJogRight,
                         moving ->
-                            mTurret.setTurretSpeed(moving ? Turret.TURRET_JOG_SPEED : 0)
+                            mTurret.setTurretSpeed(moving ? -Turret.TURRET_JOG_SPEED : 0)
                     ),
                     createHoldAction(
                         mControlBoard::getClimberUp,

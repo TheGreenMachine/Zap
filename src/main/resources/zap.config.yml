@@ -28,28 +28,28 @@ subsystems:
                     azimuth: FLAz
                     canCoder: FLEnc
                     constants:
-                        encoderOffset: 1593
+                        encoderOffset: 1591
                         invertSensorPhase: 1
                 frontRight:
                     drive: FRDr
                     azimuth: FRAz
                     canCoder: FREnc
                     constants:
-                        encoderOffset: 1621
+                        encoderOffset: 1626
                         invertSensorPhase: 1
                 backLeft:
                     drive: RLDr
                     azimuth: RLAz
                     canCoder: RLEnc
                     constants:
-                        encoderOffset: 3114 #1539
+                        encoderOffset: 3120 #1539
                         invertSensorPhase: 1
                 backRight:
                     drive: RRDr
                     azimuth: RRAz
                     canCoder: RREnc
                     constants:
-                        encoderOffset: 2842
+                        encoderOffset: 2843
                         invertSensorPhase: 1
             drivePID:
                 slot0:
@@ -132,7 +132,7 @@ subsystems:
             rpmFloorCheck: 2000
             rpmEpsilonCheck: 60
             nearVel: 4500
-            midVel: 8600
+            midVel: 8450 #8450
             farVel: 10150
             maxVel: 16500
             coast: 6000
@@ -146,8 +146,8 @@ subsystems:
             bottomClamp: 6
         pidConfig:
             slot0: #TODO Change this
-                kP: 0.025 #0.075 #tunned at 4000
-                kI: 0.01
+                kP: 0.015 #0.075 #tunned at 4000
+                kI: 0.001
                 kD: 0.6
                 kF: 0.0
                 allowableError: 5000
@@ -157,7 +157,7 @@ subsystems:
             startPos: 0  #TODO set this value
             returnPos: 0
             firstToSecondRungPos: 140127 #86.5 #TODO set this value
-            secondToLastRungPos: 330610 #TODO set this value
+            secondToLastRungPos: 350610 #TODO set this value
             lastPos: 389790 #TODO set this value
     elevator:
         implemented: true

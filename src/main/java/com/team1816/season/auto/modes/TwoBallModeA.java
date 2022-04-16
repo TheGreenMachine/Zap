@@ -5,6 +5,7 @@ import com.team1816.lib.auto.actions.*;
 import com.team1816.lib.auto.modes.AutoModeBase;
 import com.team1816.season.auto.actions.*;
 import com.team1816.season.auto.paths.TrajectorySet;
+import com.team1816.season.subsystems.Shooter;
 import com.team1816.season.subsystems.Turret;
 
 public class TwoBallModeA extends AutoModeBase {
@@ -24,11 +25,11 @@ public class TwoBallModeA extends AutoModeBase {
         runAction(
             new SeriesAction(
                 new ParallelAction(
-                    new TurretAction(Turret.CARDINAL_NORTH + 15), // to be changed
-                    new CollectAction(true)
+                    new TurretAction(Turret.CARDINAL_NORTH + 10), // to be changed
+                    new CollectAction(true),
+                    new RampUpShooterAction(Shooter.MID_VELOCITY)
                 ),
                 trajectory,
-                new AutoAimAndRev(3, 11000), // TODO tune the default value
                 new ShootAction(true, true),
                 new WaitAction(4)
             )

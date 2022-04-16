@@ -87,7 +87,7 @@ public class Superstructure {
 
     public void setCollecting(boolean collecting, boolean backSpin) {
         this.collecting = collecting;
-        updateDesiredSpindexer();
+        updateDesiredSpindexer(backSpin);
         updateDesiredCollector(backSpin);
     }
 
@@ -109,14 +109,14 @@ public class Superstructure {
         } else {
             shooter.setDesiredState(Shooter.STATE.COASTING);
         }
-        updateDesiredSpindexer();
+        updateDesiredSpindexer(false);
         updateDesiredCollector(false);
     }
 
     public void setFiring(boolean firing) {
         this.firing = firing;
         System.out.println("struct - fire " + firing);
-        updateDesiredSpindexer();
+        updateDesiredSpindexer(false);
         updateDesiredElevator();
         updateDesiredCollector(false);
     }
@@ -135,11 +135,15 @@ public class Superstructure {
         }
     }
 
-    public void updateDesiredSpindexer() {
+    public void updateDesiredSpindexer(boolean backSpin) {
         if (firing) {
             spindexer.setDesiredState(Spindexer.STATE.FIRE);
         } else if (collecting) {
-            spindexer.setDesiredState(Spindexer.STATE.COLLECT);
+            if (backSpin) {
+                spindexer.setDesiredState(Spindexer.STATE.FLUSH);
+            } else {
+                spindexer.setDesiredState(Spindexer.STATE.COLLECT);
+            }
         } else if (revving) {
             spindexer.setDesiredState(Spindexer.STATE.INDEX);
         } else {
