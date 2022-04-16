@@ -146,7 +146,7 @@ subsystems:
             bottomClamp: 6
         pidConfig:
             slot0: #TODO Change this
-                kP: 0.015 #0.075 #tunned at 4000
+                kP: 0.005 #0.075 #tunned at 4000
                 kI: 0.001
                 kD: 0.6
                 kF: 0.0
@@ -156,9 +156,9 @@ subsystems:
             unlockPos: -14400 #TODO set this value
             startPos: 0  #TODO set this value
             returnPos: 0
-            firstToSecondRungPos: 140127 #86.5 #TODO set this value
-            secondToLastRungPos: 350610 #TODO set this value
-            lastPos: 389790 #TODO set this value
+            firstToSecondRungPos: 140000 #86.5 #TODO set this value
+            secondToLastRungPos: 346000 #TODO set this value
+            lastPos: 370000 #TODO set this value
     elevator:
         implemented: true
         talons:
