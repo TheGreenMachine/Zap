@@ -130,4 +130,48 @@ public class NaturalCubicSpline extends Spline {
                 (double) h[i - 1];
         }
     }
+
+    // additional properties
+    public double getDerivativeAtKnotPointIndex(int i) {
+        double ans = 0, input = 0;
+        input = coordinates.get(i)[0];
+        if (i < coefficients.size() - 1) {
+            ans =
+                coefficients.get(i).get(1) *
+                input +
+                2 *
+                coefficients.get(i).get(2) *
+                input +
+                3 *
+                coefficients.get(i).get(3) *
+                Math.pow(input, 2);
+        } else {
+            ans =
+                coefficients.get(i - 1).get(1) *
+                input +
+                2 *
+                coefficients.get(i - 1).get(2) *
+                input +
+                3 *
+                coefficients.get(i - 1).get(3) *
+                Math.pow(input, 2);
+        }
+        return ans;
+    }
+
+    public double getSecondDerivativeAtKnotPointIndex(int i) {
+        double ans = 0, input = 0;
+        input = coordinates.get(i)[0];
+        if (i < coefficients.size() - 1) {
+            ans = 2 * coefficients.get(i).get(2) + 6 * coefficients.get(i).get(3) * input;
+        } else {
+            ans =
+                2 *
+                coefficients.get(i - 1).get(2) +
+                6 *
+                coefficients.get(i - 1).get(3) *
+                input;
+        }
+        return ans;
+    }
 }

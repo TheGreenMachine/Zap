@@ -1,10 +1,7 @@
 package com.team1816.season.subsystems;
 
 import com.google.inject.Singleton;
-import com.team1816.season.util.FloorFunctionSpline;
-import com.team1816.season.util.LinearPiecewiseSpline;
-import com.team1816.season.util.NaturalCubicSpline;
-import com.team1816.season.util.Spline;
+import com.team1816.season.util.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 
@@ -44,6 +41,7 @@ public class DistanceManager {
         calculateFloorFunctionSpline();
         calculateLinearizedSpline();
         calculateNaturalCubicSpline();
+        calculateQuinticSpline();
     }
 
     private void calculateFloorFunctionSpline() {
@@ -56,6 +54,10 @@ public class DistanceManager {
 
     private void calculateNaturalCubicSpline() {
         shooterOutput = new NaturalCubicSpline(coordinates);
+    }
+
+    private void calculateQuinticSpline() {
+        shooterOutput = new QuinticSpline(coordinates);
     }
 
     private double getSpindexerOutput(double distance) {
