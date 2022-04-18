@@ -5,6 +5,7 @@ import com.team1816.lib.auto.actions.*;
 import com.team1816.lib.auto.modes.AutoModeBase;
 import com.team1816.season.auto.actions.*;
 import com.team1816.season.auto.paths.TrajectorySet;
+import com.team1816.season.subsystems.Shooter;
 import com.team1816.season.subsystems.Turret;
 
 public class TwoBallModeB extends AutoModeBase {
@@ -20,15 +21,13 @@ public class TwoBallModeB extends AutoModeBase {
     @Override
     protected void routine() throws AutoModeEndedException {
         System.out.println("Running Two Ball B Mode");
-        runAction(new WaitAction(1));
+        runAction(new WaitAction(.5));
         runAction(
             new SeriesAction(
                 new ParallelAction(
-                    new TurretAction(Turret.CARDINAL_NORTH + 25), // to be changed
-                    new WaitAction(8),
-                    new AutoAimAction(10),
+                    new TurretAction(Turret.CARDINAL_NORTH + 5), // to be changed
                     new CollectAction(true),
-                    new RampUpShooterAction(13000) // make actual shooting vel
+                    new RampUpShooterAction(Shooter.MID_VELOCITY)
                 ),
                 trajectory,
                 new ShootAction(true, true),

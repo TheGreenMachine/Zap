@@ -79,7 +79,7 @@ while True:
             fpsCounter.update()
             fpsCounter.stop()
             #stream_image = fps.putIterationsPerSec(stream_image, fpsCounter.fps())
-            # stream_image = cv2.bitwise_and(stream_image, stream_image, mask=mask)
+            #stream_image = cv2.bitwise_and(stream_image, stream_image, mask=mask)
             if vs.distance >= 0:
                 lastDist = vs.distance
             stream_image = cv2.putText(stream_image, f"{lastDist} in",

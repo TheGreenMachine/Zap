@@ -6,17 +6,22 @@ import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 
 public class GhostPigeonIMU implements IPigeonIMU {
 
-    public GhostPigeonIMU(int id) {}
+    double dummyYaw;
+
+    public GhostPigeonIMU(int id) {
+        dummyYaw = 0;
+    }
 
     public GhostPigeonIMU(IMotorControllerEnhanced motor) {}
 
     @Override
     public double getYaw() {
-        return 0;
+        return dummyYaw;
     }
 
     @Override
     public ErrorCode setYaw(double angleDeg) {
+        dummyYaw = angleDeg;
         return ErrorCode.OK;
     }
 

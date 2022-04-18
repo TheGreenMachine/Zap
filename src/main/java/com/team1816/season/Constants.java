@@ -67,7 +67,6 @@ public class Constants {
 
     public static final Pose2d ZeroPose = new Pose2d(0.5, fieldCenterY, EmptyRotation);
     public static Pose2d StartingPose = new Pose2d(0.5, fieldCenterY, EmptyRotation);
-    public static Pose2d prevDrivePose = new Pose2d(0.5, fieldCenterY, EmptyRotation);
 
     // CAN Timeouts
     public static final int kCANTimeoutMs = 10; // use for important on the fly updates
@@ -78,47 +77,18 @@ public class Constants {
         "openLoopRampRate"
     );
 
-    private static final double moduleDeltaX =
-        Units.inches_to_meters(kDriveWheelbaseLengthInches) / 2.0;
-    private static final double moduleDeltaY =
-        Units.inches_to_meters(kDriveWheelTrackWidthInches) / 2.0;
-
-    public static final Translation2d kFrontLeftModulePosition = new Translation2d(
-        moduleDeltaX,
-        moduleDeltaY
-    );
-    public static final Translation2d kFrontRightModulePosition = new Translation2d(
-        moduleDeltaX,
-        -moduleDeltaY
-    );
-    public static final Translation2d kBackLeftModulePosition = new Translation2d(
-        -moduleDeltaX,
-        moduleDeltaY
-    );
-    public static final Translation2d kBackRightModulePosition = new Translation2d(
-        -moduleDeltaX,
-        -moduleDeltaY
-    );
-
-    public static final Translation2d[] kModulePositions = {
-        kFrontLeftModulePosition,
-        kFrontRightModulePosition,
-        kBackRightModulePosition,
-        kBackLeftModulePosition,
-    };
-
     public static class Swerve {
 
         public String kName = "Name";
         public String kDriveMotorName = "";
         public String kAzimuthMotorName = "";
 
-        public static final int AZIMUTH_TICK_MASK = (int) factory.getConstant(
+        public static final int kAzimuthPPR = (int) factory.getConstant(
             "drive",
             "azimuthEncPPR",
             4096
-        ) -
-        1;
+        );
+        public static final int AZIMUTH_TICK_MASK = kAzimuthPPR - 1;
         public static final double AZIMUTH_ADJUSTMENT_OFFSET_DEGREES = factory.getConstant(
             "drive",
             "azimuthHomeAdjustmentDegrees",
@@ -156,6 +126,12 @@ public class Constants {
             kDriveWheelTrackWidthMeters / 2.0
         );
 
+        // Module Indicies
+        public static final int kFrontLeft = 0;
+        public static final int kFrontRight = 1;
+        public static final int kBackLeft = 2;
+        public static final int kBackRight = 3;
+
         public static final Translation2d kFrontLeftModulePosition = new Translation2d(
             moduleDeltaX,
             moduleDeltaY
@@ -173,6 +149,13 @@ public class Constants {
             -moduleDeltaY
         );
 
+        public static final Translation2d[] kModulePositions = {
+            kFrontLeftModulePosition,
+            kFrontRightModulePosition,
+            kBackRightModulePosition,
+            kBackLeftModulePosition,
+        };
+
         // See https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/swerve-drive-kinematics.html
         public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
             kFrontLeftModulePosition,
@@ -180,11 +163,6 @@ public class Constants {
             kBackLeftModulePosition,
             kBackRightModulePosition
         );
-
-        public static final int kFrontLeft = 0;
-        public static final int kFrontRight = 1;
-        public static final int kBackLeft = 2;
-        public static final int kBackRight = 3;
     }
 
     // reset button
@@ -209,11 +187,11 @@ public class Constants {
         "maxVelPathFollowing"
     );
     public static double kOpenLoopMaxVelMeters = factory.getConstant("maxVelOpenLoop");
-    public static final double kTicksPerRevolution = 4096; // make into yaml constant
 
-    public static final double kPXController = 10;
-    public static final double kPYController = 10;
-    public static final double kPThetaController = 700; // find why this is so big (700)
+    public static final double kPXController = 6;
+    public static final double kPYController = 6;
+    public static final double kPThetaController = 600; // find why this is so big (700)
+    public static final double kIThetaController = 0; // find why this is so big (700)
     public static final double kDThetaController = 0; // 2000;
     public static double kMaxAngularSpeed = factory.getConstant("maxRotVel"); // rad/sec
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI;
@@ -233,8 +211,8 @@ public class Constants {
     public static final boolean kUsePoseTrack =
         factory.getConstant("shooter", "usingPoseForSpeed", 0) > 0;
     public static final boolean kUseVision = factory.getSubsystem("camera").implemented;
-    public static final boolean kUseCameraInAuto =
-        factory.getConstant("useCameraInAuto", 0) > 0;
+    //    public static final boolean kEnableBucketTuning =
+    //        factory.getConstant("enableBucketTuning", 0) > 0;
     // Do not change anything after this line unless you rewire the robot and
     // update the spreadsheet!
     // Port assignments should match up with the spreadsheet here:

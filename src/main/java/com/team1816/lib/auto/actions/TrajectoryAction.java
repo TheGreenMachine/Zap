@@ -44,12 +44,12 @@ public class TrajectoryAction implements Action {
                     new DifferentialDriveKinematics(
                         Units.inchesToMeters(Constants.kDriveWheelTrackWidthInches)
                     ),
-                    mDrive::updateTrajectoryVelocities
+                    ((TankDrive) mDrive)::updateTrajectoryVelocities
                 );
         } else if (mDrive instanceof SwerveDrive) {
             var thetaController = new ProfiledPIDController(
                 Constants.kPThetaController,
-                0,
+                Constants.kIThetaController,
                 Constants.kDThetaController,
                 Constants.kThetaControllerConstraints
             );
@@ -63,8 +63,8 @@ public class TrajectoryAction implements Action {
                     new PIDController(Constants.kPXController, 0, 0),
                     new PIDController(Constants.kPYController, 0, 0),
                     thetaController,
-                    mDrive::getTrajectoryHeadings,
-                    mDrive::setModuleStates
+                    ((SwerveDrive) mDrive)::getTrajectoryHeadings,
+                    ((SwerveDrive) mDrive)::setModuleStates
                 );
         } else {
             System.out.println(

@@ -38,12 +38,12 @@ def preProcess(image):
 
 
 edge_params = {
-    'min_h': 0,
-    'min_s': 0,
-    'min_v': 0,
-    'max_h': 0,
-    'max_s': 0,
-    'max_v': 0,
+    'min_h': 59,
+    'min_s': 55,
+    'min_v': 120,
+    'max_h': 111,
+    'max_s': 255,
+    'max_v': 255,
 }
 
 
@@ -109,21 +109,28 @@ def postProcess(image, target):
 
 
 if __name__ == '__main__':
-    cap = cv2.VideoCapture(0)
-    hexes = make_half_hex_shape()
+    cap = cv2.VideoCapture("video2_Trim.mp4")
+    cv2.namedWindow("PreProcessed Image")
+    cv2.createTrackbar('Hmin', 'PreProcessed Image', edge_params['min_h'], 255, min_hchange)
+    cv2.createTrackbar('Smin', 'PreProcessed Image', edge_params['min_s'], 255, min_schange)
+    cv2.createTrackbar('Vmin', 'PreProcessed Image', edge_params['min_v'], 255, min_vchange)
+    cv2.createTrackbar('Hmax', 'PreProcessed Image', edge_params['max_h'], 255, max_hchange)
+    cv2.createTrackbar('Smax', 'PreProcessed Image', edge_params['max_s'], 255, max_schange)
+    cv2.createTrackbar('Vmax', 'PreProcessed Image', edge_params['max_v'], 255, max_vchange)
+
     while 1:
         _, frame = cap.read()
         preProcessImage = preProcess(frame)
-        cv2.imshow("PreProcessed Image", preProcessImage)
-        target = findTarget(preProcessImage, hexes)
-        postProcessImage = postProcess(frame, target)
+        stream_image = cv2.bitwise_and(frame, frame, mask=preProcessImage)
+        cv2.line(stream_image, (0, 272), (672, 272), (0, 255, 255), 3)
+        cv2.imshow("PreProcessed Image", stream_image)
         #cv2.imshow("PostProcessed Image", postProcessImage)
-        cv2.createTrackbar('Hmax', 'PreProcessed Image', 0, 255, max_hchange)
-        cv2.createTrackbar('Smax', 'PreProcessed Image', 0, 255, max_schange)
-        cv2.createTrackbar('Vmax', 'PreProcessed Image', 0, 255, max_vchange)
-
-        cv2.createTrackbar('Hmin', 'PreProcessed Image', 0, 255, min_hchange)
-        cv2.createTrackbar('Smin', 'PreProcessed Image', 0, 255, min_schange)
-        cv2.createTrackbar('Vmin', 'PreProcessed Image', 0, 255, min_vchange)
-
-        cv2.waitKey(1)
+        cv2.imshow("Raw Image", frame)
+        if cv2.waitKey(30) == ord('p'):
+            while 1:
+                preProcessImage = preProcess(frame)
+                stream_image = cv2.bitwise_and(frame, frame, mask=preProcessImage)
+                cv2.line(stream_image, (0, 272), (672, 272), (0, 255, 255), 3)
+                cv2.imshow("PreProcessed Image", stream_image)
+                if cv2.waitKey(1) == ord('r'):
+                    break

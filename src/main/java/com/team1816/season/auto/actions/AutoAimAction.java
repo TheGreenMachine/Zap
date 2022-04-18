@@ -23,13 +23,13 @@ public class AutoAimAction implements Action {
 
     @Override
     public void start() {
-        if (Constants.kUseCameraInAuto) {
+        if (Constants.kUseVision) {
             prevControlMode = turret.getControlMode();
             aimTimer =
                 new AsyncTimer(
                     duration,
                     () -> turret.setControlMode(Turret.ControlMode.CAMERA_FOLLOWING),
-                    () -> turret.setControlMode(prevControlMode)
+                    () -> turret.lockTurret()
                 );
             aimTimer.update();
             turret.setControlMode(Turret.ControlMode.CAMERA_FOLLOWING);
@@ -38,14 +38,14 @@ public class AutoAimAction implements Action {
 
     @Override
     public void update() {
-        if (Constants.kUseCameraInAuto) {
+        if (Constants.kUseVision) {
             aimTimer.update();
         }
     }
 
     @Override
     public boolean isFinished() {
-        if (Constants.kUseCameraInAuto) {
+        if (Constants.kUseVision) {
             return aimTimer.isCompleted();
         } else {
             return true;
@@ -54,6 +54,8 @@ public class AutoAimAction implements Action {
 
     @Override
     public void done() {
-        turret.setControlMode(prevControlMode);
+        if (Constants.kUseVision) {
+            turret.lockTurret();
+        }
     }
 }
