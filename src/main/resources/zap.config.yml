@@ -123,7 +123,7 @@ subsystems:
                 kI: 0.0002
                 kD: 13.5 # 11 - 4.5
                 kF: 0.0487
-                allowableError: 50
+                allowableError: 60
         constants:
             usingPoseForSpeed: 0
             maxTicks: 20700 #
@@ -146,9 +146,9 @@ subsystems:
             bottomClamp: 6
         pidConfig:
             slot0: #TODO Change this
-                kP: 0.005 #0.075 #tunned at 4000
-                kI: 0.001
-                kD: 0.6
+                kP: 0.050 #0.075 #tunned at 4000
+                kI: 0.000
+                kD: .6
                 kF: 0.0
                 allowableError: 5000
         constants:

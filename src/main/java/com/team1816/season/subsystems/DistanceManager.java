@@ -104,7 +104,6 @@ public class DistanceManager {
 
     public void incrementBucket(double incrVal) {
         if (allowBucketOffset) {
-            allowBucketOffset = false;
             buckets[lastBucketIndex].bumpOffset += incrVal;
             System.out.println(
                 "incrementing bucket #" +
