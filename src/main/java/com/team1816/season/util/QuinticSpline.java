@@ -14,6 +14,21 @@ public class QuinticSpline extends Spline {
     }
 
     @Override
+    public double getValue(double input) {
+        for (int i = 0; i < coordinates.size() - 1; i++) {
+            if (input < coordinates.get(i + 1)[0]) { // this is because we want the value to hold until the next value
+                double output = coordinates.get(i).length > 2 ? coordinates.get(i)[2] : 0; // use offsets if they exist
+                for (int j = 0; j < coefficients.get(i).size(); j++) {
+                    output += Math.pow(input, j) * coefficients.get(i).get(j);
+                }
+                return output;
+            }
+        }
+        return coordinates.get(coordinates.size() - 1)[1];
+    }
+
+    // This method is mathematically accurate, yet due to the need for floating point accuracy to at least 20 places, is not advisable for practical application
+    @Override
     public ArrayList<ArrayList<Double>> generateCoefficients() { // a less mathematically intense process, relies on the cubic spline for derivatives
         NaturalCubicSpline spline = new NaturalCubicSpline(coordinates);
         ArrayList<ArrayList<Double>> qCoefficients = new ArrayList<>();

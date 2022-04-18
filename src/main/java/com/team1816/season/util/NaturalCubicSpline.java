@@ -14,6 +14,20 @@ public class NaturalCubicSpline extends Spline {
     }
 
     @Override
+    public double getValue(double input) {
+        for (int i = 0; i < coordinates.size() - 1; i++) {
+            if (input < coordinates.get(i + 1)[0]) { // this is because we want the value to hold until the next value
+                double output = coordinates.get(i).length > 2 ? coordinates.get(i)[2] : 0; // use offsets if they exist
+                for (int j = 0; j < coefficients.get(i).size(); j++) {
+                    output += Math.pow(input, j) * coefficients.get(i).get(j);
+                }
+                return output;
+            }
+        }
+        return coordinates.get(coordinates.size() - 1)[1];
+    }
+
+    @Override
     public ArrayList<ArrayList<Double>> generateCoefficients() { // this allows for continuous differentiability to the second degree and similar invertibility
         int n = coordinates.size();
         ArrayList<ArrayList<Double>> nCoefficients = new ArrayList<>();
@@ -137,8 +151,7 @@ public class NaturalCubicSpline extends Spline {
         input = coordinates.get(i)[0];
         if (i < coefficients.size() - 1) {
             ans =
-                coefficients.get(i).get(1) *
-                input +
+                coefficients.get(i).get(1) +
                 2 *
                 coefficients.get(i).get(2) *
                 input +
@@ -147,8 +160,7 @@ public class NaturalCubicSpline extends Spline {
                 Math.pow(input, 2);
         } else {
             ans =
-                coefficients.get(i - 1).get(1) *
-                input +
+                coefficients.get(i - 1).get(1) +
                 2 *
                 coefficients.get(i - 1).get(2) *
                 input +
