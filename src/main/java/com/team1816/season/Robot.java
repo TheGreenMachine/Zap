@@ -330,12 +330,12 @@ public class Robot extends TimedRobot {
                         mControlBoard::getCollectorBackspin,
                         pressed -> mSuperstructure.setCollecting(pressed, false)
                     ),
-                    createAction(mControlBoard::getUnlockClimber, mClimber::setUnlocked),
+                    createAction(mControlBoard::getUnlockClimber, mClimber::unlock),
                     createAction(
                         mControlBoard::getUseManualShoot,
                         () -> {
                             useManualShoot = !useManualShoot;
-                            System.out.println("manual shooting!");
+                            System.out.println("manual shooting toggled!");
                         }
                     ),
                     createAction(
