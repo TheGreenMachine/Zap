@@ -123,7 +123,7 @@ subsystems:
                 kI: 0.0002
                 kD: 13.5 # 11 - 4.5
                 kF: 0.0487
-                allowableError: 60
+                allowableError: 65
         constants:
             usingPoseForSpeed: 0
             maxTicks: 20700 #
