@@ -140,7 +140,7 @@ public class Camera extends Subsystem {
         loops++;
     }
 
-    public boolean checkSystem() {
+    public boolean checkSystem() { // this doesn't actually do anything because there's no read calls
         if (this.isImplemented()) {
             setCameraEnabled(true);
             Timer.delay(2);

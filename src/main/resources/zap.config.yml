@@ -157,8 +157,8 @@ subsystems:
             unlockPos: -14400 #TODO set this value
             startPos: 0  #TODO set this value
             returnPos: 0
-            firstToSecondRungPos: 140000 #86.5 #TODO set this value
-            secondToLastRungPos: 346000 #TODO set this value
+            firstToSecondRungPos: 150000 #86.5 #TODO set this value - - 140000
+            secondToLastRungPos: 342000 #TODO set this value - - 346000
             lastPos: 370000 #TODO set this value
     elevator:
         implemented: true
