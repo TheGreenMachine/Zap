@@ -133,7 +133,8 @@ subsystems:
             rpmEpsilonCheck: 60
             nearVel: 4500
             midVel: 8450 #8450
-            farVel: 10150
+            tarmacTapeVel: 8300
+            launchpadVel: 10150
             maxVel: 16500
             coast: 6000
     climber:
