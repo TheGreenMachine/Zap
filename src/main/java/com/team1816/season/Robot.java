@@ -346,7 +346,6 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createHoldAction(mControlBoard::getSlowMode, mDrive::setSlowMode),
-                    createHoldAction(mControlBoard::getBrakeMode, mDrive::setBrakeMode),
                     // Operator Gamepad
                     createAction(
                         mControlBoard::getRaiseBucket,
@@ -678,13 +677,17 @@ public class Robot extends TimedRobot {
             );
         }
 
-        mDrive.setTeleopInputs(
-            mControlBoard.getThrottle(),
-            mControlBoard.getStrafe(),
-            mControlBoard.getTurn(),
-            mControlBoard.getSlowMode(),
-            false
-        );
+        if (mControlBoard.getBrakeMode()) {
+            mDrive.setOpenLoop(SwerveDriveSignal.BRAKE);
+        } else {
+            mDrive.setTeleopInputs(
+                mControlBoard.getThrottle(),
+                mControlBoard.getStrafe(),
+                mControlBoard.getTurn(),
+                mControlBoard.getSlowMode(),
+                false
+            );
+        }
     }
 
     @Override

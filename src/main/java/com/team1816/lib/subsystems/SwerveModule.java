@@ -104,7 +104,7 @@ public class SwerveModule implements ISwerveModule {
             mDriveMotor.set(
                 ControlMode.PercentOutput,
                 desired_state.speedMetersPerSecond
-            ); // w/out conversion, would be lying to it
+            ); // lying to it - speedMetersPerSecond passed in is actually percent output (1 to -1)
         }
         mAzmDemand =
             DriveConversions.convertDegreesToTicks(desired_state.angle.getDegrees()) +
