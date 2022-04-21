@@ -133,7 +133,7 @@ subsystems:
             rpmEpsilonCheck: 60
             nearVel: 4500
             midVel: 8450 #8450
-            tarmacTapeVel: 8300
+            tarmacTapeVel: 8125
             launchpadVel: 10150
             maxVel: 16500
             coast: 6000

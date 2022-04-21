@@ -376,7 +376,7 @@ public class Robot extends TimedRobot {
                             if (useManualShoot || true) {
                                 mSuperstructure.setRevving(
                                     yeet,
-                                    Shooter.MID_VELOCITY, // change this into tarmacTapeVel once you get the "ok" signal
+                                    Shooter.TARMAC_TAPE_VEL, // change this into tarmacTapeVel once you get the "ok" signal
                                     true
                                 ); // Tarmac
                             } else {
