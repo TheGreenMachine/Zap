@@ -282,7 +282,15 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     @Override
     public synchronized void stop() {
-        setOpenLoop(SwerveDriveSignal.NEUTRAL);
+        if(mDriveControlState == DriveControlState.OPEN_LOOP){
+            setOpenLoop(SwerveDriveSignal.NEUTRAL);
+        } else if(mDriveControlState == DriveControlState.TRAJECTORY_FOLLOWING){
+            SwerveModuleState[] states = new SwerveModuleState[4];
+            for(int i  = 0; i < swerveModules.length; i++){
+                states[i].speedMetersPerSecond = 0;
+                states[i].angle = swerveModules[i].getState().angle;
+            }
+        }
         mTrajectoryIndex = 0;
     }
 

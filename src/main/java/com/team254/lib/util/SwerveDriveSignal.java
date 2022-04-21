@@ -14,8 +14,9 @@ import static com.team1816.lib.math.DriveConversions.inchesPerSecondToTicksPer10
 public class SwerveDriveSignal extends DriveSignal {
     public static final double[] ZERO_SPEED = new double[]{0, 0, 0, 0};
     public static final Rotation2d[] ZERO_AZIMUTH = new Rotation2d[]{new Rotation2d(), new Rotation2d(), new Rotation2d(), new Rotation2d()};
-    // not actually an X rn
-    public static final Rotation2d[] X_AZIMUTH = new Rotation2d[]{Rotation2d.fromDegrees(45), Rotation2d.fromDegrees(-45), Rotation2d.fromDegrees(-45), Rotation2d.fromDegrees(45)};
+    public static final Rotation2d[] X_AZIMUTH = new Rotation2d[]{
+        Rotation2d.fromDegrees(45), Rotation2d.fromDegrees(-45), Rotation2d.fromDegrees(-45), Rotation2d.fromDegrees(45)
+    };
     public static final Rotation2d[] AZIMUTH_90_DEGREES = new Rotation2d[]{
         Rotation2d.fromDegrees(90), Rotation2d.fromDegrees(90), Rotation2d.fromDegrees(90), Rotation2d.fromDegrees(90)
     };
@@ -36,11 +37,6 @@ public class SwerveDriveSignal extends DriveSignal {
     public SwerveDriveSignal(double left, double right) {
         super(left, right);
         mWheelSpeeds = new double[4];
-//        mWheelSpeeds[Constants.Swerve.kFrontLeft] = left;
-//        mWheelSpeeds[Constants.Swerve.kBackLeft] = left;
-//        mWheelSpeeds[Constants.Swerve.kFrontRight] = right;
-//        mWheelSpeeds[Constants.Swerve.kBackRight] = right;
-
         mWheelAzimuths = ZERO_AZIMUTH;
         mBrakeMode = false;
     }

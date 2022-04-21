@@ -225,6 +225,7 @@ public class Turret extends Subsystem implements PidProvider {
         }
     }
 
+    // CCW positive - 0 to 360
     public synchronized void setTurretAngle(double angle) {
         setControlMode(ControlMode.POSITION);
         setTurretPosition(convertTurretDegreesToTicks(angle));
