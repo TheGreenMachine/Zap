@@ -29,6 +29,9 @@ public class TrajectorySet {
     public static Trajectory FIVE_BALL_C;
     public static Trajectory FIVE_BALL_D;
 
+    public static Trajectory ONE_BALL_A_B;
+    public static Trajectory ONE_BALL_C_BORDER;
+
     public static List<Rotation2d> TWO_BALL_A_HEADINGS;
 
     public static List<Rotation2d> TWO_BALL_B_HEADINGS;
@@ -43,6 +46,9 @@ public class TrajectorySet {
     public static List<Rotation2d> FIVE_BALL_B_HEADINGS;
     public static List<Rotation2d> FIVE_BALL_C_HEADINGS;
     public static List<Rotation2d> FIVE_BALL_D_HEADINGS;
+
+    public static List<Rotation2d> ONE_BALL_A_B_HEADINGS;
+    public static List<Rotation2d> ONE_BALL_C_BORDER_HEADINGS;
 
     public TrajectorySet() {
         // Trajectories
@@ -65,6 +71,9 @@ public class TrajectorySet {
         FIVE_BALL_C = new FiveBallAutoC().generateTrajectory();
         FIVE_BALL_D = new FiveBallAutoD().generateTrajectory();
 
+        ONE_BALL_A_B = new OneBallA_B().generateTrajectory();
+        ONE_BALL_C_BORDER = new OneBallAutoC_Border().generateTrajectory();
+
         // Heading lists
         LIVING_ROOM_HEADINGS = new LivingRoomPath().generateHeadings();
 
@@ -82,5 +91,8 @@ public class TrajectorySet {
         FIVE_BALL_B_HEADINGS = new FiveBallAutoB().generateHeadings();
         FIVE_BALL_C_HEADINGS = new FiveBallAutoC().generateHeadings();
         FIVE_BALL_D_HEADINGS = new FiveBallAutoD().generateHeadings();
+
+        ONE_BALL_A_B_HEADINGS = new OneBallA_B().generateHeadings();
+        ONE_BALL_C_BORDER_HEADINGS = new OneBallAutoC_Border().generateHeadings();
     }
 }
