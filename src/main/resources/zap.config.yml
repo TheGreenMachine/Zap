@@ -123,7 +123,7 @@ subsystems:
                 kI: 0.0002
                 kD: 13.5 # 11 - 4.5
                 kF: 0.0487
-                allowableError: 65
+                allowableError: 100 #TODO @trent raising this value trades cycle time for accuracy - original value = 65
         constants:
             usingPoseForSpeed: 0
             maxTicks: 20700 #
@@ -146,20 +146,20 @@ subsystems:
             topClamp: 7
             bottomClamp: 6
         pidConfig:
-            slot0: #TODO Change this
+            slot0:
                 kP: 0.050 #0.075 #tunned at 4000
                 kI: 0.000
                 kD: .6
                 kF: 0.0
                 allowableError: 5000
         constants:
-            maxTicks: 1 # TODO set this value
-            unlockPos: -14400 #TODO set this value
-            startPos: 0  #TODO set this value
+            maxTicks: 1
+            unlockPos: -14400
+            startPos: 0
             returnPos: 0
-            firstToSecondRungPos: 150000 #86.5 #TODO set this value - - 140000
-            secondToLastRungPos: 342000 #TODO set this value - - 346000
-            lastPos: 370000 #TODO set this value
+            firstToSecondRungPos: 150000
+            secondToLastRungPos: 342000
+            lastPos: 370000
     elevator:
         implemented: true
         talons:
@@ -170,14 +170,14 @@ subsystems:
                 kI: 0
                 kD: 2
                 kF: 0.05
-                allowableError: 1000 # 750
+                allowableError: 3000 #TODO @trent upping this value will trade indexing time for accuracy -- original value = 1000, fire vel = 10000
         invertMotor:
             - elevator
         constants:
             isVelocity: 1
             maxTicks: 20000 # tune
             ballSensor: 0
-            firePow: 0.5
+            firePow: 0.5 #TODO @trent only raise if rlly need faster cycle time b/c this could change ball trajectory -- (firePow * maxticks = firePow in ticks/100MS)
             flushPow: -0.3
     spindexer:
         implemented: true
@@ -187,10 +187,10 @@ subsystems:
             feederFlap: -1
         constants:
             collectPow: 0.5
-            indexPow: -0.5
+            indexPow: -0.5 # TODO original value -0.5 -- lowering this will lower the chance of jamming -- raising will guarantee balls don't enter elevator early
             flushPow: -1
             coastPow: 0.00
-            firePow: 0.30
+            firePow: 0.30 # TODO raising will make balls fire faster, but balls firing too close to one another may be inaccurate? (test) -- warning: value too high -> jams
     collector:
         implemented: true
         sparkmaxes:
