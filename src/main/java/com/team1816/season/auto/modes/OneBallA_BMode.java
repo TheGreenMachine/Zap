@@ -26,9 +26,9 @@ public class OneBallA_BMode extends AutoModeBase {
             new SeriesAction(
                 new ParallelAction(
                     new TurretAction(Turret.CARDINAL_NORTH + 2), // to be changed
-                    new RampUpShooterAction(Shooter.MID_VELOCITY)
+                    new RampUpShooterAction(Shooter.MID_VELOCITY),
+                    new WaitAction(10)
                 ),
-                new WaitAction(9),
                 trajectory,
                 new ShootAction(true, true),
                 new WaitAction(3)

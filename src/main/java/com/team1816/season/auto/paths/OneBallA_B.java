@@ -10,8 +10,8 @@ public class OneBallA_B implements PathContainer {
     @Override
     public List<Pose2d> buildWaypoints() {
         return List.of(
-            new Pose2d(237, 153, Rotation2d.fromDegrees(180)),
-            new Pose2d(188, 153, Rotation2d.fromDegrees(180))
+            new Pose2d(235, 153, Rotation2d.fromDegrees(180)),
+            new Pose2d(187, 153, Rotation2d.fromDegrees(180))
         );
     }
 
