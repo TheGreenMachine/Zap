@@ -121,8 +121,8 @@ public class Camera extends Subsystem {
             }
             state.visionPoint.dist = distanceSum / distances.size();
             distances.remove(0);
-            state.visionPoint.deltaX = parseDeltaX(state.visionPoint.cX);
         }
+        state.visionPoint.deltaX = parseDeltaX(state.visionPoint.cX);
         lastDistance = dis;
     }
 
