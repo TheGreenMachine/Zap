@@ -51,6 +51,9 @@ public class Camera extends Subsystem {
     }
 
     private double parseDeltaX(double x) {
+        if(x > MAX_DELTA_X || x < 1) {
+            return 0;
+        }
         double deltaXPixels = (x - (VIDEO_WIDTH / 2)); // Calculate deltaX from center of screen
         double base =
             Math.toDegrees(Math.atan2(deltaXPixels, CAMERA_FOCAL_LENGTH)) * 0.64;

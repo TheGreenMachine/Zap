@@ -215,7 +215,7 @@ subsystems:
         constants:
             debug: 0
             maxDist: 400
-            maxDeltaX: 670
+            maxDeltaX: 640 # 670
             allowableDistanceError: 50
             deviation: 0
 pcm: 2
