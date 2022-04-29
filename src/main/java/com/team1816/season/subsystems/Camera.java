@@ -29,8 +29,9 @@ public class Camera extends Subsystem {
     private static final double CAMERA_FOCAL_LENGTH = 700; // px
     private static final double VIDEO_WIDTH = 1280; // px
     private static final double VIDEO_HEIGHT = 720; // px
-    private static final double CAMERA_FOV =
-        2 * Math.atan((VIDEO_WIDTH / 2) / CAMERA_FOCAL_LENGTH) * (180 / Math.PI); // deg
+    private static final double CAMERA_HFOV = 85;
+    public static final double CAMERA_VFOV = 54;
+//        2 * Math.atan((VIDEO_WIDTH / 2) / CAMERA_FOCAL_LENGTH) * (180 / Math.PI); // deg
     public static final double ALLOWABLE_DISTANCE_ERROR = factory.getConstant(
         NAME,
         "allowableDistanceError",
@@ -38,7 +39,7 @@ public class Camera extends Subsystem {
     ); // deg
     //    private Queue<Double> distances = new PriorityQueue<Double>();
     private final double MAX_DIST = factory.getConstant(NAME, "maxDist", 260);
-    private final double MAX_DELTA_X = factory.getConstant(NAME, "maxDeltaX", 672);
+    private final double MAX_DELTA_X = factory.getConstant(NAME, "maxDeltaX", 1200);
 
     // state
     private ArrayList<Double> distances = new ArrayList<>();
@@ -77,7 +78,7 @@ public class Camera extends Subsystem {
             (Constants.kTargetHeight - Constants.kCameraMountingHeight) /
             (
                 Math.tan(
-                    Math.toRadians(Constants.kCameraMountingAngleY + (state.visionPoint.cY - (VIDEO_HEIGHT / 2)))
+                    Math.toRadians(Constants.kCameraMountingAngleY + ((state.visionPoint.cY - (VIDEO_HEIGHT / 2)) * CAMERA_VFOV / VIDEO_HEIGHT))
                 ) // camera mounting angle isn't accurate rn
             )
         );
