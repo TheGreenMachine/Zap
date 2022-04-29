@@ -29,7 +29,7 @@ public class Camera extends Subsystem {
     private static final double CAMERA_FOCAL_LENGTH = 700; // px
     private static final double VIDEO_WIDTH = 1280; // px
     private static final double CAMERA_FOV =
-        2 * Math.atan((VIDEO_WIDTH / 2) / CAMERA_FOCAL_LENGTH); // deg
+        2 * Math.atan((VIDEO_WIDTH / 2) / CAMERA_FOCAL_LENGTH) * (180 / Math.PI); // deg
     public static final double ALLOWABLE_DISTANCE_ERROR = factory.getConstant(
         NAME,
         "allowableDistanceError",
