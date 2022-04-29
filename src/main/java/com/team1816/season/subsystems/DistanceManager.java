@@ -99,7 +99,8 @@ public class DistanceManager {
                 return bucket.calculateAndUpdate(distance);
             }
         }
-        return 52.5 * distance + 850; // this was the else statement at the end
+        System.out.println("distance value too large!!");
+        return Shooter.MID_VELOCITY; // this was the else statement at the end
     }
 
     public void incrementBucket(double incrVal) {
