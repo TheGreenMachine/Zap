@@ -366,7 +366,7 @@ public class Robot extends TimedRobot {
                         mControlBoard::getYeetShot,
                         yeet -> {
                             mShooter.setHood(false);
-                            if (useManualShoot || true) {
+                            if (useManualShoot) {
                                 mSuperstructure.setRevving(
                                     yeet,
                                     Shooter.TARMAC_TAPE_VEL, // change this into tarmacTapeVel once you get the "ok" signal
@@ -389,7 +389,7 @@ public class Robot extends TimedRobot {
                             mSuperstructure.setRevving(
                                 shooting,
                                 Shooter.LAUNCHPAD_VEL,
-                                true // use manual shoot WAS HERE
+                                useManualShoot // use manual shoot WAS HERE
                             ); // Launchpad
                             mSuperstructure.setFiring(shooting);
                         }
