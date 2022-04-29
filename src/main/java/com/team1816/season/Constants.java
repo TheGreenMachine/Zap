@@ -24,6 +24,8 @@ public class Constants {
     public static final double kLooperDt = factory.getConstant("kLooperDt", .020);
 
     // Field characterization
+    public static final double kTargetHeight = 404; // inches
+    public static final double kCameraMountingHeight = 29.5; // inches
     public static final double fieldCenterY = 8.23 / 2.0;
     public static final double fieldCenterX = 16.46 / 2.0;
     public static final Pose2d targetPos = new Pose2d(

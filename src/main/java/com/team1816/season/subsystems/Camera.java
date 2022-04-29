@@ -25,10 +25,10 @@ public class Camera extends Subsystem {
 
     public final VisionSocket socket = new VisionSocket();
     // Constants
-    // private static final double CAMERA_FOV = 87.0; // deg
     private static final String NAME = "camera";
     private static final double CAMERA_FOCAL_LENGTH = 700; // px
     private static final double VIDEO_WIDTH = 1280; // px
+    private static final double CAMERA_FOV = 2 * Math.atan((VIDEO_WIDTH / 2) / CAMERA_FOCAL_LENGTH); // deg
     public static final double ALLOWABLE_DISTANCE_ERROR = factory.getConstant(
         NAME,
         "allowableDistanceError",
@@ -56,7 +56,7 @@ public class Camera extends Subsystem {
         }
         double deltaXPixels = (x - (VIDEO_WIDTH / 2)); // Calculate deltaX from center of screen
         double base =
-            Math.toDegrees(Math.atan2(deltaXPixels, CAMERA_FOCAL_LENGTH)) * 0.64;
+            Math.toDegrees(Math.atan2(deltaXPixels, CAMERA_FOCAL_LENGTH)); // Converted to degrees
         return base;
     }
 
@@ -72,8 +72,10 @@ public class Camera extends Subsystem {
         if (RobotBase.isSimulation()) {
             return robotState.getEstimatedDistanceToGoal();
         }
-        double deviation = factory.getConstant(NAME, "deviation", 0);
-        return state.visionPoint.dist + deviation;
+        return (Constants.kTargetHeight - Constants.kCameraMountingHeight)
+            / (Math.tan(Math.toRadians(Constants.kCameraMountingAngleY + state.visionPoint.cY))
+        );
+//        return state.visionPoint.dist + deviation;
     }
 
     public double getRawCenterX() {

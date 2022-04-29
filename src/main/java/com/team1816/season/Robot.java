@@ -358,13 +358,7 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         mControlBoard::getAutoAim,
                         pressed -> {
-                            if (pressed) {
-                                mTurret.setControlMode(
-                                    Turret.ControlMode.CAMERA_FOLLOWING
-                                );
-                            } else {
-                                mTurret.setControlMode(defaultTurretControlMode); // this gets called when the robot inits - this could be bad?
-                            }
+                            mTurret.snapWithCamera();
                         }
                     ),
                     createAction(mControlBoard::getCameraToggle, mCamera::setEnabled),

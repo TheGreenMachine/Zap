@@ -102,6 +102,7 @@ subsystems:
         talons:
             turret: 33 # need to set to pdp port number
         constants:
+            deltaXScalar: 13 # 1/2 of what it was before b/c removed 0.64 multiplier in camera class TODO @trent tune here!
             revLimit: 8800 # adjusted for zero-offset
             fwdLimit: 41500 # adjusted for zero-offset
             absPosTicksSouth: 0 # absolute

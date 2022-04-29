@@ -6,6 +6,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IMotorSensor;
+import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.lib.math.PoseUtil;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
@@ -37,6 +38,7 @@ public class Turret extends Subsystem implements PidProvider {
     private static final int kPrimaryCloseLoop = 0;
     private static final int kPIDGyroIDx = 0;
     private static final int kPIDVisionIDx = 0;
+    public final double DELTA_X_SCALAR;
     public static int TURRET_ABS_ENCODER_PPR = 4096;
     public static int TURRET_PPR;
     private final int TURRET_MASK;
@@ -58,16 +60,22 @@ public class Turret extends Subsystem implements PidProvider {
     private final double kD;
     private final double kF;
     // State
-    private static int desiredTurretPos = 0;
-    private static int followingTurretPos = 0;
+    private int desiredTurretPos = 0;
+    private int followingTurretPos = 0;
     private int visionCorroboration = 0;
     private double turretSpeed;
     private boolean outputsChanged = true;
-    private static ControlMode controlMode;
+    private ControlMode controlMode;
+    private AsyncTimer waitForSnap = new AsyncTimer(0.5,
+        () -> {
+        setTurretPosition(getActualTurretPositionTicks() + cameraFollowingOffset());
+        }
+    );
 
     public Turret() {
         super(NAME);
         this.turret = factory.getMotor(NAME, "turret");
+        DELTA_X_SCALAR = factory.getConstant(NAME, "deltaXScalar", 1);
         TURRET_ABS_ENCODER_PPR = (int) factory.getConstant(NAME, "encPPR");
         TURRET_PPR = (int) factory.getConstant(NAME, "turretPPR");
         TURRET_MASK = TURRET_PPR - 1;
@@ -165,7 +173,7 @@ public class Turret extends Subsystem implements PidProvider {
     public void setControlMode(ControlMode controlMode) {
         if (this.controlMode != controlMode) {
             outputsChanged = true;
-            if (controlMode == ControlMode.CAMERA_FOLLOWING) {
+            if (controlMode == ControlMode.CAMERA_FOLLOWING || controlMode == ControlMode.CAMERA_SNAP) {
                 if (Constants.kUseVision) {
                     this.controlMode = controlMode;
                     turret.selectProfileSlot(kPIDVisionIDx, 0);
@@ -230,6 +238,11 @@ public class Turret extends Subsystem implements PidProvider {
         setControlMode(ControlMode.POSITION);
         setTurretPosition(convertTurretDegreesToTicks(angle));
         followingTurretPos = desiredTurretPos;
+    }
+
+    public synchronized void snapWithCamera() {
+        setControlMode(ControlMode.CAMERA_SNAP);
+        waitForSnap.reset();
     }
 
     public synchronized void setFollowingAngle(double angle) {
@@ -301,6 +314,9 @@ public class Turret extends Subsystem implements PidProvider {
                 autoHomeWithOffset(motionOffset());
                 positionControl(followingTurretPos);
                 break;
+            case CAMERA_SNAP:
+                snapControl();
+                positionControl(desiredTurretPos);
             case POSITION:
                 positionControl(desiredTurretPos);
                 break;
@@ -312,7 +328,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     private int cameraFollowingOffset() {
         var delta = -camera.getDeltaX();
-        return ((int) (delta * 26)) - ABS_TICKS_SOUTH;
+        return ((int) (delta * DELTA_X_SCALAR)) - ABS_TICKS_SOUTH;
     }
 
     private int fieldFollowingOffset() {
@@ -355,15 +371,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     private void autoHome() {
         var cameraOffset = cameraFollowingOffset();
-        if (cameraOffset > TURRET_PPR / 3) {
-            cameraOffset = 0;
-        }
         int adj = followingTurretPos + cameraOffset;
-        //        if (adj > TURRET_LIMIT_FORWARD - ZERO_OFFSET) {
-        //            adj = TURRET_LIMIT_FORWARD - ZERO_OFFSET;
-        //        } else if (adj < TURRET_LIMIT_REVERSE - ZERO_OFFSET) {
-        //            adj = TURRET_LIMIT_REVERSE - ZERO_OFFSET;
-        //        }
         if (adj != followingTurretPos) {
             followingTurretPos = adj;
             outputsChanged = true;
@@ -377,6 +385,10 @@ public class Turret extends Subsystem implements PidProvider {
             followingTurretPos = adj;
             outputsChanged = true;
         }
+    }
+
+    public void snapControl() {
+        waitForSnap.update();
     }
 
     private void trackGyro() {
@@ -470,6 +482,7 @@ public class Turret extends Subsystem implements PidProvider {
         CENTER_FOLLOWING,
         ABSOLUTE_FOLLOWING,
         ABSOLUTE_MADNESS,
+        CAMERA_SNAP,
         POSITION,
         MANUAL,
     }
