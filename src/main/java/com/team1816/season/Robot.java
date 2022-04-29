@@ -355,9 +355,9 @@ public class Robot extends TimedRobot {
                         mControlBoard::getLowerBucket,
                         () -> mDistanceManager.incrementBucket(-100)
                     ),
-                    createHoldAction(
+                    createAction(
                         mControlBoard::getAutoAim,
-                        pressed -> {
+                        () -> {
                             mTurret.snapWithCamera();
                         }
                     ),

@@ -66,9 +66,12 @@ public class Turret extends Subsystem implements PidProvider {
     private double turretSpeed;
     private boolean outputsChanged = true;
     private ControlMode controlMode;
-    private AsyncTimer waitForSnap = new AsyncTimer(0.25,
+    private AsyncTimer waitForSnap = new AsyncTimer(
+        .25,
         () -> {
-        setTurretPosition(getActualTurretPositionTicks() + cameraFollowingOffset());
+            setTurretPosition(getActualTurretPositionTicks() + cameraFollowingOffset());
+            System.out.println("done aiming!");
+            outputsChanged = true;
         }
     );
 
@@ -173,7 +176,10 @@ public class Turret extends Subsystem implements PidProvider {
     public void setControlMode(ControlMode controlMode) {
         if (this.controlMode != controlMode) {
             outputsChanged = true;
-            if (controlMode == ControlMode.CAMERA_FOLLOWING || controlMode == ControlMode.CAMERA_SNAP) {
+            if (
+                controlMode == ControlMode.CAMERA_FOLLOWING ||
+                controlMode == ControlMode.CAMERA_SNAP
+            ) {
                 if (Constants.kUseVision) {
                     this.controlMode = controlMode;
                     turret.selectProfileSlot(kPIDVisionIDx, 0);
@@ -241,8 +247,8 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     public synchronized void snapWithCamera() {
-        setControlMode(ControlMode.CAMERA_SNAP);
         waitForSnap.reset();
+        setControlMode(ControlMode.CAMERA_SNAP);
     }
 
     public synchronized void setFollowingAngle(double angle) {

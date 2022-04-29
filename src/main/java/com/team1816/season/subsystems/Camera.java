@@ -28,7 +28,8 @@ public class Camera extends Subsystem {
     private static final String NAME = "camera";
     private static final double CAMERA_FOCAL_LENGTH = 700; // px
     private static final double VIDEO_WIDTH = 1280; // px
-    private static final double CAMERA_FOV = 2 * Math.atan((VIDEO_WIDTH / 2) / CAMERA_FOCAL_LENGTH); // deg
+    private static final double CAMERA_FOV =
+        2 * Math.atan((VIDEO_WIDTH / 2) / CAMERA_FOCAL_LENGTH); // deg
     public static final double ALLOWABLE_DISTANCE_ERROR = factory.getConstant(
         NAME,
         "allowableDistanceError",
@@ -51,12 +52,11 @@ public class Camera extends Subsystem {
     }
 
     private double parseDeltaX(double x) {
-        if(Math.abs(x) > MAX_DELTA_X) {
+        if (Math.abs(x) > MAX_DELTA_X) {
             return 0;
         }
         double deltaXPixels = (x - (VIDEO_WIDTH / 2)); // Calculate deltaX from center of screen
-        double base =
-            Math.toDegrees(Math.atan2(deltaXPixels, CAMERA_FOCAL_LENGTH)); // Converted to degrees
+        double base = Math.toDegrees(Math.atan2(deltaXPixels, CAMERA_FOCAL_LENGTH)); // Converted to degrees
         return base;
     }
 
@@ -72,10 +72,15 @@ public class Camera extends Subsystem {
         if (RobotBase.isSimulation()) {
             return robotState.getEstimatedDistanceToGoal();
         }
-        return (Constants.kTargetHeight - Constants.kCameraMountingHeight)
-            / (Math.tan(Math.toRadians(Constants.kCameraMountingAngleY + state.visionPoint.cY)) // camera mounting angle isn't accurate rn
+        return (
+            (Constants.kTargetHeight - Constants.kCameraMountingHeight) /
+            (
+                Math.tan(
+                    Math.toRadians(Constants.kCameraMountingAngleY + state.visionPoint.cY)
+                ) // camera mounting angle isn't accurate rn
+            )
         );
-//        return state.visionPoint.dist + deviation;
+        //        return state.visionPoint.dist + deviation;
     }
 
     public double getRawCenterX() {
@@ -198,6 +203,6 @@ public class Camera extends Subsystem {
         if (currentTurretAngle < 0 && adjacent < 0) {
             currentTurretAngle += 360;
         }
-        return (.5 * (currentTurretAngle - targetTurretAngle)); //scaling for the feedback loop
+        return ((currentTurretAngle - targetTurretAngle)); //scaling for the feedback loop
     }
 }

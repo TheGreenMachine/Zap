@@ -30,13 +30,12 @@ public class AsyncTimer {
 
     public void update() {
         if (completed) return;
-
         if (!hasStarted) {
             startTime = Timer.getFPGATimestamp(); // Timer.getFPGATimeStamp in SECONDS
             if (startAction != null) {
                 startAction.run();
-                hasStarted = true;
             }
+            hasStarted = true;
         } else {
             if (Timer.getFPGATimestamp() >= startTime + duration) {
                 completed = true;
