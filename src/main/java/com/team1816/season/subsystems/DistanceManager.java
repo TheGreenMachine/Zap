@@ -99,6 +99,7 @@ public class DistanceManager {
                 return bucket.calculateAndUpdate(distance);
             }
         }
+        SmartDashboard.putNumber("Camera/Last Distance", distance);
         System.out.println("distance value too large!!");
         return Shooter.MID_VELOCITY; // this was the else statement at the end
     }
