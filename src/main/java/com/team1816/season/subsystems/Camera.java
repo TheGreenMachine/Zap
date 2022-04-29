@@ -74,6 +74,7 @@ public class Camera extends Subsystem {
         if (RobotBase.isSimulation()) {
             return robotState.getEstimatedDistanceToGoal();
         }
+        SmartDashboard.putNumber("Camera/cy", state.visionPoint.cY);
         return (
             (Constants.kTargetHeight - Constants.kCameraMountingHeight) /
             (
