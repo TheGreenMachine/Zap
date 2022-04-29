@@ -102,7 +102,7 @@ subsystems:
         talons:
             turret: 33 # need to set to pdp port number
         constants:
-            deltaXScalar: 13 #value worked best at 150 in sim -- TODO @trent tune here!
+            deltaXScalar: 150 #value worked best at 150 in sim -- TODO @trent tune here!
             revLimit: 8800 # adjusted for zero-offset
             fwdLimit: 41500 # adjusted for zero-offset
             absPosTicksSouth: 0 # absolute
@@ -216,7 +216,7 @@ subsystems:
         constants:
             debug: 0
             maxDist: 400
-            maxDeltaX: 670 # 670
+            maxDeltaX: 1200 # 670
             allowableDistanceError: 50
             deviation: 0
 pcm: 2

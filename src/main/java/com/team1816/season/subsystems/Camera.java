@@ -52,7 +52,7 @@ public class Camera extends Subsystem {
     }
 
     private double parseDeltaX(double x) {
-        if (Math.abs(x) > MAX_DELTA_X) {
+        if (Math.abs(x) > MAX_DELTA_X || x < 0) {
             return 0;
         }
         double deltaXPixels = (x - (VIDEO_WIDTH / 2)); // Calculate deltaX from center of screen
