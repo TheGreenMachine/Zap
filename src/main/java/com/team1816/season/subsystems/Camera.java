@@ -73,7 +73,7 @@ public class Camera extends Subsystem {
             return robotState.getEstimatedDistanceToGoal();
         }
         return (Constants.kTargetHeight - Constants.kCameraMountingHeight)
-            / (Math.tan(Math.toRadians(Constants.kCameraMountingAngleY + state.visionPoint.cY))
+            / (Math.tan(Math.toRadians(Constants.kCameraMountingAngleY + state.visionPoint.cY)) // camera mounting angle isn't accurate rn
         );
 //        return state.visionPoint.dist + deviation;
     }

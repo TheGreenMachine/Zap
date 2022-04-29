@@ -66,7 +66,7 @@ public class Turret extends Subsystem implements PidProvider {
     private double turretSpeed;
     private boolean outputsChanged = true;
     private ControlMode controlMode;
-    private AsyncTimer waitForSnap = new AsyncTimer(0.5,
+    private AsyncTimer waitForSnap = new AsyncTimer(0.25,
         () -> {
         setTurretPosition(getActualTurretPositionTicks() + cameraFollowingOffset());
         }
