@@ -51,7 +51,7 @@ public class Camera extends Subsystem {
     }
 
     private double parseDeltaX(double x) {
-        if(x > MAX_DELTA_X || x < 1) {
+        if(x > MAX_DELTA_X || x < 0) {
             return 0;
         }
         double deltaXPixels = (x - (VIDEO_WIDTH / 2)); // Calculate deltaX from center of screen
@@ -114,15 +114,15 @@ public class Camera extends Subsystem {
             distances.add(dis);
         }
 
-        if (distances.size() > 8) { // note - this number was 5 before!
+        if (distances.size() > 4) { // note - this number was 8 before!
             double distanceSum = 0;
             for (int i = 0; i < distances.size(); i++) {
                 distanceSum += distances.get(i);
             }
             state.visionPoint.dist = distanceSum / distances.size();
             distances.remove(0);
+            state.visionPoint.deltaX = parseDeltaX(state.visionPoint.cX);
         }
-        state.visionPoint.deltaX = parseDeltaX(state.visionPoint.cX);
         lastDistance = dis;
     }
 
