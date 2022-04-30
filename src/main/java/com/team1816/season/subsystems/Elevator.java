@@ -6,6 +6,7 @@ import com.google.inject.Singleton;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.subsystems.Subsystem;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 
 @Singleton
@@ -15,7 +16,7 @@ public class Elevator extends Subsystem {
 
     // Components
     private final IMotorControllerEnhanced elevator;
-    //    private final DigitalInput ballSensor;
+    private final DigitalInput ballSensor;
 
     // State
     private double elevatorOutput;
@@ -27,6 +28,7 @@ public class Elevator extends Subsystem {
     private final double MAX_TICKS;
     private final double ALLOWABLE_ERROR;
     private final double FLUSH;
+    private final double INTAKE;
     private double FIRE; // bear in mind this is overridden
     private final boolean isVelocity;
     private final String pidSlot = "slot0";
@@ -35,8 +37,8 @@ public class Elevator extends Subsystem {
         super(NAME);
         this.elevator = factory.getMotor(NAME, "elevator");
         PIDSlotConfiguration config = factory.getPidSlotConfig(NAME, pidSlot);
-        //        this.ballSensor =
-        //            new DigitalInput((int) factory.getConstant(NAME, "ballSensor", 0));
+        this.ballSensor =
+            new DigitalInput((int) factory.getConstant(NAME, "ballSensor", 0));
 
         isVelocity = factory.getConstant(NAME, "isVelocity", 0) > 0;
 
@@ -44,9 +46,11 @@ public class Elevator extends Subsystem {
         if (!isVelocity) {
             FLUSH = factory.getConstant(NAME, "flushPow", -0.5);
             FIRE = factory.getConstant(NAME, "firePow", 0.5);
+            INTAKE = factory.getConstant(NAME, "intakePow", 0.05);
         } else {
             FLUSH = factory.getConstant(NAME, "flushPow", -0.5) * MAX_TICKS;
             FIRE = factory.getConstant(NAME, "firePow", 0.5) * MAX_TICKS;
+            INTAKE = factory.getConstant(NAME, "intakePow", 0.05) * MAX_TICKS;
         }
         ALLOWABLE_ERROR = config.allowableError;
     }
@@ -75,6 +79,15 @@ public class Elevator extends Subsystem {
         }
     }
 
+    private void lockToSensor() {
+        if (hasBallInElevator()) {
+            setElevator(0);
+        } else {
+            setElevator(INTAKE);
+            outputsChanged = true; // keep looping through writeToHardware if no ball seen
+        }
+    }
+
     public void setDesiredState(STATE state) {
         if (this.state != state) {
             this.state = state;
@@ -88,8 +101,7 @@ public class Elevator extends Subsystem {
     }
 
     public boolean hasBallInElevator() {
-        return false;
-        //        return ballSensor.get(); // TODO get Digital IO
+        return ballSensor.get();
     }
 
     // TODO: implement when we have color sensors
@@ -125,6 +137,8 @@ public class Elevator extends Subsystem {
                 case STOP:
                     setElevator(0);
                     break;
+                case INTAKE:
+                    lockToSensor();
                 case FIRE:
                     lockToShooter();
                     break;
@@ -157,6 +171,7 @@ public class Elevator extends Subsystem {
 
     public enum STATE {
         STOP,
+        INTAKE,
         FIRE,
         FLUSH,
     }

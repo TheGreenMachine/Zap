@@ -137,7 +137,7 @@ subsystems:
             tarmacTapeVel: 8125
             launchpadVel: 10150
             maxVel: 16500
-            coast: 6000
+            coast: 8000
     climber:
         implemented: true
         falcons:
@@ -180,6 +180,7 @@ subsystems:
             ballSensor: 0
             firePow: 0.5 #TODO @trent only raise if rlly need faster cycle time b/c this could change ball trajectory -- (firePow * maxticks = firePow in ticks/100MS)
             flushPow: -0.3
+            intakePow: 0.05
     spindexer:
         implemented: true
         talons:
