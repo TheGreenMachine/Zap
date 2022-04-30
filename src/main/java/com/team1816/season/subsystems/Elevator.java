@@ -85,6 +85,7 @@ public class Elevator extends Subsystem {
         System.out.println("LOCKING TO BALL SENSOR - - - - ballSensor:" + hasBallInElevator());
         if (hasBallInElevator()) {
             setElevator(0);
+            outputsChanged = true;
         } else {
             setElevator(INTAKE);
             outputsChanged = true; // keep looping through writeToHardware if no ball seen
