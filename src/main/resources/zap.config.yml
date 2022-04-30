@@ -219,6 +219,7 @@ subsystems:
             maxDeltaX: 1200 # 670
             allowableDistanceError: 50
             deviation: 0
+            dumbDistanceMultiplier: 0.5 # TODO @ trent fiddle-me-timbers
 pcm: 2
 canivoreBusName: highSpeed
 constants:

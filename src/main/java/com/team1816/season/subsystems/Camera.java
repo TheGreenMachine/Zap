@@ -11,6 +11,8 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import javax.naming.Name;
 import java.util.ArrayList;
 
 @Singleton
@@ -40,6 +42,7 @@ public class Camera extends Subsystem {
     //    private Queue<Double> distances = new PriorityQueue<Double>();
     private final double MAX_DIST = factory.getConstant(NAME, "maxDist", 260);
     private final double MAX_DELTA_X = factory.getConstant(NAME, "maxDeltaX", 1200);
+    private final double dumbDistanceMultiplier = factory.getConstant(NAME, "dumbDistanceMultiplier", 1);
 
     // state
     private ArrayList<Double> distances = new ArrayList<>();
@@ -82,7 +85,7 @@ public class Camera extends Subsystem {
                 Math.tan(
                     Math.toRadians(Constants.kCameraMountingAngleY + (((VIDEO_HEIGHT - state.visionPoint.cY) - (VIDEO_HEIGHT / 2)) * CAMERA_VFOV / VIDEO_HEIGHT))
                 ) // camera mounting angle isn't accurate rn
-            )
+            ) * dumbDistanceMultiplier
         );
         //        return state.visionPoint.dist + deviation;
     }
