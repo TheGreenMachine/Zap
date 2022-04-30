@@ -25,8 +25,11 @@ public class Constants {
 
     // Field characterization
     public static final double kTargetHeight = 104; // inches
+    public static final double kTargetRadius = 26.56; // inches
     public static final double kCameraMountingHeight = 29.5; // inches
-    public static final double kCameraMountingAngleY = 26; // degrees FIXME
+    public static final double kHeightFromCamToHub =
+        kTargetHeight - kCameraMountingHeight; // inches
+    public static final double kCameraMountingAngleY = 26; // degrees
     public static final double fieldCenterY = 8.23 / 2.0;
     public static final double fieldCenterX = 16.46 / 2.0;
     public static final Pose2d targetPos = new Pose2d(

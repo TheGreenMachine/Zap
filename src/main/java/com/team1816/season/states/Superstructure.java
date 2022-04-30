@@ -53,7 +53,7 @@ public class Superstructure {
     private final boolean usePoseTrack;
     private double maxAllowablePoseError = factory.getConstant(
         "maxAllowablePoseError",
-        0.2
+        2
     );
 
     public Superstructure() {
@@ -102,8 +102,10 @@ public class Superstructure {
         if (revving) {
             shooter.setDesiredState(Shooter.STATE.REVVING);
             if (Camera.cameraEnabled && !manual) {
-                shooter.setVelocity(getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
-                shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) > 0);
+                shooter.setVelocity(getOutput(DistanceManager.SUBSYSTEM.SHOOTER));
+                shooter.setHood(getOutput(DistanceManager.SUBSYSTEM.HOOD) > 0);
+            } else if (usePoseTrack && shooterVel == -1) {
+                shooter.setVelocity(getEstimatedOutput());
             } else {
                 shooter.setVelocity(shooterVel);
             }
@@ -146,7 +148,11 @@ public class Superstructure {
                 spindexer.setDesiredState(Spindexer.STATE.COLLECT);
             }
         } else if (revving) {
-            spindexer.setDesiredState(Spindexer.STATE.INDEX);
+            if (elevator.hasBallInElevator()) {
+                spindexer.setDesiredState(Spindexer.STATE.STOP);
+            } else {
+                spindexer.setDesiredState(Spindexer.STATE.COAST);
+            }
         } else {
             spindexer.setDesiredState(Spindexer.STATE.COAST);
         }
@@ -164,15 +170,23 @@ public class Superstructure {
         }
     }
 
-    public double getDistance(DistanceManager.SUBSYSTEM subsystem) {
+    public double getOutput(DistanceManager.SUBSYSTEM subsystem) {
         if (useVision) {
             double camDis = camera.getDistance();
             System.out.println("tracked camera distance is . . . " + camDis);
             return distanceManager.getOutput(camDis, subsystem);
         } else {
-            System.out.println("using neither poseTracking nor vision ! - not intended");
+            System.out.println("not vision ! - not intended");
             return -1;
         }
+    }
+
+    public double getEstimatedOutput() {
+        var output = distanceManager.getOutput(
+            robotState.getEstimatedDistanceToGoal(),
+            DistanceManager.SUBSYSTEM.SHOOTER
+        );
+        return output;
     }
 
     public void shootWhileMoving(double currentCamDist) {
@@ -206,7 +220,13 @@ public class Superstructure {
         double cameraDist = camera.getDistance();
         // 26.56 = radius of center hub - - 5629 = square of height of hub
         double distanceToCenterMeters = Units.inchesToMeters(
-            26.56 + (Math.sqrt((cameraDist * cameraDist) - 5629.5))
+            Constants.kTargetRadius +
+            (
+                Math.sqrt(
+                    (cameraDist * cameraDist) -
+                    (Constants.kHeightFromCamToHub * Constants.kHeightFromCamToHub)
+                )
+            )
         );
 
         Translation2d deltaToHub = new Translation2d(

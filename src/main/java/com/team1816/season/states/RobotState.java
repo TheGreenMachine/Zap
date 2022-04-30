@@ -74,12 +74,20 @@ public class RobotState {
     }
 
     public double getEstimatedDistanceToGoal() {
-        double distanceToGoalMeters = field_to_vehicle
+        double estimatedDistanceToGoalMeters = field_to_vehicle
             .getTranslation()
             .getDistance(Constants.targetPos.getTranslation());
-        return Math.sqrt(
-            Math.pow(Units.metersToInches(distanceToGoalMeters), 2) + 5629.5
-        );
+        double distInches =
+            (
+                Math.sqrt(
+                    Units.metersToInches(
+                        estimatedDistanceToGoalMeters * estimatedDistanceToGoalMeters
+                    ) +
+                    (Constants.kHeightFromCamToHub * Constants.kHeightFromCamToHub)
+                )
+            );
+        System.out.println("estimated distance = " + distInches);
+        return distInches;
     }
 
     public synchronized void outputToSmartDashboard() {

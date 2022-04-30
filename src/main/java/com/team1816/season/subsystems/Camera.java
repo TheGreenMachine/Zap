@@ -82,7 +82,7 @@ public class Camera extends Subsystem {
         }
         SmartDashboard.putNumber("Camera/cy", VIDEO_HEIGHT - state.visionPoint.cY);
         return (
-            (Constants.kTargetHeight - Constants.kCameraMountingHeight) /
+            (Constants.kHeightFromCamToHub) /
             (
                 Math.tan(
                     Math.toRadians(

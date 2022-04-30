@@ -5,7 +5,6 @@ import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.subsystems.Subsystem;
-import com.team1816.season.Constants;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
@@ -128,7 +127,7 @@ public class Elevator extends Subsystem {
                 actualOutput = elevator.getSelectedSensorVelocity(0);
                 if (Math.abs(elevatorOutput) == 0) {
                     robotState.elevatorState = STATE.STOP;
-                } else if(state == STATE.INTAKE) {
+                } else if (state == STATE.INTAKE) {
                     robotState.elevatorState = state;
                 } else if (Math.abs(FIRE - actualOutput) < ALLOWABLE_ERROR) {
                     robotState.elevatorState = STATE.FIRE;
