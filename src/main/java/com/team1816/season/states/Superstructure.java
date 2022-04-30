@@ -52,7 +52,7 @@ public class Superstructure {
     private final boolean useVision;
     private final boolean usePoseTrack;
     private double minAllowablePoseError = factory.getConstant(
-        "mixAllowablePoseError",
+        "minAllowablePoseError",
         0.2
     );
     private double maxAllowablePoseError = factory.getConstant(
