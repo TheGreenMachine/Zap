@@ -80,8 +80,10 @@ public class Elevator extends Subsystem {
     }
 
     private void lockToSensor() {
+        System.out.println("LOCKING TO BALL SENSOR - - - - ballSensor:" + ballSensor.get());
         if (hasBallInElevator()) {
             setElevator(0);
+            outputsChanged = true;
         } else {
             setElevator(INTAKE);
             outputsChanged = true; // keep looping through writeToHardware if no ball seen
