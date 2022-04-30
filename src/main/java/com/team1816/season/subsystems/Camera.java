@@ -79,7 +79,7 @@ public class Camera extends Subsystem {
             (Constants.kTargetHeight - Constants.kCameraMountingHeight) /
             (
                 Math.tan(
-                    Math.toRadians(Constants.kCameraMountingAngleY + (VIDEO_HEIGHT - state.visionPoint.cY))
+                    Math.toRadians(Constants.kCameraMountingAngleY + (((VIDEO_HEIGHT - state.visionPoint.cY) - (VIDEO_HEIGHT / 2)) * CAMERA_VFOV / VIDEO_HEIGHT))
                 ) // camera mounting angle isn't accurate rn
             )
         );
