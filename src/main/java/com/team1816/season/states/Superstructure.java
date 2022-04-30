@@ -155,12 +155,12 @@ public class Superstructure {
     public void updateDesiredElevator() {
         if (firing) {
             elevator.setDesiredState(Elevator.STATE.FIRE);
-        } else if (collecting) {
-            elevator.setDesiredState(Elevator.STATE.INTAKE);
-        } else if (revving) {
-            elevator.setDesiredState(Elevator.STATE.STOP);
+//        } else if (collecting) {
+//            elevator.setDesiredState(Elevator.STATE.INTAKE);
+//        } else if (revving) {
+//            elevator.setDesiredState(Elevator.STATE.STOP);
         } else {
-            elevator.setDesiredState(Elevator.STATE.STOP);
+            elevator.setDesiredState(Elevator.STATE.INTAKE);
         }
     }
 

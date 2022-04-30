@@ -191,8 +191,8 @@ subsystems:
             collectPow: 0.5
             indexPow: -0.5 # TODO original value -0.5 -- lowering this will lower the chance of jamming -- raising will guarantee balls don't enter elevator early
             flushPow: -1
-            coastPow: 0.00
-            firePow: 0.30 # TODO raising will make balls fire faster, but balls firing too close to one another may be inaccurate? (test) -- warning: value too high -> jams
+            coastPow: 0.25
+            firePow: 0.85 # TODO raising will make balls fire faster, but balls firing too close to one another may be inaccurate? (test) -- w
     collector:
         implemented: true
         sparkmaxes:
@@ -209,7 +209,7 @@ subsystems:
                 kF: 0.0001
                 allowableError: 10
         constants:
-            revving: 2000 #.05
+            revving: 0 #.05
             collecting: -5000 #-3600
             flush: 5000 #.35
     camera:

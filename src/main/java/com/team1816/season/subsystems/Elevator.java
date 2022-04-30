@@ -60,14 +60,16 @@ public class Elevator extends Subsystem {
     }
 
     private void setElevator(double elevatorOutput) {
-        this.elevatorOutput = elevatorOutput;
+        if(this.elevatorOutput != elevatorOutput){
+            this.elevatorOutput = elevatorOutput;
 
-        if (isVelocity) {
-            System.out.println(elevatorOutput + " = elevator velocity");
-            this.elevator.set(ControlMode.Velocity, elevatorOutput);
-        } else {
-            System.out.println(elevatorOutput + " = elevator power");
-            this.elevator.set(ControlMode.PercentOutput, elevatorOutput);
+            if (isVelocity) {
+                System.out.println(elevatorOutput + " = elevator velocity");
+                this.elevator.set(ControlMode.Velocity, elevatorOutput);
+            } else {
+                System.out.println(elevatorOutput + " = elevator power");
+                this.elevator.set(ControlMode.PercentOutput, elevatorOutput);
+            }
         }
     }
 
@@ -83,7 +85,6 @@ public class Elevator extends Subsystem {
         System.out.println("LOCKING TO BALL SENSOR - - - - ballSensor:" + hasBallInElevator());
         if (hasBallInElevator()) {
             setElevator(0);
-            outputsChanged = true;
         } else {
             setElevator(INTAKE);
             outputsChanged = true; // keep looping through writeToHardware if no ball seen
