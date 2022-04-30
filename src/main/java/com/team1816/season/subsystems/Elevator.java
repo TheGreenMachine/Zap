@@ -80,7 +80,7 @@ public class Elevator extends Subsystem {
     }
 
     private void lockToSensor() {
-        System.out.println("LOCKING TO BALL SENSOR - - - - ballSensor:" + ballSensor.get());
+        System.out.println("LOCKING TO BALL SENSOR - - - - ballSensor:" + hasBallInElevator());
         if (hasBallInElevator()) {
             setElevator(0);
             outputsChanged = true;
@@ -103,7 +103,7 @@ public class Elevator extends Subsystem {
     }
 
     public boolean hasBallInElevator() {
-        return ballSensor.get();
+        return !ballSensor.get();
     }
 
     // TODO: implement when we have color sensors
