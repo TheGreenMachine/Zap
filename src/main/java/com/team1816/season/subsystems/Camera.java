@@ -74,12 +74,12 @@ public class Camera extends Subsystem {
         if (RobotBase.isSimulation()) {
             return robotState.getEstimatedDistanceToGoal();
         }
-        SmartDashboard.putNumber("Camera/cy", state.visionPoint.cY);
+        SmartDashboard.putNumber("Camera/cy", VIDEO_HEIGHT - state.visionPoint.cY);
         return (
             (Constants.kTargetHeight - Constants.kCameraMountingHeight) /
             (
                 Math.tan(
-                    Math.toRadians(Constants.kCameraMountingAngleY + (((VIDEO_HEIGHT - state.visionPoint.cY) - (VIDEO_HEIGHT / 2)) * CAMERA_VFOV / VIDEO_HEIGHT))
+                    Math.toRadians(Constants.kCameraMountingAngleY + (VIDEO_HEIGHT - state.visionPoint.cY))
                 ) // camera mounting angle isn't accurate rn
             )
         );
