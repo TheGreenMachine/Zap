@@ -139,6 +139,7 @@ public class Elevator extends Subsystem {
                     break;
                 case INTAKE:
                     lockToSensor();
+                    break;
                 case FIRE:
                     lockToShooter();
                     break;
