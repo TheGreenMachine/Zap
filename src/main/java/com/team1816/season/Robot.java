@@ -198,7 +198,7 @@ public class Robot extends TimedRobot {
                 }
                 BadLog.createTopic(
                     "ClimberPosition",
-                    "NativeRotationUnits",
+                    "NativeUnits",
                     mClimber::getClimberPosition,
                     "hide",
                     "join:Tracking/Angles"
@@ -265,11 +265,18 @@ public class Robot extends TimedRobot {
                     "join:Tracking/Angles"
                 );
                 mElevator.CreateBadLogTopic(
-                    "Elevator/ElevatorVel",
+                    "Elevator/ElevatorActVel",
                     "NativeUnits",
                     mElevator::getActualOutput,
                     "hide",
-                    "join:Tracking/Angles"
+                    "join:Elevator/Velocities"
+                );
+                mElevator.CreateBadLogTopic(
+                    "Elevator/ElevatorDesiredVel",
+                    "NativeUnits",
+                    mElevator::getDesiredOutput,
+                    "hide",
+                    "join:Elevator/Velocities"
                 );
             }
 

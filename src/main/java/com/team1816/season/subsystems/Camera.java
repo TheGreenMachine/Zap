@@ -11,8 +11,6 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import javax.naming.Name;
 import java.util.ArrayList;
 
 @Singleton
@@ -33,7 +31,7 @@ public class Camera extends Subsystem {
     private static final double VIDEO_HEIGHT = 720; // px
     private static final double CAMERA_HFOV = 85;
     public static final double CAMERA_VFOV = 54;
-//        2 * Math.atan((VIDEO_WIDTH / 2) / CAMERA_FOCAL_LENGTH) * (180 / Math.PI); // deg
+    //        2 * Math.atan((VIDEO_WIDTH / 2) / CAMERA_FOCAL_LENGTH) * (180 / Math.PI); // deg
     public static final double ALLOWABLE_DISTANCE_ERROR = factory.getConstant(
         NAME,
         "allowableDistanceError",
@@ -42,7 +40,11 @@ public class Camera extends Subsystem {
     //    private Queue<Double> distances = new PriorityQueue<Double>();
     private final double MAX_DIST = factory.getConstant(NAME, "maxDist", 260);
     private final double MAX_DELTA_X = factory.getConstant(NAME, "maxDeltaX", 1200);
-    private final double dumbDistanceMultiplier = factory.getConstant(NAME, "dumbDistanceMultiplier", 1);
+    private final double dumbDistanceMultiplier = factory.getConstant(
+        NAME,
+        "dumbDistanceMultiplier",
+        1
+    );
 
     // state
     private ArrayList<Double> distances = new ArrayList<>();
@@ -83,9 +85,17 @@ public class Camera extends Subsystem {
             (Constants.kTargetHeight - Constants.kCameraMountingHeight) /
             (
                 Math.tan(
-                    Math.toRadians(Constants.kCameraMountingAngleY + (((VIDEO_HEIGHT - state.visionPoint.cY) - (VIDEO_HEIGHT / 2)) * CAMERA_VFOV / VIDEO_HEIGHT))
+                    Math.toRadians(
+                        Constants.kCameraMountingAngleY +
+                        (
+                            ((VIDEO_HEIGHT - state.visionPoint.cY) - (VIDEO_HEIGHT / 2)) *
+                            CAMERA_VFOV /
+                            VIDEO_HEIGHT
+                        )
+                    )
                 ) // camera mounting angle isn't accurate rn
-            ) * dumbDistanceMultiplier
+            ) *
+            dumbDistanceMultiplier
         );
         //        return state.visionPoint.dist + deviation;
     }
