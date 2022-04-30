@@ -126,7 +126,7 @@ subsystems:
                 kF: 0.0487
                 allowableError: 100 #TODO @trent raising this value trades cycle time for accuracy - original value = 65
         constants:
-            usingPoseForSpeed: 0
+            usingPoseForSpeed: 1
             maxTicks: 20700 #
             currentFloorCheck: .12
             currentEpsilonCheck: .2
@@ -220,7 +220,7 @@ subsystems:
             maxDeltaX: 1200 # 670
             allowableDistanceError: 50
             deviation: 0
-            dumbDistanceMultiplier: 1 # TODO @ trent fiddle-me-timbers
+            dumbDistanceMultiplier: 1
 pcm: 2
 canivoreBusName: highSpeed
 constants:
@@ -237,7 +237,8 @@ constants:
     maxVelOpenLoop: 3 # 160 # 240 # inches/s # 22560 native units ---30
     maxVelPathFollowing: 2.2 # 160 # 240 # inches/s # 22560 native units ---30
     maxAccel: 100 # inches/s^ 2
-    maxAllowablePoseError: 2
+    minAllowablePoseError: 1
+    maxAllowablePoseError: 4
     ## Logging ##
     logTeleOp: 1 # 0 or 1
     logAuto: 1 # 0 or 1

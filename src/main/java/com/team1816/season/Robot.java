@@ -367,20 +367,16 @@ public class Robot extends TimedRobot {
                         mControlBoard::getAutoAim,
                         aim -> {
                             if (aim) {
-                                hasAimed = true;
                                 mTurret.snapWithCamera();
                             } else {
-                                if (hasAimed) {
-                                    hasAimed = false;
-                                    mSuperstructure.updatePoseWithCamera();
-                                    if (
-                                        defaultTurretControlMode ==
-                                        Turret.ControlMode.CENTER_FOLLOWING
-                                    ) {
-                                        mTurret.setFollowingAngle(Turret.CARDINAL_SOUTH);
-                                    }
-                                    mTurret.setControlMode(defaultTurretControlMode);
+                                mSuperstructure.updatePoseWithCamera();
+                                if (
+                                    defaultTurretControlMode ==
+                                    Turret.ControlMode.CENTER_FOLLOWING
+                                ) {
+                                    mTurret.setFollowingAngle(Turret.CARDINAL_SOUTH);
                                 }
+                                mTurret.setControlMode(defaultTurretControlMode);
                             }
                         }
                     ),

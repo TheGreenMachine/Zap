@@ -80,11 +80,11 @@ public class RobotState {
         double distInches =
             (
                 Math.sqrt(
-                    Units.metersToInches(
-                        estimatedDistanceToGoalMeters * estimatedDistanceToGoalMeters
-                    ) +
+                    Units.metersToInches(estimatedDistanceToGoalMeters) *
+                    Units.metersToInches(estimatedDistanceToGoalMeters) +
                     (Constants.kHeightFromCamToHub * Constants.kHeightFromCamToHub)
-                )
+                ) -
+                Constants.kTargetRadius
             );
         System.out.println("estimated distance = " + distInches);
         return distInches;

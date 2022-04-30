@@ -51,6 +51,10 @@ public class Superstructure {
     private boolean firing;
     private final boolean useVision;
     private final boolean usePoseTrack;
+    private double minAllowablePoseError = factory.getConstant(
+        "mixAllowablePoseError",
+        0.2
+    );
     private double maxAllowablePoseError = factory.getConstant(
         "maxAllowablePoseError",
         2
@@ -239,18 +243,18 @@ public class Superstructure {
                 robotState.field_to_vehicle.getRotation()
             )
         );
-        if (
-            Math.abs(
-                Math.hypot(
-                    robotState.field_to_vehicle.getX() - newRobotPose.getX(),
-                    robotState.field_to_vehicle.getY() - newRobotPose.getY()
-                )
-            ) >
-            maxAllowablePoseError
-        ) {
+        var diff = Math.abs(
+            Math.hypot(
+                robotState.field_to_vehicle.getX() - newRobotPose.getX(),
+                robotState.field_to_vehicle.getY() - newRobotPose.getY()
+            )
+        );
+        if (diff > minAllowablePoseError && diff < maxAllowablePoseError) {
             System.out.println(newRobotPose + " = new robot pose");
             drive.resetOdometry(newRobotPose);
             robotState.field_to_vehicle = newRobotPose;
+        } else {
+            System.out.println("not resetting robot pose! diff = " + diff);
         }
     }
 }
