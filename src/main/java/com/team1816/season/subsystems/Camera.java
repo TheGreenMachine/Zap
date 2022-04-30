@@ -50,6 +50,7 @@ public class Camera extends Subsystem {
 
     public Camera() {
         super(NAME);
+        SmartDashboard.putNumber("Camera/cy", 0);
         socket.setDebug(factory.getConstant(NAME, "debug") > 0);
     }
 
