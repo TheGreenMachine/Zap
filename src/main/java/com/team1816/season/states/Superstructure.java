@@ -158,7 +158,11 @@ public class Superstructure {
                 spindexer.setDesiredState(Spindexer.STATE.COAST);
             }
         } else {
-            spindexer.setDesiredState(Spindexer.STATE.COAST);
+            if (elevator.hasBallInElevator()) {
+                spindexer.setDesiredState(Spindexer.STATE.STOP);
+            } else {
+                spindexer.setDesiredState(Spindexer.STATE.COAST);
+            }
         }
     }
 
