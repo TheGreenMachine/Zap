@@ -37,8 +37,6 @@ public class Elevator extends Subsystem {
     public Elevator() {
         super(NAME);
         this.elevator = factory.getMotor(NAME, "elevator");
-        elevator.configVoltageCompSaturation(4, Constants.kCANTimeoutMs);
-        elevator.enableVoltageCompensation(true);
 
         PIDSlotConfiguration config = factory.getPidSlotConfig(NAME, pidSlot);
         this.ballSensor =
