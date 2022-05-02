@@ -65,10 +65,10 @@ public class Elevator extends Subsystem {
             this.elevatorOutput = elevatorOutput;
 
             if (isVelocity) {
-                System.out.println(elevatorOutput + " = elevator velocity");
+                //                System.out.println("elevator velocity: " + elevatorOutput);
                 this.elevator.set(ControlMode.Velocity, elevatorOutput);
             } else {
-                System.out.println(elevatorOutput + " = elevator power");
+                //                System.out.println("elevator power: " + elevatorOutput);
                 this.elevator.set(ControlMode.PercentOutput, elevatorOutput);
             }
         }
@@ -83,9 +83,6 @@ public class Elevator extends Subsystem {
     }
 
     private void lockToSensor() {
-        System.out.println(
-            "ballSensor: " + hasBallInElevator()
-        );
         if (hasBallInElevator()) {
             setDesiredState(STATE.STOP);
         } else {
@@ -98,7 +95,7 @@ public class Elevator extends Subsystem {
         if (this.state != state) {
             this.state = state;
             outputsChanged = true;
-            System.out.println("desired elevator " + state);
+            System.out.println("desired elevator changed: " + state);
         }
     }
 
@@ -124,20 +121,25 @@ public class Elevator extends Subsystem {
         if (state != robotState.elevatorState) {
             if (isVelocity) {
                 actualOutput = elevator.getSelectedSensorVelocity(0);
-                if (Math.abs(elevatorOutput) == 0) {
+                if (Math.abs(actualOutput) < 100) { // TODO make this not a raw number
                     robotState.elevatorState = STATE.STOP;
                 } else if (state == STATE.INTAKE) {
                     robotState.elevatorState = state;
                 } else if (Math.abs(FIRE - actualOutput) < ALLOWABLE_ERROR) {
                     robotState.elevatorState = STATE.FIRE;
-                } else if (elevatorOutput < .2) {
+                } else if (elevatorOutput < -1000) {
                     robotState.elevatorState = STATE.FLUSH;
                 }
             } else {
                 robotState.elevatorState = state;
             }
 
-            System.out.println("ACTUAL ELEVATOR STATE = " + robotState.elevatorState);
+            System.out.println(
+                "desired elevator: " +
+                state +
+                ", actual state: " +
+                robotState.elevatorState
+            );
         }
     }
 

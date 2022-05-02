@@ -233,7 +233,7 @@ public class Turret extends Subsystem implements PidProvider {
     private synchronized void setTurretPosition(double position) {
         //Since we are using position we need ensure value stays in one rotation
         if (desiredTurretPos != (int) position) {
-            System.out.println("setting desiredTurretPos to " + position);
+            //            System.out.println("setting desiredTurretPos to " + position);
             desiredTurretPos = (int) position;
             outputsChanged = true;
         }
@@ -242,6 +242,7 @@ public class Turret extends Subsystem implements PidProvider {
     // CCW positive - 0 to 360
     public synchronized void setTurretAngle(double angle) {
         setControlMode(ControlMode.POSITION);
+        System.out.println("setting turret angle: " + angle);
         setTurretPosition(convertTurretDegreesToTicks(angle));
         followingTurretPos = desiredTurretPos;
     }

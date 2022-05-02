@@ -78,6 +78,10 @@ public class Superstructure {
         collecting = false;
         revving = false;
         firing = false;
+        robotState.collectorState = Collector.STATE.STOP;
+        robotState.spinState = Spindexer.STATE.STOP;
+        robotState.elevatorState = Elevator.STATE.STOP;
+        robotState.shooterState = Shooter.STATE.STOP;
         System.out.println("stopping/starting superstructure");
     }
 

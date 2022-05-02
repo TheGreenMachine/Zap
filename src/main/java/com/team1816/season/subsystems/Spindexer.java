@@ -47,7 +47,7 @@ public class Spindexer extends Subsystem {
 
     private void setSpindexer(double spindexerPower) {
         this.spindexerPower = spindexerPower;
-        System.out.println(spindexerPower + " = spindexer pow");
+        //        System.out.println("spindexer pow: " + spindexerPower);
         spindexer.set(ControlMode.PercentOutput, spindexerPower);
     }
 
@@ -68,7 +68,7 @@ public class Spindexer extends Subsystem {
         if (this.state != state) {
             this.state = state;
             outputsChanged = true;
-            System.out.println("desired spindexer " + state);
+            System.out.println("desired spindexer changed: " + state);
         }
     }
 
@@ -88,7 +88,9 @@ public class Spindexer extends Subsystem {
             //            }
             robotState.spinState = state;
 
-            System.out.println("ACTUAL SPINDEXER STATE = " + robotState.spinState);
+            System.out.println(
+                "desired spindexer: " + state + ", actual: " + robotState.spinState
+            );
         }
     }
 
