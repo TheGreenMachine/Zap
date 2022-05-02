@@ -121,7 +121,7 @@ public class Camera extends Subsystem {
         // self.cx+'|'+self.cy+'|' + self.distance + "\n"
         String[] data = socket.request("point");
         if (data == null || data.length < 4) {
-            System.out.println("CAMERA DEBUG: Malformed point line: ");
+            if (data != null) System.out.println("CAMERA DEBUG: Malformed point line: ");
             return;
         }
         state.visionPoint.cX = Double.parseDouble(data[1]);

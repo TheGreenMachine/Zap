@@ -1,15 +1,19 @@
 package com.team1816.lib.vision;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import java.io.*;
 import java.net.*;
+import javax.inject.Singleton;
 
+@Singleton
 public class VisionSocket {
 
     private final String PROTOCOL_LINE = "\\|";
     private Socket socket;
     private BufferedReader socketIn;
     private PrintWriter socketOut;
-    private long needsReconnect = 0;
+    private static double needsReconnect = 0;
     private boolean enabled = false;
     private boolean useDebug = false;
 
@@ -21,14 +25,15 @@ public class VisionSocket {
         if (!enabled) return false;
         try {
             socket = new Socket();
-            socket.connect(new InetSocketAddress("10.18.16.16", 5802), 10);
+            socket.setSoTimeout(15);
+            socket.connect(new InetSocketAddress("10.18.16.16", 5802), 15);
             socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             socketOut = new PrintWriter(socket.getOutputStream(), true);
             debug("connect succeeded");
             needsReconnect = 0;
         } catch (Throwable t) {
-            debug("connect failed: " + t.getMessage());
-            needsReconnect = System.currentTimeMillis();
+            DriverStation.reportError("connect failed: " + t.getMessage(), false);
+            needsReconnect = Timer.getFPGATimestamp();
             return false;
         }
         return true;
@@ -47,9 +52,7 @@ public class VisionSocket {
             }
             cleanup();
         } catch (IOException e) {
-            debug("Close failed: " + e.getMessage());
-            // e.printStackTrace();
-            return;
+            DriverStation.reportError("Close failed: " + e.getMessage(), false);
         }
     }
 
@@ -62,7 +65,7 @@ public class VisionSocket {
             socketOut = null;
             socketIn = null;
         } catch (Throwable t) {
-            return;
+            DriverStation.reportError("Cleanup failed: " + t.getMessage(), false);
         }
     }
 
@@ -92,9 +95,8 @@ public class VisionSocket {
         // we can safely return new String[0] because
         // all the code already checks for length > 1 as a safety measure
         // against, like, `distance|` being returned.
-        if (!enabled || needsReconnect != 0) {
-            debug("not connected for line: " + message);
-            return new String[0];
+        if (!enabled || !isConnected()) {
+            return null;
         }
         debug("enabled, sending request: " + message);
         try {
@@ -107,8 +109,8 @@ public class VisionSocket {
             debug("CAMERA LINE: " + line);
             return line.split(PROTOCOL_LINE);
         } catch (IOException e) {
-            debug("Write failed: " + e.getMessage());
-            needsReconnect = System.currentTimeMillis();
+            debug("Write failed: " + e.getMessage() + " " + needsReconnect);
+            if (needsReconnect == 0) needsReconnect = Timer.getFPGATimestamp();
             return null;
         }
     }
