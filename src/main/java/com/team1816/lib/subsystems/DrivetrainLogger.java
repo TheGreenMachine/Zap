@@ -8,7 +8,7 @@ public class DrivetrainLogger {
         if (isSwerve) {
             for (
                 int i = 0;
-                i < ((SwerveDrivetrain) drivetrain).getSwerveModules().length;
+                i < 1; //((SwerveDrivetrain) drivetrain).getSwerveModules().length;
                 i++
             ) {
                 var module = ((SwerveDrivetrain) drivetrain).getSwerveModules()[i];
@@ -18,7 +18,7 @@ public class DrivetrainLogger {
                 subsystem.CreateBadLogTopic(
                     prefix + "AzimuthPosition",
                     "ticks",
-                    module::getAzimuthPosition,
+                    module::getAzimuthActual,
                     "hide",
                     "join:Drivetrain/AzimuthPosition"
                 );
@@ -41,14 +41,14 @@ public class DrivetrainLogger {
                 subsystem.CreateBadLogTopic(
                     prefix + "DriveVelocity",
                     "ticks",
-                    module::getDriveVelocity,
+                    module::getDriveActual,
                     "hide",
                     "join:Drivetrain/DriveVelocity"
                 );
                 subsystem.CreateBadLogTopic(
                     prefix + "DriveVelocityDemand",
                     "ticks",
-                    module::getDriveVelocityDemand,
+                    module::getDriveDemand,
                     "hide",
                     "join:Drivetrain/DriveVelocity"
                 );
@@ -140,7 +140,7 @@ public class DrivetrainLogger {
             "join:Drivetrain/Heading"
         );
         subsystem.CreateBadLogTopic(
-            "Drivetrain/Heading",
+            "Drivetrain/DesiredHeading",
             "Angle",
             drivetrain::getDesiredHeading,
             "hide",

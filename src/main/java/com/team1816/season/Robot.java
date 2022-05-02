@@ -189,20 +189,8 @@ public class Robot extends TimedRobot {
                             "inches",
                             mCamera::getDistance
                         );
-                        BadLog.createTopic(
-                            "Vision/CenterX",
-                            "pixels",
-                            mCamera::getRawCenterX
-                        );
                     }
                 }
-                BadLog.createTopic(
-                    "ClimberPosition",
-                    "NativeUnits",
-                    mClimber::getClimberPosition,
-                    "hide",
-                    "join:Tracking/Angles"
-                );
                 mShooter.CreateBadLogTopic(
                     "Shooter/ActVel",
                     "NativeUnits",
@@ -242,41 +230,6 @@ public class Robot extends TimedRobot {
                     "Turret/ErrorPos",
                     "NativeUnits",
                     mTurret::getPositionError
-                );
-                mTurret.CreateBadLogTopic(
-                    "Turret/FieldToTurret",
-                    "Degrees",
-                    () -> mRobotState.getLatestFieldToTurret().getDegrees(),
-                    "hide",
-                    "join:Tracking/Angles"
-                );
-                mTurret.CreateBadLogTopic(
-                    "Drive/HeadingRelativeToInitial",
-                    "Degrees",
-                    () -> mDrive.getHeadingRelativeToInitial().getDegrees(),
-                    "hide",
-                    "join:Tracking/Angles"
-                );
-                mTurret.CreateBadLogTopic(
-                    "Turret/TurretAngle",
-                    "Degrees",
-                    mTurret::getActualTurretPositionDegrees,
-                    "hide",
-                    "join:Tracking/Angles"
-                );
-                mElevator.CreateBadLogTopic(
-                    "Elevator/ElevatorActVel",
-                    "NativeUnits",
-                    mElevator::getActualOutput,
-                    "hide",
-                    "join:Elevator/Velocities"
-                );
-                mElevator.CreateBadLogTopic(
-                    "Elevator/ElevatorDesiredVel",
-                    "NativeUnits",
-                    mElevator::getDesiredOutput,
-                    "hide",
-                    "join:Elevator/Velocities"
                 );
             }
 

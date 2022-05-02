@@ -140,7 +140,6 @@ public class Shooter extends Subsystem implements PidProvider {
 
     public void setVelocity(double velocity) {
         velocityDemand = velocity;
-        //        System.out.println("velocity shooter demand = " + velocityDemand);
         shooterMain.set(ControlMode.Velocity, velocityDemand);
     }
 
@@ -148,11 +147,9 @@ public class Shooter extends Subsystem implements PidProvider {
         // no checker for state because we may tell the shooter to set to the same state but different vel
         this.state = state;
         outputsChanged = true;
-        //        System.out.println("desired shooter " + state);
     }
 
     public boolean isVelocityNearTarget() {
-        //        System.out.println("checking if shooter up to speed - " + velocityDemand + " = velocity demand"  + actualShooterVelocity + " = act vel");
         return (
             Math.abs(velocityDemand - actualShooterVelocity) < VELOCITY_THRESHOLD &&
             state != STATE.COASTING
@@ -174,9 +171,6 @@ public class Shooter extends Subsystem implements PidProvider {
             } else {
                 robotState.shooterState = STATE.COASTING;
             }
-            //            System.out.println(
-            //                "desired shooter: " + state + ", actual: " + robotState.shooterState
-            //            );
         }
     }
 

@@ -68,28 +68,13 @@ public class Spindexer extends Subsystem {
         if (this.state != state) {
             this.state = state;
             outputsChanged = true;
-            //            System.out.println("desired spindexer changed: " + state);
         }
     }
 
     @Override
     public void readFromHardware() {
         if (state != robotState.spinState) {
-            //            double actualVel = spindexer.getSelectedSensorVelocity(0);
-
-            //            if(state == SPIN_STATE.COLLECT || state == SPIN_STATE.INDEX){ // logic not yet made for collect / index
-            //                robotState.spinState = state;
-            //            } else if(Math.abs(spindexerPower) < POWER_THRESHOLD) {
-            //                robotState.spinState = SPIN_STATE.STOP;
-            //            } else if (spindexerPower > POWER_THRESHOLD) {
-            //                robotState.spinState = SPIN_STATE.FIRE;
-            //            } else if(spindexerPower < -POWER_THRESHOLD){
-            //                robotState.spinState = SPIN_STATE.FLUSH;
-            //            }
             robotState.spinState = state;
-            //            System.out.println(
-            //                "desired spindexer: " + state + ", actual: " + robotState.spinState
-            //            );
         }
     }
 

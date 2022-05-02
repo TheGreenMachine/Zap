@@ -4,13 +4,13 @@ public interface ISwerveModule {
     String getSubsystemName();
 
     //    double getAzimuthVelocity();
-    double getAzimuthPosition();
+    double getAzimuthActual();
     //    double getAzimuthPositionDemand();
     double getAzimuthError();
     double getAzimuthDemand();
 
-    double getDriveVelocity();
-    double getDriveVelocityDemand();
+    double getDriveActual();
+    double getDriveDemand();
     //    double getDriveDistance();
     double getDriveError();
 }

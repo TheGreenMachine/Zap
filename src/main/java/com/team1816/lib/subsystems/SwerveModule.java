@@ -133,7 +133,7 @@ public class SwerveModule implements ISwerveModule {
     }
 
     @Override
-    public double getAzimuthPosition() {
+    public double getAzimuthActual() {
         return mAzimuthMotor.getSelectedSensorPosition(0);
     }
 
@@ -148,12 +148,12 @@ public class SwerveModule implements ISwerveModule {
     }
 
     @Override
-    public double getDriveVelocity() {
+    public double getDriveActual() {
         return mDriveMotor.getSelectedSensorVelocity(0);
     }
 
     @Override
-    public double getDriveVelocityDemand() {
+    public double getDriveDemand() {
         return mVelDemand;
     }
 
