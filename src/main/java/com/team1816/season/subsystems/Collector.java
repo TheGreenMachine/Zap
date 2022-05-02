@@ -22,7 +22,7 @@ public class Collector extends Subsystem {
     private boolean armDown;
     private boolean outputsChanged = false;
     private double velocityDemand;
-    private double actualVelocity;
+    //    private double actualVelocity;
     private STATE state = STATE.STOP;
 
     private final double COLLECTING;
@@ -52,9 +52,9 @@ public class Collector extends Subsystem {
         outputsChanged = true;
     }
 
-    public double getActualVelocity() {
-        return actualVelocity;
-    }
+    //    public double getActualVelocity() {
+    //        return actualVelocity;
+    //    }
 
     public double getDemandedVelocity() {
         return velocityDemand;
@@ -63,14 +63,14 @@ public class Collector extends Subsystem {
     public void setDesiredState(STATE state) {
         if (this.state != state) {
             this.state = state;
-            System.out.println("desired collector changed: " + state);
+            //            System.out.println("desired collector changed: " + state);
             outputsChanged = true;
         }
     }
 
     @Override
     public void readFromHardware() {
-        this.actualVelocity = intake.getSelectedSensorVelocity(0);
+        //        this.actualVelocity = intake.getSelectedSensorVelocity(0);
     }
 
     @Override

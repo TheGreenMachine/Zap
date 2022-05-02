@@ -68,7 +68,7 @@ public class Spindexer extends Subsystem {
         if (this.state != state) {
             this.state = state;
             outputsChanged = true;
-            System.out.println("desired spindexer changed: " + state);
+            //            System.out.println("desired spindexer changed: " + state);
         }
     }
 
