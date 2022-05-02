@@ -72,7 +72,7 @@ public class Camera extends Subsystem {
         if (RobotBase.isSimulation()) { //simulate feedback loop
             return simulateDeltaX();
         } else {
-            return state.visionPoint.deltaX;
+            return parseDeltaX(state.visionPoint.cX);
         }
     }
 
@@ -80,7 +80,6 @@ public class Camera extends Subsystem {
         if (RobotBase.isSimulation()) {
             return robotState.getEstimatedDistanceToGoal();
         }
-        SmartDashboard.putNumber("Camera/cy", VIDEO_HEIGHT - state.visionPoint.cY);
         return (
             (Constants.kTargetHeight - Constants.kCameraMountingHeight) /
             (
@@ -127,27 +126,6 @@ public class Camera extends Subsystem {
         }
         state.visionPoint.cX = Double.parseDouble(data[1]);
         state.visionPoint.cY = Double.parseDouble(data[2]);
-        System.out.println(state.visionPoint.cX);
-
-        double dis = Double.parseDouble(data[3]);
-        if (
-            dis > 0 &&
-            dis < MAX_DIST &&
-            Math.abs(dis - lastDistance) < ALLOWABLE_DISTANCE_ERROR
-        ) {
-            distances.add(dis);
-        }
-
-        if (distances.size() > 2) { // note - this number was 8 before!
-            double distanceSum = 0;
-            for (int i = 0; i < distances.size(); i++) {
-                distanceSum += distances.get(i);
-            }
-            state.visionPoint.dist = distanceSum / distances.size();
-            distances.remove(0);
-            state.visionPoint.deltaX = parseDeltaX(state.visionPoint.cX);
-        }
-        lastDistance = dis;
     }
 
     public void stop() {

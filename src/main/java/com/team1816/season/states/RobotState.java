@@ -93,14 +93,10 @@ public class RobotState {
 
         public double cX;
         public double cY;
-        public double dist;
-        public double deltaX;
 
         public Point() {
             cX = 0;
             cY = 0;
-            dist = 0;
-            deltaX = 0;
         }
     }
 }
