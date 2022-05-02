@@ -19,6 +19,7 @@ class ThreadedVisionServer(object):
         self.original_yml = copy.deepcopy(yaml_data)
         self.yml_path = yml_path
         self.update_exposure = False
+        self.update_debug = False
         self.calib_camera = False
 
     def listen(self):
@@ -103,8 +104,14 @@ class ThreadedVisionServer(object):
         elif key == "LINE":
             self.yml_data['stream']['line'] = value
             self.line = True
-        elif key == "CalibrationCamera":
-            self.calib_camera = value
+        elif key == "DEBG":
+            if value == 1:
+                self.calib_camera = True
+                self.update_debug = True
+            else:
+                self.calib_camera = False
+                self.update_debug = True
+            self.yml_data['camera']['debug'] = value
         elif key == "RESET":
             self.yml_data.update(self.original_yml)
             dumpYML()
