@@ -87,10 +87,9 @@ public class Spindexer extends Subsystem {
             //                robotState.spinState = SPIN_STATE.FLUSH;
             //            }
             robotState.spinState = state;
-
-            System.out.println(
-                "desired spindexer: " + state + ", actual: " + robotState.spinState
-            );
+            //            System.out.println(
+            //                "desired spindexer: " + state + ", actual: " + robotState.spinState
+            //            );
         }
     }
 

@@ -174,10 +174,9 @@ public class Shooter extends Subsystem implements PidProvider {
             } else {
                 robotState.shooterState = STATE.COASTING;
             }
-
-            System.out.println(
-                "desired shooter: " + state + ", actual: " + robotState.shooterState
-            );
+            //            System.out.println(
+            //                "desired shooter: " + state + ", actual: " + robotState.shooterState
+            //            );
         }
     }
 

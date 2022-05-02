@@ -133,10 +133,9 @@ public class Elevator extends Subsystem {
             } else {
                 robotState.elevatorState = state;
             }
-
-            System.out.println(
-                "desired elevator: " + state + ", actual: " + robotState.elevatorState
-            );
+            //            System.out.println(
+            //                "desired elevator: " + state + ", actual: " + robotState.elevatorState
+            //            );
         }
     }
 
