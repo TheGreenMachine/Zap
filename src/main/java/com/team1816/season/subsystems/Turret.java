@@ -191,7 +191,7 @@ public class Turret extends Subsystem implements PidProvider {
             } else {
                 this.controlMode = controlMode;
                 turret.selectProfileSlot(kPIDGyroIDx, 0);
-                camera.setCameraEnabled(false);
+                camera.setCameraEnabled(controlMode == ControlMode.MANUAL);
                 if (controlMode == ControlMode.MANUAL) {
                     led.indicateStatus(LedManager.RobotStatus.MANUAL_TURRET);
                 } else {
