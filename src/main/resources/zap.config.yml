@@ -178,7 +178,7 @@ subsystems:
             isVelocity: 1
             maxTicks: 20000 # tune
             ballSensor: 0
-            firePow: 0.5 #TODO @trent only raise if rlly need faster cycle time b/c this could change ball trajectory -- (firePow * maxticks = firePow in ticks/100MS)
+            firePow: 0.35 #TODO @trent only raise if rlly need faster cycle time b/c this could change ball trajectory -- (firePow * maxticks = firePow in ticks/100MS)
             flushPow: -0.3
             intakePow: 0.3
     spindexer:
