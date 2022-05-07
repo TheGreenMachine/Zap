@@ -23,7 +23,6 @@ import com.team1816.season.states.Superstructure;
 import com.team1816.season.subsystems.*;
 import com.team254.lib.util.LatchedBoolean;
 import com.team254.lib.util.SwerveDriveSignal;
-import com.team254.lib.util.TimeDelayedBoolean;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.*;
 import java.nio.file.Files;
@@ -62,11 +61,11 @@ public class Robot extends TimedRobot {
     private final LedManager mLedManager;
     private final DistanceManager mDistanceManager;
 
-    private LatchedBoolean mWantsAutoExecution = new LatchedBoolean();
-    private LatchedBoolean mWantsAutoInterrupt = new LatchedBoolean();
+    private final LatchedBoolean mWantsAutoExecution = new LatchedBoolean();
+    private final LatchedBoolean mWantsAutoInterrupt = new LatchedBoolean();
 
-    private AutoModeSelector mAutoModeSelector;
-    private AutoModeExecutor mAutoModeExecutor;
+    private final AutoModeSelector mAutoModeSelector;
+    private final AutoModeExecutor mAutoModeExecutor;
     private TrajectorySet trajectorySet;
 
     private double loopStart;
@@ -98,6 +97,7 @@ public class Robot extends TimedRobot {
         mLedManager = injector.getInstance(LedManager.class);
         mSubsystemManager = injector.getInstance(SubsystemManager.class);
         mAutoModeSelector = injector.getInstance(AutoModeSelector.class);
+        mAutoModeExecutor = injector.getInstance(AutoModeExecutor.class);
         trajectorySet = injector.getInstance(TrajectorySet.class);
     }
 
@@ -245,9 +245,7 @@ public class Robot extends TimedRobot {
                 mLedManager
             );
 
-            mDrive.zeroSensors();
-            mTurret.zeroSensors();
-            mClimber.zeroSensors();
+            mSubsystemManager.zeroSensors();
             mSuperstructure.setStopped(true); // bool statement is for shooter state (stop or coast)
             mDistanceManager.outputBucketOffsets();
 
@@ -294,7 +292,7 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createAction(
-                        mControlBoard::getZeroPose, // line up against ally field wall -> zero
+                        mControlBoard::getZeroPose,
                         () -> {
                             mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
                             mDrive.zeroSensors(Constants.ZeroPose);
@@ -324,7 +322,7 @@ public class Robot extends TimedRobot {
                             if (useManualShoot) {
                                 mSuperstructure.setRevving(
                                     yeet,
-                                    Shooter.TARMAC_TAPE_VEL, // change this into tarmacTapeVel once you get the "ok" signal
+                                    Shooter.TARMAC_TAPE_VEL,
                                     true
                                 ); // Tarmac
                             } else {
@@ -384,7 +382,6 @@ public class Robot extends TimedRobot {
                         }
                     )
                 );
-            mDrive.zeroSensors();
         } catch (Throwable t) {
             faulted = true;
             throw t;
@@ -405,9 +402,7 @@ public class Robot extends TimedRobot {
             if (mAutoModeExecutor != null) {
                 mAutoModeExecutor.stop();
             }
-            mAutoModeSelector.reset();
             mAutoModeSelector.updateModeCreator();
-            mAutoModeExecutor = new AutoModeExecutor();
 
             mDisabledLooper.start();
 
@@ -505,7 +500,9 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         try {
+            // update shuffleboard for subsystem values
             mSubsystemManager.outputToSmartDashboard();
+            // update robot state on field for Field2D widget
             mRobotState.outputToSmartDashboard();
             mAutoModeSelector.outputToSmartDashboard();
         } catch (Throwable t) {
@@ -519,10 +516,10 @@ public class Robot extends TimedRobot {
         loopStart = Timer.getFPGATimestamp();
         try {
             if (RobotController.getUserButton()) {
-                System.out.println("Zeroing Robot!");
-                //                mDrive.zeroSensors(Constants.ZeroPose);
+                mDrive.zeroSensors(Constants.ZeroPose);
                 mLedManager.indicateStatus(LedManager.RobotStatus.SEEN_TARGET);
             } else {
+                // non-camera LEDs will flash red if robot periodic updates fail
                 if (faulted) {
                     mLedManager.blinkStatus(LedManager.RobotStatus.ERROR);
                 } else {
@@ -530,7 +527,7 @@ public class Robot extends TimedRobot {
                 }
             }
 
-            // Update auto modes
+            // Periodically check if drivers changed desired auto - if yes, then update the actual auto mode
             mAutoModeSelector.updateModeCreator();
 
             Optional<AutoModeBase> autoMode = mAutoModeSelector.getAutoMode();
@@ -542,8 +539,6 @@ public class Robot extends TimedRobot {
                 mRobotState.field.getObject("Trajectory");
                 mAutoModeExecutor.setAutoMode(auto);
                 Constants.StartingPose = auto.getTrajectory().getInitialPose();
-                //                mRobotState.reset(Constants.StartingPose);
-                //                mDrive.zeroSensors();
             }
         } catch (Throwable t) {
             faulted = true;
@@ -554,21 +549,19 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         loopStart = Timer.getFPGATimestamp();
-        boolean signalToResume = !mControlBoard.getUnlockClimber(); // TODO: select auto interrupt button
+
+        // debugging functionality to stop autos mid-path
+        boolean signalToResume = !mControlBoard.getUnlockClimber();
         boolean signalToStop = mControlBoard.getUnlockClimber();
-        // Resume if switch flipped up
-        if (mWantsAutoExecution.update(signalToResume)) {
-            mAutoModeExecutor.resume();
-        }
-
-        // Interrupt if switch flipped down
-        if (mWantsAutoInterrupt.update(signalToStop)) {
-            System.out.println("Auto mode interrupted ");
-            mAutoModeExecutor.interrupt();
-        }
-
         if (mAutoModeExecutor.isInterrupted()) {
             manualControl();
+
+            if (mWantsAutoExecution.update(signalToResume)) {
+                mAutoModeExecutor.resume();
+            }
+        }
+        if (mWantsAutoInterrupt.update(signalToStop)) {
+            mAutoModeExecutor.interrupt();
         }
 
         if (Constants.kIsLoggingAutonomous) {
@@ -582,8 +575,9 @@ public class Robot extends TimedRobot {
         loopStart = Timer.getFPGATimestamp();
 
         try {
-            manualControl(); // controls drivetrain and turret joystick calcs
+            manualControl(); // controls drivetrain and turret joystick control mode
         } catch (Throwable t) {
+            faulted = true;
             throw t;
         }
         if (Constants.kIsLoggingTeleOp) {
@@ -591,9 +585,6 @@ public class Robot extends TimedRobot {
             logger.log();
         }
     }
-
-    TimeDelayedBoolean mShouldMaintainAzimuth = new TimeDelayedBoolean();
-    LatchedBoolean shouldChangeAzimuthSetpoint = new LatchedBoolean();
 
     public void manualControl() {
         actionManager.update();

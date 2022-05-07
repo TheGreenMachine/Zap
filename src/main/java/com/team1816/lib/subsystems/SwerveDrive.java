@@ -143,7 +143,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     // autonomous (trajectory following)
     public void startTrajectory(Trajectory trajectory, List<Rotation2d> headings) {
-        System.out.println("STARTING TRAJECTORY ");
         mPeriodicIO.timestamp = 0;
         mTrajectoryStart = 0;
         mTrajectory = trajectory;

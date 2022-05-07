@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Used to reset, enableDigital, stop, and update all subsystems at once
+ * Used to zero, enableDigital, stop, and update all subsystems at once
  */
 public class SubsystemManager implements ILooper {
 
@@ -32,6 +32,10 @@ public class SubsystemManager implements ILooper {
 
     public void stop() {
         mAllSubsystems.forEach(Subsystem::stop);
+    }
+
+    public void zeroSensors() {
+        mAllSubsystems.forEach(Subsystem::zeroSensors);
     }
 
     public List<Subsystem> getSubsystems() {
