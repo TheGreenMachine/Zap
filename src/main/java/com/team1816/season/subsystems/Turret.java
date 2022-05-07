@@ -438,9 +438,7 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     @Override
-    public void stop() {
-        camera.setCameraEnabled(false);
-    }
+    public void stop() {}
 
     @Override
     public boolean checkSystem() {

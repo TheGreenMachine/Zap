@@ -105,7 +105,7 @@ public class Superstructure {
         System.out.println("struct - rev " + revving);
         if (revving) {
             shooter.setDesiredState(Shooter.STATE.REVVING);
-            if (Camera.cameraEnabled && !manual) {
+            if (camera.isEnabled() && !manual) {
                 shooter.setVelocity(getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
                 shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) > 0);
             } else {

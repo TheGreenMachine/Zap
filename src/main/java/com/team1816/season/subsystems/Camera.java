@@ -6,12 +6,9 @@ import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.vision.VisionSocket;
 import com.team1816.season.Constants;
 import com.team1816.season.states.RobotState;
-import edu.wpi.first.networktables.EntryListenerFlags;
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import java.util.ArrayList;
 
 @Singleton
 public class Camera extends Subsystem {
@@ -30,14 +27,7 @@ public class Camera extends Subsystem {
     private static final double VIDEO_WIDTH = 1280; // px
     private static final double VIDEO_HEIGHT = 720; // px
     private static final double CAMERA_HFOV = 85;
-    public static final double CAMERA_VFOV = 54;
-    //        2 * Math.atan((VIDEO_WIDTH / 2) / CAMERA_FOCAL_LENGTH) * (180 / Math.PI); // deg
-    public static final double ALLOWABLE_DISTANCE_ERROR = factory.getConstant(
-        NAME,
-        "allowableDistanceError",
-        50
-    ); // deg
-    //    private Queue<Double> distances = new PriorityQueue<Double>();
+    public static final double CAMERA_VFOV = 54; // 2 * Math.atan((VIDEO_WIDTH / 2) / CAMERA_FOCAL_LENGTH); // deg
     private final double MAX_DIST = factory.getConstant(NAME, "maxDist", 260);
     private final double MAX_DELTA_X = factory.getConstant(NAME, "maxDeltaX", 1200);
     private final double dumbDistanceMultiplier = factory.getConstant(
@@ -47,11 +37,7 @@ public class Camera extends Subsystem {
     );
 
     // state
-    private ArrayList<Double> distances = new ArrayList<>();
-    public static boolean cameraEnabled;
-    private int loops = 0;
-    private double lastDistance = 0;
-    private double deviation = factory.getConstant(NAME, "deviation", 0);
+    private boolean cameraEnabled;
 
     public Camera() {
         super(NAME);
@@ -92,11 +78,10 @@ public class Camera extends Subsystem {
                             VIDEO_HEIGHT
                         )
                     )
-                ) // camera mounting angle isn't accurate rn
+                )
             ) *
             dumbDistanceMultiplier
         );
-        //        return state.visionPoint.dist + deviation;
     }
 
     public double getRawCenterX() {
@@ -105,7 +90,7 @@ public class Camera extends Subsystem {
 
     public void setCameraEnabled(boolean cameraEnabled) {
         if (this.isImplemented()) {
-            Camera.cameraEnabled = cameraEnabled;
+            this.cameraEnabled = cameraEnabled;
             led.setCameraLed(cameraEnabled);
             socket.setEnabled(cameraEnabled);
         } else {
@@ -113,7 +98,11 @@ public class Camera extends Subsystem {
         }
     }
 
-    public void setEnabled() {
+    public boolean isEnabled() {
+        return cameraEnabled;
+    }
+
+    public void toggleEnabled() {
         setCameraEnabled(!cameraEnabled);
     }
 
@@ -142,7 +131,6 @@ public class Camera extends Subsystem {
         if (socket.isConnected()) {
             cachePoint();
         }
-        loops++;
     }
 
     public boolean checkSystem() { // this doesn't actually do anything because there's no read calls
@@ -159,26 +147,6 @@ public class Camera extends Subsystem {
             setCameraEnabled(false);
         }
         return true;
-    }
-
-    @Override
-    public void initSendable(SendableBuilder builder) {
-        SmartDashboard.putNumber("Camera/Camera Deviation", deviation);
-        SmartDashboard
-            .getEntry("Camera Deviation")
-            .addListener(
-                notification -> setCameraDeviation(notification.value.getDouble()),
-                EntryListenerFlags.kNew | EntryListenerFlags.kUpdate
-            );
-    }
-
-    public void setCameraDeviation(double shuffleboardDeviation) {
-        deviation = shuffleboardDeviation;
-        System.out.println("setting camera deviation to " + shuffleboardDeviation);
-    }
-
-    public void incrementDeviation(double incrVal) {
-        deviation += incrVal;
     }
 
     public double simulateDeltaX() {

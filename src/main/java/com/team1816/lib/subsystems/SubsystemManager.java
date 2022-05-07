@@ -12,8 +12,6 @@ import java.util.List;
  */
 public class SubsystemManager implements ILooper {
 
-    public static SubsystemManager mInstance = null;
-
     private List<Subsystem> mAllSubsystems;
     private List<Loop> mLoops = new ArrayList<>();
 
@@ -60,8 +58,11 @@ public class SubsystemManager implements ILooper {
 
         @Override
         public void onLoop(double timestamp) {
-            mAllSubsystems.forEach(Subsystem::readFromHardware);
+            // loop through calls assigned by registerEnabledLoops (i.e. in Drive)
             mLoops.forEach(l -> l.onLoop(timestamp));
+
+            // loop through read and write from hardware
+            mAllSubsystems.forEach(Subsystem::readFromHardware);
             mAllSubsystems.forEach(Subsystem::writeToHardware);
         }
 
@@ -78,6 +79,7 @@ public class SubsystemManager implements ILooper {
 
         @Override
         public void onLoop(double timestamp) {
+            // only loop through read from hardware
             mAllSubsystems.forEach(Subsystem::readFromHardware);
         }
 

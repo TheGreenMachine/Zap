@@ -5,8 +5,6 @@ import com.ctre.phoenix.led.CANdle;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.ICANdle;
 import com.team1816.lib.hardware.components.ICanifier;
-import com.team1816.lib.loops.ILooper;
-import com.team1816.lib.loops.Loop;
 import com.team1816.lib.subsystems.Subsystem;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
@@ -75,8 +73,6 @@ public class LedManager extends Subsystem {
         if (cameraLedOn != cameraOn) {
             cameraLedChanged = true;
             cameraLedOn = cameraOn;
-            // if the LED is turned off we need to update the main 8 to match the others
-            outputsChanged = true;
         }
     }
 
@@ -129,93 +125,70 @@ public class LedManager extends Subsystem {
         return period;
     }
 
-    private void writeLedHardware(int r, int g, int b) {
-        boolean cameraUpdated = false;
-        if (candle != null) {
-            if (cameraLedChanged && cameraLedOn) {
-                cameraLedChanged = false;
-                cameraUpdated = true;
+    private void writeToCameraLed(int r, int g, int b) {
+        if (factory.getConstant("pdIsRev") > 0) { // TODO this is a hack because currently not using candle
+            mInfraStructure.getPdh().setSwitchableChannel(cameraLedOn); // cameraLedOn
+        } else if (candle != null) {
+            if (cameraLedOn) {
                 candle.setLEDs(0, 255, 0, 0, 0, 8);
-            }
-            if (outputsChanged) {
-                if (factory.getConstant("pdIsRev") > 0) { // TODO this is a hack because currently not using candle
-                    mInfraStructure.getPdh().setSwitchableChannel(cameraLedOn); // cameraLedOn
-                }
-                var ledStart = cameraLedOn ? 8 : 0;
-                candle.setLEDs(r, g, b, 0, ledStart, 74 - ledStart);
+            } else {
+                candle.setLEDs(r, g, b, 0, 0, 8);
             }
         }
-        if (canifier != null && outputsChanged) {
+    }
+
+    private void writeToLed(int r, int g, int b) {
+        if (candle != null) {
+            candle.setLEDs(r, g, b, 0, 8, 74 - 8); // 8 == number of camera leds
+        } else if (canifier != null) {
             canifier.setLEDOutput(r / 255.0, CANifier.LEDChannel.LEDChannelB);
             canifier.setLEDOutput(g / 255.0, CANifier.LEDChannel.LEDChannelA);
             canifier.setLEDOutput(b / 255.0, CANifier.LEDChannel.LEDChannelC);
-        }
-        if (!cameraUpdated) {
-            outputsChanged = false;
         }
     }
 
     @Override
     public void writeToHardware() {
-        if (canifier != null || candle != null) {
-            loopDelay++;
-            if (loopDelay < 4) return;
-            loopDelay = 0;
-            switch (controlState) {
-                case RAVE:
-                    var color = Color.getHSBColor(raveHue, 1.0f, MAX / 255.0f);
-                    if (!color.equals(lastRaveColor)) {
-                        outputsChanged = true;
-                        writeLedHardware(
-                            color.getRed(),
-                            color.getGreen(),
-                            color.getBlue()
-                        );
-                    }
-                    raveHue += RAVE_SPEED;
-                    break;
-                case BLINK:
-                    if (System.currentTimeMillis() >= lastWriteTime + (period / 2)) {
-                        if (blinkLedOn) {
+        if (outputsChanged) {
+            outputsChanged = false;
+            if (canifier != null || candle != null) {
+                switch (controlState) {
+                    case RAVE:
+                        var color = Color.getHSBColor(raveHue, 1.0f, MAX / 255.0f);
+                        if (!color.equals(lastRaveColor)) {
                             outputsChanged = true;
-                            writeLedHardware(0, 0, 0);
-                            blinkLedOn = false;
-                        } else {
-                            outputsChanged = true;
-                            writeLedHardware(ledR, ledG, ledB);
-                            blinkLedOn = true;
+                            writeToLed(color.getRed(), color.getGreen(), color.getBlue());
                         }
-                        lastWriteTime = System.currentTimeMillis();
-                    }
-                    break;
-                case STANDARD:
-                    writeLedHardware(ledR, ledG, ledB);
-                    break;
+                        raveHue += RAVE_SPEED;
+                        break;
+                    case BLINK:
+                        if (System.currentTimeMillis() >= lastWriteTime + (period / 2)) {
+                            if (blinkLedOn) {
+                                outputsChanged = true;
+                                writeToLed(0, 0, 0);
+                                blinkLedOn = false;
+                            } else {
+                                outputsChanged = true;
+                                writeToLed(ledR, ledG, ledB);
+                                blinkLedOn = true;
+                            }
+                            lastWriteTime = System.currentTimeMillis();
+                        }
+                        break;
+                    case STANDARD:
+                        writeToLed(ledR, ledG, ledB);
+                        break;
+                }
             }
+        }
+        if (cameraLedChanged) {
+            cameraLedChanged = false;
+            writeToCameraLed(ledR, ledG, ledB);
         }
     }
 
     @Override
     public void stop() {}
-
-    @Override
-    public void registerEnabledLoops(ILooper mEnabledLooper) {
-        super.registerEnabledLoops(mEnabledLooper);
-        mEnabledLooper.register(
-            new Loop() {
-                @Override
-                public void onStart(double timestamp) {}
-
-                @Override
-                public void onLoop(double timestamp) {
-                    LedManager.this.writeToHardware();
-                }
-
-                @Override
-                public void onStop(double timestamp) {}
-            }
-        );
-    }
 
     @Override
     public boolean checkSystem() {

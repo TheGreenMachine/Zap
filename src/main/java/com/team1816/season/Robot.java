@@ -69,9 +69,7 @@ public class Robot extends TimedRobot {
     private AutoModeExecutor mAutoModeExecutor;
     private TrajectorySet trajectorySet;
 
-    private boolean mDriveByCameraInAuto = false;
     private double loopStart;
-    private boolean mHasBeenEnabled = false;
 
     private ActionManager actionManager;
 
@@ -256,9 +254,6 @@ public class Robot extends TimedRobot {
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mSubsystemManager.registerDisabledLoops(mDisabledLooper);
 
-            mLedManager.registerEnabledLoops(mEnabledLooper);
-            mLedManager.registerEnabledLoops(mDisabledLooper);
-
             // Robot starts forwards.
             mRobotState.reset();
 
@@ -321,7 +316,7 @@ public class Robot extends TimedRobot {
                             mTurret.snapWithCamera();
                         }
                     ),
-                    createAction(mControlBoard::getCameraToggle, mCamera::setEnabled),
+                    createAction(mControlBoard::getCameraToggle, mCamera::toggleEnabled),
                     createHoldAction(
                         mControlBoard::getYeetShot,
                         yeet -> {
@@ -402,7 +397,7 @@ public class Robot extends TimedRobot {
             mEnabledLooper.stop();
 
             mLedManager.setDefaultStatus(LedManager.RobotStatus.DISABLED);
-            mLedManager.setCameraLed(false);
+            mCamera.setCameraEnabled(false);
 
             mSuperstructure.setStopped(true);
 
@@ -433,20 +428,14 @@ public class Robot extends TimedRobot {
             // Robot starts where it's told for auto path
             mRobotState.reset();
 
-            mHasBeenEnabled = true;
-
             mDrive.zeroSensors();
             mTurret.zeroSensors();
 
             mSuperstructure.setStopped(false);
-            mCamera.setCameraEnabled(false);
 
             mDrive.setControlState(Drive.DriveControlState.TRAJECTORY_FOLLOWING);
+            mAutoModeExecutor.start();
 
-            System.out.println("Auto init - " + mDriveByCameraInAuto);
-            if (!mDriveByCameraInAuto) {
-                mAutoModeExecutor.start();
-            }
             mEnabledLooper.start();
         } catch (Throwable t) {
             throw t;
@@ -463,24 +452,17 @@ public class Robot extends TimedRobot {
                 mAutoModeExecutor.stop();
             }
 
-            //            mDrive.zeroSensors(Constants.prevDrivePose);
             mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
             mTurret.zeroSensors();
             mClimber.zeroSensors();
 
-            mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
-
-            mHasBeenEnabled = true;
-
             mEnabledLooper.start();
-            mTurret.setControlMode(defaultTurretControlMode);
 
-            mCamera.setCameraEnabled(false); // do we enable here or only when we use vision? - this may cause an error b/c we enable more than once
+            mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
+            mTurret.setControlMode(defaultTurretControlMode);
 
             mSuperstructure.setStopped(false);
             mInfrastructure.startCompressor();
-
-            mControlBoard.reset();
         } catch (Throwable t) {
             faulted = true;
             throw t;
@@ -536,7 +518,7 @@ public class Robot extends TimedRobot {
     public void disabledPeriodic() {
         loopStart = Timer.getFPGATimestamp();
         try {
-            if (RobotController.getUserButton() && !mHasBeenEnabled) {
+            if (RobotController.getUserButton()) {
                 System.out.println("Zeroing Robot!");
                 //                mDrive.zeroSensors(Constants.ZeroPose);
                 mLedManager.indicateStatus(LedManager.RobotStatus.SEEN_TARGET);
@@ -585,7 +567,7 @@ public class Robot extends TimedRobot {
             mAutoModeExecutor.interrupt();
         }
 
-        if (mDriveByCameraInAuto || mAutoModeExecutor.isInterrupted()) {
+        if (mAutoModeExecutor.isInterrupted()) {
             manualControl();
         }
 
