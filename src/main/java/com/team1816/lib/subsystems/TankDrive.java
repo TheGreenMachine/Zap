@@ -408,50 +408,14 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     // getters
     @Override
-    public double getKP() {
+    public PIDSlotConfiguration getPIDConfig() {
         PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
         defaultPIDConfig.kP = 0.0;
-        return (factory.getSubsystem(NAME).implemented)
-            ? factory
-                .getSubsystem(NAME)
-                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
-                .kP
-            : 0.0;
-    }
-
-    @Override
-    public double getKI() {
-        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
         defaultPIDConfig.kI = 0.0;
-        return (factory.getSubsystem(NAME).implemented)
-            ? factory
-                .getSubsystem(NAME)
-                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
-                .kI
-            : 0.0;
-    }
-
-    @Override
-    public double getKD() {
-        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
         defaultPIDConfig.kD = 0.0;
-        return (factory.getSubsystem(NAME).implemented)
-            ? factory
-                .getSubsystem(NAME)
-                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
-                .kD
-            : 0.0;
-    }
-
-    @Override
-    public double getKF() {
-        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
         defaultPIDConfig.kF = 0.0;
         return (factory.getSubsystem(NAME).implemented)
-            ? factory
-                .getSubsystem(NAME)
-                .pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
-                .kF
-            : 0.0;
+            ? factory.getSubsystem(NAME).pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+            : defaultPIDConfig;
     }
 }

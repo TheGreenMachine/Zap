@@ -55,10 +55,7 @@ public class Turret extends Subsystem implements PidProvider {
     private static LedManager led;
 
     private final String pidSlot = "slot0";
-    private final double kP;
-    private final double kI;
-    private final double kD;
-    private final double kF;
+    private final PIDSlotConfiguration pidConfig;
     // State
     private int desiredTurretPos = 0;
     private int followingTurretPos = 0;
@@ -88,11 +85,7 @@ public class Turret extends Subsystem implements PidProvider {
         ZERO_OFFSET = (int) factory.getConstant(NAME, "zeroOffset"); //add offset to keep turret in positive range
         turret.setNeutralMode(NeutralMode.Brake);
 
-        PIDSlotConfiguration pidConfig = factory.getPidSlotConfig(NAME, pidSlot);
-        this.kP = pidConfig.kP;
-        this.kI = pidConfig.kI;
-        this.kD = pidConfig.kD;
-        this.kF = pidConfig.kF;
+        pidConfig = factory.getPidSlotConfig(NAME, pidSlot);
         ALLOWABLE_ERROR_TICKS = pidConfig.allowableError.intValue();
         // Position Control
         double peakOutput = 0.75;
@@ -203,23 +196,8 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     @Override
-    public double getKP() {
-        return kP;
-    }
-
-    @Override
-    public double getKI() {
-        return kI;
-    }
-
-    @Override
-    public double getKD() {
-        return kD;
-    }
-
-    @Override
-    public double getKF() {
-        return kF;
+    public PIDSlotConfiguration getPIDConfig() {
+        return pidConfig;
     }
 
     public void setTurretSpeed(double speed) {

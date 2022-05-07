@@ -32,10 +32,7 @@ public class Shooter extends Subsystem implements PidProvider {
 
     // Constants
     private final String pidSlot = "slot0";
-    private final double kP;
-    private final double kI;
-    private final double kD;
-    private final double kF;
+    private final PIDSlotConfiguration pidConfig;
     // we may not need these 4 constants in the near future - still need to move into constructor
     public static final int NEAR_VELOCITY = (int) factory.getConstant(NAME, "nearVel"); // Initiation line
     public static final int MID_VELOCITY = (int) factory.getConstant(NAME, "midVel"); // Trench this also worked from initiation
@@ -57,32 +54,23 @@ public class Shooter extends Subsystem implements PidProvider {
 
     public Shooter() {
         super(NAME);
-        this.shooterMain = factory.getMotor(NAME, "shooterMain");
-        this.shooterFollower =
+        shooterMain = factory.getMotor(NAME, "shooterMain");
+        shooterFollower =
             (IMotorControllerEnhanced) factory.getMotor(
                 NAME,
                 "shooterFollower",
                 shooterMain
             );
-
-        this.shooterFollower.setInverted(true);
-        this.hood = factory.getSolenoid(NAME, "hood");
-
-        PIDSlotConfiguration pidConfig = factory.getPidSlotConfig(NAME, pidSlot);
-
-        this.kP = pidConfig.kP;
-        this.kI = pidConfig.kI;
-        this.kD = pidConfig.kD;
-        this.kF = pidConfig.kF;
-        VELOCITY_THRESHOLD = pidConfig.allowableError.intValue();
-
+        shooterFollower.setInverted(true);
         shooterMain.setNeutralMode(NeutralMode.Coast);
         shooterFollower.setNeutralMode(NeutralMode.Coast);
-
-        configCurrentLimits(40/* amps */);
-
+        hood = factory.getSolenoid(NAME, "hood");
         shooterMain.configClosedloopRamp(0.5, Constants.kCANTimeoutMs);
         shooterMain.setSensorPhase(false);
+        configCurrentLimits(40/* amps */);
+
+        pidConfig = factory.getPidSlotConfig(NAME, pidSlot);
+        VELOCITY_THRESHOLD = pidConfig.allowableError.intValue();
     }
 
     private void configCurrentLimits(int currentLimitAmps) {
@@ -97,23 +85,8 @@ public class Shooter extends Subsystem implements PidProvider {
     }
 
     @Override
-    public double getKP() {
-        return kP;
-    }
-
-    @Override
-    public double getKI() {
-        return kI;
-    }
-
-    @Override
-    public double getKD() {
-        return kD;
-    }
-
-    @Override
-    public double getKF() {
-        return kF;
+    public PIDSlotConfiguration getPIDConfig() {
+        return pidConfig;
     }
 
     public double getActualVelocity() {
