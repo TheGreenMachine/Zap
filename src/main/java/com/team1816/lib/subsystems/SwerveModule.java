@@ -94,17 +94,17 @@ public class SwerveModule implements ISwerveModule {
             desiredState,
             getState().angle
         ); // desiredState; //
+        mVelDemand =
+            DriveConversions.metersPerSecondToTicksPer100ms(
+                desired_state.speedMetersPerSecond
+            );
         if (!isOpenLoop) {
-            mVelDemand =
-                DriveConversions.metersPerSecondToTicksPer100ms(
-                    desired_state.speedMetersPerSecond
-                );
             mDriveMotor.set(ControlMode.Velocity, mVelDemand);
         } else {
             mDriveMotor.set(
                 ControlMode.PercentOutput,
                 desired_state.speedMetersPerSecond
-            ); // w/out conversion, would be lying to it
+            ); // lying to it - speedMetersPerSecond passed in is actually percent output (1 to -1)
         }
         mAzmDemand =
             DriveConversions.convertDegreesToTicks(desired_state.angle.getDegrees()) +

@@ -87,7 +87,7 @@ public class Climber extends Subsystem {
             };
     }
 
-    public void setUnlocked() {
+    public void unlock() {
         unlocked = true;
     }
 

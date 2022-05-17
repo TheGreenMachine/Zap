@@ -215,7 +215,7 @@ public class Superstructure {
                 deltaToHub.unaryMinus(),
                 robotState.field_to_vehicle.getRotation()
             )
-        ); //
+        );
         if (
             Math.abs(
                 Math.hypot(

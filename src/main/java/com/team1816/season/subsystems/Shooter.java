@@ -39,7 +39,14 @@ public class Shooter extends Subsystem implements PidProvider {
     // we may not need these 4 constants in the near future - still need to move into constructor
     public static final int NEAR_VELOCITY = (int) factory.getConstant(NAME, "nearVel"); // Initiation line
     public static final int MID_VELOCITY = (int) factory.getConstant(NAME, "midVel"); // Trench this also worked from initiation
-    public static final int FAR_VELOCITY = (int) factory.getConstant(NAME, "farVel");
+    public static final int TARMAC_TAPE_VEL = (int) factory.getConstant(
+        NAME,
+        "tarmacTapeVel"
+    ); // Trench this also worked from initiation
+    public static final int LAUNCHPAD_VEL = (int) factory.getConstant(
+        NAME,
+        "launchpadVel"
+    );
     public static final int MAX_VELOCITY = (int) factory.getConstant(NAME, "maxVel");
 
     public static final int COAST_VELOCITY = (int) factory.getConstant(NAME, "coast");

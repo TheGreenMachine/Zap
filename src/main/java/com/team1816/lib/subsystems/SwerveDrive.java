@@ -148,10 +148,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         mTrajectoryStart = 0;
         mTrajectory = trajectory;
         mHeadings = headings;
-        //        if (!trajectoryStarted) {
-        //            zeroSensors(trajectory.getInitialPose());
-        //            trajectoryStarted = true; // massive hack here woo
-        //        }
         mTrajectoryIndex = 0;
         updateRobotState();
         mDriveControlState = DriveControlState.TRAJECTORY_FOLLOWING;
@@ -282,7 +278,17 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     @Override
     public synchronized void stop() {
-        setOpenLoop(SwerveDriveSignal.NEUTRAL);
+        if (mDriveControlState == DriveControlState.OPEN_LOOP || mTrajectory == null) {
+            setOpenLoop(SwerveDriveSignal.NEUTRAL);
+        } else if (mDriveControlState == DriveControlState.TRAJECTORY_FOLLOWING) {
+            SwerveModuleState[] states = new SwerveModuleState[4];
+            for (int i = 0; i < swerveModules.length; i++) {
+                states[i] = new SwerveModuleState();
+                states[i].speedMetersPerSecond = 0;
+                states[i].angle = swerveModules[i].getState().angle;
+                swerveModules[i].setDesiredState(states[i], false);
+            }
+        }
         mTrajectoryIndex = 0;
     }
 

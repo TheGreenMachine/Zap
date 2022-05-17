@@ -123,7 +123,7 @@ subsystems:
                 kI: 0.0002
                 kD: 13.5 # 11 - 4.5
                 kF: 0.0487
-                allowableError: 60
+                allowableError: 65
         constants:
             usingPoseForSpeed: 0
             maxTicks: 20700 #
@@ -133,7 +133,8 @@ subsystems:
             rpmEpsilonCheck: 60
             nearVel: 4500
             midVel: 8450 #8450
-            farVel: 10150
+            tarmacTapeVel: 8125
+            launchpadVel: 10150
             maxVel: 16500
             coast: 6000
     climber:
@@ -156,8 +157,8 @@ subsystems:
             unlockPos: -14400 #TODO set this value
             startPos: 0  #TODO set this value
             returnPos: 0
-            firstToSecondRungPos: 140000 #86.5 #TODO set this value
-            secondToLastRungPos: 346000 #TODO set this value
+            firstToSecondRungPos: 150000 #86.5 #TODO set this value - - 140000
+            secondToLastRungPos: 342000 #TODO set this value - - 346000
             lastPos: 370000 #TODO set this value
     elevator:
         implemented: true
@@ -207,7 +208,7 @@ subsystems:
                 allowableError: 10
         constants:
             revving: 2000 #.05
-            collecting: -3600 #-5000
+            collecting: -5000 #-3600
             flush: 5000 #.35
     camera:
         implemented: true

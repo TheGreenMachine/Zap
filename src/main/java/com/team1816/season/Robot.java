@@ -342,12 +342,12 @@ public class Robot extends TimedRobot {
                             }
                         }
                     ),
-                    createAction(mControlBoard::getUnlockClimber, mClimber::setUnlocked),
+                    createAction(mControlBoard::getUnlockClimber, mClimber::unlock),
                     createAction(
                         mControlBoard::getUseManualShoot,
                         () -> {
                             useManualShoot = !useManualShoot;
-                            System.out.println("manual shooting!");
+                            System.out.println("manual shooting toggled!");
                         }
                     ),
                     createAction(
@@ -358,7 +358,6 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createHoldAction(mControlBoard::getSlowMode, mDrive::setSlowMode),
-                    createHoldAction(mControlBoard::getBrakeMode, mDrive::setBrakeMode),
                     // Operator Gamepad
                     createAction(
                         mControlBoard::getRaiseBucket,
@@ -385,10 +384,10 @@ public class Robot extends TimedRobot {
                         mControlBoard::getYeetShot,
                         yeet -> {
                             mShooter.setHood(false);
-                            if (useManualShoot) {
+                            if (useManualShoot || true) {
                                 mSuperstructure.setRevving(
                                     yeet,
-                                    Shooter.MID_VELOCITY,
+                                    Shooter.TARMAC_TAPE_VEL, // change this into tarmacTapeVel once you get the "ok" signal
                                     true
                                 ); // Tarmac
                             } else {
@@ -407,8 +406,8 @@ public class Robot extends TimedRobot {
                             mShooter.setHood(true);
                             mSuperstructure.setRevving(
                                 shooting,
-                                Shooter.FAR_VELOCITY,
-                                useManualShoot
+                                Shooter.LAUNCHPAD_VEL,
+                                true // use manual shoot WAS HERE
                             ); // Launchpad
                             mSuperstructure.setFiring(shooting);
                         }
@@ -690,13 +689,17 @@ public class Robot extends TimedRobot {
             );
         }
 
-        mDrive.setTeleopInputs(
-            mControlBoard.getThrottle(),
-            mControlBoard.getStrafe(),
-            mControlBoard.getTurn(),
-            mControlBoard.getSlowMode(),
-            false
-        );
+        if (mControlBoard.getBrakeMode()) {
+            mDrive.setOpenLoop(SwerveDriveSignal.BRAKE);
+        } else {
+            mDrive.setTeleopInputs(
+                mControlBoard.getThrottle(),
+                mControlBoard.getStrafe(),
+                mControlBoard.getTurn(),
+                mControlBoard.getSlowMode(),
+                false
+            );
+        }
     }
 
     @Override
