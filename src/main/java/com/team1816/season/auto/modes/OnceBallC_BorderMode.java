@@ -8,30 +8,30 @@ import com.team1816.season.auto.paths.TrajectorySet;
 import com.team1816.season.subsystems.Shooter;
 import com.team1816.season.subsystems.Turret;
 
-public class TwoBallModeA extends AutoModeBase {
+public class OnceBallC_BorderMode extends AutoModeBase {
 
-    public TwoBallModeA() {
+    public OnceBallC_BorderMode() {
         trajectory =
             new TrajectoryAction(
-                TrajectorySet.TWO_BALL_A,
-                TrajectorySet.TWO_BALL_A_HEADINGS
+                TrajectorySet.ONE_BALL_C_BORDER,
+                TrajectorySet.ONE_BALL_C_BORDER_HEADINGS
             );
     }
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        System.out.println("Running Two Ball A Mode");
+        System.out.println("Running Two Ball B Mode");
         runAction(new WaitAction(.5));
         runAction(
             new SeriesAction(
                 new ParallelAction(
-                    new TurretAction(Turret.CARDINAL_NORTH + 5), // to be changed
-                    new CollectAction(true),
+                    new TurretAction(Turret.CARDINAL_NORTH - 4), // to be changed
                     new RampUpShooterAction(Shooter.MID_VELOCITY)
                 ),
+                new WaitAction(6),
                 trajectory,
                 new ShootAction(true, true),
-                new WaitAction(4)
+                new WaitAction(3)
             )
         );
         runAction(new StopAction(false));

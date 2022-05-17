@@ -95,8 +95,13 @@ public class SwerveDriveTest {
 
     @Test
     public void testFactoryMock() {
-        assertEquals(maxVel, Constants.kPathFollowingMaxVelMeters, .01);
+        assertEquals(maxVel, Constants.kOpenLoopMaxVelMeters, .01);
         assertEquals(maxRotVel, Constants.kMaxAngularSpeed, .01);
+        assertEquals(
+            Constants.kDriveWheelTrackWidthMeters,
+            Constants.kDriveWheelbaseLengthMeters,
+            .01
+        );
     }
 
     @Test
@@ -104,7 +109,7 @@ public class SwerveDriveTest {
         mDrive.setTeleopInputs(0, 0, 1, false, false);
         mDrive.writeToHardware();
         mDrive.readFromHardware();
-        verifyStates(mDrive.getStates(), 0, maxVel, maxRotVel);
+        verifyStates(mDrive.getStates(), 0, 0, maxRotVel);
     }
 
     @Test
@@ -120,7 +125,7 @@ public class SwerveDriveTest {
         mDrive.setTeleopInputs(0, 1, 0, false, false);
         mDrive.writeToHardware();
         mDrive.readFromHardware();
-        verifyStates(mDrive.getStates(), 0, maxVel, maxRotVel);
+        verifyStates(mDrive.getStates(), 0, maxVel, 0);
     }
 
     public void verifyStates(
@@ -142,15 +147,14 @@ public class SwerveDriveTest {
         for (int i = 0; i < states.length; i++) {
             var actVel = states[i].speedMetersPerSecond;
             assertEquals(
+                "Velocity does not match",
                 Math.abs(expected[i].speedMetersPerSecond),
                 Math.abs(actVel),
                 .01
             );
             var actRot = states[i].angle.getRadians();
             var expRot = expected[i].angle.getRadians();
-            if (actRot >= 2 * Math.PI) actRot -= 2 * Math.PI;
-            if (actVel < 0) expRot += Math.PI;
-            assertEquals(expRot, actRot, .2);
+            assertEquals("Rotation does not match", expRot, actRot, .2);
         }
     }
 }

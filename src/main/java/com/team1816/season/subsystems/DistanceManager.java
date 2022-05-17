@@ -5,15 +5,16 @@ import com.team1816.season.util.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 
+
 @Singleton
 public class DistanceManager {
 
     // State
+    private int lastBucketIndex;
+    private static boolean allowBucketOffset = false;
     public ArrayList<Double[]> coordinates;
     public Spline shooterOutput;
 
-    private int lastBucketIndex;
-    private boolean allowBucketOffset;
 
     // Constants
     public static ArrayList<Double[]> shooterMap = new ArrayList<>() { // format: {distance, output, offset}
@@ -61,6 +62,9 @@ public class DistanceManager {
     }
 
     private double getSpindexerOutput(double distance) {
+        //        if(distance < 110){
+        //            return 0;
+        //        }
         return .38;
     }
 

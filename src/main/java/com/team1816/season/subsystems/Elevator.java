@@ -3,6 +3,7 @@ package com.team1816.season.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.google.inject.Singleton;
+import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.subsystems.Subsystem;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
@@ -19,18 +20,21 @@ public class Elevator extends Subsystem {
     // State
     private double elevatorOutput;
     private boolean outputsChanged;
+    private double actualOutput;
     private STATE state = STATE.STOP;
 
     // Constants
     private final double MAX_TICKS;
+    private final double ALLOWABLE_ERROR;
     private final double FLUSH;
     private double FIRE; // bear in mind this is overridden
     private final boolean isVelocity;
+    private final String pidSlot = "slot0";
 
     public Elevator() {
         super(NAME);
         this.elevator = factory.getMotor(NAME, "elevator");
-
+        PIDSlotConfiguration config = factory.getPidSlotConfig(NAME, pidSlot);
         //        this.ballSensor =
         //            new DigitalInput((int) factory.getConstant(NAME, "ballSensor", 0));
 
@@ -44,6 +48,7 @@ public class Elevator extends Subsystem {
             FLUSH = factory.getConstant(NAME, "flushPow", -0.5) * MAX_TICKS;
             FIRE = factory.getConstant(NAME, "firePow", 0.5) * MAX_TICKS;
         }
+        ALLOWABLE_ERROR = config.allowableError;
     }
 
     public void overridePower(double newFirePow) {
@@ -78,6 +83,10 @@ public class Elevator extends Subsystem {
         }
     }
 
+    public double getActualOutput() {
+        return actualOutput;
+    }
+
     public boolean hasBallInElevator() {
         return false;
         //        return ballSensor.get(); // TODO get Digital IO
@@ -90,16 +99,19 @@ public class Elevator extends Subsystem {
 
     @Override
     public void readFromHardware() {
-        //        double actualVel = elevator.getSelectedSensorVelocity(0);
         if (state != robotState.elevatorState) {
-            //            if(Math.abs(elevatorPower) == 0) {
-            //                robotState.elevatorState = ELEVATOR_STATE.STOP;
-            //            } else if (elevatorPower > POWER_THRESHOLD) {
-            //                robotState.elevatorState = ELEVATOR_STATE.FIRE;
-            //            } else if(elevatorPower < -POWER_THRESHOLD){
-            //                robotState.elevatorState = ELEVATOR_STATE.FLUSH;
-            //            }
-            robotState.elevatorState = state;
+            if (isVelocity) {
+                actualOutput = elevator.getSelectedSensorVelocity(0);
+                if (Math.abs(elevatorOutput) == 0) {
+                    robotState.elevatorState = STATE.STOP;
+                } else if (Math.abs(FIRE - actualOutput) < ALLOWABLE_ERROR) {
+                    robotState.elevatorState = STATE.FIRE;
+                } else if (elevatorOutput < .2) {
+                    robotState.elevatorState = STATE.FLUSH;
+                }
+            } else {
+                robotState.elevatorState = state;
+            }
 
             System.out.println("ACTUAL ELEVATOR STATE = " + robotState.elevatorState);
         }

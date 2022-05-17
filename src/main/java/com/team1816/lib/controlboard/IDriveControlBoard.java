@@ -17,7 +17,7 @@ public interface IDriveControlBoard {
 
     boolean getCollectorBackspin();
 
-    boolean getRunAutoModeInTeleop();
+    boolean getUseManualShoot();
 
     boolean getZeroPose();
 

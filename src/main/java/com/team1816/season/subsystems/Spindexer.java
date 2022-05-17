@@ -30,6 +30,7 @@ public class Spindexer extends Subsystem {
     private final double FLUSH;
     private final double FIRE;
     private final double POWER_THRESHOLD;
+    private final double COAST;
 
     public Spindexer() {
         super(NAME);
@@ -40,6 +41,7 @@ public class Spindexer extends Subsystem {
         INDEX = factory.getConstant(NAME, "indexPow", -0.25);
         FLUSH = factory.getConstant(NAME, "flushPow", -1);
         FIRE = factory.getConstant(NAME, "firePow", 1);
+        COAST = factory.getConstant(NAME, "coastPow", -.1);
         POWER_THRESHOLD = .1;
     }
 
@@ -49,8 +51,8 @@ public class Spindexer extends Subsystem {
         spindexer.set(ControlMode.PercentOutput, spindexerPower);
     }
 
-    private void lockToShooter() { // bear in mind this might never fire if shooter not implemented - not rly important tho
-        if (robotState.shooterState == Shooter.STATE.REVVING) {
+    private void lockToElevator() { // bear in mind this might never fire if shooter not implemented - not rly important tho
+        if (robotState.elevatorState == Elevator.STATE.FIRE) {
             setSpindexer(FIRE);
         } else {
             outputsChanged = true; // keep looping through writeToHardWare if shooter not up to speed
@@ -108,7 +110,10 @@ public class Spindexer extends Subsystem {
                     setSpindexer(FLUSH);
                     break;
                 case FIRE:
-                    lockToShooter();
+                    lockToElevator();
+                    break;
+                case COAST:
+                    setSpindexer(COAST);
                     break;
             }
             this.feederFlap.set(feederFlapOut);
@@ -138,5 +143,6 @@ public class Spindexer extends Subsystem {
         INDEX,
         FLUSH,
         FIRE,
+        COAST,
     }
 }

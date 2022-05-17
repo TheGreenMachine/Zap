@@ -14,7 +14,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.RobotBase;
 import java.util.List;
 
@@ -149,10 +148,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         mTrajectoryStart = 0;
         mTrajectory = trajectory;
         mHeadings = headings;
-        //        if (!trajectoryStarted) {
-        //            zeroSensors(trajectory.getInitialPose());
-        //            trajectoryStarted = true; // massive hack here woo
-        //        }
         mTrajectoryIndex = 0;
         updateRobotState();
         mDriveControlState = DriveControlState.TRAJECTORY_FOLLOWING;
@@ -283,7 +278,17 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     @Override
     public synchronized void stop() {
-        setOpenLoop(SwerveDriveSignal.NEUTRAL);
+        if (mDriveControlState == DriveControlState.OPEN_LOOP || mTrajectory == null) {
+            setOpenLoop(SwerveDriveSignal.NEUTRAL);
+        } else if (mDriveControlState == DriveControlState.TRAJECTORY_FOLLOWING) {
+            SwerveModuleState[] states = new SwerveModuleState[4];
+            for (int i = 0; i < swerveModules.length; i++) {
+                states[i] = new SwerveModuleState();
+                states[i].speedMetersPerSecond = 0;
+                states[i].angle = swerveModules[i].getState().angle;
+                swerveModules[i].setDesiredState(states[i], false);
+            }
+        }
         mTrajectoryIndex = 0;
     }
 
@@ -300,23 +305,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
 
         return modulesPassed; // not actually doing anything
-    }
-
-    @Override
-    public void initSendable(SendableBuilder builder) {
-        super.initSendable(builder);
-        //        SmartDashboard.putBoolean(
-        //            "Drive/TeleopFieldCentric",
-        //            this.mPeriodicIO.field_relative
-        //        );
-        //        SmartDashboard
-        //            .getEntry("Drive/TeleopFieldCentric")
-        //            .addListener(
-        //                notification -> {
-        //                    this.mPeriodicIO.field_relative = notification.value.getBoolean();
-        //                },
-        //                EntryListenerFlags.kNew | EntryListenerFlags.kUpdate
-        //            );
     }
 
     // getters

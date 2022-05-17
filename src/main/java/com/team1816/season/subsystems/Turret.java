@@ -36,9 +36,9 @@ public class Turret extends Subsystem implements PidProvider {
     // Constants
     private static final int kPrimaryCloseLoop = 0;
     private static final int kPIDGyroIDx = 0;
-    private static final int kPIDVisionIDx = 1;
+    private static final int kPIDVisionIDx = 0;
     public static int TURRET_ABS_ENCODER_PPR = 4096;
-    public final int TURRET_PPR;
+    public static int TURRET_PPR;
     private final int TURRET_MASK;
     private final double TURRET_ENC_RATIO;
     public final int ALLOWABLE_ERROR_TICKS;
@@ -119,7 +119,7 @@ public class Turret extends Subsystem implements PidProvider {
     /**
      * converts 0-360 to 0-TURRET_ENCODER_PPR with zero offset
      */
-    public int convertTurretDegreesToTicks(double degrees) {
+    public static int convertTurretDegreesToTicks(double degrees) {
         return ((int) (((degrees) / 360.0) * TURRET_PPR));
     }
 
@@ -225,6 +225,7 @@ public class Turret extends Subsystem implements PidProvider {
         }
     }
 
+    // CCW positive - 0 to 360
     public synchronized void setTurretAngle(double angle) {
         setControlMode(ControlMode.POSITION);
         setTurretPosition(convertTurretDegreesToTicks(angle));
@@ -311,7 +312,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     private int cameraFollowingOffset() {
         var delta = -camera.getDeltaX();
-        return ((int) (delta * 10)) - ABS_TICKS_SOUTH;
+        return ((int) (delta * 26)) - ABS_TICKS_SOUTH;
     }
 
     private int fieldFollowingOffset() {

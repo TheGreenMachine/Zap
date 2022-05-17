@@ -188,9 +188,10 @@ public class Constants {
     );
     public static double kOpenLoopMaxVelMeters = factory.getConstant("maxVelOpenLoop");
 
-    public static final double kPXController = 10;
-    public static final double kPYController = 10;
+    public static final double kPXController = 6;
+    public static final double kPYController = 6;
     public static final double kPThetaController = 600; // find why this is so big (700)
+    public static final double kIThetaController = 0; // find why this is so big (700)
     public static final double kDThetaController = 0; // 2000;
     public static double kMaxAngularSpeed = factory.getConstant("maxRotVel"); // rad/sec
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI;
@@ -210,8 +211,8 @@ public class Constants {
     public static final boolean kUsePoseTrack =
         factory.getConstant("shooter", "usingPoseForSpeed", 0) > 0;
     public static final boolean kUseVision = factory.getSubsystem("camera").implemented;
-    public static final boolean kUseCameraInAuto =
-        factory.getConstant("useCameraInAuto", 0) > 0;
+    //    public static final boolean kEnableBucketTuning =
+    //        factory.getConstant("enableBucketTuning", 0) > 0;
     // Do not change anything after this line unless you rewire the robot and
     // update the spreadsheet!
     // Port assignments should match up with the spreadsheet here:

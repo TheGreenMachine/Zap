@@ -87,7 +87,7 @@ public class Climber extends Subsystem {
             };
     }
 
-    public void setUnlocked() {
+    public void unlock() {
         unlocked = true;
     }
 
@@ -96,7 +96,7 @@ public class Climber extends Subsystem {
             System.out.println("climber not unlocked!");
             return;
         }
-        if (currentStage < stages.length - 1 && !needsOverShoot) {
+        if (currentStage < stages.length - 1 && (!needsOverShoot || currentStage == 2)) {
             if (controlMode != ControlMode.POSITION) {
                 controlMode = ControlMode.POSITION;
             }
@@ -163,7 +163,7 @@ public class Climber extends Subsystem {
                 climbDelay = false;
                 Timer.delay(1);
             }
-            if (Math.abs(error) < ALLOWABLE_ERROR) {
+            if (Math.abs(error) < ALLOWABLE_ERROR && currentStage != 2) {
                 needsOverShoot = false;
             }
             outputsChanged = true;

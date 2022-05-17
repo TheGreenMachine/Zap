@@ -73,6 +73,7 @@
       "/LiveWindow/Ungrouped/PIDController[8]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[9]": "PIDController",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
+      "/LiveWindow/drivetrain": "Gyro",
       "/SmartDashboard/Auto mode": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/SendableChooser[0]": "String Chooser",
@@ -117,6 +118,14 @@
     }
   },
   "NetworkTables": {
+    "FMSInfo": {
+      "open": true
+    },
+    "LiveWindow": {
+      "drivetrain": {
+        "open": true
+      }
+    },
     "SmartDashboard": {
       "Drive": {
         "open": true
@@ -124,7 +133,13 @@
       "Field": {
         "open": true
       },
+      "Starting Position": {
+        "open": true
+      },
       "open": true
     }
+  },
+  "NetworkTables View": {
+    "visible": false
   }
 }

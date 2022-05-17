@@ -77,8 +77,9 @@ public class Robot extends TimedRobot {
 
     // private PowerDistributionPanel pdp = new PowerDistributionPanel();
     private final Turret.ControlMode defaultTurretControlMode =
-        Turret.ControlMode.CENTER_FOLLOWING;
+        Turret.ControlMode.FIELD_FOLLOWING;
     private boolean faulted;
+    private boolean useManualShoot = false;
 
     Robot() {
         super();
@@ -95,6 +96,7 @@ public class Robot extends TimedRobot {
         mShooter = injector.getInstance(Shooter.class);
         mRobotState = injector.getInstance(RobotState.class);
         mInfrastructure = injector.getInstance(Infrastructure.class);
+        mDistanceManager = injector.getInstance(DistanceManager.class);
         mLedManager = injector.getInstance(LedManager.class);
         mDistanceManager = injector.getInstance(DistanceManager.class);
         mSubsystemManager = injector.getInstance(SubsystemManager.class);
@@ -202,11 +204,6 @@ public class Robot extends TimedRobot {
                     "hide",
                     "join:Tracking/Angles"
                 );
-                BadLog.createTopic(
-                    "ClimberCurrentDraw",
-                    "Amps",
-                    mClimber::getCurrentDraw
-                );
                 mShooter.CreateBadLogTopic(
                     "Shooter/ActVel",
                     "NativeUnits",
@@ -268,6 +265,13 @@ public class Robot extends TimedRobot {
                     "hide",
                     "join:Tracking/Angles"
                 );
+                mElevator.CreateBadLogTopic(
+                    "Elevator/ElevatorVel",
+                    "NativeUnits",
+                    mElevator::getActualOutput,
+                    "hide",
+                    "join:Tracking/Angles"
+                );
             }
 
             logger.finishInitialization();
@@ -290,6 +294,7 @@ public class Robot extends TimedRobot {
             mTurret.zeroSensors();
             mClimber.zeroSensors();
             mSuperstructure.setStopped(true); // bool statement is for shooter state (stop or coast)
+            mDistanceManager.outputBucketOffsets();
 
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mSubsystemManager.registerDisabledLoops(mDisabledLooper);
@@ -322,13 +327,32 @@ public class Robot extends TimedRobot {
                     //                    ),
                     createHoldAction(
                         mControlBoard::getCollectorToggle,
-                        pressed -> mSuperstructure.setCollecting(pressed, true)
+                        pressed -> {
+                            if (pressed) {
+                                mSuperstructure.setCollecting(pressed, true);
+                            } else {
+                                mSuperstructure.setCollecting(false, false);
+                            }
+                        }
                     ),
                     createHoldAction(
                         mControlBoard::getCollectorBackspin,
-                        pressed -> mSuperstructure.setCollecting(pressed, false)
+                        pressed -> {
+                            if (pressed) {
+                                mSuperstructure.setCollecting(pressed, false);
+                            } else {
+                                mSuperstructure.setCollecting(false, false);
+                            }
+                        }
                     ),
-                    createAction(mControlBoard::getUnlockClimber, mClimber::setUnlocked),
+                    createAction(mControlBoard::getUnlockClimber, mClimber::unlock),
+                    createAction(
+                        mControlBoard::getUseManualShoot,
+                        () -> {
+                            useManualShoot = !useManualShoot;
+                            System.out.println("manual shooting toggled!");
+                        }
+                    ),
                     createAction(
                         mControlBoard::getZeroPose, // line up against ally field wall -> zero
                         () -> {
@@ -337,7 +361,6 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createHoldAction(mControlBoard::getSlowMode, mDrive::setSlowMode),
-                    createHoldAction(mControlBoard::getBrakeMode, mDrive::setBrakeMode),
                     // Operator Gamepad
                     createAction(
                         mControlBoard::getRaiseBucket,
@@ -355,7 +378,6 @@ public class Robot extends TimedRobot {
                                     Turret.ControlMode.CAMERA_FOLLOWING
                                 );
                             } else {
-                                mSuperstructure.calculatePoseWithCamera();
                                 mTurret.setControlMode(defaultTurretControlMode); // this gets called when the robot inits - this could be bad?
                             }
                         }
@@ -364,13 +386,20 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         mControlBoard::getYeetShot,
                         yeet -> {
-                            if (yeet) {
-                                mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
-                            } else {
-                                mTurret.setControlMode(defaultTurretControlMode); // this gets called when the robot inits - this could be bad?
-                            }
                             mShooter.setHood(false);
-                            mSuperstructure.setRevving(yeet, Shooter.NEAR_VELOCITY);
+                            if (useManualShoot || true) {
+                                mSuperstructure.setRevving(
+                                    yeet,
+                                    Shooter.TARMAC_TAPE_VEL, // change this into tarmacTapeVel once you get the "ok" signal
+                                    true
+                                ); // Tarmac
+                            } else {
+                                mSuperstructure.setRevving(
+                                    yeet,
+                                    Shooter.NEAR_VELOCITY,
+                                    true
+                                ); // Barf shot
+                            }
                             mSuperstructure.setFiring(yeet);
                         }
                     ),
@@ -378,7 +407,11 @@ public class Robot extends TimedRobot {
                         mControlBoard::getShoot,
                         shooting -> {
                             mShooter.setHood(true);
-                            mSuperstructure.setRevving(shooting, 11000); // TODO TUNE
+                            mSuperstructure.setRevving(
+                                shooting,
+                                Shooter.LAUNCHPAD_VEL,
+                                true // use manual shoot WAS HERE
+                            ); // Launchpad
                             mSuperstructure.setFiring(shooting);
                         }
                     ),
@@ -386,12 +419,12 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         mControlBoard::getTurretJogLeft,
                         moving ->
-                            mTurret.setTurretSpeed(moving ? -Turret.TURRET_JOG_SPEED : 0)
+                            mTurret.setTurretSpeed(moving ? Turret.TURRET_JOG_SPEED : 0)
                     ),
                     createHoldAction(
                         mControlBoard::getTurretJogRight,
                         moving ->
-                            mTurret.setTurretSpeed(moving ? Turret.TURRET_JOG_SPEED : 0)
+                            mTurret.setTurretSpeed(moving ? -Turret.TURRET_JOG_SPEED : 0)
                     ),
                     createHoldAction(
                         mControlBoard::getClimberUp,
@@ -410,9 +443,7 @@ public class Robot extends TimedRobot {
                                 mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
                                 mSuperstructure.setStopped(true);
                             } else {
-                                mDrive.setOpenLoop(SwerveDriveSignal.SET_CLIMB);
                                 mTurret.setTurretAngle(Turret.CARDINAL_SOUTH - 30);
-                                // TODO: If possible, set drivetrain wheels to be inline with climb direction and put in coast mode
                             }
 
                             mClimber.incrementClimberStage();
@@ -661,13 +692,17 @@ public class Robot extends TimedRobot {
             );
         }
 
-        mDrive.setTeleopInputs(
-            mControlBoard.getThrottle(),
-            mControlBoard.getStrafe(),
-            mControlBoard.getTurn(),
-            mControlBoard.getSlowMode(),
-            false
-        );
+        if (mControlBoard.getBrakeMode()) {
+            mDrive.setOpenLoop(SwerveDriveSignal.BRAKE);
+        } else {
+            mDrive.setTeleopInputs(
+                mControlBoard.getThrottle(),
+                mControlBoard.getStrafe(),
+                mControlBoard.getTurn(),
+                mControlBoard.getSlowMode(),
+                false
+            );
+        }
     }
 
     @Override

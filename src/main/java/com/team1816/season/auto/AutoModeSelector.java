@@ -37,6 +37,8 @@ public class AutoModeSelector {
         TWO_BALL_C,
         FOUR_BALL_C,
         FIVE_BALL,
+        ONE_BALL_A_B,
+        ONE_BALL_C_BORDER,
     }
 
     private DesiredMode mCachedDesiredMode = null;
@@ -81,6 +83,8 @@ public class AutoModeSelector {
         mModeChooser.addOption("Four Ball C", DesiredMode.FOUR_BALL_C);
 
         mModeChooser.addOption("Five Ball", DesiredMode.FIVE_BALL);
+        mModeChooser.addOption("One Ball A/B", DesiredMode.ONE_BALL_A_B);
+        mModeChooser.addOption("One Ball C/Border", DesiredMode.ONE_BALL_C_BORDER);
 
         SmartDashboard.putData("Auto mode", mModeChooser);
         SmartDashboard.putData("Starting Position", mStartPositionChooser);
@@ -156,6 +160,10 @@ public class AutoModeSelector {
                 return (Optional.of(new FourBallModeC()));
             case FIVE_BALL:
                 return (Optional.of(new FiveBallMode()));
+            case ONE_BALL_A_B:
+                return (Optional.of(new OneBallA_BMode()));
+            case ONE_BALL_C_BORDER:
+                return (Optional.of(new OnceBallC_BorderMode()));
             default:
                 break;
         }
