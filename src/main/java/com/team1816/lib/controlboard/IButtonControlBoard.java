@@ -9,14 +9,6 @@ public interface IButtonControlBoard {
 
     boolean getCameraToggle();
 
-    boolean getRaiseBucket();
-
-    boolean getLowerBucket();
-
-    boolean getIncrementCamDeviation();
-
-    boolean getDecrementCamDeviation();
-
     boolean getHood();
 
     boolean getRaiseBucket();

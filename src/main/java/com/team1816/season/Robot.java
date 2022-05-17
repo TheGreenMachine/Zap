@@ -98,7 +98,6 @@ public class Robot extends TimedRobot {
         mInfrastructure = injector.getInstance(Infrastructure.class);
         mDistanceManager = injector.getInstance(DistanceManager.class);
         mLedManager = injector.getInstance(LedManager.class);
-        mDistanceManager = injector.getInstance(DistanceManager.class);
         mSubsystemManager = injector.getInstance(SubsystemManager.class);
         mAutoModeSelector = injector.getInstance(AutoModeSelector.class);
         trajectorySet = injector.getInstance(TrajectorySet.class);

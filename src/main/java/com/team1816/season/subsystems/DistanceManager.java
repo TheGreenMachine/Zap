@@ -5,7 +5,6 @@ import com.team1816.season.util.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 
-
 @Singleton
 public class DistanceManager {
 
@@ -14,7 +13,6 @@ public class DistanceManager {
     private static boolean allowBucketOffset = false;
     public ArrayList<Double[]> coordinates;
     public Spline shooterOutput;
-
 
     // Constants
     public static ArrayList<Double[]> shooterMap = new ArrayList<>() { // format: {distance, output, offset}
@@ -62,9 +60,6 @@ public class DistanceManager {
     }
 
     private double getSpindexerOutput(double distance) {
-        //        if(distance < 110){
-        //            return 0;
-        //        }
         return .38;
     }
 
@@ -73,6 +68,7 @@ public class DistanceManager {
     }
 
     private double getShooterOutput(double distance) {
+        // used determine the last index at which any change to a certain "bucket" should be applied to
         allowBucketOffset = true;
         for (int i = 0; i < coordinates.size(); i++) {
             if (distance < coordinates.get(i)[0]) {

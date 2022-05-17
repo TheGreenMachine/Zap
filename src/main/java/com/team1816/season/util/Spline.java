@@ -11,7 +11,7 @@ public abstract class Spline {
     protected static ArrayList<ArrayList<Double>> coefficients;
 
     protected Spline(ArrayList<Double[]> knotPoints) {
-        coordinates = sort(knotPoints); // properly formats and checks coordinats
+        coordinates = sort(knotPoints); // properly formats and checks coordinates
     }
 
     public double getValue(double input) {

@@ -71,26 +71,6 @@ public class TankDemoModeControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getRaiseBucket() {
-        return false;
-    }
-
-    @Override
-    public boolean getLowerBucket() {
-        return false;
-    }
-
-    @Override
-    public boolean getIncrementCamDeviation() {
-        return false;
-    }
-
-    @Override
-    public boolean getDecrementCamDeviation() {
-        return false;
-    }
-
-    @Override
     public boolean getHood() {
         return false;
     }
