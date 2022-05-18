@@ -46,14 +46,6 @@ public class DistanceManager {
         return coordinates;
     }
 
-    public void setCoordinates(ArrayList<Double[]> coordinates) {
-        this.coordinates = coordinates;
-    }
-
-    public ArrayList<Double[]> getShooterMap() {
-        return shooterMap;
-    }
-
     public void calculateFloorFunctionSpline() {
         shooterOutput = new FloorFunctionSpline(coordinates);
     }
