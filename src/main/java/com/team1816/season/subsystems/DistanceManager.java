@@ -66,7 +66,7 @@ public class DistanceManager {
         return .5;
     }
 
-    public double getShooterOutput(double distance) {
+    private double getShooterOutput(double distance) {
         // used determine the last index at which any change to a certain "bucket" should be applied to
         allowBucketOffset = true;
         for (int i = 0; i < coordinates.size(); i++) {

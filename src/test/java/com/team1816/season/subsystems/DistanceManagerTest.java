@@ -42,8 +42,9 @@ public class DistanceManagerTest {
     public void checkCoordinates() {
         for (int i = 0; i < mDistanceManager.getCoordinates().size(); i++) {
             double expectedValue = mDistanceManager.getCoordinates().get(i)[1];
-            double actualValue = mDistanceManager.getShooterOutput(
-                mDistanceManager.getCoordinates().get(i)[0]
+            double actualValue = mDistanceManager.getOutput(
+                mDistanceManager.getCoordinates().get(i)[0],
+                DistanceManager.SUBSYSTEM.SHOOTER
             );
             Assert.assertEquals(expectedValue, actualValue, 0.1);
         }
@@ -76,7 +77,11 @@ public class DistanceManagerTest {
                     break;
                 }
             }
-            Assert.assertEquals(expectedValue, mDistanceManager.getShooterOutput(i), 0.1);
+            Assert.assertEquals(
+                expectedValue,
+                mDistanceManager.getOutput(i, DistanceManager.SUBSYSTEM.SHOOTER),
+                0.1
+            );
         }
     }
 
@@ -90,8 +95,11 @@ public class DistanceManagerTest {
         for (double i = lowerBound; i <= upperBound; i += resolution) { // monotonically increasing
             Assert.assertEquals(
                 true,
-                mDistanceManager.getShooterOutput(i) >=
-                mDistanceManager.getShooterOutput(i - resolution)
+                mDistanceManager.getOutput(i, DistanceManager.SUBSYSTEM.SHOOTER) >=
+                mDistanceManager.getOutput(
+                    i - resolution,
+                    DistanceManager.SUBSYSTEM.SHOOTER
+                )
             );
         }
     }
@@ -102,8 +110,11 @@ public class DistanceManagerTest {
         for (double i = lowerBound; i <= upperBound; i += resolution) { // monotonically increasing
             Assert.assertEquals(
                 true,
-                mDistanceManager.getShooterOutput(i) >=
-                mDistanceManager.getShooterOutput(i - resolution)
+                mDistanceManager.getOutput(i, DistanceManager.SUBSYSTEM.SHOOTER) >=
+                mDistanceManager.getOutput(
+                    i - resolution,
+                    DistanceManager.SUBSYSTEM.SHOOTER
+                )
             );
         }
     }
@@ -134,6 +145,6 @@ public class DistanceManagerTest {
         double upperBound = mDistanceManager
             .getCoordinates()
             .get(mDistanceManager.getCoordinates().size() - 1)[0];
-        linearSplineTest(lowerBound, upperBound, 1.0);
+        cubicSplineTest(lowerBound, upperBound, 1.0);
     }
 }
