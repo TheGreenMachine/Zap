@@ -7,8 +7,8 @@ import java.util.List;
 
 public abstract class Spline {
 
-    protected static ArrayList<Double[]> coordinates;
-    protected static ArrayList<ArrayList<Double>> coefficients;
+    public static ArrayList<Double[]> coordinates;
+    public static ArrayList<ArrayList<Double>> coefficients;
 
     protected Spline(ArrayList<Double[]> knotPoints) {
         coordinates = sort(knotPoints); // properly formats and checks coordinates
@@ -18,7 +18,11 @@ public abstract class Spline {
         for (int i = 0; i < coordinates.size() - 1; i++) {
             if (input < coordinates.get(i + 1)[0]) { // this is because we want the value to hold until the next value
                 double output = coordinates.get(i).length > 2 ? coordinates.get(i)[2] : 0; // use offsets if they exist
-                for (int j = 0; j < coefficients.get(i).size(); j++) {
+                for (
+                    int j = 0;
+                    j < coefficients.get(i).size();
+                    j++
+                ) {
                     output += Math.pow(input, j) * coefficients.get(i).get(j);
                 }
                 return output;

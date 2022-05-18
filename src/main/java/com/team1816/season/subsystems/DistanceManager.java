@@ -11,11 +11,11 @@ public class DistanceManager {
     // State
     private int lastBucketIndex;
     private static boolean allowBucketOffset = false;
-    public ArrayList<Double[]> coordinates;
-    public Spline shooterOutput;
+    private ArrayList<Double[]> coordinates;
+    private Spline shooterOutput;
 
     // Constants
-    public static ArrayList<Double[]> shooterMap = new ArrayList<>() { // format: {distance, output, offset}
+    private static final ArrayList<Double[]> shooterMap = new ArrayList<>() { // format: {distance, output, offset}
         {
             add(new Double[] { 97.0, 7200.0, 0.0 });
             add(new Double[] { 105.0, 7700.0, 0.0 });
@@ -40,23 +40,30 @@ public class DistanceManager {
         calculateFloorFunctionSpline();
         calculateLinearizedSpline();
         calculateNaturalCubicSpline();
-        calculateQuinticSpline();
     }
 
-    private void calculateFloorFunctionSpline() {
+    public ArrayList<Double[]> getCoordinates() {
+        return coordinates;
+    }
+
+    public void setCoordinates(ArrayList<Double[]> coordinates) {
+        this.coordinates = coordinates;
+    }
+
+    public ArrayList<Double[]> getShooterMap() {
+        return shooterMap;
+    }
+
+    public void calculateFloorFunctionSpline() {
         shooterOutput = new FloorFunctionSpline(coordinates);
     }
 
-    private void calculateLinearizedSpline() {
+    public void calculateLinearizedSpline() {
         shooterOutput = new LinearPiecewiseSpline(coordinates);
     }
 
-    private void calculateNaturalCubicSpline() {
+    public void calculateNaturalCubicSpline() {
         shooterOutput = new NaturalCubicSpline(coordinates);
-    }
-
-    private void calculateQuinticSpline() {
-        shooterOutput = new QuinticSpline(coordinates);
     }
 
     private double getSpindexerOutput(double distance) {
@@ -67,7 +74,7 @@ public class DistanceManager {
         return .5;
     }
 
-    private double getShooterOutput(double distance) {
+    public double getShooterOutput(double distance) {
         // used determine the last index at which any change to a certain "bucket" should be applied to
         allowBucketOffset = true;
         for (int i = 0; i < coordinates.size(); i++) {
