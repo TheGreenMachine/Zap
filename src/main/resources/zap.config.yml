@@ -125,6 +125,8 @@ subsystems:
                 kF: 0.0487
                 allowableError: 65
         constants:
+            useLinearPiecewise: 0
+            useCubicSpline: 0
             usingPoseForSpeed: 0
             maxTicks: 20700 #
             currentFloorCheck: .12

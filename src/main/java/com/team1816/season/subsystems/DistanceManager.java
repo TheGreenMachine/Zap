@@ -1,12 +1,16 @@
 package com.team1816.season.subsystems;
 
 import com.google.inject.Singleton;
+import com.team1816.lib.hardware.factory.RobotFactory;
+import com.team1816.season.Robot;
 import com.team1816.season.util.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 
 @Singleton
 public class DistanceManager {
+
+    public static RobotFactory factory = Robot.getFactory();
 
     // State
     private int lastBucketIndex;
@@ -38,8 +42,11 @@ public class DistanceManager {
         lastBucketIndex = 0;
         allowBucketOffset = false;
         calculateFloorFunctionSpline();
-        calculateLinearizedSpline();
-        calculateNaturalCubicSpline();
+        if (factory.getConstant("shooter", "useLinearPiecewise") == 1) {
+            calculateLinearizedSpline();
+        } else if (factory.getConstant("shooter", "useCubicSpline") == 1) {
+            calculateNaturalCubicSpline();
+        }
     }
 
     public ArrayList<Double[]> getCoordinates() {
