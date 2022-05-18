@@ -42,13 +42,16 @@ public class DistanceManagerTest {
     public void checkCoordinates() {
         for (int i = 0; i < mDistanceManager.getCoordinates().size(); i++) {
             double expectedValue = mDistanceManager.getCoordinates().get(i)[1];
-            double actualValue = mDistanceManager.getShooterOutput(i);
+            double actualValue = mDistanceManager.getShooterOutput(
+                mDistanceManager.getCoordinates().get(i)[0]
+            );
             Assert.assertEquals(expectedValue, actualValue, 0.1);
         }
     }
 
     public void bucketTest(double lowerBound, double upperBound, double resolution) {
         mDistanceManager.calculateFloorFunctionSpline();
+        checkCoordinates();
         for (double i = lowerBound; i <= upperBound; i += resolution) {
             double expectedValue = 0;
             for (int j = 1; j < mDistanceManager.getCoordinates().size(); j++) {
