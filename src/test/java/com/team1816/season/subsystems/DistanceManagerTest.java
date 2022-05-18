@@ -80,6 +80,34 @@ public class DistanceManagerTest {
         }
     }
 
+    public void linearSplineTest(
+        double lowerBound,
+        double upperBound,
+        double resolution
+    ) {
+        mDistanceManager.calculateLinearizedSpline();
+        checkCoordinates();
+        for (double i = lowerBound; i <= upperBound; i += resolution) { // monotonically increasing
+            Assert.assertEquals(
+                true,
+                mDistanceManager.getShooterOutput(i) >=
+                mDistanceManager.getShooterOutput(i - resolution)
+            );
+        }
+    }
+
+    public void cubicSplineTest(double lowerBound, double upperBound, double resolution) {
+        mDistanceManager.calculateNaturalCubicSpline();
+        checkCoordinates();
+        for (double i = lowerBound; i <= upperBound; i += resolution) { // monotonically increasing
+            Assert.assertEquals(
+                true,
+                mDistanceManager.getShooterOutput(i) >=
+                mDistanceManager.getShooterOutput(i - resolution)
+            );
+        }
+    }
+
     @Test
     public void runBucketTest() {
         double lowerBound = 95;
@@ -92,8 +120,20 @@ public class DistanceManagerTest {
     }
 
     @Test
-    public void runLinearSplineTest() {} //needs to check coordinates and monotonically increasing conditions
+    public void runLinearSplineTest() { // needs to check coordinates and monotonically increasing conditions
+        double lowerBound = 95;
+        double upperBound = mDistanceManager
+            .getCoordinates()
+            .get(mDistanceManager.getCoordinates().size() - 1)[0];
+        linearSplineTest(lowerBound, upperBound, 1.0);
+    }
 
     @Test
-    public void runCubicSplineTest() {} //needs to check coordinates and monotonically increasing conditions
+    public void runCubicSplineTest() { // needs to check coordinates and monotonically increasing conditions
+        double lowerBound = 95;
+        double upperBound = mDistanceManager
+            .getCoordinates()
+            .get(mDistanceManager.getCoordinates().size() - 1)[0];
+        linearSplineTest(lowerBound, upperBound, 1.0);
+    }
 }
