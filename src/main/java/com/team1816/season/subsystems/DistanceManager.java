@@ -70,7 +70,7 @@ public class DistanceManager {
     }
 
     private double getElevatorOutput(double distance) { // TODO lots of hacks here - generate real outputs with hood in future
-        return .5;
+        return .50;
     }
 
     private double getShooterOutput(double distance) {
