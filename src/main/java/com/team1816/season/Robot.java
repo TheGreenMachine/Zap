@@ -77,9 +77,10 @@ public class Robot extends TimedRobot {
 
     // private PowerDistributionPanel pdp = new PowerDistributionPanel();
     private final Turret.ControlMode defaultTurretControlMode =
-        Turret.ControlMode.FIELD_FOLLOWING;
+        Turret.ControlMode.CENTER_FOLLOWING;
     private boolean faulted;
     private boolean useManualShoot = false;
+    private boolean hasAimed = false;
 
     Robot() {
         super();
@@ -315,10 +316,21 @@ public class Robot extends TimedRobot {
                         mControlBoard::getLowerBucket,
                         () -> mDistanceManager.incrementBucket(-100)
                     ),
-                    createAction(
+                    createHoldAction(
                         mControlBoard::getAutoAim,
-                        () -> {
-                            mTurret.snapWithCamera();
+                        aim -> {
+                            if (aim) {
+                                mTurret.snapWithCamera();
+                            } else {
+                                mSuperstructure.updatePoseWithCamera();
+                                if (
+                                    defaultTurretControlMode ==
+                                    Turret.ControlMode.CENTER_FOLLOWING
+                                ) {
+                                    mTurret.setFollowingAngle(Turret.CARDINAL_SOUTH);
+                                }
+                                mTurret.setControlMode(defaultTurretControlMode);
+                            }
                         }
                     ),
                     createAction(mControlBoard::getCameraToggle, mCamera::setEnabled),
@@ -349,7 +361,7 @@ public class Robot extends TimedRobot {
                             mSuperstructure.setRevving(
                                 shooting,
                                 Shooter.LAUNCHPAD_VEL,
-                                useManualShoot // use manual shoot WAS HERE
+                                useManualShoot
                             ); // Launchpad
                             mSuperstructure.setFiring(shooting);
                         }
@@ -629,6 +641,14 @@ public class Robot extends TimedRobot {
                     )
                 ).getDegrees()
             );
+        }
+
+        if (
+            !mControlBoard.getShoot() &&
+            !mControlBoard.getYeetShot() &&
+            Constants.kUsePoseTrack
+        ) {
+            mSuperstructure.setRevving(true, -1, true);
         }
 
         if (mControlBoard.getBrakeMode()) {

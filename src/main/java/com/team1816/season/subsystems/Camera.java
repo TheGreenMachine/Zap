@@ -81,7 +81,7 @@ public class Camera extends Subsystem {
             return robotState.getEstimatedDistanceToGoal();
         }
         return (
-            (Constants.kTargetHeight - Constants.kCameraMountingHeight) /
+            (Constants.kHeightFromCamToHub) /
             (
                 Math.tan(
                     Math.toRadians(

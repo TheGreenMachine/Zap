@@ -55,6 +55,7 @@ public class Spindexer extends Subsystem {
         if (robotState.elevatorState == Elevator.STATE.FIRE) {
             setSpindexer(FIRE);
         } else {
+            setSpindexer(INDEX);
             outputsChanged = true; // keep looping through writeToHardWare if shooter not up to speed
         }
     }

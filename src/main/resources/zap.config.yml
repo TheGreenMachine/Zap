@@ -180,7 +180,7 @@ subsystems:
             ballSensor: 0
             firePow: 0.35 #TODO @trent only raise if rlly need faster cycle time b/c this could change ball trajectory -- (firePow * maxticks = firePow in ticks/100MS)
             flushPow: -0.3
-            intakePow: 0.3
+            intakePow: 0.5
     spindexer:
         implemented: true
         talons:
@@ -220,7 +220,7 @@ subsystems:
             maxDeltaX: 1200 # 670
             allowableDistanceError: 50
             deviation: 0
-            dumbDistanceMultiplier: 1 # TODO @ trent fiddle-me-timbers
+            dumbDistanceMultiplier: 1
 pcm: 2
 canivoreBusName: highSpeed
 constants:
@@ -237,7 +237,8 @@ constants:
     maxVelOpenLoop: 3 # 160 # 240 # inches/s # 22560 native units ---30
     maxVelPathFollowing: 2.2 # 160 # 240 # inches/s # 22560 native units ---30
     maxAccel: 100 # inches/s^ 2
-    maxAllowablePoseError: 0.1
+    minAllowablePoseError: 1
+    maxAllowablePoseError: 4
     ## Logging ##
     logTeleOp: 1 # 0 or 1
     logAuto: 1 # 0 or 1
