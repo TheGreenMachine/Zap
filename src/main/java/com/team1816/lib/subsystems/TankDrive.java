@@ -38,8 +38,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     // hardware states
 
     private double leftEncoderSimPosition = 0, rightEncoderSimPosition = 0;
-    private final double tickRatioPerLoop = Constants.kLooperDt / .1d;
-
     private DifferentialDriveOdometry odometry;
 
     public void updateTrajectoryVelocities(Double leftVel, Double rightVel) {

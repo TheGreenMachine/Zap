@@ -52,6 +52,7 @@ public abstract class Drive
     protected List<Rotation2d> mHeadings;
     protected int mTrajectoryIndex = 0;
     protected boolean trajectoryStarted = false;
+    protected final double tickRatioPerLoop = Constants.kLooperDt / .01d;
 
     // hardware states
     protected String pidSlot = "slot0";
@@ -94,8 +95,6 @@ public abstract class Drive
         public Rotation2d gyro_heading = Constants.EmptyRotation;
         // no_offset = Relative to initial position, unaffected by reset
         public Rotation2d gyro_heading_no_offset = Constants.EmptyRotation;
-        public double drive_distance_inches;
-        public double velocity_inches_per_second = 0;
         public double left_position_ticks;
         public double right_position_ticks;
         public double left_velocity_ticks_per_100ms;
@@ -230,10 +229,6 @@ public abstract class Drive
     @Override
     public double getHeadingDegrees() {
         return mPeriodicIO.gyro_heading.getDegrees();
-    }
-
-    public synchronized Rotation2d getHeadingRelativeToInitial() {
-        return mPeriodicIO.gyro_heading_no_offset;
     }
 
     public DriveControlState getControlState() {

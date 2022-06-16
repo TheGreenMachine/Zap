@@ -1,6 +1,5 @@
 package com.team1816.season;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.factory.RobotFactory;
@@ -86,42 +85,21 @@ public class Constants {
         public String kDriveMotorName = "";
         public String kAzimuthMotorName = "";
 
+        public PIDSlotConfiguration kAzimuthPid;
+        public PIDSlotConfiguration kDrivePid;
+
+        // constants defined for each swerve module
+        public boolean kInvertAzimuth = false;
+        public boolean kInvertAzimuthSensorPhase = false;
+        public double kAzimuthEncoderHomeOffset;
+
         public static final int kAzimuthPPR = (int) factory.getConstant(
             "drive",
             "azimuthEncPPR",
             4096
         );
-        public static final int AZIMUTH_TICK_MASK = kAzimuthPPR - 1;
-        public static final double AZIMUTH_ADJUSTMENT_OFFSET_DEGREES = factory.getConstant(
-            "drive",
-            "azimuthHomeAdjustmentDegrees",
-            0
-        );
 
-        public static double driveKS = 1; //TODO: PUT VALUES
-        public static double driveKV = 1; //TODO: PUT VALUES
-        public static double driveKA = 1; //TODO: PUT VALUES
-
-        // general azimuth
-        public boolean kInvertAzimuth = false;
-        public boolean kInvertAzimuthSensorPhase = false;
-        public NeutralMode kAzimuthInitNeutralMode = NeutralMode.Brake; // neutral mode could change
-        public double kAzimuthTicksPerRadian = 4096.0 / (2 * Math.PI); // for azimuth
-        public double kAzimuthEncoderHomeOffset = 0;
-        public double kAzimuthAdjustmentOffset;
-
-        // azimuth motion
-        public PIDSlotConfiguration kAzimuthPid;
-        public int kAzimuthClosedLoopAllowableError = (int) factory.getConstant(
-            "drivetrain",
-            "azimuthAllowableErrorTicks"
-        );
-
-        // general drive
-        public PIDSlotConfiguration kDrivePid;
-        // drive current/voltage -ginget  - removed these
-        // drive measurement
-
+        // azimuth position
         private static final double moduleDeltaX = Units.inches_to_meters(
             kDriveWheelbaseLengthMeters / 2.0
         );

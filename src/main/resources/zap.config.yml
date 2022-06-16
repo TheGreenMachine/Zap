@@ -66,21 +66,10 @@ subsystems:
                     allowableError: 5
         constants:
             maxTicks: 12275.7 # ticks per 100ms
-            kP: 0.1 # 0.18 # TODO: tune PID, these are temporary PID values from Zeta
-            kI: 0.0001 # 0.018
-            kD: 4.0 # 3.6
-            kF: 0.0475813
-            iZone: 0
-            currentFloorCheck: .12
-            currentEpsilonCheck: .2
-            rpmFloorCheck: 2000
-            rpmEpsilonCheck: 60
             openLoopRampRate: 0.8
             isSwerve: 1
             encPPR: 14255
             azimuthEncPPR: 4096
-            azimuthAllowableErrorTicks: 5
-            azimuthHomeAdjustmentDegrees: 1
     ledmanager:
         implemented: true
         canifier: -1
@@ -100,9 +89,9 @@ subsystems:
                 kF: 0 # Should be 0 for position control
                 allowableError: 40
         talons:
-            turret: 33 # need to set to pdp port number
+            turret: 33
         constants:
-            deltaXScalar: 150 #value worked best at 150 in sim -- TODO @trent tune here!
+            deltaXScalar: 150 #value worked best at 150 in sim
             revLimit: 8800 # adjusted for zero-offset
             fwdLimit: 41500 # adjusted for zero-offset
             absPosTicksSouth: 0 # absolute
@@ -124,16 +113,12 @@ subsystems:
                 kI: 0.0002
                 kD: 13.5 # 11 - 4.5
                 kF: 0.0487
-                allowableError: 100 #TODO @trent raising this value trades cycle time for accuracy - original value = 65
+                allowableError: 100
         constants:
             usingPoseForSpeed: 0
-            maxTicks: 20700 #
-            currentFloorCheck: .12
-            currentEpsilonCheck: .2
-            rpmFloorCheck: 2000
-            rpmEpsilonCheck: 60
+            maxTicks: 20700
             nearVel: 4500
-            midVel: 8450 #8450
+            midVel: 8450
             tarmacTapeVel: 8125
             launchpadVel: 10150
             maxVel: 16500
@@ -167,18 +152,18 @@ subsystems:
             elevator: 32
         pidConfig:
             slot0:
-                kP: 0.060 #tunned at 4000  - .05
+                kP: 0.060
                 kI: 0
                 kD: 2
                 kF: 0.05
-                allowableError: 3000 #TODO @trent upping this value will trade indexing time for accuracy -- original value = 1000, fire vel = 10000
+                allowableError: 3000
         invertMotor:
             - elevator
         constants:
             isVelocity: 1
-            maxTicks: 20000 # tune
+            maxTicks: 20000
             ballSensor: 0
-            firePow: 0.35 #TODO @trent only raise if rlly need faster cycle time b/c this could change ball trajectory -- (firePow * maxticks = firePow in ticks/100MS)
+            firePow: 0.35
             flushPow: -0.3
             intakePow: 0.3
     spindexer:
@@ -189,10 +174,10 @@ subsystems:
             feederFlap: -1
         constants:
             collectPow: 0.5
-            indexPow: -0.5 # TODO original value -0.5 -- lowering this will lower the chance of jamming -- raising will guarantee balls don't enter elevator early
+            indexPow: -0.5
             flushPow: -1
             coastPow: 0.25
-            firePow: 0.85 # TODO raising will make balls fire faster, but balls firing too close to one another may be inaccurate? (test) -- w
+            firePow: 0.85
     collector:
         implemented: true
         sparkmaxes:
@@ -217,10 +202,8 @@ subsystems:
         constants:
             debug: 0
             maxDist: 400
-            maxDeltaX: 1200 # 670
+            maxDeltaX: 1200
             allowableDistanceError: 50
-            deviation: 0
-            dumbDistanceMultiplier: 1 # TODO @ trent fiddle-me-timbers
 pcm: 2
 canivoreBusName: highSpeed
 constants:

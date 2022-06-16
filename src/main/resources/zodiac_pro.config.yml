@@ -10,97 +10,179 @@ subsystems:
             rightFollowerTwo: -1
         invertMotor:
             - leftMain
+        pidConfig:
+            slot0:
+                kP: 0.1 # 0.18
+                kI: 0.0001 # 0.018
+                kD: 4.0 # 3.6
+                kF: 0.0475813
         constants:
-            pigeonId: 9
-            pigeonOnTalon: -1
+            maxTicks: 12275.7 # ticks per 100ms TODO tune - value currently from swerve
             encPPR: 22220.8
-            kP: 0.1 # 0.18 # TODO: tune PID, these are temporary PID values from Zeta
-            kI: 0.0001 # 0.018
-            kD: 4.0 # 3.6
-            kF: 0.0475813
-            iZone: 0
-            currentFloorCheck: .12
-            currentEpsilonCheck: .2
-            rpmFloorCheck: 2000
-            rpmEpsilonCheck: 60
             openLoopRampRate: 0.8
             isSwerve: 0
-    climber:
-        implemented: false
-        falcons:
-            intake: 11
-        talons:
-            elevator: 6
-        solenoids:
-            arm: 0
-            deployer: 5
-        invertMotor:
-            - elevator
-    hopper:
-        implemented: false
-        talons:
-            spindexer: 4
-            elevator: 5
-        solenoids:
-            feederFlap: 4
-        invertMotor:
-            - elevator
-            - spindexer
-    shooter:
-        implemented: false
-        falcons:
-            shooterMain: 3
-            shooterFollower: 2
-        pid:
-            -   kP: 0.15 #0.30
-                kI: 0
-                kD: 2.5 #4.5
-                kF: 0.05671 #0.00953253
-        constants:
-            currentFloorCheck: .12
-            currentEpsilonCheck: .2
-            rpmFloorCheck: 2000
-            rpmEpsilonCheck: 60
-            velocityThreshold: 500
-    turret:
-        implemented: true
-        pid:
-            -   kP: 6 # 1.981 # 1.645
-                kI: 0.0001
-                kD: 90
-                kF: 0 # Should be 0 for position control
-        talons:
-            turret: 13
-        invertSensorPhase:
-            - turret
-        constants:
-            revLimit: -3632
-            fwdLimit: -818
-            absPosTicksSouth: -3277
-            encPPR: 4096
     ledmanager:
         implemented: true
-        canifier: 18
+        canifier: -1
+        candle: -1
         constants:
-            raveEnabled: 0
+            raveEnabled: 1
             raveSpeed: 0.05
             cameraLed: 1
+            maxLevel: 255
+    turret:
+        implemented: true
+        pidConfig:
+            slot0:
+                kP: 1.25
+                kI: 0.0003
+                kD: 40.5
+                kF: 0 # Should be 0 for position control
+                allowableError: 40
+        talons:
+            turret: 33
+        constants:
+            deltaXScalar: 150 #value worked best at 150 in sim
+            revLimit: 8800 # adjusted for zero-offset
+            fwdLimit: 41500 # adjusted for zero-offset
+            absPosTicksSouth: 0 # absolute
+            zeroOffset: 12639 # (turretPPR - non-adjusted fwdLimit - non-adjusted revlimit) / 2
+            encPPR: 4096
+            turretPPR: 53248 # 4096 * 13
+    shooter:
+        implemented: true
+        falcons:
+            shooterMain: 21
+            shooterFollower: -1
+        invertMotor:
+            - shooterMain
+        solenoids:
+            hood: 0
+        pidConfig:
+            slot0:
+                kP: 0.38 #.45
+                kI: 0.0002
+                kD: 13.5 # 11 - 4.5
+                kF: 0.0487
+                allowableError: 100
+        constants:
+            usingPoseForSpeed: 0
+            maxTicks: 20700
+            nearVel: 4500
+            midVel: 8450
+            tarmacTapeVel: 8125
+            launchpadVel: 10150
+            maxVel: 16500
+            coast: 8000
+    climber:
+        implemented: true
+        falcons:
+            climber: 34 #20
+            climberFollower: 35 #-1
+        solenoids:
+            topClamp: 7
+            bottomClamp: 6
+        pidConfig:
+            slot0:
+                kP: 0.050 #0.075 #tunned at 4000
+                kI: 0.000
+                kD: .6
+                kF: 0.0
+                allowableError: 5000
+        constants:
+            maxTicks: 1
+            unlockPos: -14400
+            startPos: 0
+            returnPos: 0
+            firstToSecondRungPos: 150000
+            secondToLastRungPos: 342000
+            lastPos: 370000
+    elevator:
+        implemented: true
+        talons:
+            elevator: 32
+        pidConfig:
+            slot0:
+                kP: 0.060
+                kI: 0
+                kD: 2
+                kF: 0.05
+                allowableError: 3000
+        invertMotor:
+            - elevator
+        constants:
+            isVelocity: 1
+            maxTicks: 20000
+            ballSensor: 0
+            firePow: 0.35
+            flushPow: -0.3
+            intakePow: 0.3
+    spindexer:
+        implemented: true
+        talons:
+            spindexer: 31
+        solenoids:
+            feederFlap: -1
+        constants:
+            collectPow: 0.5
+            indexPow: -0.5
+            flushPow: -1
+            coastPow: 0.25
+            firePow: 0.85
+    collector:
+        implemented: true
+        sparkmaxes:
+            intake: 23 # maxTicks 10617
+        invertMotor:
+            - intake
+        solenoids:
+            arm: 2
+        pidConfig:
+            slot0:
+                kP: 0.0001 #tunned at 4000
+                kI: 0.0
+                kD: 0.006
+                kF: 0.0001
+                allowableError: 10
+        constants:
+            revving: 0 #.05
+            collecting: -5000 #-3600
+            flush: 5000 #.35
     camera:
         implemented: true
-        canifier: 19
-pcm: 8
+        constants:
+            debug: 0
+            maxDist: 400
+            maxDeltaX: 1200
+            allowableDistanceError: 50
+pcm: 2
+canivoreBusName: highSpeed
 constants:
-    maxVel: 40 #inch/s
-    maxTicks: 14000 # ticks per 100ms TODO test actual maxTicks value
-    maxAccel: 20 #inch/s^2
-    sensorPhase: 0
-    kLooperDt: .020
+    # pigeon
+    pigeonId: 13
+    isPigeon2: 1
+    pigeonOnTalon: -1
+    # drivetrain dimensions and movement
+    maxRotVel: 7.2
+    trackWidth: 21 #inches
+    wheelbaseLength: 21.5 #inches
+    wheelDiameter: 4
     kTrackScrubFactor: 1.0
+    maxVelOpenLoop: 3 # 160 # 240 # inches/s # 22560 native units ---30
+    maxVelPathFollowing: 2.2 # 160 # 240 # inches/s # 22560 native units ---30
+    maxAccel: 100 # inches/s^ 2
+    maxAllowablePoseError: 0.1
+    ## Logging ##
+    logTeleOp: 1 # 0 or 1
+    logAuto: 1 # 0 or 1
+    badLogEnabled: 1 # 0 or 1
+    configStatusFrames: 0 # 0 or 1
     verbose: 0 # 0 or 1
-    useAutoAim: 1
-    trackWidth: 25 #inches
+    ## General ##
+    EnableBucketTuning: 1
+    teleopFieldCentric: 1 # 0 or 1
     compressorEnabled: 1 # 0 or 1
-    wheelDiameter: 6.32 #inches
-    logTeleOp: 1
-    logAuto: 1
-    badLogEnabled: 1
+    kLooperDt: .035 # seconds
+    pdIsRev: 1 # power distribution
+    phIsRev: 0 # pneumatics control
+    resetFactoryDefaults: 0 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret

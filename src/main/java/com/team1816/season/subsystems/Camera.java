@@ -30,11 +30,6 @@ public class Camera extends Subsystem {
     public static final double CAMERA_VFOV = 54; // 2 * Math.atan((VIDEO_WIDTH / 2) / CAMERA_FOCAL_LENGTH); // deg
     private final double MAX_DIST = factory.getConstant(NAME, "maxDist", 260);
     private final double MAX_DELTA_X = factory.getConstant(NAME, "maxDeltaX", 1200);
-    private final double dumbDistanceMultiplier = factory.getConstant(
-        NAME,
-        "dumbDistanceMultiplier",
-        1
-    );
 
     // state
     private boolean cameraEnabled;
@@ -79,8 +74,7 @@ public class Camera extends Subsystem {
                         )
                     )
                 )
-            ) *
-            dumbDistanceMultiplier
+            )
         );
     }
 
