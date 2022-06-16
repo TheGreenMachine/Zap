@@ -177,8 +177,8 @@ public class Superstructure {
 
     public void shootWhileMoving(double currentCamDist) {
         Translation2d chassisVelocity = new Translation2d(
-            robotState.chassis_speeds.vxMetersPerSecond,
-            robotState.chassis_speeds.vyMetersPerSecond
+            robotState.delta_vehicle.vxMetersPerSecond,
+            robotState.delta_vehicle.vyMetersPerSecond
         );
         Translation2d shooterDirection = new Translation2d( //important to make sure that this is a unit vector
             1,

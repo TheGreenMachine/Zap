@@ -158,27 +158,15 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
     }
 
-    private void updateRobotState() {
+    @Override
+    public void updateRobotState() {
         robotState.field_to_vehicle = swerveOdometry.getPoseMeters();
-        robotState.chassis_speeds =
+        robotState.delta_vehicle =
             new ChassisSpeeds(
                 mPeriodicIO.chassisSpeed.vxMetersPerSecond,
                 mPeriodicIO.chassisSpeed.vyMetersPerSecond,
                 mPeriodicIO.chassisSpeed.omegaRadiansPerSecond
             );
-        robotState.delta_field_to_vehicle =
-            new Twist2d(
-                // these three may be missing conversions from velocity to change in pose? (meters/s to x-y-theta/updateTime)
-                // not sure because field_to_vehicle is also being plugged directly into field as a value in meters
-                mPeriodicIO.chassisSpeed.vxMetersPerSecond * Constants.kLooperDt,
-                mPeriodicIO.chassisSpeed.vyMetersPerSecond * Constants.kLooperDt,
-                mPeriodicIO.chassisSpeed.omegaRadiansPerSecond * Constants.kLooperDt
-            );
-    }
-
-    @Override
-    protected void updateOpenLoopPeriodic() {
-        // no openLoop update needed
     }
 
     // general setters

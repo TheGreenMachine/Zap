@@ -188,7 +188,9 @@ public abstract class Drive
         mPeriodicIO.desired_heading = mPeriodicIO.desired_pose.getRotation();
     }
 
-    protected abstract void updateOpenLoopPeriodic();
+    protected void updateOpenLoopPeriodic() {}
+
+    protected abstract void updateRobotState();
 
     /**
      * Configure talons for open loop control

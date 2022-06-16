@@ -7,6 +7,7 @@ import com.team254.lib.util.Units;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
@@ -74,10 +75,14 @@ public class Constants {
     public static final int kCANTimeoutMs = 10; // use for important on the fly updates
     public static final int kLongCANTimeoutMs = 100; // use for constructors
 
-    public static final double kOpenLoopRampRate = factory.getConstant(
-        "drivetrain",
-        "openLoopRampRate"
-    );
+    public static class Tank {
+
+        public String kName = "Name";
+
+        public static final DifferentialDriveKinematics tankKinematics = new DifferentialDriveKinematics(
+            kDriveWheelTrackWidthMeters
+        );
+    }
 
     public static class Swerve {
 

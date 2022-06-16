@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.*;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
+import com.team1816.lib.math.DriveConversions;
 import com.team1816.lib.util.EnhancedMotorChecker;
 import com.team1816.season.Constants;
 import com.team1816.season.auto.AutoModeSelector;
@@ -15,7 +16,9 @@ import com.team254.lib.util.CheesyDriveHelper;
 import com.team254.lib.util.DriveSignal;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -124,45 +127,40 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     }
 
     @Override
-    public synchronized void readFromHardware() {
+    public synchronized void readFromHardware() { // reads the actual output from robot and updates state
+        mPeriodicIO.chassisSpeed =
+            Constants.Tank.tankKinematics.toChassisSpeeds(
+                new DifferentialDriveWheelSpeeds(
+                    getLeftVelocityActual(),
+                    getRightVelocityActual()
+                )
+            );
         if (RobotBase.isSimulation()) {
+            // this is needed because differentialDriveOdometry has no updatePoseWithTime equivalent hence it must be manually simulated
             double leftAdjDemand = mPeriodicIO.left_demand;
             double rightAdjDemand = mPeriodicIO.right_demand;
             if (mDriveControlState == DriveControlState.OPEN_LOOP) {
                 leftAdjDemand = mPeriodicIO.left_demand * maxVelTicksPer100ms;
                 rightAdjDemand = mPeriodicIO.right_demand * maxVelTicksPer100ms;
             }
-            var driveTrainErrorPercent = .05;
-            mPeriodicIO.left_error = leftAdjDemand * driveTrainErrorPercent;
-            leftEncoderSimPosition +=
-                (leftAdjDemand - mPeriodicIO.left_error) * tickRatioPerLoop;
+            // simulate lateral motion
+            leftEncoderSimPosition += leftAdjDemand * tickRatioPerLoop;
             rightEncoderSimPosition += rightAdjDemand * tickRatioPerLoop;
-            mPeriodicIO.left_position_ticks = leftEncoderSimPosition;
-            mPeriodicIO.right_position_ticks = rightEncoderSimPosition;
-            mPeriodicIO.left_velocity_ticks_per_100ms =
-                leftAdjDemand - mPeriodicIO.left_error;
-            mPeriodicIO.right_velocity_ticks_per_100ms = rightAdjDemand;
-            // calculate rotation based on left/right vel differences
-            gyroDrift -=
-                (
-                    mPeriodicIO.left_velocity_ticks_per_100ms -
-                    mPeriodicIO.right_velocity_ticks_per_100ms
-                ) /
-                robotWidthTicks;
-            mPeriodicIO.gyro_heading_no_offset =
-                mPeriodicIO.desired_heading.rotateBy(
-                    Rotation2d.fromDegrees(gyroDrift * .3)
+            // simulate rotational motion
+            mPeriodicIO.gyro_heading =
+                mPeriodicIO.gyro_heading.rotateBy(
+                    new Rotation2d(
+                        mPeriodicIO.chassisSpeed.omegaRadiansPerSecond *
+                        Constants.kLooperDt *
+                        180 /
+                        Math.PI *
+                        0.01
+                    )
                 );
         } else {
-            mPeriodicIO.left_position_ticks = mLeftMaster.getSelectedSensorPosition(0);
-            mPeriodicIO.right_position_ticks = mRightMaster.getSelectedSensorPosition(0);
-            mPeriodicIO.left_velocity_ticks_per_100ms =
-                +mLeftMaster.getSelectedSensorVelocity(0);
-            mPeriodicIO.right_velocity_ticks_per_100ms =
-                mRightMaster.getSelectedSensorVelocity(0);
-            mPeriodicIO.gyro_heading_no_offset = Rotation2d.fromDegrees(mPigeon.getYaw());
+            mPeriodicIO.gyro_heading = Rotation2d.fromDegrees(mPigeon.getYaw());
         }
-        mPeriodicIO.gyro_heading = mPeriodicIO.gyro_heading_no_offset;
+        // the sole purpose of the error is for logging
         if (mDriveControlState == DriveControlState.OPEN_LOOP) {
             mPeriodicIO.left_error = 0;
             mPeriodicIO.right_error = 0;
@@ -175,7 +173,36 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             Units.inchesToMeters(getLeftEncoderDistance()),
             Units.inchesToMeters(getRightEncoderDistance())
         );
-        updateRobotPose();
+        updateRobotState();
+    }
+
+    @Override
+    public void updateRobotState() {
+        robotState.field_to_vehicle = odometry.getPoseMeters();
+        robotState.delta_vehicle =
+            new ChassisSpeeds(
+                mPeriodicIO.chassisSpeed.vxMetersPerSecond,
+                mPeriodicIO.chassisSpeed.vyMetersPerSecond,
+                mPeriodicIO.chassisSpeed.omegaRadiansPerSecond
+            );
+    }
+
+    public double getLeftVelocityActual() {
+        double velocity = // might need to change
+            DriveConversions.convertTicksToMeters(
+                mLeftMaster.getSelectedSensorVelocity(0)
+            ) *
+            10;
+        return velocity;
+    }
+
+    public double getRightVelocityActual() {
+        double velocity = // might need to change
+            DriveConversions.convertTicksToMeters(
+                mRightMaster.getSelectedSensorVelocity(0)
+            ) *
+            10;
+        return velocity;
     }
 
     @Override
@@ -197,11 +224,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         }
     }
 
-    @Override
-    protected void updateOpenLoopPeriodic() {
-        // no openLoop update needed
-    }
-
     /**
      * Configure talons for open loop control
      */
@@ -209,16 +231,15 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     @Override
     public synchronized void setOpenLoop(DriveSignal signal) {
         if (mDriveControlState != DriveControlState.OPEN_LOOP) {
-            setBrakeMode(false);
             System.out.println("switching to open loop");
             System.out.println(signal);
             mDriveControlState = DriveControlState.OPEN_LOOP;
+            mPeriodicIO.left_feedforward = 0.0;
+            mPeriodicIO.right_feedforward = 0.0;
         }
         setBrakeMode(signal.getBrakeMode());
         mPeriodicIO.left_demand = signal.getLeft();
         mPeriodicIO.right_demand = signal.getRight();
-        mPeriodicIO.left_feedforward = 0.0;
-        mPeriodicIO.right_feedforward = 0.0;
     }
 
     @Override
@@ -243,9 +264,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         if (mDriveControlState != Drive.DriveControlState.OPEN_LOOP) {
             mDriveControlState = Drive.DriveControlState.OPEN_LOOP;
         }
-
-        mPeriodicIO.left_demand = driveSignal.getLeft();
-        mPeriodicIO.right_demand = driveSignal.getRight();
     }
 
     /**
