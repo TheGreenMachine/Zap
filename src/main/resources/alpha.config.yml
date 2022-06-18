@@ -8,77 +8,102 @@ subsystems:
             rightFollower: -1
         pidConfig:
             slot0:
-                kP: 1.6 #/ 0.18 # TODO: tune PID, these are temporary PID values from Zeta
+                kP: 1.6 #/ 0.18
                 kI: 0.001 # 0.018
                 kD: 15 # 3.6
                 kF: 0.538
-                iZone: 30
-            slot1:
-                kP: 3.0
-                kI: 0.018
-                kD: 4.2
-                kF: 0.042
         invertMotor:
             - rightMain
         constants:
-            pigeonId: 9
-            pigeonOnTalon: -1
-            currentFloorCheck: .12
-            currentEpsilonCheck: .2
-            kP: 3.0 # 0.18 # TODO: tune PID, these are temporary PID values from Zeta
-            kI: 0.03 # 0.018
-            kD: 36 # 3.6
-            kF: 0.96
-            rpmFloorCheck: 2000
-            rpmEpsilonCheck: 60
+            maxTicks: 12275.7
             openLoopRampRate: 0.8
             isSwerve: 0
-            encPPR: 999
-            azimuthEncPPR: 4096
-            azimuthAllowableErrorTicks: 10
+            encPPR: 4096
+            currentLimit: 40
     turret:
         implemented: true
         talons:
             turret: 3
+        invertMotor:
+            - turret
         pidConfig:
             slot0:
                 kP: 2
                 kI: 0
                 kD: 10
                 kF: 0 # Should be 0 for position control
-                iZone: 200
-            slot1:
-                kP: 1
-                kI: 0
-                kD: 20
-                kF: 0 # Should be 0 for position control
-                iZone: 200
+                allowableError: 40
         constants:
+            turretPPR: 4096
             encPPR: 4096
-            revLimit: 960
-            fwdLimit: 2990
+            revLimit: 260
+            fwdLimit: 3990
             currentFloorCheck: 0
             currentEpsilonCheck: .2
             rpmFloorCheck: 0
-            absPosTicksSouth: 4035
+            zeroOffset: 2163
+            absPosTicksSouth: 0
             invert_sensor_phase: 0
             rpmEpsilonCheck: 60
+            deltaXScalar: 150
+    shooter:
+        implemented: false
+        falcons:
+            shooterMain: 21
+            shooterFollower: -1
+        invertMotor:
+            - shooterMain
+        solenoids:
+            hood: 0
+        pidConfig:
+            slot0:
+                kP: 0.38 #.45
+                kI: 0.0002
+                kD: 13.5 # 11 - 4.5
+                kF: 0.0487
+                allowableError: 50
+        constants:
+            usingPoseForSpeed: 0
+            maxTicks: 20700 #
+            currentFloorCheck: .12
+            currentEpsilonCheck: .2
+            rpmFloorCheck: 2000
+            rpmEpsilonCheck: 60
+            nearVel: 4500
+            midVel: 8600
+            farVel: 10150
+            maxVel: 16500
+            coast: 6000
 pcm: 8
 constants:
+    pdID: 0
+    ## Pigeon Config ##
+    pigeonId: 9
+    isPigeon2: 0
+    pigeonOnTalon: -1
+    ## Drivetrain Dimensions and Parameters ##
+    maxAllowablePoseError: 0.1
+    maxVel: 3 # meters/s
+    maxVelPathFollowing: 3 # 160 # 240 # inches/s # 22560 native units ---30
+    maxVelOpenLoop: 3 # 160 # 240 # inches/s # 22560 native units ---30
+    maxRotVel: 7.2
     maxTicks: 14000 # ticks per 100ms TODO test actual maxTicks value
-    sensorPhase: 0
-    kLooperDt: .010
+    maxAccel: 20 #inch/s^2
+    trackWidth: 25 #inches
+    wheelbaseLength: 25 #inches
+    wheelDiameter: 6.32 #inches
     kTrackScrubFactor: 1.0
-    isSwerve: 0
+    ## General Config ##
+    sensorPhase: 0
+    kLooperDt: .020
     verbose: 0 # 0 or 1
-    compressorEnabled: 0 # 0 or 1
+    useCameraInAuto: 0
     useAutoAim: 1
-    maxVel: 120 # inches/s
-    maxAccel: 60 # inches/s^2
-    trackWidth: 23 # inches
-    wheelbaseLength: 21.5 #inches
-    wheelDiameter: 6.122 #inches
+    compressorEnabled: 1 # 0 or 1
+    pdIsRev: 0 # power distribution
+    phIsRev: 0
+    ## Logging Config ##
     logTeleOp: 1
     logAuto: 1
-    teleopFieldCentric: 0
     badLogEnabled: 1
+    configStatusFrames: 0

@@ -199,8 +199,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     ) {
         if (mDriveControlState != DriveControlState.OPEN_LOOP) {
             mDriveControlState = DriveControlState.OPEN_LOOP;
+            mPeriodicIO.use_heading_controller = use_heading_controller;
         }
-        mPeriodicIO.use_heading_controller = use_heading_controller;
         SwerveDriveSignal signal = swerveDriveHelper.calculateDriveSignal(
             forward,
             strafe,

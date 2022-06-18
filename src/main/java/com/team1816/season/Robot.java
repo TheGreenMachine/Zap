@@ -447,7 +447,7 @@ public class Robot extends TimedRobot {
                 mAutoModeExecutor.stop();
             }
 
-            mDrive.setOpenLoop(SwerveDriveSignal.NEUTRAL);
+            mDrive.stop();
             mTurret.zeroSensors();
             mClimber.zeroSensors();
 
