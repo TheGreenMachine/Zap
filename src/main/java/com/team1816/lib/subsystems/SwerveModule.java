@@ -77,7 +77,7 @@ public class SwerveModule implements ISwerveModule {
 
         mAzimuthMotor.configAllowableClosedloopError(
             0,
-            constants.kAzimuthClosedLoopAllowableError,
+            constants.kAzimuthPid.allowableError,
             Constants.kLongCANTimeoutMs
         );
 

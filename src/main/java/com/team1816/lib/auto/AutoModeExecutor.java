@@ -9,8 +9,6 @@ import javax.inject.Singleton;
 @Singleton
 public class AutoModeExecutor {
 
-    private static AutoModeExecutor mInstance = null;
-
     private AutoModeBase mAutoMode = null;
     private Thread mThread = null;
 

@@ -51,13 +51,9 @@ public class Superstructure {
     private boolean firing;
     private final boolean useVision;
     private final boolean usePoseTrack;
-    private double minAllowablePoseError = factory.getConstant(
-        "minAllowablePoseError",
-        0.2
-    );
     private double maxAllowablePoseError = factory.getConstant(
         "maxAllowablePoseError",
-        2
+        0.2
     );
 
     public Superstructure() {
@@ -109,11 +105,9 @@ public class Superstructure {
         System.out.println("struct - rev " + revving);
         if (revving) {
             shooter.setDesiredState(Shooter.STATE.REVVING);
-            if (Camera.cameraEnabled && !manual) {
-                shooter.setVelocity(getOutput(DistanceManager.SUBSYSTEM.SHOOTER));
-                shooter.setHood(getOutput(DistanceManager.SUBSYSTEM.HOOD) > 0);
-            } else if (usePoseTrack && shooterVel == -1) {
-                shooter.setVelocity(getEstimatedOutput());
+            if (camera.isEnabled() && !manual) {
+                shooter.setVelocity(getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
+                shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) > 0);
             } else {
                 shooter.setVelocity(shooterVel);
             }
@@ -156,17 +150,9 @@ public class Superstructure {
                 spindexer.setDesiredState(Spindexer.STATE.COLLECT);
             }
         } else if (revving) {
-            if (elevator.hasBallInElevator()) {
-                spindexer.setDesiredState(Spindexer.STATE.STOP);
-            } else {
-                spindexer.setDesiredState(Spindexer.STATE.COAST);
-            }
+            spindexer.setDesiredState(Spindexer.STATE.INDEX);
         } else {
-            if (elevator.hasBallInElevator()) {
-                spindexer.setDesiredState(Spindexer.STATE.STOP);
-            } else {
-                spindexer.setDesiredState(Spindexer.STATE.COAST);
-            }
+            spindexer.setDesiredState(Spindexer.STATE.COAST);
         }
     }
 
@@ -178,29 +164,21 @@ public class Superstructure {
         }
     }
 
-    public double getOutput(DistanceManager.SUBSYSTEM subsystem) {
+    public double getDistance(DistanceManager.SUBSYSTEM subsystem) {
         if (useVision) {
             double camDis = camera.getDistance();
             System.out.println("tracked camera distance is . . . " + camDis);
             return distanceManager.getOutput(camDis, subsystem);
         } else {
-            System.out.println("not vision ! - not intended");
+            System.out.println("using neither poseTracking nor vision ! - not intended");
             return -1;
         }
     }
 
-    public double getEstimatedOutput() {
-        var output = distanceManager.getOutput(
-            robotState.getEstimatedDistanceToGoal(),
-            DistanceManager.SUBSYSTEM.SHOOTER
-        );
-        return output;
-    }
-
     public void shootWhileMoving(double currentCamDist) {
         Translation2d chassisVelocity = new Translation2d(
-            robotState.chassis_speeds.vxMetersPerSecond,
-            robotState.chassis_speeds.vyMetersPerSecond
+            robotState.delta_vehicle.vxMetersPerSecond,
+            robotState.delta_vehicle.vyMetersPerSecond
         );
         Translation2d shooterDirection = new Translation2d( //important to make sure that this is a unit vector
             1,
@@ -228,13 +206,7 @@ public class Superstructure {
         double cameraDist = camera.getDistance();
         // 26.56 = radius of center hub - - 5629 = square of height of hub
         double distanceToCenterMeters = Units.inchesToMeters(
-            Constants.kTargetRadius +
-            (
-                Math.sqrt(
-                    (cameraDist * cameraDist) -
-                    (Constants.kHeightFromCamToHub * Constants.kHeightFromCamToHub)
-                )
-            )
+            26.56 + (Math.sqrt((cameraDist * cameraDist) - 5629.5))
         );
 
         Translation2d deltaToHub = new Translation2d(
@@ -247,18 +219,18 @@ public class Superstructure {
                 robotState.field_to_vehicle.getRotation()
             )
         );
-        var diff = Math.abs(
-            Math.hypot(
-                robotState.field_to_vehicle.getX() - newRobotPose.getX(),
-                robotState.field_to_vehicle.getY() - newRobotPose.getY()
-            )
-        );
-        if (diff > minAllowablePoseError && diff < maxAllowablePoseError) {
+        if (
+            Math.abs(
+                Math.hypot(
+                    robotState.field_to_vehicle.getX() - newRobotPose.getX(),
+                    robotState.field_to_vehicle.getY() - newRobotPose.getY()
+                )
+            ) >
+            maxAllowablePoseError
+        ) {
             System.out.println(newRobotPose + " = new robot pose");
             drive.resetOdometry(newRobotPose);
             robotState.field_to_vehicle = newRobotPose;
-        } else {
-            System.out.println("not resetting robot pose! diff = " + diff);
         }
     }
 }

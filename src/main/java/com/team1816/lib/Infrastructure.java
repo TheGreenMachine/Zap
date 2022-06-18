@@ -32,7 +32,7 @@ public class Infrastructure {
         mPigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_6_Accel, 1000);
         pdh =
             new PowerDistribution(
-                1,
+                (int) factory.getConstant("pdID", 1),
                 factory.getConstant("pdIsRev") > 0
                     ? PowerDistribution.ModuleType.kRev
                     : PowerDistribution.ModuleType.kCTRE

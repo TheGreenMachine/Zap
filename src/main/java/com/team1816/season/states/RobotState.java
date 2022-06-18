@@ -18,8 +18,7 @@ public class RobotState {
     public Pose2d field_to_vehicle = Constants.EmptyPose;
     public Pose2d estimated_field_to_vehicle = Constants.EmptyPose;
     public Rotation2d vehicle_to_turret = Constants.EmptyRotation;
-    public Twist2d delta_field_to_vehicle = new Twist2d();
-    public ChassisSpeeds chassis_speeds = new ChassisSpeeds();
+    public ChassisSpeeds delta_vehicle = new ChassisSpeeds();
     public double shooterSpeed = 0; // needs to be remapped - default value
 
     // Superstructure ACTUAL states

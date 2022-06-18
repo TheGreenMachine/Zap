@@ -5,6 +5,7 @@ import static com.team1816.lib.math.DriveConversions.inchesPerSecondToTicksPer10
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
+import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.IPigeonIMU;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.lib.loops.Loop;
@@ -51,6 +52,7 @@ public abstract class Drive
     protected List<Rotation2d> mHeadings;
     protected int mTrajectoryIndex = 0;
     protected boolean trajectoryStarted = false;
+    protected final double tickRatioPerLoop = Constants.kLooperDt / .01d;
 
     // hardware states
     protected String pidSlot = "slot0";
@@ -93,8 +95,6 @@ public abstract class Drive
         public Rotation2d gyro_heading = Constants.EmptyRotation;
         // no_offset = Relative to initial position, unaffected by reset
         public Rotation2d gyro_heading_no_offset = Constants.EmptyRotation;
-        public double drive_distance_inches;
-        public double velocity_inches_per_second = 0;
         public double left_position_ticks;
         public double right_position_ticks;
         public double left_velocity_ticks_per_100ms;
@@ -188,7 +188,9 @@ public abstract class Drive
         mPeriodicIO.desired_heading = mPeriodicIO.desired_pose.getRotation();
     }
 
-    protected abstract void updateOpenLoopPeriodic();
+    protected void updateOpenLoopPeriodic() {}
+
+    protected abstract void updateRobotState();
 
     /**
      * Configure talons for open loop control
@@ -215,16 +217,7 @@ public abstract class Drive
 
     // getters
     @Override
-    public abstract double getKP();
-
-    @Override
-    public abstract double getKI();
-
-    @Override
-    public abstract double getKD();
-
-    @Override
-    public abstract double getKF();
+    public abstract PIDSlotConfiguration getPIDConfig();
 
     @Override
     public double getDesiredHeading() {
@@ -238,10 +231,6 @@ public abstract class Drive
     @Override
     public double getHeadingDegrees() {
         return mPeriodicIO.gyro_heading.getDegrees();
-    }
-
-    public synchronized Rotation2d getHeadingRelativeToInitial() {
-        return mPeriodicIO.gyro_heading_no_offset;
     }
 
     public DriveControlState getControlState() {

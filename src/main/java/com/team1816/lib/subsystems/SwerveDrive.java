@@ -84,26 +84,18 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
         if (RobotBase.isSimulation()) { // calculate rotation based on actualModeStates
             // simulates rotation by computing the rotational motion per interval
-            mPeriodicIO.gyro_heading_no_offset =
-                mPeriodicIO.gyro_heading_no_offset.rotateBy(
-                    new Rotation2d(
-                        mPeriodicIO.chassisSpeed.omegaRadiansPerSecond *
-                        Constants.kLooperDt *
-                        0.01
-                    )
-                );
+            double sim_gyro_offset_radians =
+                mPeriodicIO.chassisSpeed.omegaRadiansPerSecond * tickRatioPerLoop / 10;
             // calculate rotation with gyro drift
             gyroDrift -= 0;
-            mPeriodicIO.gyro_heading_no_offset =
-                mPeriodicIO.gyro_heading_no_offset.rotateBy(
-                    Rotation2d.fromDegrees(gyroDrift)
-                );
+            mPeriodicIO.gyro_heading =
+                mPeriodicIO.gyro_heading
+                    .rotateBy(Rotation2d.fromDegrees(sim_gyro_offset_radians))
+                    .rotateBy(Rotation2d.fromDegrees(gyroDrift));
         } else {
-            mPeriodicIO.gyro_heading_no_offset =
-                Rotation2d.fromDegrees(mInfrastructure.getYaw());
+            mPeriodicIO.gyro_heading = Rotation2d.fromDegrees(mInfrastructure.getYaw());
         }
 
-        mPeriodicIO.gyro_heading = mPeriodicIO.gyro_heading_no_offset;
         swerveOdometry.update(mPeriodicIO.gyro_heading, states);
         updateRobotState();
     }
@@ -143,7 +135,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     // autonomous (trajectory following)
     public void startTrajectory(Trajectory trajectory, List<Rotation2d> headings) {
-        System.out.println("STARTING TRAJECTORY ");
         mPeriodicIO.timestamp = 0;
         mTrajectoryStart = 0;
         mTrajectory = trajectory;
@@ -167,27 +158,15 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
     }
 
-    private void updateRobotState() {
+    @Override
+    public void updateRobotState() {
         robotState.field_to_vehicle = swerveOdometry.getPoseMeters();
-        robotState.chassis_speeds =
+        robotState.delta_vehicle =
             new ChassisSpeeds(
                 mPeriodicIO.chassisSpeed.vxMetersPerSecond,
                 mPeriodicIO.chassisSpeed.vyMetersPerSecond,
                 mPeriodicIO.chassisSpeed.omegaRadiansPerSecond
             );
-        robotState.delta_field_to_vehicle =
-            new Twist2d(
-                // these three may be missing conversions from velocity to change in pose? (meters/s to x-y-theta/updateTime)
-                // not sure because field_to_vehicle is also being plugged directly into field as a value in meters
-                mPeriodicIO.chassisSpeed.vxMetersPerSecond * Constants.kLooperDt,
-                mPeriodicIO.chassisSpeed.vyMetersPerSecond * Constants.kLooperDt,
-                mPeriodicIO.chassisSpeed.omegaRadiansPerSecond * Constants.kLooperDt
-            );
-    }
-
-    @Override
-    protected void updateOpenLoopPeriodic() {
-        // no openLoop update needed
     }
 
     // general setters
@@ -220,8 +199,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     ) {
         if (mDriveControlState != DriveControlState.OPEN_LOOP) {
             mDriveControlState = DriveControlState.OPEN_LOOP;
+            mPeriodicIO.use_heading_controller = use_heading_controller;
         }
-        mPeriodicIO.use_heading_controller = use_heading_controller;
         SwerveDriveSignal signal = swerveDriveHelper.calculateDriveSignal(
             forward,
             strafe,
@@ -310,50 +289,16 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     // getters
     @Override
-    public double getKP() {
+    public PIDSlotConfiguration getPIDConfig() {
         PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
         defaultPIDConfig.kP = 0.0;
-        return (factory.getSubsystem(NAME).implemented)
-            ? factory
-                .getSubsystem(NAME)
-                .swerveModules.drivePID.getOrDefault(pidSlot, defaultPIDConfig)
-                .kP
-            : 0.0;
-    }
-
-    @Override
-    public double getKI() {
-        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
         defaultPIDConfig.kI = 0.0;
-        return (factory.getSubsystem(NAME).implemented)
-            ? factory
-                .getSubsystem(NAME)
-                .swerveModules.drivePID.getOrDefault(pidSlot, defaultPIDConfig)
-                .kI
-            : 0.0;
-    }
-
-    @Override
-    public double getKD() {
-        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
         defaultPIDConfig.kD = 0.0;
-        return (factory.getSubsystem(NAME).implemented)
-            ? factory
-                .getSubsystem(NAME)
-                .swerveModules.drivePID.getOrDefault(pidSlot, defaultPIDConfig)
-                .kD
-            : 0.0;
-    }
-
-    @Override
-    public double getKF() {
-        PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
         defaultPIDConfig.kF = 0.0;
         return (factory.getSubsystem(NAME).implemented)
             ? factory
                 .getSubsystem(NAME)
                 .swerveModules.drivePID.getOrDefault(pidSlot, defaultPIDConfig)
-                .kF
-            : 0.0;
+            : defaultPIDConfig;
     }
 }
