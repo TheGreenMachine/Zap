@@ -27,8 +27,8 @@ public class Turret extends Subsystem implements PidProvider {
     public static final double EAST = 270; // deg - relative to vehicle NOT FIELD
     public static final double NORTH = 180; // deg - relative to vehicle NOT FIELD
     public static final double WEST = 90; // deg - relative to vehicle NOT FIELD
-    public final int REV_LIMIT = ((int) factory.getConstant(NAME, "revLimit"));
-    public final int FWD_LIMIT = ((int) factory.getConstant(NAME, "fwdLimit"));
+    public final int REV_LIMIT = Math.min((int) factory.getConstant(NAME, "fwdLimit"), ((int) factory.getConstant(NAME, "revLimit")));
+    public final int FWD_LIMIT = Math.max((int) factory.getConstant(NAME, "fwdLimit"), ((int) factory.getConstant(NAME, "revLimit")));
     public static int REV_MASK_POINT; // lowest allowed tick value before turret masks (+turretPPR)
     public static int FWD_MASK_POINT; // highest allowed tick value before turret masks (-turretPPR)
     public static int ZERO_OFFSET; // used to make sure turret tick range is non-negative
