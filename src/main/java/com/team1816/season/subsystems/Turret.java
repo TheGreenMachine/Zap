@@ -89,7 +89,15 @@ public class Turret extends Subsystem implements PidProvider {
         turret.setNeutralMode(NeutralMode.Brake);
 
         //there's absolutely no reason to have more than two rotations
-        TURRET_PPR = TRUE_TURRET_PPR * (Math.abs(TURRET_LIMIT_FORWARD-TURRET_LIMIT_REVERSE)/TRUE_TURRET_PPR > 1?2:1); //TUR
+        TURRET_PPR =
+            TRUE_TURRET_PPR *
+            (
+                Math.abs(TURRET_LIMIT_FORWARD - TURRET_LIMIT_REVERSE) /
+                    TRUE_TURRET_PPR >
+                    1
+                    ? 2
+                    : 1
+            ); //TUR
         TURRET_MASK = TURRET_PPR - 1;
 
         pidConfig = factory.getPidSlotConfig(NAME, pidSlot);
@@ -372,7 +380,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     private void autoHomeWithOffset(int offset) {
         var cameraOffset = cameraFollowingOffset();
-        int adj = followingTurretPos + cameraOffset + offset;
+        int adj = followingTurretPos + cameraOffset + (int) (offset * DELTA_X_SCALAR);
         if (adj != followingTurretPos) {
             followingTurretPos = adj;
             outputsChanged = true;
@@ -417,24 +425,41 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     private void positionControl(int rawPos) {
-        int adjPos = (rawPos + ABS_TICKS_SOUTH + ZERO_OFFSET) % TURRET_MASK;// % TRUE_TURRET_MASK; (TUR)
+        int adjPos = (rawPos + ABS_TICKS_SOUTH + ZERO_OFFSET) % TURRET_MASK; // % TRUE_TURRET_MASK; (TUR)
         // we want to mod it by the TRUE_TURRET_MASK only if it's not in the fringes
         /**
          * TUR CHANGES BELOW
          */
-        if(!(Math.abs(TURRET_LIMIT_FORWARD-TURRET_LIMIT_REVERSE)>TRUE_TURRET_PPR)) { // if this is false then TURRET_MASK = TRUE_TURRET_MASK
-            if (!(
-                (
-                    adjPos < (Math.min(TURRET_LIMIT_FORWARD, TURRET_LIMIT_REVERSE)
-                    + (Math.abs(TURRET_LIMIT_REVERSE - TURRET_LIMIT_FORWARD) - TRUE_TURRET_PPR)/2)
-                    && adjPos > (Math.min(TURRET_LIMIT_FORWARD, TURRET_LIMIT_REVERSE))
-                ) || (
-                    adjPos > (Math.max(TURRET_LIMIT_FORWARD, TURRET_LIMIT_REVERSE)
-                    - (Math.abs(TURRET_LIMIT_REVERSE - TURRET_LIMIT_FORWARD) - TRUE_TURRET_PPR)/2)
-                    && adjPos < (Math.max(TURRET_LIMIT_FORWARD, TURRET_LIMIT_REVERSE))
-                ) // everything above should address the fringes
-            )) {
-                adjPos%=TRUE_TURRET_MASK;
+        if (!(Math.abs(TURRET_LIMIT_FORWARD - TURRET_LIMIT_REVERSE) > TRUE_TURRET_PPR)) { // if this is false then TURRET_MASK = TRUE_TURRET_MASK
+            if (
+                !(
+                    (
+                        adjPos <
+                        (
+                            Math.min(TURRET_LIMIT_FORWARD, TURRET_LIMIT_REVERSE) +
+                            (
+                                Math.abs(TURRET_LIMIT_REVERSE - TURRET_LIMIT_FORWARD) -
+                                TRUE_TURRET_PPR
+                            ) /
+                            2
+                        ) &&
+                        adjPos > (Math.min(TURRET_LIMIT_FORWARD, TURRET_LIMIT_REVERSE))
+                    ) ||
+                    (
+                        adjPos >
+                        (
+                            Math.max(TURRET_LIMIT_FORWARD, TURRET_LIMIT_REVERSE) -
+                            (
+                                Math.abs(TURRET_LIMIT_REVERSE - TURRET_LIMIT_FORWARD) -
+                                TRUE_TURRET_PPR
+                            ) /
+                            2
+                        ) &&
+                        adjPos < (Math.max(TURRET_LIMIT_FORWARD, TURRET_LIMIT_REVERSE))
+                    ) // everything above should address the fringes
+                )
+            ) {
+                adjPos %= TRUE_TURRET_MASK;
             }
         }
         /**
