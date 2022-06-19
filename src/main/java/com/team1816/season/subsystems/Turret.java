@@ -40,10 +40,13 @@ public class Turret extends Subsystem implements PidProvider {
     private static final int kPIDVisionIDx = 0;
     public final double DELTA_X_SCALAR;
     public static int TURRET_ABS_ENCODER_PPR = 4096;
+    private final boolean TURRET_DOUBLE_ROTATION;
     public static int TRUE_TURRET_PPR; // (TUR) new edits
     public static int TURRET_PPR; // (TUR) new edits
     private final int TURRET_MASK;
     private final int TRUE_TURRET_MASK;
+    private final int TURRET_LIMIT_FORWARD_BUFFER;
+    private final int TURRET_LIMIT_REVERSE_BUFFER;
     private final double TURRET_ENC_RATIO;
     public final int ALLOWABLE_ERROR_TICKS;
 
@@ -82,6 +85,7 @@ public class Turret extends Subsystem implements PidProvider {
         TURRET_ABS_ENCODER_PPR = (int) factory.getConstant(NAME, "encPPR");
         TRUE_TURRET_PPR = (int) factory.getConstant(NAME, "turretPPR");
         TRUE_TURRET_MASK = TRUE_TURRET_PPR - 1;
+        TURRET_DOUBLE_ROTATION = Math.abs(TURRET_LIMIT_FORWARD - TURRET_LIMIT_REVERSE) / TRUE_TURRET_PPR > 1;
         TURRET_ENC_RATIO = (double) TRUE_TURRET_PPR / TURRET_ABS_ENCODER_PPR;
         ABS_TICKS_SOUTH = ((int) factory.getConstant(NAME, "absPosTicksSouth"));
         HALF_ABS_ENCPPR = TURRET_ABS_ENCODER_PPR / 2 - HALF_ABS_ENCPPR;
@@ -89,16 +93,24 @@ public class Turret extends Subsystem implements PidProvider {
         turret.setNeutralMode(NeutralMode.Brake);
 
         //there's absolutely no reason to have more than two rotations
-        TURRET_PPR =
-            TRUE_TURRET_PPR *
-            (
-                Math.abs(TURRET_LIMIT_FORWARD - TURRET_LIMIT_REVERSE) /
-                    TRUE_TURRET_PPR >
-                    1
-                    ? 2
-                    : 1
-            ); //TUR
+        TURRET_PPR = TURRET_DOUBLE_ROTATION?2:1; //TUR
         TURRET_MASK = TURRET_PPR - 1;
+
+        if(TURRET_LIMIT_FORWARD == Math.min(TURRET_LIMIT_FORWARD, TURRET_LIMIT_REVERSE)) {
+            TURRET_LIMIT_FORWARD_BUFFER = TURRET_LIMIT_FORWARD
+                + (Math.abs(TURRET_LIMIT_REVERSE - TURRET_LIMIT_FORWARD) -
+                    TRUE_TURRET_PPR) / 2;
+            TURRET_LIMIT_REVERSE_BUFFER = TURRET_LIMIT_REVERSE
+                - (Math.abs(TURRET_LIMIT_REVERSE - TURRET_LIMIT_FORWARD) -
+                    TRUE_TURRET_PPR) / 2;
+        } else {
+            TURRET_LIMIT_FORWARD_BUFFER = TURRET_LIMIT_FORWARD
+                - (Math.abs(TURRET_LIMIT_REVERSE - TURRET_LIMIT_FORWARD) -
+                TRUE_TURRET_PPR) / 2;
+            TURRET_LIMIT_REVERSE_BUFFER = TURRET_LIMIT_REVERSE
+                + (Math.abs(TURRET_LIMIT_REVERSE - TURRET_LIMIT_FORWARD) -
+                TRUE_TURRET_PPR) / 2;
+        }
 
         pidConfig = factory.getPidSlotConfig(NAME, pidSlot);
         ALLOWABLE_ERROR_TICKS = pidConfig.allowableError.intValue();
@@ -430,34 +442,14 @@ public class Turret extends Subsystem implements PidProvider {
         /**
          * TUR CHANGES BELOW
          */
-        if (!(Math.abs(TURRET_LIMIT_FORWARD - TURRET_LIMIT_REVERSE) > TRUE_TURRET_PPR)) { // if this is false then TURRET_MASK = TRUE_TURRET_MASK
-            if (
-                !(
-                    (
-                        adjPos <
-                        (
-                            Math.min(TURRET_LIMIT_FORWARD, TURRET_LIMIT_REVERSE) +
-                            (
-                                Math.abs(TURRET_LIMIT_REVERSE - TURRET_LIMIT_FORWARD) -
-                                TRUE_TURRET_PPR
-                            ) /
-                            2
-                        ) &&
-                        adjPos > (Math.min(TURRET_LIMIT_FORWARD, TURRET_LIMIT_REVERSE))
-                    ) ||
-                    (
-                        adjPos >
-                        (
-                            Math.max(TURRET_LIMIT_FORWARD, TURRET_LIMIT_REVERSE) -
-                            (
-                                Math.abs(TURRET_LIMIT_REVERSE - TURRET_LIMIT_FORWARD) -
-                                TRUE_TURRET_PPR
-                            ) /
-                            2
-                        ) &&
-                        adjPos < (Math.max(TURRET_LIMIT_FORWARD, TURRET_LIMIT_REVERSE))
-                    ) // everything above should address the fringes
-                )
+        if (!TURRET_DOUBLE_ROTATION) { // if this is false then TURRET_MASK = TRUE_TURRET_MASK
+            if (!(
+                    adjPos < (Math.min(TURRET_LIMIT_FORWARD_BUFFER, TURRET_LIMIT_REVERSE_BUFFER)) &&
+                    adjPos > (Math.min(TURRET_LIMIT_FORWARD, TURRET_LIMIT_REVERSE))
+                ) && !(
+                    adjPos > (Math.max(TURRET_LIMIT_FORWARD_BUFFER, TURRET_LIMIT_REVERSE_BUFFER)) &&
+                    adjPos < (Math.max(TURRET_LIMIT_FORWARD, TURRET_LIMIT_REVERSE))
+                ) // everything above should address the fringes
             ) {
                 adjPos %= TRUE_TURRET_MASK;
             }
