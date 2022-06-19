@@ -446,7 +446,7 @@ public class Turret extends Subsystem implements PidProvider {
         /**
          * TUR CHANGES BELOW
          */
-        if (!TURRET_DOUBLE_ROTATION) { // if this is false then TURRET_MASK = TRUE_TURRET_MASK
+        if (TURRET_DOUBLE_ROTATION) { // if this is false then TURRET_MASK = TRUE_TURRET_MASK
             if (!(
                     adjPos < (Math.min(TURRET_BUFFER_FORWARD, TURRET_BUFFER_REVERSE)) &&
                     adjPos > (Math.min(TURRET_LIMIT_FORWARD, TURRET_LIMIT_REVERSE))
