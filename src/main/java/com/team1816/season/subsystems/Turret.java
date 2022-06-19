@@ -89,7 +89,7 @@ public class Turret extends Subsystem implements PidProvider {
         turret.setNeutralMode(NeutralMode.Brake);
 
         //there's absolutely no reason to have more than two rotations
-        TURRET_PPR = TRUE_TURRET_PPR * (Math.abs(TURRET_LIMIT_FORWARD-TURRET_LIMIT_REVERSE)/TRUE_TURRET_PPR + 1>2?2:1); //TUR
+        TURRET_PPR = TRUE_TURRET_PPR * (Math.abs(TURRET_LIMIT_FORWARD-TURRET_LIMIT_REVERSE)/TRUE_TURRET_PPR > 1?2:1); //TUR
         TURRET_MASK = TURRET_PPR - 1;
 
         pidConfig = factory.getPidSlotConfig(NAME, pidSlot);
