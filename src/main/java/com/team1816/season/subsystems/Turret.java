@@ -432,7 +432,7 @@ public class Turret extends Subsystem implements PidProvider {
                     adjPos > (Math.max(TURRET_LIMIT_FORWARD, TURRET_LIMIT_REVERSE)
                     - (Math.abs(TURRET_LIMIT_REVERSE - TURRET_LIMIT_FORWARD) - TRUE_TURRET_PPR)/2)
                     && adjPos < (Math.max(TURRET_LIMIT_FORWARD, TURRET_LIMIT_REVERSE))
-                ) //This should adress the fringes
+                ) // everything above should address the fringes
             )) {
                 adjPos%=TRUE_TURRET_MASK;
             }
