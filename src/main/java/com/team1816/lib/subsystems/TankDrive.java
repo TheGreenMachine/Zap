@@ -106,14 +106,11 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     public synchronized void writeToHardware() { // sets the demands for hardware from the inputs provided
         if (mDriveControlState == DriveControlState.OPEN_LOOP) {
             if (isSlowMode) {
-                mLeftMaster.set(ControlMode.MotionMagic, mPeriodicIO.left_demand * 0.5);
-                mRightMaster.set(
-                    ControlMode.MotionMagic,
-                    mPeriodicIO.right_demand * 0.5
-                );
+                mLeftMaster.set(ControlMode.PercentOutput, mPeriodicIO.left_demand * 0.5);
+                mRightMaster.set(ControlMode.PercentOutput, mPeriodicIO.right_demand * 0.5);
             } else {
-                mLeftMaster.set(ControlMode.MotionMagic, mPeriodicIO.left_demand);
-                mRightMaster.set(ControlMode.MotionMagic, mPeriodicIO.right_demand);
+                mLeftMaster.set(ControlMode.PercentOutput, mPeriodicIO.left_demand);
+                mRightMaster.set(ControlMode.PercentOutput, mPeriodicIO.right_demand);
             }
         } else {
             mLeftMaster.set(ControlMode.Velocity, mPeriodicIO.left_demand);
