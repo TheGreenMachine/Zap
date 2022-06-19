@@ -47,7 +47,7 @@ subsystems:
             rpmEpsilonCheck: 60
             deltaXScalar: 150
     shooter:
-        implemented: true
+        implemented: false
         falcons:
             shooterMain: 21
             shooterFollower: -1
