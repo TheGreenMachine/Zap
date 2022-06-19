@@ -43,10 +43,10 @@ public class Turret extends Subsystem implements PidProvider {
     private final boolean TURRET_DOUBLE_ROTATION;
     public static int TRUE_TURRET_PPR; // (TUR) new edits
     public static int TURRET_PPR; // (TUR) new edits
-    private final int TURRET_MASK;
     private final int TRUE_TURRET_MASK;
-    private final int TURRET_LIMIT_FORWARD_BUFFER;
-    private final int TURRET_LIMIT_REVERSE_BUFFER;
+    private final int TURRET_MASK;
+    private final int TURRET_BUFFER_FORWARD;
+    private final int TURRET_BUFFER_REVERSE;
     private final double TURRET_ENC_RATIO;
     public final int ALLOWABLE_ERROR_TICKS;
 
@@ -97,17 +97,17 @@ public class Turret extends Subsystem implements PidProvider {
         TURRET_MASK = TURRET_PPR - 1;
 
         if(TURRET_LIMIT_FORWARD == Math.min(TURRET_LIMIT_FORWARD, TURRET_LIMIT_REVERSE)) {
-            TURRET_LIMIT_FORWARD_BUFFER = TURRET_LIMIT_FORWARD
+            TURRET_BUFFER_FORWARD = TURRET_LIMIT_FORWARD
                 + (Math.abs(TURRET_LIMIT_REVERSE - TURRET_LIMIT_FORWARD) -
                     TRUE_TURRET_PPR) / 2;
-            TURRET_LIMIT_REVERSE_BUFFER = TURRET_LIMIT_REVERSE
+            TURRET_BUFFER_REVERSE = TURRET_LIMIT_REVERSE
                 - (Math.abs(TURRET_LIMIT_REVERSE - TURRET_LIMIT_FORWARD) -
                     TRUE_TURRET_PPR) / 2;
         } else {
-            TURRET_LIMIT_FORWARD_BUFFER = TURRET_LIMIT_FORWARD
+            TURRET_BUFFER_FORWARD = TURRET_LIMIT_FORWARD
                 - (Math.abs(TURRET_LIMIT_REVERSE - TURRET_LIMIT_FORWARD) -
                 TRUE_TURRET_PPR) / 2;
-            TURRET_LIMIT_REVERSE_BUFFER = TURRET_LIMIT_REVERSE
+            TURRET_BUFFER_REVERSE = TURRET_LIMIT_REVERSE
                 + (Math.abs(TURRET_LIMIT_REVERSE - TURRET_LIMIT_FORWARD) -
                 TRUE_TURRET_PPR) / 2;
         }
@@ -444,10 +444,10 @@ public class Turret extends Subsystem implements PidProvider {
          */
         if (!TURRET_DOUBLE_ROTATION) { // if this is false then TURRET_MASK = TRUE_TURRET_MASK
             if (!(
-                    adjPos < (Math.min(TURRET_LIMIT_FORWARD_BUFFER, TURRET_LIMIT_REVERSE_BUFFER)) &&
+                    adjPos < (Math.min(TURRET_BUFFER_FORWARD, TURRET_BUFFER_REVERSE)) &&
                     adjPos > (Math.min(TURRET_LIMIT_FORWARD, TURRET_LIMIT_REVERSE))
                 ) && !(
-                    adjPos > (Math.max(TURRET_LIMIT_FORWARD_BUFFER, TURRET_LIMIT_REVERSE_BUFFER)) &&
+                    adjPos > (Math.max(TURRET_BUFFER_FORWARD, TURRET_BUFFER_REVERSE)) &&
                     adjPos < (Math.max(TURRET_LIMIT_FORWARD, TURRET_LIMIT_REVERSE))
                 ) // everything above should address the fringes
             ) {
