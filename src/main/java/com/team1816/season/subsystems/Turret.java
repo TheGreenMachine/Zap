@@ -40,8 +40,10 @@ public class Turret extends Subsystem implements PidProvider {
     private static final int kPIDVisionIDx = 0;
     public final double DELTA_X_SCALAR;
     public static int TURRET_ABS_ENCODER_PPR = 4096;
-    public static int TURRET_PPR;
+    public static int TRUE_TURRET_PPR; // (TUR) new edits
+    public static int TURRET_PPR; // (TUR) new edits
     private final int TURRET_MASK;
+    private final int TRUE_TURRET_MASK;
     private final double TURRET_ENC_RATIO;
     public final int ALLOWABLE_ERROR_TICKS;
 
@@ -78,13 +80,17 @@ public class Turret extends Subsystem implements PidProvider {
         this.turret = factory.getMotor(NAME, "turret");
         DELTA_X_SCALAR = factory.getConstant(NAME, "deltaXScalar", 1);
         TURRET_ABS_ENCODER_PPR = (int) factory.getConstant(NAME, "encPPR");
-        TURRET_PPR = (int) factory.getConstant(NAME, "turretPPR");
-        TURRET_MASK = TURRET_PPR - 1;
-        TURRET_ENC_RATIO = (double) TURRET_PPR / TURRET_ABS_ENCODER_PPR;
+        TRUE_TURRET_PPR = (int) factory.getConstant(NAME, "turretPPR");
+        TRUE_TURRET_MASK = TRUE_TURRET_PPR - 1;
+        TURRET_ENC_RATIO = (double) TRUE_TURRET_PPR / TURRET_ABS_ENCODER_PPR;
         ABS_TICKS_SOUTH = ((int) factory.getConstant(NAME, "absPosTicksSouth"));
         HALF_ABS_ENCPPR = TURRET_ABS_ENCODER_PPR / 2 - HALF_ABS_ENCPPR;
         ZERO_OFFSET = (int) factory.getConstant(NAME, "zeroOffset"); //add offset to keep turret in positive range
         turret.setNeutralMode(NeutralMode.Brake);
+
+        //there's absolutely no reason to have more than two rotations
+        TURRET_PPR = TRUE_TURRET_PPR * (Math.abs(TURRET_LIMIT_FORWARD-TURRET_LIMIT_REVERSE)/TRUE_TURRET_PPR + 1>2?2:1); //TUR
+        TURRET_MASK = TURRET_PPR - 1;
 
         pidConfig = factory.getPidSlotConfig(NAME, pidSlot);
         ALLOWABLE_ERROR_TICKS = pidConfig.allowableError.intValue();
@@ -411,9 +417,31 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     private void positionControl(int rawPos) {
-        int adjPos = (rawPos + ABS_TICKS_SOUTH + ZERO_OFFSET) % TURRET_MASK;
+        int adjPos = (rawPos + ABS_TICKS_SOUTH + ZERO_OFFSET) % TURRET_MASK;// % TRUE_TURRET_MASK; (TUR)
+        // we want to mod it by the TRUE_TURRET_MASK only if it's not in the fringes
+        /**
+         * TUR CHANGES BELOW
+         */
+        if(!(Math.abs(TURRET_LIMIT_FORWARD-TURRET_LIMIT_REVERSE)>TRUE_TURRET_PPR)) { // if this is false then TURRET_MASK = TRUE_TURRET_MASK
+            if (!(
+                (
+                    adjPos < (Math.min(TURRET_LIMIT_FORWARD, TURRET_LIMIT_REVERSE)
+                    + (Math.abs(TURRET_LIMIT_REVERSE - TURRET_LIMIT_FORWARD) - TRUE_TURRET_PPR)/2)
+                    && adjPos > (Math.min(TURRET_LIMIT_FORWARD, TURRET_LIMIT_REVERSE))
+                ) || (
+                    adjPos > (Math.max(TURRET_LIMIT_FORWARD, TURRET_LIMIT_REVERSE)
+                    - (Math.abs(TURRET_LIMIT_REVERSE - TURRET_LIMIT_FORWARD) - TRUE_TURRET_PPR)/2)
+                    && adjPos < (Math.max(TURRET_LIMIT_FORWARD, TURRET_LIMIT_REVERSE))
+                ) //This should adress the fringes
+            )) {
+                adjPos%=TRUE_TURRET_MASK;
+            }
+        }
+        /**
+         * TUR CHANGES ABOVE
+         */
         if (adjPos < 0) {
-            adjPos += TURRET_MASK;
+            adjPos += TRUE_TURRET_PPR; //Shouldn't this be turret ppr?
         }
         if (outputsChanged) {
             turret.set(com.ctre.phoenix.motorcontrol.ControlMode.Position, adjPos);

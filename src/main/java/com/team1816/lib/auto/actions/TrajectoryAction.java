@@ -13,6 +13,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import java.util.List;
@@ -40,7 +41,7 @@ public class TrajectoryAction implements Action {
                 new RamseteCommand(
                     trajectory,
                     mDrive::getPose,
-                    new RamseteController(),
+                    new RamseteController(), //defaults of
                     new DifferentialDriveKinematics(
                         Units.inchesToMeters(Constants.kDriveWheelTrackWidthInches)
                     ),
