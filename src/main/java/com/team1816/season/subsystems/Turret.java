@@ -95,21 +95,25 @@ public class Turret extends Subsystem implements PidProvider {
         //there's absolutely no reason to have more than two rotations
         TURRET_PPR = TURRET_DOUBLE_ROTATION?2:1; //TUR
         TURRET_MASK = TURRET_PPR - 1;
-
-        if(TURRET_LIMIT_FORWARD == Math.min(TURRET_LIMIT_FORWARD, TURRET_LIMIT_REVERSE)) {
-            TURRET_BUFFER_FORWARD = TURRET_LIMIT_FORWARD
-                + (Math.abs(TURRET_LIMIT_REVERSE - TURRET_LIMIT_FORWARD) -
+        if(TURRET_DOUBLE_ROTATION) {
+            if (TURRET_LIMIT_FORWARD == Math.min(TURRET_LIMIT_FORWARD, TURRET_LIMIT_REVERSE)) {
+                TURRET_BUFFER_FORWARD = TURRET_LIMIT_FORWARD
+                    + (Math.abs(TURRET_LIMIT_REVERSE - TURRET_LIMIT_FORWARD) -
                     TRUE_TURRET_PPR) / 2;
-            TURRET_BUFFER_REVERSE = TURRET_LIMIT_REVERSE
-                - (Math.abs(TURRET_LIMIT_REVERSE - TURRET_LIMIT_FORWARD) -
+                TURRET_BUFFER_REVERSE = TURRET_LIMIT_REVERSE
+                    - (Math.abs(TURRET_LIMIT_REVERSE - TURRET_LIMIT_FORWARD) -
                     TRUE_TURRET_PPR) / 2;
+            } else {
+                TURRET_BUFFER_FORWARD = TURRET_LIMIT_FORWARD
+                    - (Math.abs(TURRET_LIMIT_REVERSE - TURRET_LIMIT_FORWARD) -
+                    TRUE_TURRET_PPR) / 2;
+                TURRET_BUFFER_REVERSE = TURRET_LIMIT_REVERSE
+                    + (Math.abs(TURRET_LIMIT_REVERSE - TURRET_LIMIT_FORWARD) -
+                    TRUE_TURRET_PPR) / 2;
+            }
         } else {
-            TURRET_BUFFER_FORWARD = TURRET_LIMIT_FORWARD
-                - (Math.abs(TURRET_LIMIT_REVERSE - TURRET_LIMIT_FORWARD) -
-                TRUE_TURRET_PPR) / 2;
-            TURRET_BUFFER_REVERSE = TURRET_LIMIT_REVERSE
-                + (Math.abs(TURRET_LIMIT_REVERSE - TURRET_LIMIT_FORWARD) -
-                TRUE_TURRET_PPR) / 2;
+            TURRET_BUFFER_FORWARD = TURRET_LIMIT_FORWARD;
+            TURRET_BUFFER_REVERSE = TURRET_LIMIT_REVERSE;
         }
 
         pidConfig = factory.getPidSlotConfig(NAME, pidSlot);
