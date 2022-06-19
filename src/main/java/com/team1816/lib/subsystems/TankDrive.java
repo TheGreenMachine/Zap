@@ -107,7 +107,10 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         if (mDriveControlState == DriveControlState.OPEN_LOOP) {
             if (isSlowMode) {
                 mLeftMaster.set(ControlMode.PercentOutput, mPeriodicIO.left_demand * 0.5);
-                mRightMaster.set(ControlMode.PercentOutput, mPeriodicIO.right_demand * 0.5);
+                mRightMaster.set(
+                    ControlMode.PercentOutput,
+                    mPeriodicIO.right_demand * 0.5
+                );
             } else {
                 mLeftMaster.set(ControlMode.PercentOutput, mPeriodicIO.left_demand);
                 mRightMaster.set(ControlMode.PercentOutput, mPeriodicIO.right_demand);
