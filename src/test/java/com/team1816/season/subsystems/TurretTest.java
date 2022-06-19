@@ -181,10 +181,7 @@ public class TurretTest {
         mTurret = new Turret();
         mTurret.zeroSensors();
         Assert.assertEquals(
-            mTurret.TURRET_PPR /
-                2.0 -
-                mTurret.TURRET_PPR ==
-                mTurret.TURRET_ABS_ENCODER_PPR
+            mTurret.TURRET_PPR / 2.0 - mTurret.TURRET_PPR == mTurret.ABS_PPR
                 ? 0
                 : absInit,
             mTurret.getActualTurretPositionTicks(),

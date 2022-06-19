@@ -25,7 +25,7 @@ public class TwoBallModeC extends AutoModeBase {
         runAction(
             new SeriesAction(
                 new ParallelAction(
-                    new TurretAction(Turret.CARDINAL_NORTH - 5), // to be changed
+                    new TurretAction(Turret.NORTH - 5), // to be changed
                     new CollectAction(true),
                     new RampUpShooterAction(Shooter.MID_VELOCITY) //8650
                 ),

@@ -25,7 +25,7 @@ public class OnceBallC_BorderMode extends AutoModeBase {
         runAction(
             new SeriesAction(
                 new ParallelAction(
-                    new TurretAction(Turret.CARDINAL_NORTH - 4), // to be changed
+                    new TurretAction(Turret.NORTH - 4), // to be changed
                     new RampUpShooterAction(Shooter.MID_VELOCITY)
                 ),
                 new WaitAction(6),

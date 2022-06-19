@@ -295,7 +295,7 @@ public class Robot extends TimedRobot {
                     createAction(
                         mControlBoard::getZeroPose,
                         () -> {
-                            mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
+                            mTurret.setTurretAngle(Turret.SOUTH);
                             mDrive.zeroSensors(Constants.ZeroPose);
                         }
                     ),
@@ -320,7 +320,7 @@ public class Robot extends TimedRobot {
                                     defaultTurretControlMode ==
                                     Turret.ControlMode.CENTER_FOLLOWING
                                 ) {
-                                    mTurret.setFollowingAngle(Turret.CARDINAL_SOUTH);
+                                    mTurret.setFollowingAngle(Turret.SOUTH);
                                 }
                                 mTurret.setControlMode(defaultTurretControlMode);
                             }
@@ -362,13 +362,11 @@ public class Robot extends TimedRobot {
                     createAction(mControlBoard::getHood, mShooter::setHood),
                     createHoldAction(
                         mControlBoard::getTurretJogLeft,
-                        moving ->
-                            mTurret.setTurretSpeed(moving ? Turret.TURRET_JOG_SPEED : 0)
+                        moving -> mTurret.setTurretSpeed(moving ? Turret.JOG_SPEED : 0)
                     ),
                     createHoldAction(
                         mControlBoard::getTurretJogRight,
-                        moving ->
-                            mTurret.setTurretSpeed(moving ? -Turret.TURRET_JOG_SPEED : 0)
+                        moving -> mTurret.setTurretSpeed(moving ? -Turret.JOG_SPEED : 0)
                     ),
                     createHoldAction(
                         mControlBoard::getClimberUp,
@@ -384,10 +382,10 @@ public class Robot extends TimedRobot {
                         mControlBoard::getAutoClimb,
                         () -> {
                             if (mClimber.getCurrentStage() == 0) {
-                                mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
+                                mTurret.setTurretAngle(Turret.SOUTH);
                                 mSuperstructure.setStopped(true);
                             } else {
-                                mTurret.setTurretAngle(Turret.CARDINAL_SOUTH - 30);
+                                mTurret.setTurretAngle(Turret.SOUTH - 30);
                             }
 
                             mClimber.incrementClimberStage();
@@ -465,7 +463,7 @@ public class Robot extends TimedRobot {
 
             mEnabledLooper.start();
 
-            mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
+            mTurret.setTurretAngle(Turret.SOUTH);
             mTurret.setControlMode(defaultTurretControlMode);
 
             mSuperstructure.setStopped(false);
