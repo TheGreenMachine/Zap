@@ -375,8 +375,7 @@ public class Turret extends Subsystem implements PidProvider {
         int fieldTickOffset = fieldFollowingOffset();
         int centerOffset = centerFollowingOffset();
 
-        int adj =
-            (desiredPos + fieldTickOffset + centerOffset + visionCorroboration);
+        int adj = (desiredPos + fieldTickOffset + centerOffset + visionCorroboration);
         if (adj != followingPos) {
             followingPos = adj;
             outputsChanged = true;
