@@ -27,11 +27,18 @@ public class Turret extends Subsystem implements PidProvider {
     public static final double EAST = 270; // deg - relative to vehicle NOT FIELD
     public static final double NORTH = 180; // deg - relative to vehicle NOT FIELD
     public static final double WEST = 90; // deg - relative to vehicle NOT FIELD
-    public final int REV_LIMIT = Math.min((int) factory.getConstant(NAME, "fwdLimit"), ((int) factory.getConstant(NAME, "revLimit")));
-    public final int FWD_LIMIT = Math.max((int) factory.getConstant(NAME, "fwdLimit"), ((int) factory.getConstant(NAME, "revLimit")));
+    public final int REV_LIMIT = Math.min(
+        (int) factory.getConstant(NAME, "fwdLimit"),
+        ((int) factory.getConstant(NAME, "revLimit"))
+    );
+    public final int FWD_LIMIT = Math.max(
+        (int) factory.getConstant(NAME, "fwdLimit"),
+        ((int) factory.getConstant(NAME, "revLimit"))
+    );
     public static int REV_MASK_POINT; // lowest allowed tick value before turret masks (+turretPPR)
     public static int FWD_MASK_POINT; // highest allowed tick value before turret masks (-turretPPR)
     public static int ZERO_OFFSET; // used to make sure turret tick range is non-negative
+    public final int ABS_TICKS_SOUTH; // abs encoder count at cardinal SOUTH
     public static int ABS_PPR;
     public static int TURRET_PPR;
     private final double ENC_RATIO;
@@ -75,6 +82,7 @@ public class Turret extends Subsystem implements PidProvider {
         DELTA_X_SCALAR = factory.getConstant(NAME, "deltaXScalar", 1);
 
         ZERO_OFFSET = (int) factory.getConstant(NAME, "zeroOffset"); //add offset to keep turret in positive range
+        ABS_TICKS_SOUTH = ((int) factory.getConstant(NAME, "absPosTicksSouth"));
         ABS_PPR = (int) factory.getConstant(NAME, "encPPR");
         TURRET_PPR = (int) factory.getConstant(NAME, "turretPPR");
         ENC_RATIO = (double) TURRET_PPR / ABS_PPR;
@@ -239,7 +247,13 @@ public class Turret extends Subsystem implements PidProvider {
 
     // this is what is eventually referred to in readFromHardware, so we're undoing conversions here
     public double getActualTurretPositionTicks() {
-        return ((turret.getSelectedSensorPosition(kPrimaryCloseLoop) - ZERO_OFFSET));
+        return (
+            (
+                turret.getSelectedSensorPosition(kPrimaryCloseLoop) -
+                ABS_TICKS_SOUTH -
+                ZERO_OFFSET
+            )
+        );
     }
 
     public double getTargetPosition() {
@@ -401,7 +415,7 @@ public class Turret extends Subsystem implements PidProvider {
             } else if (rawPos < REV_MASK_POINT) {
                 rawPos += TURRET_PPR;
             }
-            int adjPos = (rawPos + ZERO_OFFSET);
+            int adjPos = (rawPos + ABS_TICKS_SOUTH + ZERO_OFFSET);
 
             turret.set(com.ctre.phoenix.motorcontrol.ControlMode.Position, adjPos);
             outputsChanged = false;
