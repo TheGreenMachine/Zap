@@ -35,8 +35,8 @@ public class Turret extends Subsystem implements PidProvider {
         (int) factory.getConstant(NAME, "fwdLimit"),
         ((int) factory.getConstant(NAME, "revLimit"))
     );
-    public static int REV_MASK_POINT; // lowest allowed tick value before turret masks (+turretPPR)
-    public static int FWD_MASK_POINT; // highest allowed tick value before turret masks (-turretPPR)
+    public static int REV_WRAPAROUND_POINT; // lowest allowed tick value before turret masks (+turretPPR)
+    public static int FWD_WRAPAROUND_POINT; // highest allowed tick value before turret masks (-turretPPR)
     public static int ZERO_OFFSET; // used to make sure turret tick range is non-negative
     public final int ABS_TICKS_SOUTH; // abs encoder count at cardinal SOUTH
     public static int ABS_PPR;
@@ -88,8 +88,8 @@ public class Turret extends Subsystem implements PidProvider {
         ENC_RATIO = (double) TURRET_PPR / ABS_PPR;
 
         int MASK = Math.abs((REV_LIMIT + TURRET_PPR) - (FWD_LIMIT)) / 2; // this value is truncated
-        FWD_MASK_POINT = FWD_LIMIT + MASK;
-        REV_MASK_POINT = REV_LIMIT - MASK;
+        FWD_WRAPAROUND_POINT = FWD_LIMIT + MASK;
+        REV_WRAPAROUND_POINT = REV_LIMIT - MASK;
 
         turret.setNeutralMode(NeutralMode.Brake);
 
@@ -410,9 +410,9 @@ public class Turret extends Subsystem implements PidProvider {
 
     private void positionControl(int rawPos) {
         if (outputsChanged) {
-            if (rawPos > FWD_MASK_POINT) {
+            if (rawPos > FWD_WRAPAROUND_POINT) {
                 rawPos -= TURRET_PPR;
-            } else if (rawPos < REV_MASK_POINT) {
+            } else if (rawPos < REV_WRAPAROUND_POINT) {
                 rawPos += TURRET_PPR;
             }
             int adjPos = (rawPos + ABS_TICKS_SOUTH + ZERO_OFFSET);
