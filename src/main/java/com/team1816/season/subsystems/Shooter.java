@@ -94,6 +94,13 @@ public class Shooter extends Subsystem implements PidProvider {
     }
 
     public boolean isVelocityNearTarget() {
+        if (!isImplemented()) {
+            /*
+            this is here to let us use rampUpShooterAction or getShoot on a robot that doesn't have a shooter without
+            having the robot freeze up (ie: a path won't continue until the shooter has finished ramping up)
+            */
+            return true;
+        }
         return (
             Math.abs(desiredVelocity - actualVelocity) < VELOCITY_THRESHOLD &&
             desiredState != STATE.COASTING
