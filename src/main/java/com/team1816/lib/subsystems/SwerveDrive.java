@@ -85,7 +85,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         if (RobotBase.isSimulation()) { // calculate rotation based on actualModeStates
             // simulates rotation by computing the rotational motion per interval
             double sim_gyro_offset_radians =
-                mPeriodicIO.chassisSpeed.omegaRadiansPerSecond * tickRatioPerLoop / 10;
+                mPeriodicIO.chassisSpeed.omegaRadiansPerSecond * tickRatioPerLoop;
             // calculate rotation with gyro drift
             gyroDrift -= 0;
             mPeriodicIO.gyro_heading =
@@ -284,7 +284,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             }
         }
 
-        return modulesPassed; // not actually doing anything
+        return modulesPassed;
     }
 
     // getters

@@ -164,13 +164,14 @@ public class Constants {
         "maxVelOpenLoop"
     );
 
-    public static final double kPXController = 10;
-    public static final double kPYController = 10;
-    public static final double kPThetaController = 5; // find why this is so big (600)
+    public static final double kPXController = 1;
+    public static final double kPYController = 1;
+    public static final double kPThetaController = 4;
     public static final double kIThetaController = 0;
     public static final double kDThetaController = 0;
     public static final double kMaxAngularSpeed = factory.getConstant("maxRotVel"); // rad/sec
-    public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI;
+    public static final double kMaxAngularAccelerationRadiansPerSecondSquared =
+        2 * Math.PI;
 
     // Constraint for the motion profilied robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
