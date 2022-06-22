@@ -469,6 +469,10 @@ public class RobotFactory {
         return getSubsystem(subsystemName).constants.get(name);
     }
 
+    public PIDSlotConfiguration getPidSlotConfig(String subsystemName) {
+        return getPidSlotConfig(subsystemName, "slot0", PIDConfig.Generic);
+    }
+
     public PIDSlotConfiguration getPidSlotConfig(String subsystemName, String slot) {
         return getPidSlotConfig(subsystemName, slot, PIDConfig.Generic);
     }

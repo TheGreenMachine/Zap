@@ -31,7 +31,6 @@ public class Shooter extends Subsystem implements PidProvider {
     private double actualShooterVelocity;
 
     // Constants
-    private final String pidSlot = "slot0";
     private final PIDSlotConfiguration pidConfig;
     // we may not need these 4 constants in the near future - still need to move into constructor
     public static final int NEAR_VELOCITY = (int) factory.getConstant(NAME, "nearVel"); // Initiation line
@@ -69,7 +68,7 @@ public class Shooter extends Subsystem implements PidProvider {
         shooterMain.setSensorPhase(false);
         configCurrentLimits(40/* amps */);
 
-        pidConfig = factory.getPidSlotConfig(NAME, pidSlot);
+        pidConfig = factory.getPidSlotConfig(NAME);
         VELOCITY_THRESHOLD = pidConfig.allowableError.intValue();
     }
 

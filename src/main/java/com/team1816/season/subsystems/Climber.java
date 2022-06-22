@@ -40,7 +40,6 @@ public class Climber extends Subsystem {
     private boolean outputsChanged = false;
 
     private final double ALLOWABLE_ERROR;
-    private final String pidSlot = "slot0";
 
     public Climber() {
         super(NAME);
@@ -51,7 +50,7 @@ public class Climber extends Subsystem {
         topClamp = factory.getSolenoid(NAME, "topClamp");
         bottomClamp = factory.getSolenoid(NAME, "bottomClamp");
 
-        PIDSlotConfiguration config = factory.getPidSlotConfig(NAME, pidSlot);
+        PIDSlotConfiguration config = factory.getPidSlotConfig(NAME);
 
         ALLOWABLE_ERROR = config.allowableError;
 

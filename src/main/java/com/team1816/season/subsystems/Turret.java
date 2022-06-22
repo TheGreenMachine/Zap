@@ -47,7 +47,6 @@ public class Turret extends Subsystem implements PidProvider {
     private static final int kPrimaryCloseLoop = 0;
     private static final int kPIDGyroIDx = 0;
     private static final int kPIDVisionIDx = 0;
-    private final String pidSlot = "slot0";
     private final PIDSlotConfiguration pidConfig;
 
     // Components
@@ -88,7 +87,7 @@ public class Turret extends Subsystem implements PidProvider {
         ENC_RATIO = (double) TURRET_PPR / ABS_PPR;
 
         int MASK = 0;
-        if(Math.abs(REV_LIMIT - FWD_LIMIT) > TURRET_PPR){
+        if (Math.abs(REV_LIMIT - FWD_LIMIT) > TURRET_PPR) {
             MASK = Math.abs((REV_LIMIT + TURRET_PPR) - (FWD_LIMIT)) / 2; // this value is truncated
         }
         FWD_WRAPAROUND_POINT = FWD_LIMIT + MASK;
@@ -98,7 +97,7 @@ public class Turret extends Subsystem implements PidProvider {
 
         // Position Control
         double peakOutput = 0.75;
-        pidConfig = factory.getPidSlotConfig(NAME, pidSlot);
+        pidConfig = factory.getPidSlotConfig(NAME);
         turret.configPeakOutputForward(peakOutput, Constants.kCANTimeoutMs);
         turret.configNominalOutputForward(0, Constants.kCANTimeoutMs);
         turret.configNominalOutputReverse(0, Constants.kCANTimeoutMs);

@@ -5,7 +5,6 @@ import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.subsystems.Subsystem;
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -29,13 +28,12 @@ public class Elevator extends Subsystem {
     private final double INTAKE;
     private final double FIRE;
     private final boolean isVelocity;
-    private final String pidSlot = "slot0";
 
     public Elevator() {
         super(NAME);
         this.elevatorMotor = factory.getMotor(NAME, "elevator");
 
-        PIDSlotConfiguration config = factory.getPidSlotConfig(NAME, pidSlot);
+        PIDSlotConfiguration config = factory.getPidSlotConfig(NAME);
         this.ballSensor =
             new DigitalInput((int) factory.getConstant(NAME, "ballSensor", 0));
 
@@ -118,7 +116,6 @@ public class Elevator extends Subsystem {
                 } else if (desiredOutput < -1000) {
                     robotState.elevatorState = STATE.FLUSH;
                 }
-
             } else {
                 robotState.elevatorState = state;
             }

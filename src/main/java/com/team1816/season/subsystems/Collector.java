@@ -27,14 +27,13 @@ public class Collector extends Subsystem {
     private final double COLLECTING;
     private final double FLUSH;
     private final double REVVING;
-    private final String pidSlot = "slot0";
 
     public Collector() {
         super(NAME);
         armPiston = factory.getSolenoid(NAME, "arm");
         intake = factory.getMotor(NAME, "intake");
 
-        PIDSlotConfiguration config = factory.getPidSlotConfig(NAME, pidSlot);
+        PIDSlotConfiguration config = factory.getPidSlotConfig(NAME);
 
         intake.config_kP(0, config.kP, 100);
         intake.config_kI(0, config.kI, 100);

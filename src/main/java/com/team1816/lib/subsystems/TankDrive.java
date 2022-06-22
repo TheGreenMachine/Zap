@@ -9,12 +9,10 @@ import com.google.inject.Singleton;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.math.DriveConversions;
 import com.team1816.lib.util.EnhancedMotorChecker;
-import com.team1816.lib.util.GreenDriveHelper;
 import com.team1816.season.Constants;
 import com.team1816.season.auto.AutoModeSelector;
 import com.team1816.season.subsystems.LedManager;
 import com.team254.lib.util.CheesyDriveHelper;
-import com.team254.lib.util.DriveHelper;
 import com.team254.lib.util.DriveSignal;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -109,10 +107,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         if (mDriveControlState == DriveControlState.OPEN_LOOP) {
             if (isSlowMode) {
                 leftMain.set(ControlMode.PercentOutput, mPeriodicIO.left_demand * 0.5);
-                rightMain.set(
-                    ControlMode.PercentOutput,
-                    mPeriodicIO.right_demand * 0.5
-                );
+                rightMain.set(ControlMode.PercentOutput, mPeriodicIO.right_demand * 0.5);
             } else {
                 leftMain.set(ControlMode.PercentOutput, mPeriodicIO.left_demand);
                 rightMain.set(ControlMode.PercentOutput, mPeriodicIO.right_demand);
@@ -389,9 +384,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     public double getLeftVelocityActual() {
         double velocity = // might need to change
-            DriveConversions.convertTicksToMeters(
-                leftMain.getSelectedSensorVelocity(0)
-            ) *
+            DriveConversions.convertTicksToMeters(leftMain.getSelectedSensorVelocity(0)) *
             10;
         return velocity;
     }
@@ -439,7 +432,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         defaultPIDConfig.kD = 0.0;
         defaultPIDConfig.kF = 0.0;
         return (factory.getSubsystem(NAME).implemented)
-            ? factory.getSubsystem(NAME).pidConfig.getOrDefault(pidSlot, defaultPIDConfig)
+            ? factory.getSubsystem(NAME).pidConfig.getOrDefault("slot0", defaultPIDConfig)
             : defaultPIDConfig;
     }
 }

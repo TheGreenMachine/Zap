@@ -298,7 +298,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         return (factory.getSubsystem(NAME).implemented)
             ? factory
                 .getSubsystem(NAME)
-                .swerveModules.drivePID.getOrDefault(pidSlot, defaultPIDConfig)
+                .swerveModules.drivePID.getOrDefault("slot0", defaultPIDConfig)
             : defaultPIDConfig;
     }
 }
