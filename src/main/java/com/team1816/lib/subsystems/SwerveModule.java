@@ -93,7 +93,7 @@ public class SwerveModule implements ISwerveModule {
         SwerveModuleState desired_state = SwerveKinematics.optimize(
             desiredState,
             getState().angle
-        ); // desiredState; //
+        );
         mVelDemand =
             DriveConversions.metersPerSecondToTicksPer100ms(
                 desired_state.speedMetersPerSecond

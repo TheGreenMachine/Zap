@@ -160,13 +160,15 @@ public class Constants {
     public static final double kPathFollowingMaxVelMeters = factory.getConstant(
         "maxVelPathFollowing"
     );
-    public static double kOpenLoopMaxVelMeters = factory.getConstant("maxVelOpenLoop");
+    public static final double kOpenLoopMaxVelMeters = factory.getConstant(
+        "maxVelOpenLoop"
+    );
 
-    public static final double kPXController = 6;
-    public static final double kPYController = 6;
-    public static final double kPThetaController = 600; // find why this is so big (700)
-    public static final double kIThetaController = 0; // find why this is so big (700)
-    public static final double kDThetaController = 0; // 2000;
+    public static final double kPXController = 10;
+    public static final double kPYController = 10;
+    public static final double kPThetaController = 5; // find why this is so big (600)
+    public static final double kIThetaController = 0;
+    public static final double kDThetaController = 0;
     public static final double kMaxAngularSpeed = factory.getConstant("maxRotVel"); // rad/sec
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI;
 

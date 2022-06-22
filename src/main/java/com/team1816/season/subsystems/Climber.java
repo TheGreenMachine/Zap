@@ -196,7 +196,7 @@ public class Climber extends Subsystem {
     public void readFromHardware() {
         error = climberMain.getSelectedSensorPosition(0) - stages[currentStage].position;
         climberPosition = climberMain.getSelectedSensorPosition(0);
-        currentDraw = climberMain.getOutputCurrent();
+        //        currentDraw = climberMain.getOutputCurrent();
     }
 
     @Override

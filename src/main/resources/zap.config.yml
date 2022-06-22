@@ -197,7 +197,7 @@ subsystems:
             collecting: -5000 #-3600
             flush: 5000 #.35
     camera:
-        implemented: true
+        implemented: false
         constants:
             debug: 0
             maxDist: 400
@@ -212,13 +212,13 @@ constants:
     isPigeon2: 1
     pigeonOnTalon: -1
     # drivetrain dimensions and movement
-    maxRotVel: 7.2
+    maxRotVel: 14
     trackWidth: 21 #inches
     wheelbaseLength: 21.5 #inches
     wheelDiameter: 4
     kTrackScrubFactor: 1.0
     maxVelOpenLoop: 3 # meters/s
-    maxVelPathFollowing: 2.2 # meters/s
+    maxVelPathFollowing: 3 # meters/s (2.2)
     maxAccel: 2.54 # meters/s^ 2
     maxAllowablePoseError: 0.1
     ## Logging ##
