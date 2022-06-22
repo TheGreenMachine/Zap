@@ -87,7 +87,10 @@ public class Turret extends Subsystem implements PidProvider {
         TURRET_PPR = (int) factory.getConstant(NAME, "turretPPR");
         ENC_RATIO = (double) TURRET_PPR / ABS_PPR;
 
-        int MASK = Math.abs((REV_LIMIT + TURRET_PPR) - (FWD_LIMIT)) / 2; // this value is truncated
+        int MASK = 0;
+        if(Math.abs(REV_LIMIT - FWD_LIMIT) > TURRET_PPR){
+            MASK = Math.abs((REV_LIMIT + TURRET_PPR) - (FWD_LIMIT)) / 2; // this value is truncated
+        }
         FWD_WRAPAROUND_POINT = FWD_LIMIT + MASK;
         REV_WRAPAROUND_POINT = REV_LIMIT - MASK;
 

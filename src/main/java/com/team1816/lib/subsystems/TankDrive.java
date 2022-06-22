@@ -9,10 +9,12 @@ import com.google.inject.Singleton;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.math.DriveConversions;
 import com.team1816.lib.util.EnhancedMotorChecker;
+import com.team1816.lib.util.GreenDriveHelper;
 import com.team1816.season.Constants;
 import com.team1816.season.auto.AutoModeSelector;
 import com.team1816.season.subsystems.LedManager;
 import com.team254.lib.util.CheesyDriveHelper;
+import com.team254.lib.util.DriveHelper;
 import com.team254.lib.util.DriveSignal;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -33,16 +35,16 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     private static AutoModeSelector autoModeSelector;
 
     // Hardware
-    private final IMotorControllerEnhanced mLeftMaster, mRightMaster;
-    private final IMotorController mLeftSlaveA, mRightSlaveA, mLeftSlaveB, mRightSlaveB;
+    private final IMotorControllerEnhanced leftMain, rightMain;
+    private final IMotorController leftFollowerA, rightFollowerA, leftFollowerB, rightFollowerB;
 
     // Odometry
     private DifferentialDriveOdometry tankOdometry;
-    private double leftEncoderSimPosition = 0, rightEncoderSimPosition = 0;
+    private double leftEncSimPosition = 0, rightEncSimPosition = 0;
     private final double tickRatioPerLoop = Constants.kLooperDt / .1d;
 
     // Control
-    private final CheesyDriveHelper cheesyDriveHelper = new CheesyDriveHelper();
+    private final CheesyDriveHelper driveHelper = new CheesyDriveHelper();
 
     /**
      * Constructor
@@ -50,12 +52,12 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     public TankDrive() {
         super(); // calls into the constructor of the abstract super class Drive, configures PeriodicIO and Pigeon (gyro) along with basic subsystem features
         // configure motors
-        mLeftMaster = factory.getMotor(NAME, "leftMain");
-        mLeftSlaveA = factory.getMotor(NAME, "leftFollower", mLeftMaster);
-        mLeftSlaveB = factory.getMotor(NAME, "leftFollowerTwo", mLeftMaster);
-        mRightMaster = factory.getMotor(NAME, "rightMain");
-        mRightSlaveA = factory.getMotor(NAME, "rightFollower", mRightMaster);
-        mRightSlaveB = factory.getMotor(NAME, "rightFollowerTwo", mRightMaster);
+        leftMain = factory.getMotor(NAME, "leftMain");
+        leftFollowerA = factory.getMotor(NAME, "leftFollower", leftMain);
+        leftFollowerB = factory.getMotor(NAME, "leftFollowerTwo", leftMain);
+        rightMain = factory.getMotor(NAME, "rightMain");
+        rightFollowerA = factory.getMotor(NAME, "rightFollower", rightMain);
+        rightFollowerB = factory.getMotor(NAME, "rightFollowerTwo", rightMain);
 
         // configure follower motor currentLimits
         var currentLimitConfig = new SupplyCurrentLimitConfiguration(
@@ -64,27 +66,27 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             0,
             0
         );
-        mLeftMaster.configSupplyCurrentLimit(
+        leftMain.configSupplyCurrentLimit(
             currentLimitConfig,
             Constants.kLongCANTimeoutMs
         );
-        ((IMotorControllerEnhanced) mLeftSlaveA).configSupplyCurrentLimit(
+        ((IMotorControllerEnhanced) leftFollowerA).configSupplyCurrentLimit(
                 currentLimitConfig,
                 Constants.kLongCANTimeoutMs
             );
-        ((IMotorControllerEnhanced) mLeftSlaveB).configSupplyCurrentLimit(
+        ((IMotorControllerEnhanced) leftFollowerB).configSupplyCurrentLimit(
                 currentLimitConfig,
                 Constants.kLongCANTimeoutMs
             );
-        mRightMaster.configSupplyCurrentLimit(
+        rightMain.configSupplyCurrentLimit(
             currentLimitConfig,
             Constants.kLongCANTimeoutMs
         );
-        ((IMotorControllerEnhanced) mRightSlaveA).configSupplyCurrentLimit(
+        ((IMotorControllerEnhanced) rightFollowerA).configSupplyCurrentLimit(
                 currentLimitConfig,
                 Constants.kLongCANTimeoutMs
             );
-        ((IMotorControllerEnhanced) mRightSlaveB).configSupplyCurrentLimit(
+        ((IMotorControllerEnhanced) rightFollowerB).configSupplyCurrentLimit(
                 currentLimitConfig,
                 Constants.kLongCANTimeoutMs
             );
@@ -106,18 +108,18 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     public synchronized void writeToHardware() { // sets the demands for hardware from the inputs provided
         if (mDriveControlState == DriveControlState.OPEN_LOOP) {
             if (isSlowMode) {
-                mLeftMaster.set(ControlMode.PercentOutput, mPeriodicIO.left_demand * 0.5);
-                mRightMaster.set(
+                leftMain.set(ControlMode.PercentOutput, mPeriodicIO.left_demand * 0.5);
+                rightMain.set(
                     ControlMode.PercentOutput,
                     mPeriodicIO.right_demand * 0.5
                 );
             } else {
-                mLeftMaster.set(ControlMode.PercentOutput, mPeriodicIO.left_demand);
-                mRightMaster.set(ControlMode.PercentOutput, mPeriodicIO.right_demand);
+                leftMain.set(ControlMode.PercentOutput, mPeriodicIO.left_demand);
+                rightMain.set(ControlMode.PercentOutput, mPeriodicIO.right_demand);
             }
         } else {
-            mLeftMaster.set(ControlMode.Velocity, mPeriodicIO.left_demand);
-            mRightMaster.set(ControlMode.Velocity, mPeriodicIO.right_demand);
+            leftMain.set(ControlMode.Velocity, mPeriodicIO.left_demand);
+            rightMain.set(ControlMode.Velocity, mPeriodicIO.right_demand);
         }
     }
 
@@ -139,8 +141,8 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
                 rightAdjDemand = mPeriodicIO.right_demand * maxVelTicksPer100ms;
             }
             // simulate lateral motion
-            leftEncoderSimPosition += leftAdjDemand * tickRatioPerLoop;
-            rightEncoderSimPosition += rightAdjDemand * tickRatioPerLoop;
+            leftEncSimPosition += leftAdjDemand * tickRatioPerLoop;
+            rightEncSimPosition += rightAdjDemand * tickRatioPerLoop;
             // simulate rotational motion
             mPeriodicIO.gyro_heading_no_offset =
                 mPeriodicIO.gyro_heading_no_offset.rotateBy(
@@ -161,8 +163,8 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             mPeriodicIO.left_error = 0;
             mPeriodicIO.right_error = 0;
         } else {
-            mPeriodicIO.left_error = mLeftMaster.getClosedLoopError(0);
-            mPeriodicIO.right_error = mRightMaster.getClosedLoopError(0);
+            mPeriodicIO.left_error = leftMain.getClosedLoopError(0);
+            mPeriodicIO.right_error = rightMain.getClosedLoopError(0);
         }
         tankOdometry.update(
             mPeriodicIO.gyro_heading,
@@ -193,10 +195,10 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     }
 
     public synchronized void resetEncoders() {
-        mLeftMaster.setSelectedSensorPosition(0, 0, 0);
-        mRightMaster.setSelectedSensorPosition(0, 0, 0);
-        leftEncoderSimPosition = 0;
-        rightEncoderSimPosition = 0;
+        leftMain.setSelectedSensorPosition(0, 0, 0);
+        rightMain.setSelectedSensorPosition(0, 0, 0);
+        leftEncSimPosition = 0;
+        rightEncSimPosition = 0;
     }
 
     @Override
@@ -227,13 +229,13 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
         boolean leftSide = EnhancedMotorChecker.checkMotors(
             this,
-            getTalonCheckerConfig(mLeftMaster),
-            new EnhancedMotorChecker.NamedMotor("left_master", mLeftMaster)
+            getTalonCheckerConfig(leftMain),
+            new EnhancedMotorChecker.NamedMotor("left_master", leftMain)
         );
         boolean rightSide = EnhancedMotorChecker.checkMotors(
             this,
-            getTalonCheckerConfig(mRightMaster),
-            new EnhancedMotorChecker.NamedMotor("right_master", mRightMaster)
+            getTalonCheckerConfig(rightMain),
+            new EnhancedMotorChecker.NamedMotor("right_master", rightMain)
         );
 
         boolean checkPigeon = mPigeon == null;
@@ -279,7 +281,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         if (mDriveControlState != DriveControlState.OPEN_LOOP) {
             mDriveControlState = DriveControlState.OPEN_LOOP;
         }
-        DriveSignal driveSignal = cheesyDriveHelper.cheesyDrive(
+        DriveSignal driveSignal = driveHelper.cheesyDrive(
             forward,
             rotation,
             false,
@@ -305,10 +307,10 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         if (mDriveControlState == DriveControlState.OPEN_LOOP) {
             setBrakeMode(false);
             System.out.println("Switching to Velocity");
-            mLeftMaster.selectProfileSlot(0, 0);
-            mRightMaster.selectProfileSlot(0, 0);
-            mLeftMaster.configNeutralDeadband(0.0, 0);
-            mRightMaster.configNeutralDeadband(0.0, 0);
+            leftMain.selectProfileSlot(0, 0);
+            rightMain.selectProfileSlot(0, 0);
+            leftMain.configNeutralDeadband(0.0, 0);
+            rightMain.configNeutralDeadband(0.0, 0);
         }
 
         mPeriodicIO.left_demand = signal.getLeft();
@@ -336,27 +338,27 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             System.out.println("setBrakeMode " + on);
             mIsBrakeMode = on;
 
-            mLeftMaster.set(ControlMode.Velocity, 0);
-            mRightMaster.set(ControlMode.Velocity, 0);
+            leftMain.set(ControlMode.Velocity, 0);
+            rightMain.set(ControlMode.Velocity, 0);
 
             NeutralMode mode = on ? NeutralMode.Brake : NeutralMode.Coast;
 
-            mRightMaster.setNeutralMode(mode);
-            mRightSlaveA.setNeutralMode(mode);
-            mRightSlaveB.setNeutralMode(mode);
+            rightMain.setNeutralMode(mode);
+            rightFollowerA.setNeutralMode(mode);
+            rightFollowerB.setNeutralMode(mode);
 
-            mLeftMaster.setNeutralMode(mode);
-            mLeftSlaveA.setNeutralMode(mode);
-            mLeftSlaveB.setNeutralMode(mode);
+            leftMain.setNeutralMode(mode);
+            leftFollowerA.setNeutralMode(mode);
+            leftFollowerB.setNeutralMode(mode);
         }
     }
 
     public double getLeftEncoderRotations() { // this is used for nothing other than sim
-        return leftEncoderSimPosition / DRIVE_ENCODER_PPR;
+        return leftEncSimPosition / DRIVE_ENCODER_PPR;
     }
 
     public double getRightEncoderRotations() {
-        return rightEncoderSimPosition / DRIVE_ENCODER_PPR;
+        return rightEncSimPosition / DRIVE_ENCODER_PPR;
     }
 
     @Override
@@ -371,12 +373,12 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     @Override
     public double getLeftVelocityNativeUnits() {
-        return mLeftMaster.getSelectedSensorVelocity(0);
+        return leftMain.getSelectedSensorVelocity(0);
     }
 
     @Override
     public double getRightVelocityNativeUnits() {
-        return mRightMaster.getSelectedSensorVelocity(0);
+        return rightMain.getSelectedSensorVelocity(0);
     }
 
     private EnhancedMotorChecker.CheckerConfig getTalonCheckerConfig(
@@ -388,7 +390,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     public double getLeftVelocityActual() {
         double velocity = // might need to change
             DriveConversions.convertTicksToMeters(
-                mLeftMaster.getSelectedSensorVelocity(0)
+                leftMain.getSelectedSensorVelocity(0)
             ) *
             10;
         return velocity;
@@ -397,7 +399,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     public double getRightVelocityActual() {
         double velocity = // might need to change
             DriveConversions.convertTicksToMeters(
-                mRightMaster.getSelectedSensorVelocity(0)
+                rightMain.getSelectedSensorVelocity(0)
             ) *
             10;
         return velocity;
