@@ -158,6 +158,7 @@ subsystems:
 pcm: 2
 canivoreBusName: highSpeed
 constants:
+    pdID: 1
     # pigeon
     pigeonId: 13
     isPigeon2: 1

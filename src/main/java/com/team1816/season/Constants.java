@@ -3,13 +3,13 @@ package com.team1816.season;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.factory.RobotFactory;
-import com.team254.lib.util.Units;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 
 @Singleton
 public class Constants {
@@ -54,19 +54,19 @@ public class Constants {
         kDriveWheelDiameterInches * Math.PI;
     public static final double kDriveWheelRadiusInches = kDriveWheelDiameterInches / 2.0;
 
-    public static final double kDriveWheelTrackWidthMeters = Units.inches_to_meters(
+    public static final double kDriveWheelTrackWidthMeters = Units.inchesToMeters(
         kDriveWheelTrackWidthInches
     );
-    public static final double kDriveWheelbaseLengthMeters = Units.inches_to_meters(
+    public static final double kDriveWheelbaseLengthMeters = Units.inchesToMeters(
         kDriveWheelbaseLengthInches
     );
-    public static final double kDriveWheelDiameterMeters = Units.inches_to_meters(
+    public static final double kDriveWheelDiameterMeters = Units.inchesToMeters(
         kDriveWheelDiameterInches
     );
-    public static final double kWheelCircumferenceMeters = Units.inches_to_meters(
+    public static final double kWheelCircumferenceMeters = Units.inchesToMeters(
         kWheelCircumferenceInches
     );
-    public static final double kDriveWheelRadiusMeters = Units.inches_to_meters(
+    public static final double kDriveWheelRadiusMeters = Units.inchesToMeters(
         kDriveWheelRadiusInches
     );
     public static double kTrackScrubFactor = factory.getConstant("kTrackScrubFactor");
@@ -108,12 +108,8 @@ public class Constants {
         );
 
         // azimuth position
-        private static final double moduleDeltaX = Units.inches_to_meters(
-            kDriveWheelbaseLengthMeters / 2.0
-        );
-        private static final double moduleDeltaY = Units.inches_to_meters(
-            kDriveWheelTrackWidthMeters / 2.0
-        );
+        private static final double moduleDeltaX = kDriveWheelbaseLengthMeters / 2.0;
+        private static final double moduleDeltaY = kDriveWheelTrackWidthMeters / 2.0;
 
         // Module Indicies
         public static final int kFrontLeft = 0;

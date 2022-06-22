@@ -1,7 +1,5 @@
 package com.team254.lib.util;
 
-import com.team254.lib.geometry.Rotation2d;
-
 import java.util.List;
 
 /**
@@ -77,31 +75,10 @@ public class Util {
         return result;
     }
 
-    public static double toTurretSafeAngleDegrees(Rotation2d rotation2d) {
-        double result = rotation2d.getDegrees() % 360.0;
-        if (result > 270) {
-            result -= 360;
-        } else if (result < -90) {
-            result += 360;
-        }
-        return result;
-    }
-
     public static double boundAngle0to360Degrees(double angle){
         // Naive algorithm
         while(angle >= 360.0) {angle -= 360.0;}
         while(angle < 0.0) {angle += 360.0;}
         return angle;
-    }
-
-    public static boolean shouldReverse(double goalAngle, double currentAngle){
-        goalAngle = boundAngle0to360Degrees(goalAngle);
-        currentAngle = boundAngle0to360Degrees(currentAngle);
-        double reversedAngle = boundAngle0to360Degrees(currentAngle + 180);
-        double angleDifference = Math.abs(goalAngle - currentAngle);
-        double reversedAngleDifference = Math.abs(goalAngle - reversedAngle);
-        angleDifference = (angleDifference > 180) ? 360-angleDifference : angleDifference;
-        reversedAngleDifference = (reversedAngleDifference > 180) ? 360-reversedAngleDifference : reversedAngleDifference;
-        return reversedAngleDifference < angleDifference;
     }
 }
