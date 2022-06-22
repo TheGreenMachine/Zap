@@ -17,8 +17,8 @@ import java.util.List;
  */
 public interface PathContainer {
     // velocities are in/sec
-    double kMaxVelocity = (Constants.kPathFollowingMaxVelMeters);
-    double kMaxAccel = Units.inchesToMeters(Constants.kPathFollowingMaxAccel);
+    double kMaxVelocity = Constants.kPathFollowingMaxVelMeters;
+    double kMaxAccel = Constants.kPathFollowingMaxAccelMeters;
 
     List<Pose2d> buildWaypoints();
     List<Rotation2d> buildHeadings();

@@ -16,8 +16,8 @@ public class Spindexer extends Subsystem {
     private final IMotorControllerEnhanced spindexer;
 
     // State
-    private STATE state = STATE.STOP;
-    private double spindexerPower;
+    private STATE desiredState = STATE.STOP;
+    private double desiredPower;
     private boolean outputsChanged;
 
     // Constants
@@ -41,7 +41,7 @@ public class Spindexer extends Subsystem {
     }
 
     private void setSpindexer(double spindexerPower) {
-        this.spindexerPower = spindexerPower;
+        this.desiredPower = spindexerPower;
         spindexer.set(ControlMode.PercentOutput, spindexerPower);
     }
 
@@ -55,8 +55,8 @@ public class Spindexer extends Subsystem {
     }
 
     public void setDesiredState(STATE state) {
-        if (this.state != state) {
-            this.state = state;
+        if (desiredState != state) {
+            desiredState = state;
             outputsChanged = true;
         }
     }
@@ -65,8 +65,8 @@ public class Spindexer extends Subsystem {
     public void readFromHardware() {
         // since no other subsystems rely on spindexer being up to speed to perform an action,
         // we're just claiming that the true spindexer state matches its desired state
-        if (state != robotState.spinState) {
-            robotState.spinState = state;
+        if (desiredState != robotState.spinState) {
+            robotState.spinState = desiredState;
         }
     }
 
@@ -75,7 +75,7 @@ public class Spindexer extends Subsystem {
         // avoid setting the spindexer motor unless outputs (ie: state) are changed
         if (outputsChanged) {
             outputsChanged = false;
-            switch (state) {
+            switch (desiredState) {
                 case STOP:
                     setSpindexer(0);
                     break;

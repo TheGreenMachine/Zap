@@ -3,24 +3,21 @@ package com.team1816.season.controlboard;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.controlboard.Controller;
-import com.team1816.lib.controlboard.IButtonControlBoard;
+import com.team1816.lib.controlboard.IOperatorControlBoard;
 import com.team1816.season.Constants;
-import com.team254.lib.util.DelayedBoolean;
-import edu.wpi.first.wpilibj.Timer;
 
+/*
+    operator controller (xbox, logitech, or keyboard) -
+    what method names (ie setRumble, getShoot) correspond to what button / trigger / joystick values
+ */
 @Singleton
-public class GamepadButtonControlBoard implements IButtonControlBoard {
-
-    private final double kDeadband = 0.15;
-
-    private final double kDPadDelay = 0.02;
-    private DelayedBoolean mDPadValid;
+public class GamepadOperatorControlBoard implements IOperatorControlBoard {
 
     private final Controller mController;
 
     @Inject
-    private GamepadButtonControlBoard(Controller.Factory controller) {
-        mController = controller.getControllerInstance(Constants.kButtonGamepadPort);
+    private GamepadOperatorControlBoard(Controller.Factory controller) {
+        mController = controller.getControllerInstance(Constants.kOperatorGamepadPort);
         reset();
     }
 
@@ -30,9 +27,7 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
     }
 
     @Override
-    public void reset() {
-        mDPadValid = new DelayedBoolean(Timer.getFPGATimestamp(), kDPadDelay);
-    }
+    public void reset() {}
 
     @Override
     public boolean getSuperstructure() {
@@ -66,7 +61,6 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
         return mController.getButton(Controller.Button.A);
     }
 
-    // Feeder Flap
     @Override
     public boolean getCameraToggle() {
         return mController.getButton(Controller.Button.X);
@@ -74,24 +68,22 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
 
     @Override
     public boolean getRaiseBucket() {
-        return mController.getDPad() == 0; // && !mController.getButton(Controller.Button.A);
+        return mController.getDPad() == 0;
     }
 
     @Override
     public boolean getLowerBucket() {
-        return (
-            mController.getDPad() == 180 // && !mController.getButton(Controller.Button.A)
-        );
+        return (mController.getDPad() == 180);
     }
 
     @Override
     public boolean getIncrementCamDeviation() {
-        return false; // mController.getDPad() == 0 && mController.getButton(Controller.Button.A);
+        return false;
     }
 
     @Override
     public boolean getDecrementCamDeviation() {
-        return false; //mController.getDPad() == 180 && mController.getButton(Controller.Button.A);
+        return false;
     }
 
     @Override

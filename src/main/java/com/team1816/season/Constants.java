@@ -18,10 +18,11 @@ public class Constants {
 
     public static final Pose2d EmptyPose = new Pose2d();
     public static final Rotation2d EmptyRotation = new Rotation2d();
-
-    public static boolean robotInitialized = false;
-
     public static final double kLooperDt = factory.getConstant("kLooperDt", .020);
+
+    // CAN Timeouts
+    public static final int kCANTimeoutMs = 10; // use for important on the fly updates
+    public static final int kLongCANTimeoutMs = 100; // use for constructors
 
     // Field characterization
     public static final double kTargetHeight = 104; // inches
@@ -73,10 +74,6 @@ public class Constants {
 
     public static final Pose2d ZeroPose = new Pose2d(0.5, fieldCenterY, EmptyRotation);
     public static Pose2d StartingPose = new Pose2d(0.5, fieldCenterY, EmptyRotation);
-
-    // CAN Timeouts
-    public static final int kCANTimeoutMs = 10; // use for important on the fly updates
-    public static final int kLongCANTimeoutMs = 100; // use for constructors
 
     public static class Tank {
 
@@ -150,25 +147,17 @@ public class Constants {
         );
     }
 
-    // reset button
-    public static final int kResetButtonChannel = 4;
-
     // Control Board
-    public static final boolean kUseDriveGamepad = true;
     public static final int kDriveGamepadPort = 0;
-    public static final int kButtonGamepadPort = 1;
-    public static final int kMainThrottleJoystickPort = 0;
-    public static final int kMainTurnJoystickPort = 0;
+    public static final int kOperatorGamepadPort = 1;
     public static final double kJoystickThreshold = 0.04; // deadband
 
-    public static double kCameraFrameRate = 30;
-
     // Drive speed
-    public static final double kPathFollowingMaxAccel = factory.getConstant(
+    public static final double kPathFollowingMaxAccelMeters = factory.getConstant(
         "maxAccel",
         4
     );
-    public static double kPathFollowingMaxVelMeters = factory.getConstant(
+    public static final double kPathFollowingMaxVelMeters = factory.getConstant(
         "maxVelPathFollowing"
     );
     public static double kOpenLoopMaxVelMeters = factory.getConstant("maxVelOpenLoop");
@@ -178,7 +167,7 @@ public class Constants {
     public static final double kPThetaController = 600; // find why this is so big (700)
     public static final double kIThetaController = 0; // find why this is so big (700)
     public static final double kDThetaController = 0; // 2000;
-    public static double kMaxAngularSpeed = factory.getConstant("maxRotVel"); // rad/sec
+    public static final double kMaxAngularSpeed = factory.getConstant("maxRotVel"); // rad/sec
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI;
 
     // Constraint for the motion profilied robot angle controller

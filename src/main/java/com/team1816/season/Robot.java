@@ -140,7 +140,7 @@ public class Robot extends TimedRobot {
                 );
                 BadLog.createValue(
                     "Max Acceleration",
-                    String.valueOf(Constants.kPathFollowingMaxAccel)
+                    String.valueOf(Constants.kPathFollowingMaxAccelMeters)
                 );
 
                 BadLog.createTopic(
@@ -258,24 +258,9 @@ public class Robot extends TimedRobot {
 
             mAutoModeSelector.updateModeCreator();
 
+            //
             actionManager =
                 new ActionManager(
-                    // Driver Gamepad
-                    //                    createAction(
-                    //                        mControlBoard::getRunAutoModeInTeleop,
-                    //                        () -> {
-                    //                            System.out.println("Running trajectory !");
-                    //                            SmartDashboard.putString("Teleop Spline", "TWO_BALL_B");
-                    //                            var trajectory = new TrajectoryAction(
-                    //                                TrajectorySet.TWO_BALL_B,
-                    //                                TrajectorySet.TWO_BALL_B_HEADINGS
-                    //                            );
-                    //                            mDrive.zeroSensors(
-                    //                                trajectory.getTrajectory().getInitialPose()
-                    //                            );
-                    //                            trajectory.start();
-                    //                        }
-                    //                    ),
                     createHoldAction(
                         mControlBoard::getCollectorToggle,
                         pressed -> mSuperstructure.setCollecting(pressed, true)
@@ -330,7 +315,6 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         mControlBoard::getYeetShot,
                         yeet -> {
-                            mShooter.setHood(false);
                             if (useManualShoot) {
                                 mSuperstructure.setRevving(
                                     yeet,
@@ -350,7 +334,6 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         mControlBoard::getShoot,
                         shooting -> {
-                            mShooter.setHood(true);
                             mSuperstructure.setRevving(
                                 shooting,
                                 Shooter.LAUNCHPAD_VEL,
@@ -359,7 +342,6 @@ public class Robot extends TimedRobot {
                             mSuperstructure.setFiring(shooting);
                         }
                     ),
-                    createAction(mControlBoard::getHood, mShooter::setHood),
                     createHoldAction(
                         mControlBoard::getTurretJogLeft,
                         moving -> mTurret.setTurretSpeed(moving ? Turret.JOG_SPEED : 0)
@@ -408,7 +390,7 @@ public class Robot extends TimedRobot {
 
             mSuperstructure.setStopped(true);
 
-            // Reset all auto mode state.
+            // Reset all auto mode states.
             if (mAutoModeExecutor != null) {
                 mAutoModeExecutor.stop();
             }
@@ -430,7 +412,7 @@ public class Robot extends TimedRobot {
             mDisabledLooper.stop();
             mLedManager.setDefaultStatus(LedManager.RobotStatus.AUTONOMOUS);
 
-            // Robot starts where it's told for auto path
+            // Robot starts at first waypoint (Pose2D) of current auto path chosen
             mRobotState.reset();
 
             mDrive.zeroSensors();
@@ -560,7 +542,7 @@ public class Robot extends TimedRobot {
     public void autonomousPeriodic() {
         loopStart = Timer.getFPGATimestamp();
 
-        // debugging functionality to stop autos mid-path
+        // Debugging functionality to stop autos mid-path - Currently not in use
         boolean signalToResume = !mControlBoard.getUnlockClimber();
         boolean signalToStop = mControlBoard.getUnlockClimber();
         if (mAutoModeExecutor.isInterrupted()) {
@@ -597,8 +579,10 @@ public class Robot extends TimedRobot {
     }
 
     public void manualControl() {
+        // update what's currently being imputed from both driver and operator controllers
         actionManager.update();
 
+        // Field-relative controls for turret (ie: left on joystick makes turret point left on the field, instead of left relative to the robot)
         if (
             Math.abs(mControlBoard.getTurretXVal()) > 0.90 ||
             Math.abs(mControlBoard.getTurretYVal()) > 0.90
@@ -614,6 +598,7 @@ public class Robot extends TimedRobot {
             );
         }
 
+        // Optional functionality making shooter always rev to velocity needed to score based on predicted position on field
         if (
             !mControlBoard.getShoot() &&
             !mControlBoard.getYeetShot() &&
@@ -622,6 +607,7 @@ public class Robot extends TimedRobot {
             mSuperstructure.setRevving(true, -1, true);
         }
 
+        // If brake button is held, disable drivetrain joystick controls
         if (mControlBoard.getBrakeMode()) {
             mDrive.setOpenLoop(SwerveDriveSignal.BRAKE);
         } else {

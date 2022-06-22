@@ -337,7 +337,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     private int motionOffset() {
         Translation2d shooterAxis = new Translation2d(
-            robotState.shooterSpeed,
+            robotState.shooterMPS,
             robotState.getLatestFieldToTurret()
         );
         Translation2d driveAxis = new Translation2d(

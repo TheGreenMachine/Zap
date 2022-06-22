@@ -15,14 +15,13 @@ public class Collector extends Subsystem {
 
     // Components
     private final ISolenoid armPiston;
-    private final IMotorControllerEnhanced intake;
+    private final IMotorControllerEnhanced intakeMotor;
 
     // State
     private double intakeVel;
     private boolean armDown;
     private boolean outputsChanged = false;
-    private double velocityDemand;
-    private STATE state = STATE.STOP;
+    private STATE desiredState = STATE.STOP;
 
     private final double COLLECTING;
     private final double FLUSH;
@@ -31,32 +30,23 @@ public class Collector extends Subsystem {
     public Collector() {
         super(NAME);
         armPiston = factory.getSolenoid(NAME, "arm");
-        intake = factory.getMotor(NAME, "intake");
+        intakeMotor = factory.getMotor(NAME, "intake");
 
         PIDSlotConfiguration config = factory.getPidSlotConfig(NAME);
 
-        intake.config_kP(0, config.kP, 100);
-        intake.config_kI(0, config.kI, 100);
-        intake.config_kD(0, config.kD, 100);
-        intake.config_kF(0, config.kF, 100);
+        intakeMotor.config_kP(0, config.kP, 100);
+        intakeMotor.config_kI(0, config.kI, 100);
+        intakeMotor.config_kD(0, config.kD, 100);
+        intakeMotor.config_kF(0, config.kF, 100);
 
         COLLECTING = factory.getConstant(NAME, "collecting");
         FLUSH = factory.getConstant(NAME, "flush");
         REVVING = factory.getConstant(NAME, "revving", .5);
     }
 
-    public void setVelocity(double velocity) {
-        velocityDemand = velocity;
-        outputsChanged = true;
-    }
-
-    public double getDemandedVelocity() {
-        return velocityDemand;
-    }
-
     public void setDesiredState(STATE state) {
-        if (this.state != state) {
-            this.state = state;
+        if (desiredState != state) {
+            desiredState = state;
             outputsChanged = true;
         }
     }
@@ -64,7 +54,8 @@ public class Collector extends Subsystem {
     @Override
     public void writeToHardware() {
         if (outputsChanged) {
-            switch (state) {
+            outputsChanged = false;
+            switch (desiredState) {
                 case STOP:
                     intakeVel = 0;
                     armDown = false;
@@ -79,13 +70,11 @@ public class Collector extends Subsystem {
                     break;
                 case FLUSH:
                     intakeVel = FLUSH;
-                    armDown = true; // do we want arm down for this? pending for build team opinion...
+                    armDown = true;
                     break;
             }
-            intake.set(ControlMode.Velocity, intakeVel);
-            this.armPiston.set(armDown);
-
-            this.outputsChanged = false;
+            intakeMotor.set(ControlMode.Velocity, intakeVel);
+            armPiston.set(armDown);
         }
     }
 
@@ -98,7 +87,7 @@ public class Collector extends Subsystem {
         Timer.delay(1);
         if (
             armDown != armPiston.get() &&
-            Math.abs(intake.getSelectedSensorVelocity(0) - intakeVel) > 1000
+            Math.abs(intakeMotor.getSelectedSensorVelocity(0) - intakeVel) > 1000
         ) {
             return false;
         }

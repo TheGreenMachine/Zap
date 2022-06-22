@@ -21,7 +21,7 @@ public class Elevator extends Subsystem {
     private double desiredOutput;
     private double actualOutput;
     private boolean outputsChanged;
-    private STATE state = STATE.STOP;
+    private STATE desiredState = STATE.STOP;
 
     private final double ALLOWABLE_ERROR;
     private final double FLUSH;
@@ -83,8 +83,8 @@ public class Elevator extends Subsystem {
     }
 
     public void setDesiredState(STATE state) {
-        if (this.state != state) {
-            this.state = state;
+        if (this.desiredState != state) {
+            this.desiredState = state;
             outputsChanged = true;
         }
     }
@@ -103,21 +103,21 @@ public class Elevator extends Subsystem {
 
     @Override
     public void readFromHardware() {
-        if (state != robotState.elevatorState) {
+        if (desiredState != robotState.elevatorState) {
             if (isVelocity) {
                 actualOutput = elevatorMotor.getSelectedSensorVelocity(0);
 
                 if (Math.abs(actualOutput) < 100) { // TODO make this not a raw number
                     robotState.elevatorState = STATE.STOP;
-                } else if (state == STATE.INTAKE) {
-                    robotState.elevatorState = state;
+                } else if (desiredState == STATE.INTAKE) {
+                    robotState.elevatorState = desiredState;
                 } else if (Math.abs(FIRE - actualOutput) < ALLOWABLE_ERROR) {
                     robotState.elevatorState = STATE.FIRE;
                 } else if (desiredOutput < -1000) {
                     robotState.elevatorState = STATE.FLUSH;
                 }
             } else {
-                robotState.elevatorState = state;
+                robotState.elevatorState = desiredState;
             }
         }
     }
@@ -126,7 +126,7 @@ public class Elevator extends Subsystem {
     public void writeToHardware() {
         if (outputsChanged) {
             outputsChanged = false;
-            switch (state) {
+            switch (desiredState) {
                 case STOP:
                     setElevator(0);
                     break;

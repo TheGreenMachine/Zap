@@ -1,19 +1,19 @@
 package com.team1816.season.controlboard;
 
 import com.google.inject.Inject;
-import com.team1816.lib.controlboard.IButtonControlBoard;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.controlboard.IDriveControlBoard;
+import com.team1816.lib.controlboard.IOperatorControlBoard;
 
 public class ControlBoard implements IControlBoard {
 
     private final IDriveControlBoard mDriveControlBoard;
-    private final IButtonControlBoard mButtonControlBoard;
+    private final IOperatorControlBoard mButtonControlBoard;
 
     @Inject
     private ControlBoard(
         IDriveControlBoard driveControlBoard,
-        IButtonControlBoard buttonControlBoard
+        IOperatorControlBoard buttonControlBoard
     ) {
         mDriveControlBoard = driveControlBoard;
         mButtonControlBoard = buttonControlBoard;
