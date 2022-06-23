@@ -1,11 +1,11 @@
 package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
+import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.util.EnhancedMotorChecker;
@@ -18,7 +18,7 @@ public class Shooter extends Subsystem implements PidProvider {
     private static final String NAME = "shooter";
 
     // Components
-    private final IMotorControllerEnhanced shooterMain;
+    private final IGreenMotor shooterMain;
 
     // State
     private STATE desiredState = STATE.STOP;
@@ -155,9 +155,7 @@ public class Shooter extends Subsystem implements PidProvider {
     @Override
     public void stop() {}
 
-    private EnhancedMotorChecker.CheckerConfig getTalonCheckerConfig(
-        IMotorControllerEnhanced talon
-    ) {
+    private EnhancedMotorChecker.CheckerConfig getTalonCheckerConfig(IGreenMotor talon) {
         return EnhancedMotorChecker.CheckerConfig.getForSubsystemMotor(this, talon);
     }
 

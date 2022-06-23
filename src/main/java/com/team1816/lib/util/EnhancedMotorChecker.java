@@ -1,7 +1,7 @@
 package com.team1816.lib.util;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
+import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Robot;
 import com.team254.lib.util.Util;
@@ -28,7 +28,7 @@ public class EnhancedMotorChecker {
 
         public static CheckerConfig getForSubsystemMotor(
             Subsystem subsystem,
-            IMotorControllerEnhanced motor
+            IGreenMotor motor
         ) {
             var name = subsystem.getSubsystemName();
             var factory = Robot.getFactory();
@@ -47,9 +47,9 @@ public class EnhancedMotorChecker {
     public static class NamedMotor {
 
         public String name;
-        public IMotorControllerEnhanced motor;
+        public IGreenMotor motor;
 
-        public NamedMotor(String name, IMotorControllerEnhanced motor) {
+        public NamedMotor(String name, IGreenMotor motor) {
             this.name = name;
             this.motor = motor;
         }
@@ -77,7 +77,7 @@ public class EnhancedMotorChecker {
         // Record previous configuration for all motors.
         for (NamedMotor config : motorsToCheck) {
             if (config.motor.getDeviceID() < 0) continue;
-            IMotorControllerEnhanced motor = config.motor;
+            IGreenMotor motor = config.motor;
 
             storedControlModes.add(motor.getControlMode());
 
@@ -171,7 +171,7 @@ public class EnhancedMotorChecker {
 
         // Restore Talon configurations
         for (int i = 0; i < motorsToCheck.length; ++i) {
-            IMotorControllerEnhanced motor = motorsToCheck[i].motor;
+            IGreenMotor motor = motorsToCheck[i].motor;
             if (motor.getDeviceID() >= 0) {
                 motor.set(storedControlModes.get(i), 0);
             }

@@ -50,7 +50,7 @@ public class CtreMotorFactory {
     private static final Configuration kSlaveConfiguration = new Configuration();
 
     // Create a CANTalon with the default (out of the box) configuration.
-    public static IMotorControllerEnhanced createDefaultTalon(
+    public static IGreenMotor createDefaultTalon(
         int id,
         String name,
         boolean isFalcon,
@@ -71,16 +71,16 @@ public class CtreMotorFactory {
         );
     }
 
-    public static IMotorControllerEnhanced createPermanentSlaveTalon(
+    public static IGreenMotor createPermanentSlaveTalon(
         int id,
         String name,
         boolean isFalcon,
-        IMotorController master,
+        IGreenMotor master,
         SubsystemConfig subsystem,
         Map<String, PIDSlotConfiguration> pidConfigList,
         String canBus
     ) {
-        final IMotorControllerEnhanced talon = createTalon(
+        final IGreenMotor talon = createTalon(
             id,
             name,
             kSlaveConfiguration,
@@ -97,7 +97,7 @@ public class CtreMotorFactory {
         return talon;
     }
 
-    private static IMotorControllerEnhanced createTalon(
+    private static IGreenMotor createTalon(
         int id,
         String name,
         Configuration config,
@@ -123,22 +123,16 @@ public class CtreMotorFactory {
         return talon;
     }
 
-    public static IMotorControllerEnhanced createGhostTalon(
-        int maxTicks,
-        int absInitOffset
-    ) {
-        return new GhostMotorControllerEnhanced(maxTicks, absInitOffset);
+    public static IGreenMotor createGhostTalon(int maxTicks, int absInitOffset) {
+        return new GhostMotor(maxTicks, absInitOffset);
     }
 
-    public static IMotorController createDefaultVictor(int id) {
+    public static IGreenMotor createDefaultVictor(int id) {
         return createVictor(id, kDefaultConfiguration);
     }
 
-    public static IMotorController createPermanentSlaveVictor(
-        int id,
-        IMotorController master
-    ) {
-        final IMotorController victor = createVictor(id, kSlaveConfiguration);
+    public static IGreenMotor createPermanentSlaveVictor(int id, IGreenMotor master) {
+        final IGreenMotor victor = createVictor(id, kSlaveConfiguration);
         System.out.println(
             "Slaving victor on " + id + " to talon on " + master.getDeviceID()
         );
@@ -146,12 +140,12 @@ public class CtreMotorFactory {
         return victor;
     }
 
-    public static IMotorController createVictor(int id, Configuration config) {
-        VictorSPX victor = new VictorSPX(id);
-        //configureMotorController(victor, config);
+    // This is currently treating a VictorSPX, which implements IMotorController as an IGreenMotor, which implements IMotorControllerEnhanced
+    public static IGreenMotor createVictor(int id, Configuration config) {
+        IGreenMotor victor = new LazyVictorSPX(id);
 
         victor.configReverseLimitSwitchSource(
-            RemoteLimitSwitchSource.Deactivated,
+            LimitSwitchSource.Deactivated,
             LimitSwitchNormal.NormallyOpen,
             kTimeoutMs
         );

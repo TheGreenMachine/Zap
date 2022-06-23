@@ -4,10 +4,10 @@ import static com.team1816.lib.subsystems.Drive.NAME;
 import static com.team1816.lib.subsystems.Drive.factory;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.sensors.CANCoder;
+import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.math.DriveConversions;
 import com.team1816.lib.math.SwerveKinematics;
 import com.team1816.season.Constants;
@@ -18,8 +18,8 @@ import edu.wpi.first.wpilibj.Timer;
 public class SwerveModule implements ISwerveModule {
 
     // Components
-    private final IMotorControllerEnhanced driveMotor;
-    private final IMotorControllerEnhanced azimuthMotor; // angle motor (the pivot part of a shopping cart except motorized)
+    private final IGreenMotor driveMotor;
+    private final IGreenMotor azimuthMotor; // angle motor (the pivot part of a shopping cart except motorized)
     public static CANCoder canCoder;
     public double driveDemand;
     public double azimuthDemand;

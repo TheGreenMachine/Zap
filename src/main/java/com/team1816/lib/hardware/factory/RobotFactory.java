@@ -4,12 +4,11 @@ import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifierStatusFrame;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdleStatusFrame;
-import com.ctre.phoenix.motorcontrol.IMotorController;
-import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.sensors.*;
 import com.team1816.lib.hardware.*;
 import com.team1816.lib.hardware.components.*;
+import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.hardware.components.motor.LazySparkMax;
 import com.team1816.lib.hardware.components.pcm.*;
 import com.team1816.lib.math.DriveConversions;
@@ -63,13 +62,13 @@ public class RobotFactory {
         verbose = getConstant("verbose") >= 1;
     }
 
-    public IMotorControllerEnhanced getMotor(
+    public IGreenMotor getMotor(
         String subsystemName,
         String name,
         Map<String, PIDSlotConfiguration> pidConfigs,
         int remoteSensorId
     ) {
-        IMotorControllerEnhanced motor = null;
+        IGreenMotor motor = null;
         var subsystem = getSubsystem(subsystemName);
 
         // Motor creation
@@ -156,16 +155,12 @@ public class RobotFactory {
         return motor;
     }
 
-    public IMotorControllerEnhanced getMotor(String subsystemName, String name) {
+    public IGreenMotor getMotor(String subsystemName, String name) {
         return getMotor(subsystemName, name, getSubsystem(subsystemName).pidConfig, -1); // not implemented for tank need to fix this
     }
 
-    public IMotorController getMotor(
-        String subsystemName,
-        String name,
-        IMotorController master
-    ) { // TODO: optimize this method
-        IMotorController followerMotor = null;
+    public IGreenMotor getMotor(String subsystemName, String name, IGreenMotor master) { // TODO: optimize this method
+        IGreenMotor followerMotor = null;
         var subsystem = getSubsystem(subsystemName);
         if (subsystem.implemented && master != null) {
             if (subsystem.talons != null && isHardwareValid(subsystem.talons.get(name))) {
@@ -225,13 +220,13 @@ public class RobotFactory {
         return followerMotor;
     }
 
-    public IMotorController getMotor( // a hack to circumnavigate sparkMax follower methods
+    public IGreenMotor getMotor( // a hack to circumnavigate sparkMax follower methods
         String subsystemName,
         String name,
-        IMotorController master,
+        IGreenMotor master,
         boolean invert
     ) { // TODO: optimize this method
-        IMotorController followerMotor = null;
+        IGreenMotor followerMotor = null;
         var subsystem = getSubsystem(subsystemName);
         if (
             subsystem.sparkmaxes != null &&
@@ -565,7 +560,7 @@ public class RobotFactory {
 
     private final int canMaxStatus = 100;
 
-    private void setStatusFrame(IMotorControllerEnhanced device) {
+    private void setStatusFrame(IGreenMotor device) {
         device.setStatusFramePeriod(StatusFrame.Status_1_General, canMaxStatus, 100);
         device.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, canMaxStatus, 100);
         device.setStatusFramePeriod(StatusFrame.Status_4_AinTempVbat, canMaxStatus, 100);

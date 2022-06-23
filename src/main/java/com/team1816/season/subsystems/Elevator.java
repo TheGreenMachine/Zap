@@ -1,9 +1,9 @@
 package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
+import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.subsystems.Subsystem;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
@@ -14,7 +14,7 @@ public class Elevator extends Subsystem {
     private static final String NAME = "elevator";
 
     // Components
-    private final IMotorControllerEnhanced elevatorMotor;
+    private final IGreenMotor elevatorMotor;
     private final DigitalInput ballSensor;
 
     // State

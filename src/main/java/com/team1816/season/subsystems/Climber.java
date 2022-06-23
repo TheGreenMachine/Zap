@@ -3,8 +3,8 @@ package com.team1816.season.subsystems;
 import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
 import static com.ctre.phoenix.motorcontrol.ControlMode.Position;
 
-import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
+import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
@@ -16,8 +16,8 @@ public class Climber extends Subsystem {
     private static final String NAME = "climber";
 
     // Components
-    private final IMotorControllerEnhanced climberMain;
-    private final IMotorControllerEnhanced climberFollower;
+    private final IGreenMotor climberMain;
+    private final IGreenMotor climberFollower;
     private final ISolenoid topClamp;
     private final ISolenoid bottomClamp;
 
@@ -45,11 +45,7 @@ public class Climber extends Subsystem {
         super(NAME);
         climberMain = factory.getMotor(NAME, "climberMain");
         climberFollower =
-            (IMotorControllerEnhanced) factory.getMotor(
-                NAME,
-                "climberFollower",
-                climberMain
-            );
+            (IGreenMotor) factory.getMotor(NAME, "climberFollower", climberMain);
         climberFollower.setInverted(true);
         topClamp = factory.getSolenoid(NAME, "topClamp");
         bottomClamp = factory.getSolenoid(NAME, "bottomClamp");

@@ -9,15 +9,16 @@ import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 
-public class GhostMotorControllerEnhanced
-    implements IMotorControllerEnhanced, IMotorSensor {
+public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     private ControlMode mControlMode;
     private final int mMaxTicks;
     private final double[] mDemand = new double[] { 0, 0 };
+
+    protected double mLastSet = Double.NaN;
     private final int mAbsInitOffset;
 
-    public GhostMotorControllerEnhanced(int maxTickVel, int absInitOffset) {
+    public GhostMotor(int maxTickVel, int absInitOffset) {
         mAbsInitOffset = absInitOffset;
         mMaxTicks = maxTickVel;
     }
@@ -647,5 +648,10 @@ public class GhostMotorControllerEnhanced
     public ErrorCode setQuadraturePosition(int newPosition) {
         mDemand[0] = newPosition;
         return ErrorCode.OK;
+    }
+
+    @Override
+    public double getLastSet() {
+        return mLastSet;
     }
 }

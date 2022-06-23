@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.*;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
+import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.math.DriveConversions;
 import com.team1816.lib.util.EnhancedMotorChecker;
 import com.team1816.season.Constants;
@@ -33,8 +34,8 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     private static AutoModeSelector autoModeSelector;
 
     // Hardware
-    private final IMotorControllerEnhanced leftMain, rightMain;
-    private final IMotorController leftFollowerA, rightFollowerA, leftFollowerB, rightFollowerB;
+    private final IGreenMotor leftMain, rightMain;
+    private final IGreenMotor leftFollowerA, rightFollowerA, leftFollowerB, rightFollowerB;
 
     // Odometry
     private DifferentialDriveOdometry tankOdometry;
@@ -68,11 +69,11 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             currentLimitConfig,
             Constants.kLongCANTimeoutMs
         );
-        ((IMotorControllerEnhanced) leftFollowerA).configSupplyCurrentLimit(
+        ((IGreenMotor) leftFollowerA).configSupplyCurrentLimit(
                 currentLimitConfig,
                 Constants.kLongCANTimeoutMs
             );
-        ((IMotorControllerEnhanced) leftFollowerB).configSupplyCurrentLimit(
+        ((IGreenMotor) leftFollowerB).configSupplyCurrentLimit(
                 currentLimitConfig,
                 Constants.kLongCANTimeoutMs
             );
@@ -80,11 +81,11 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             currentLimitConfig,
             Constants.kLongCANTimeoutMs
         );
-        ((IMotorControllerEnhanced) rightFollowerA).configSupplyCurrentLimit(
+        ((IGreenMotor) rightFollowerA).configSupplyCurrentLimit(
                 currentLimitConfig,
                 Constants.kLongCANTimeoutMs
             );
-        ((IMotorControllerEnhanced) rightFollowerB).configSupplyCurrentLimit(
+        ((IGreenMotor) rightFollowerB).configSupplyCurrentLimit(
                 currentLimitConfig,
                 Constants.kLongCANTimeoutMs
             );
@@ -376,9 +377,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         return rightMain.getSelectedSensorVelocity(0);
     }
 
-    private EnhancedMotorChecker.CheckerConfig getTalonCheckerConfig(
-        IMotorControllerEnhanced talon
-    ) {
+    private EnhancedMotorChecker.CheckerConfig getTalonCheckerConfig(IGreenMotor talon) {
         return EnhancedMotorChecker.CheckerConfig.getForSubsystemMotor(this, talon);
     }
 

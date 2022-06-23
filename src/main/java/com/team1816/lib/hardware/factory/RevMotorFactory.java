@@ -1,6 +1,5 @@
 package com.team1816.lib.hardware.factory;
 
-import com.ctre.phoenix.motorcontrol.*;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.SubsystemConfig;
 import com.team1816.lib.hardware.components.motor.*;
@@ -8,7 +7,7 @@ import java.util.Map;
 
 public class RevMotorFactory {
 
-    public static IMotorControllerEnhanced createDefaultSpark(
+    public static IGreenMotor createDefaultSpark(
         int id,
         String name,
         SubsystemConfig subsystems,
@@ -18,11 +17,11 @@ public class RevMotorFactory {
         return createSpark(id);
     }
 
-    public static IMotorControllerEnhanced createSpark(int id) {
+    public static IGreenMotor createSpark(int id) {
         return new LazySparkMax(id);
     }
 
-    public static IMotorControllerEnhanced createSpark(
+    public static IGreenMotor createSpark(
         int id,
         String name,
         SubsystemConfig subsystems,

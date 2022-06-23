@@ -13,7 +13,7 @@ import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 
-public class LazySparkMax implements IMotorControllerEnhanced {
+public class LazySparkMax implements IGreenMotor {
 
     private CANSparkMax mMotor;
     private SparkMaxPIDController mPidController;
@@ -49,7 +49,6 @@ public class LazySparkMax implements IMotorControllerEnhanced {
             mLastSet = demand;
             mLastControlMode = controlType;
             mPidController.setReference(demand, controlType); // note that this uses rpm for velocity!
-            //            mMotor.set(demand);
         }
     }
 
@@ -651,7 +650,7 @@ public class LazySparkMax implements IMotorControllerEnhanced {
         mMotor.follow(((LazySparkMax) masterToFollow).getMotor());
     }
 
-    public void follow(IMotorController masterToFollow, boolean inverted) {
+    public void follow(IGreenMotor masterToFollow, boolean inverted) {
         mMotor.follow(((LazySparkMax) masterToFollow).getMotor(), inverted);
     }
 
@@ -662,4 +661,9 @@ public class LazySparkMax implements IMotorControllerEnhanced {
 
     @Override
     public void valueUpdated() {}
+
+    @Override
+    public double getLastSet() {
+        return mLastSet;
+    }
 }
