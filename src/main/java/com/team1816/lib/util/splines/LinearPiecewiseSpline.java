@@ -1,13 +1,13 @@
-package com.team1816.season.util;
+package com.team1816.lib.util.splines;
 
 import java.util.ArrayList;
 
-public class FloorFunctionSpline extends Spline {
+public class LinearPiecewiseSpline extends Spline {
 
     public static ArrayList<Double[]> coordinates;
-    public static ArrayList<ArrayList<Double>> coefficients;
+    private static ArrayList<ArrayList<Double>> coefficients;
 
-    public FloorFunctionSpline(ArrayList<Double[]> knotPoints) {
+    public LinearPiecewiseSpline(ArrayList<Double[]> knotPoints) {
         super(knotPoints);
         coordinates = sort(knotPoints);
         coefficients = generateCoefficients();
@@ -18,9 +18,6 @@ public class FloorFunctionSpline extends Spline {
         for (int i = 0; i < coordinates.size() - 1; i++) {
             if (input < coordinates.get(i + 1)[0]) { // this is because we want the value to hold until the next value
                 double output = coordinates.get(i).length > 2 ? coordinates.get(i)[2] : 0; // use offsets if they exist
-                if (coefficients.size() <= 0) {
-                    coefficients = generateCoefficients();
-                }
                 for (int j = 0; j < coefficients.get(i).size(); j++) {
                     output += Math.pow(input, j) * coefficients.get(i).get(j);
                 }
@@ -32,12 +29,21 @@ public class FloorFunctionSpline extends Spline {
 
     @Override
     public ArrayList<ArrayList<Double>> generateCoefficients() {
-        ArrayList<ArrayList<Double>> fCoefficients = new ArrayList<>();
-        for (int i = 0; i < coordinates.size(); i++) {
+        ArrayList<ArrayList<Double>> lCoefficients = new ArrayList<>();
+        for (int i = 1; i < coordinates.size(); i++) {
             ArrayList<Double> tempCoefficients = new ArrayList<>();
-            tempCoefficients.add(coordinates.get(i)[1]);
-            fCoefficients.add(tempCoefficients);
+            double constant =
+                coordinates.get(i - 1)[1] -
+                coordinates.get(i - 1)[0] *
+                (coordinates.get(i)[1] - coordinates.get(i - 1)[1]) /
+                (coordinates.get(i)[0] - coordinates.get(i - 1)[0]);
+            double slope =
+                (coordinates.get(i)[1] - coordinates.get(i - 1)[1]) /
+                (coordinates.get(i)[0] - coordinates.get(i - 1)[0]);
+            tempCoefficients.add(constant);
+            tempCoefficients.add(slope);
+            lCoefficients.add(tempCoefficients);
         }
-        return fCoefficients;
+        return lCoefficients;
     }
 }

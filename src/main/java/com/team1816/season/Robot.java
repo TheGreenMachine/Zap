@@ -65,6 +65,7 @@ public class Robot extends TimedRobot {
     private final LatchedBoolean mWantsAutoInterrupt = new LatchedBoolean();
 
     private final AutoModeSelector mAutoModeSelector;
+    private final AutoModeExecutor mAutoModeExecutor;
     private TrajectorySet trajectorySet;
 
     private double loopStart;
@@ -591,7 +592,7 @@ public class Robot extends TimedRobot {
             mAutoModeExecutor.interrupt();
         }
 
-        if (mDriveByCameraInAuto || mAutoModeExecutor.isInterrupted()) {
+        if (mAutoModeExecutor.isInterrupted()) {
             manualControl();
         }
 

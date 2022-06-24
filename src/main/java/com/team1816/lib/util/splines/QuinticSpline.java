@@ -1,4 +1,4 @@
-package com.team1816.season.util;
+package com.team1816.lib.util.splines;
 
 import java.util.ArrayList;
 
