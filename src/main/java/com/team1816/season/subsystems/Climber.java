@@ -30,6 +30,7 @@ public class Climber extends Subsystem {
     // State
     private ControlMode controlMode = ControlMode.MANUAL;
     private TrapezoidProfile curProfile;
+    private double profileTime = 0;
     private double error;
     private boolean unlocked;
     private boolean needsOverShoot = false;
@@ -111,8 +112,8 @@ public class Climber extends Subsystem {
             System.out.println(
                 "incrementing climber to stage " + (currentStage+1) + " ....."
             );
+            setProfile(stages[currentStage].position, stages[currentStage+1].position);
             currentStage++;
-            setProfile(stages[currentStage].position);
             needsOverShoot = true;
             climbDelay = true;
             needsClamp = true;
@@ -198,8 +199,9 @@ public class Climber extends Subsystem {
         }
     }
 
-    private void setProfile(double pos) {
-        curProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxVel, maxAccel), new TrapezoidProfile.State(pos, 0));
+    private void setProfile(double initial, double goal) {
+        curProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxVel, maxAccel), new TrapezoidProfile.State(goal, 0), new TrapezoidProfile.State(initial, 0));
+        profileTime = curProfile.timeLeftUntil(goal);
     }
 
     @Override
@@ -217,7 +219,8 @@ public class Climber extends Subsystem {
             if (controlMode == ControlMode.POSITION) {
                 Stage stage = stages[currentStage];
                 setClamps(stage.topClamped, stage.bottomClamped, stage.topFirst);
-                positionControl(stages[currentStage].position);
+                //positionControl(stages[currentStage].position);
+                positionControl(curProfile.calculate(profileTime-curProfile.timeLeftUntil(stages[currentStage].position)).position); // gets current position in profile
             } else {
                 setClamps(topClamped, bottomClamped, false);
                 climber.set(PercentOutput, climberPower);
