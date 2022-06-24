@@ -24,6 +24,8 @@ public class SwerveModule implements ISwerveModule {
     public double driveDemand;
     public double azimuthDemand;
 
+    public double motorTemp; // drive motor temperature
+
     // State
     private boolean isBrakeMode = false;
 
@@ -40,7 +42,7 @@ public class SwerveModule implements ISwerveModule {
 
         System.out.println(
             "Configuring Swerve Module " +
-            constants.kName +
+            constants.kModuleName +
             " on subsystem " +
             subsystemName
         );
@@ -121,16 +123,20 @@ public class SwerveModule implements ISwerveModule {
                 mConstants.kAzimuthEncoderHomeOffset
             )
         );
+        motorTemp = driveMotor.getTemperature(); // Celsius
         return new SwerveModuleState(velocity, angle);
     }
 
+    public double getMotorTemp(){
+        return motorTemp;
+    }
     @Override
-    public String getSubsystemName() {
-        return mConstants.kName;
+    public String getName() {
+        return mConstants.kModuleName;
     }
 
     @Override
-    public double getAzimuthActual() {
+    public double getActualAzimuth() {
         return azimuthMotor.getSelectedSensorPosition(0);
     }
 
@@ -140,17 +146,17 @@ public class SwerveModule implements ISwerveModule {
     }
 
     @Override
-    public double getAzimuthDemand() {
+    public double getDesiredAzimuth() {
         return azimuthDemand;
     }
 
     @Override
-    public double getDriveActual() {
+    public double getActualDrive() {
         return driveMotor.getSelectedSensorVelocity(0);
     }
 
     @Override
-    public double getDriveDemand() {
+    public double getDesiredDrive() {
         return driveDemand;
     }
 

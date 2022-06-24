@@ -1,7 +1,5 @@
 package com.team1816.lib.hardware.factory;
 
-import static com.team1816.lib.subsystems.Subsystem.factory;
-
 import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifierStatusFrame;
 import com.ctre.phoenix.led.CANdle;
@@ -265,7 +263,7 @@ public class RobotFactory {
         }
 
         var swerveConstants = new Constants.Swerve();
-        swerveConstants.kName = name;
+        swerveConstants.kModuleName = name;
         swerveConstants.kAzimuthMotorName = module.azimuth; //getAzimuth and drive give ID i think - not the module name (ex: leftRear)
         swerveConstants.kAzimuthPid =
             getPidSlotConfig(subsystemName, "slot0", PIDConfig.Azimuth);

@@ -27,29 +27,44 @@ public class RobotState {
     public Shooter.STATE shooterState = Shooter.STATE.STOP;
     public Spindexer.STATE spinState = Spindexer.STATE.STOP;
     public Elevator.STATE elevatorState = Elevator.STATE.STOP;
+    public Cooler.STATE coolState = Cooler.STATE.WAIT;
+
+    public boolean hasOverheated = false;
 
     public RobotState() {
         SmartDashboard.putData("Field", field);
-        reset();
+        resetPosition();
     }
 
     /**
      * Resets the field to robot transform (robot's position on the field)
      */
-    public synchronized void reset(
+    public synchronized void resetPosition(
         Pose2d initial_field_to_vehicle,
         Rotation2d initial_vehicle_to_turret
     ) {
-        reset(initial_field_to_vehicle);
+        resetPosition(initial_field_to_vehicle);
         vehicle_to_turret = initial_vehicle_to_turret;
     }
 
-    public synchronized void reset(Pose2d initial_field_to_vehicle) {
+    public synchronized void resetPosition(Pose2d initial_field_to_vehicle) {
         field_to_vehicle = initial_field_to_vehicle;
     }
 
-    public synchronized void reset() {
-        reset(Constants.StartingPose);
+    public synchronized void resetPosition() {
+        resetPosition(Constants.StartingPose);
+    }
+
+    public synchronized void resetAllStates(){
+        collectorState = Collector.STATE.STOP;
+        spinState = Spindexer.STATE.STOP;
+        elevatorState = Elevator.STATE.STOP;
+        shooterState = Shooter.STATE.STOP;
+        coolState = Cooler.STATE.WAIT;
+        delta_vehicle = new ChassisSpeeds();
+        visionPoint = new Point();
+        shooterMPS = 0;
+        hasOverheated = false;
     }
 
     public synchronized Pose2d getLatestFieldToVehicle() {

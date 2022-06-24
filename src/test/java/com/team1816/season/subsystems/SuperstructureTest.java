@@ -47,7 +47,7 @@ public class SuperstructureTest extends TestCase {
     @Before
     public void setUp() {
         mSuperstructure = new Superstructure();
-        state.reset();
+        state.resetPosition();
     }
 
     public void testSetStopped() {}

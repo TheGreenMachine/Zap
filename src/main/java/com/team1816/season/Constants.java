@@ -86,7 +86,7 @@ public class Constants {
 
     public static class Swerve {
 
-        public String kName = "Name";
+        public String kModuleName = "Name";
         public String kDriveMotorName = "";
         public String kAzimuthMotorName = "";
 

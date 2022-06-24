@@ -47,6 +47,8 @@ public abstract class Drive
     protected boolean trajectoryStarted = false;
     protected final double tickRatioPerLoop = Constants.kLooperDt / .01d;
 
+    protected final double heatThreshold = factory.getConstant(NAME, "heatThreshold", 100);
+
     // hardware states
     protected boolean mIsBrakeMode;
 
@@ -54,7 +56,6 @@ public abstract class Drive
     protected boolean mOverrideTrajectory = false;
 
     protected boolean isSlowMode;
-    protected boolean pigeonNeedsReset = false;
 
     // Simulator
     protected double gyroDrift;
@@ -86,13 +87,10 @@ public abstract class Drive
         public Rotation2d gyro_heading = Constants.EmptyRotation;
         // no_offset = Relative to initial position, unaffected by reset
         public Rotation2d gyro_heading_no_offset = Constants.EmptyRotation;
-        public double left_position_ticks;
-        public double right_position_ticks;
-        public double left_velocity_ticks_per_100ms;
-        public double right_velocity_ticks_per_100ms;
-        // no_offset = Relative to initial position, unaffected by reset
         double left_error;
         double right_error;
+        public Rotation2d desired_heading = new Rotation2d();
+        public Pose2d desired_pose = new Pose2d();
 
         // SWERVE IMPUTS
         public ChassisSpeeds chassisSpeed = new ChassisSpeeds();
@@ -102,15 +100,10 @@ public abstract class Drive
 
         // OUTPUTS
         public double left_demand;
-
         public double right_demand;
-        public double left_accel;
-        public double right_accel;
         public double left_feedforward;
         public double right_feedforward;
-
-        public Rotation2d desired_heading = new Rotation2d();
-        public Pose2d desired_pose = new Pose2d();
+        public double[] motorTemperatures = new double[4];
 
         //here to make swerveDrive happy for now - rip out later?
         public boolean low_power;

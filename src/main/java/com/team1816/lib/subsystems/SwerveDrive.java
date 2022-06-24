@@ -78,7 +78,11 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     public synchronized void readFromHardware() {
         SwerveModuleState[] states = new SwerveModuleState[4];
         for (int i = 0; i < 4; i++) {
+            // logging actual angle and velocity of swerve motors (azimuth & drive)
             states[i] = swerveModules[i].getState();
+
+            // logging current temperatures of each module's drive motor
+            mPeriodicIO.motorTemperatures[i] = swerveModules[i].getMotorTemp();
         }
         mPeriodicIO.chassisSpeed =
             Constants.Swerve.swerveKinematics.toChassisSpeeds(states);
@@ -168,6 +172,15 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 mPeriodicIO.chassisSpeed.vyMetersPerSecond,
                 mPeriodicIO.chassisSpeed.omegaRadiansPerSecond
             );
+        // check if motors are overheating - if yes, update robotState and shut down this checker
+        if(!robotState.hasOverheated){
+            for(int i = 0; i < 4; i++){
+                if (mPeriodicIO.motorTemperatures[i] > heatThreshold) {
+                    robotState.hasOverheated = true;
+                    break;
+                }
+            }
+        }
     }
 
     // general setters

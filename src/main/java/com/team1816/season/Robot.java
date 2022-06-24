@@ -56,6 +56,7 @@ public class Robot extends TimedRobot {
     private final Spindexer mSpindexer;
     private final Elevator mElevator;
     private final Climber mClimber;
+    private final Cooler cooler;
     private final Camera mCamera;
     private final LedManager mLedManager;
     private final DistanceManager mDistanceManager;
@@ -90,6 +91,7 @@ public class Robot extends TimedRobot {
         mSpindexer = injector.getInstance(Spindexer.class);
         mSuperstructure = injector.getInstance(Superstructure.class);
         mShooter = injector.getInstance(Shooter.class);
+        cooler = injector.getInstance(Cooler.class);
         mRobotState = injector.getInstance(RobotState.class);
         mDistanceManager = injector.getInstance(DistanceManager.class);
         mLedManager = injector.getInstance(LedManager.class);
@@ -251,7 +253,7 @@ public class Robot extends TimedRobot {
             mSubsystemManager.registerDisabledLoops(mDisabledLooper);
 
             // Robot starts forwards.
-            mRobotState.reset();
+            mRobotState.resetPosition();
 
             mAutoModeSelector.updateModeCreator();
 
@@ -386,6 +388,8 @@ public class Robot extends TimedRobot {
             mCamera.setCameraEnabled(false);
 
             mSuperstructure.setStopped(true);
+            cooler.zeroSensors();
+            mRobotState.resetAllStates();
 
             // Reset all auto mode states.
             if (mAutoModeExecutor != null) {
@@ -410,7 +414,7 @@ public class Robot extends TimedRobot {
             mLedManager.setDefaultStatus(LedManager.RobotStatus.AUTONOMOUS);
 
             // Robot starts at first waypoint (Pose2D) of current auto path chosen
-            mRobotState.reset();
+            mRobotState.resetPosition();
 
             mDrive.zeroSensors();
             mTurret.zeroSensors();

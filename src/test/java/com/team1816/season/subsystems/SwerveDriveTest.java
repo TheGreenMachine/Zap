@@ -71,7 +71,7 @@ public class SwerveDriveTest {
     public void setUp() {
         when(mDriveFactory.getInstance()).thenReturn(mDrive);
         mDrive.zeroSensors();
-        state.reset();
+        state.resetPosition();
     }
 
     private SwerveModuleState[] getExpectedState(
