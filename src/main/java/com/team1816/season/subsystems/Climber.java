@@ -8,7 +8,9 @@ import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.TrapezoidProfileSubsystem;
 
 public class Climber extends Subsystem {
 
@@ -21,8 +23,13 @@ public class Climber extends Subsystem {
     private final ISolenoid topClamp;
     private final ISolenoid bottomClamp;
 
+    // Config
+    private double maxVel = 2; // arbitrary constants TODO: tune and move to yaml
+    private double maxAccel = 1; // arbitrary constants TODO: tune and move to yaml
+
     // State
     private ControlMode controlMode = ControlMode.MANUAL;
+    private TrapezoidProfile curProfile;
     private double error;
     private boolean unlocked;
     private boolean needsOverShoot = false;
@@ -33,7 +40,7 @@ public class Climber extends Subsystem {
     private final Stage[] stages;
     private double climberPosition;
     private double currentDraw;
-    //Manual
+    // Manual
     private double climberPower = 0;
     private boolean topClamped = false;
     private boolean bottomClamped = false;
@@ -52,6 +59,7 @@ public class Climber extends Subsystem {
         bottomClamp = factory.getSolenoid(NAME, "bottomClamp");
 
         PIDSlotConfiguration config = factory.getPidSlotConfig(NAME, pidSlot);
+        curProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxVel, maxAccel), new TrapezoidProfile.State());
 
         ALLOWABLE_ERROR = config.allowableError;
 
@@ -101,9 +109,10 @@ public class Climber extends Subsystem {
                 controlMode = ControlMode.POSITION;
             }
             System.out.println(
-                "incrementing climber to stage " + currentStage + " ....."
+                "incrementing climber to stage " + (currentStage+1) + " ....."
             );
             currentStage++;
+            setProfile(stages[currentStage].position);
             needsOverShoot = true;
             climbDelay = true;
             needsClamp = true;
@@ -187,6 +196,10 @@ public class Climber extends Subsystem {
             System.out.println("setting climber clamps!");
             Timer.delay(.25);
         }
+    }
+
+    private void setProfile(double pos) {
+        curProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxVel, maxAccel), new TrapezoidProfile.State(pos, 0));
     }
 
     @Override
