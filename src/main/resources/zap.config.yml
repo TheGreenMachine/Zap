@@ -115,6 +115,8 @@ subsystems:
                 kF: 0.0487
                 allowableError: 100
         constants:
+            useLinearPiecewise: 0
+            useCubicSpline: 0
             usingPoseForSpeed: 0
             maxTicks: 20700
             nearVel: 4500

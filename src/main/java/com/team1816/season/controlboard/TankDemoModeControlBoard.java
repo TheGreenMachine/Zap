@@ -71,6 +71,11 @@ public class TankDemoModeControlBoard implements IControlBoard {
     }
 
     @Override
+    public boolean getHood() {
+        return false;
+    }
+
+    @Override
     public boolean getRaiseBucket() {
         return false;
     }
@@ -87,11 +92,6 @@ public class TankDemoModeControlBoard implements IControlBoard {
 
     @Override
     public boolean getDecrementCamDeviation() {
-        return false;
-    }
-
-    @Override
-    public boolean getHood() {
         return false;
     }
 

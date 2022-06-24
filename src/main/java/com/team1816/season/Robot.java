@@ -65,7 +65,6 @@ public class Robot extends TimedRobot {
     private final LatchedBoolean mWantsAutoInterrupt = new LatchedBoolean();
 
     private final AutoModeSelector mAutoModeSelector;
-    private final AutoModeExecutor mAutoModeExecutor;
     private TrajectorySet trajectorySet;
 
     private double loopStart;
@@ -188,8 +187,20 @@ public class Robot extends TimedRobot {
                             "inches",
                             mCamera::getDistance
                         );
+                        BadLog.createTopic(
+                            "Vision/CenterX",
+                            "pixels",
+                            mCamera::getRawCenterX
+                        );
                     }
                 }
+                BadLog.createTopic(
+                    "ClimberPosition",
+                    "NativeRotationUnits",
+                    mClimber::getClimberPosition,
+                    "hide",
+                    "join:Tracking/Angles"
+                );
                 mShooter.CreateBadLogTopic(
                     "Shooter/ActVel",
                     "NativeUnits",
@@ -293,7 +304,7 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createAction(
-                        mControlBoard::getZeroPose,
+                        mControlBoard::getZeroPose, // line up against ally field wall -> zero
                         () -> {
                             mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
                             mDrive.zeroSensors(Constants.ZeroPose);
@@ -439,6 +450,7 @@ public class Robot extends TimedRobot {
             mTurret.zeroSensors();
 
             mSuperstructure.setStopped(false);
+            mCamera.setCameraEnabled(false);
 
             mDrive.setControlState(Drive.DriveControlState.TRAJECTORY_FOLLOWING);
             mAutoModeExecutor.start();
@@ -572,8 +584,15 @@ public class Robot extends TimedRobot {
                 mAutoModeExecutor.resume();
             }
         }
+
+        // Interrupt if switch flipped down
         if (mWantsAutoInterrupt.update(signalToStop)) {
+            System.out.println("Auto mode interrupted ");
             mAutoModeExecutor.interrupt();
+        }
+
+        if (mDriveByCameraInAuto || mAutoModeExecutor.isInterrupted()) {
+            manualControl();
         }
 
         if (Constants.kIsLoggingAutonomous) {

@@ -125,26 +125,6 @@ public class ControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getRaiseBucket() {
-        return mButtonControlBoard.getRaiseBucket();
-    }
-
-    @Override
-    public boolean getLowerBucket() {
-        return mButtonControlBoard.getLowerBucket();
-    }
-
-    @Override
-    public boolean getIncrementCamDeviation() {
-        return mButtonControlBoard.getIncrementCamDeviation();
-    }
-
-    @Override
-    public boolean getDecrementCamDeviation() {
-        return mButtonControlBoard.getDecrementCamDeviation();
-    }
-
-    @Override
     public boolean getClimberUp() {
         return mButtonControlBoard.getClimberUp();
     }
@@ -197,5 +177,27 @@ public class ControlBoard implements IControlBoard {
     @Override
     public boolean getHood() {
         return mButtonControlBoard.getHood();
+    }
+
+    @Override
+    public boolean getRaiseBucket() {
+        return mDriveControlBoard.getDPad() == 0; // && !mController.getButton(Controller.Button.A);
+    }
+
+    @Override
+    public boolean getLowerBucket() {
+        return (
+            mDriveControlBoard.getDPad() == 180 // && !mController.getButton(Controller.Button.A)
+        );
+    }
+
+    @Override
+    public boolean getIncrementCamDeviation() {
+        return false; // mController.getDPad() == 0 && mController.getButton(Controller.Button.A);
+    }
+
+    @Override
+    public boolean getDecrementCamDeviation() {
+        return false; //mController.getDPad() == 180 && mController.getButton(Controller.Button.A);
     }
 }

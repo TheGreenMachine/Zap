@@ -73,6 +73,11 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
     }
 
     @Override
+    public boolean getHood() {
+        return mController.getButton(Controller.Button.RIGHT_BUMPER);
+    }
+
+    @Override
     public boolean getRaiseBucket() {
         return mController.getDPad() == 0; // && !mController.getButton(Controller.Button.A);
     }
@@ -92,11 +97,6 @@ public class GamepadButtonControlBoard implements IButtonControlBoard {
     @Override
     public boolean getDecrementCamDeviation() {
         return false; //mController.getDPad() == 180 && mController.getButton(Controller.Button.A);
-    }
-
-    @Override
-    public boolean getHood() {
-        return mController.getButton(Controller.Button.RIGHT_BUMPER);
     }
 
     @Override
