@@ -16,11 +16,14 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
     private final double[] mDemand = new double[] { 0, 0 };
 
     protected double mLastSet = Double.NaN;
+
+    protected String mName = "";
     private final int mAbsInitOffset;
 
-    public GhostMotor(int maxTickVel, int absInitOffset) {
+    public GhostMotor(int maxTickVel, int absInitOffset, String name) {
         mAbsInitOffset = absInitOffset;
         mMaxTicks = maxTickVel;
+        mName = name;
     }
 
     @Override
@@ -653,5 +656,10 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
     @Override
     public double getLastSet() {
         return mLastSet;
+    }
+
+    @Override
+    public String getName() {
+        return mName;
     }
 }

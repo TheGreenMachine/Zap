@@ -4,4 +4,5 @@ import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 
 public interface IGreenMotor extends IMotorControllerEnhanced {
     double getLastSet();
+    String getName();
 }

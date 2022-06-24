@@ -177,7 +177,7 @@ public class TurretTest {
     public void zeroSensorsTest(int absInit, double turretPPR) {
         when(mockFactory.getConstant(Turret.NAME, "turretPPR")).thenReturn(turretPPR);
         when(mockFactory.getMotor(Turret.NAME, "turret"))
-            .thenReturn(new GhostMotor(0, absInit));
+            .thenReturn(new GhostMotor(0, absInit, "turret"));
         mTurret = new Turret();
         mTurret.zeroSensors();
         Assert.assertEquals(

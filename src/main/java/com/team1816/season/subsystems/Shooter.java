@@ -155,17 +155,9 @@ public class Shooter extends Subsystem implements PidProvider {
     @Override
     public void stop() {}
 
-    private EnhancedMotorChecker.CheckerConfig getTalonCheckerConfig(IGreenMotor talon) {
-        return EnhancedMotorChecker.CheckerConfig.getForSubsystemMotor(this, talon);
-    }
-
     @Override
     public boolean checkSystem() {
-        boolean checkShooter = EnhancedMotorChecker.checkMotors(
-            this,
-            getTalonCheckerConfig(shooterMain),
-            new EnhancedMotorChecker.NamedMotor("shooterMain", shooterMain)
-        );
+        boolean checkShooter = EnhancedMotorChecker.checkMotor(this, shooterMain);
 
         return checkShooter;
     }

@@ -47,7 +47,7 @@ public class CtreMotorFactory {
     }
 
     private static final Configuration kDefaultConfiguration = new Configuration();
-    private static final Configuration kSlaveConfiguration = new Configuration();
+    private static final Configuration kFollowerConfiguration = new Configuration();
 
     // Create a CANTalon with the default (out of the box) configuration.
     public static IGreenMotor createDefaultTalon(
@@ -71,11 +71,11 @@ public class CtreMotorFactory {
         );
     }
 
-    public static IGreenMotor createPermanentSlaveTalon(
+    public static IGreenMotor createFollowerTalon(
         int id,
         String name,
         boolean isFalcon,
-        IGreenMotor master,
+        IGreenMotor main,
         SubsystemConfig subsystem,
         Map<String, PIDSlotConfiguration> pidConfigList,
         String canBus
@@ -83,17 +83,17 @@ public class CtreMotorFactory {
         final IGreenMotor talon = createTalon(
             id,
             name,
-            kSlaveConfiguration,
+            kFollowerConfiguration,
             isFalcon,
             subsystem,
             pidConfigList,
-            -1, // never can have a remote sensor on slave,
+            -1, // never can have a remote sensor on Follower,
             canBus
         );
         System.out.println(
-            "Slaving talon on " + id + " to talon on " + master.getDeviceID()
+            "Slaving talon on " + id + " to talon on " + main.getDeviceID()
         );
-        talon.follow(master);
+        talon.follow(main);
         return talon;
     }
 
@@ -108,8 +108,8 @@ public class CtreMotorFactory {
         String canBus
     ) {
         IConfigurableMotorController talon = isFalcon
-            ? new LazyTalonFX(id, canBus)
-            : new LazyTalonSRX(id);
+            ? new LazyTalonFX(id, name, canBus)
+            : new LazyTalonSRX(id, name);
         configureMotorController(
             talon,
             name,
@@ -123,26 +123,34 @@ public class CtreMotorFactory {
         return talon;
     }
 
-    public static IGreenMotor createGhostTalon(int maxTicks, int absInitOffset) {
-        return new GhostMotor(maxTicks, absInitOffset);
+    public static IGreenMotor createGhostMotor(
+        int maxTicks,
+        int absInitOffset,
+        String name
+    ) {
+        return new GhostMotor(maxTicks, absInitOffset, name);
     }
 
-    public static IGreenMotor createDefaultVictor(int id) {
-        return createVictor(id, kDefaultConfiguration);
+    public static IGreenMotor createDefaultVictor(int id, String name) {
+        return createVictor(id, name, kDefaultConfiguration);
     }
 
-    public static IGreenMotor createPermanentSlaveVictor(int id, IGreenMotor master) {
-        final IGreenMotor victor = createVictor(id, kSlaveConfiguration);
+    public static IGreenMotor createFollowerVictor(
+        int id,
+        String name,
+        IGreenMotor main
+    ) {
+        final IGreenMotor victor = createVictor(id, name, kFollowerConfiguration);
         System.out.println(
-            "Slaving victor on " + id + " to talon on " + master.getDeviceID()
+            "Slaving victor on " + id + " to talon on " + main.getDeviceID()
         );
-        victor.follow(master);
+        victor.follow(main);
         return victor;
     }
 
     // This is currently treating a VictorSPX, which implements IMotorController as an IGreenMotor, which implements IMotorControllerEnhanced
-    public static IGreenMotor createVictor(int id, Configuration config) {
-        IGreenMotor victor = new LazyVictorSPX(id);
+    public static IGreenMotor createVictor(int id, String name, Configuration config) {
+        IGreenMotor victor = new LazyVictorSPX(id, name);
 
         victor.configReverseLimitSwitchSource(
             LimitSwitchSource.Deactivated,
@@ -277,9 +285,8 @@ public class CtreMotorFactory {
         talonConfiguration.enableOptimizations = true;
 
         if (factory.getConstant("resetFactoryDefaults", 0) > 0) {
+            System.out.println("Resetting motor factory defaults");
             motor.configFactoryDefault(kTimeoutMs);
-        } else {
-            System.out.println("NOT RESETTING DEFAULTS");
         }
 
         motor.overrideLimitSwitchesEnable(config.ENABLE_LIMIT_SWITCH);

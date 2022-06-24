@@ -17,17 +17,24 @@ public class LazyTalonSRX
     implements IConfigurableMotorController, IMotorSensor {
 
     protected double mLastSet = Double.NaN;
+    protected String mName = "";
     protected ControlMode mLastControlMode = null;
     private final SensorCollection mSensors;
 
-    public LazyTalonSRX(int deviceNumber) {
+    public LazyTalonSRX(int deviceNumber, String name) {
         super(deviceNumber);
         mSensors = super.getSensorCollection();
+        mName = name;
     }
 
     @Override
     public double getLastSet() {
         return mLastSet;
+    }
+
+    @Override
+    public String getName() {
+        return mName;
     }
 
     @Override

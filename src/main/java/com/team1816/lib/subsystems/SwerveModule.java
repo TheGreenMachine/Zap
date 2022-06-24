@@ -20,7 +20,7 @@ public class SwerveModule implements ISwerveModule {
     // Components
     private final IGreenMotor driveMotor;
     private final IGreenMotor azimuthMotor; // angle motor (the pivot part of a shopping cart except motorized)
-    public static CANCoder canCoder;
+    public final CANCoder canCoder;
     public double driveDemand;
     public double azimuthDemand;
 
@@ -84,7 +84,7 @@ public class SwerveModule implements ISwerveModule {
         allowableError = 5; // TODO this is a dummy value for checkSystem
 
         /* Angle Encoder Config */
-        SwerveModule.canCoder = canCoder;
+        this.canCoder = canCoder;
 
         System.out.println("  " + this);
     }

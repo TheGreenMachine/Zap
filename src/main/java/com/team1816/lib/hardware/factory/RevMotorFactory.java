@@ -14,11 +14,11 @@ public class RevMotorFactory {
         Map<String, PIDSlotConfiguration> pidConfigList,
         int remoteSensorId
     ) {
-        return createSpark(id);
+        return createSpark(id, name);
     }
 
-    public static IGreenMotor createSpark(int id) {
-        return new LazySparkMax(id);
+    public static IGreenMotor createSpark(int id, String name) {
+        return new LazySparkMax(id, name);
     }
 
     public static IGreenMotor createSpark(
@@ -28,7 +28,7 @@ public class RevMotorFactory {
         Map<String, PIDSlotConfiguration> pidConfigList,
         int remoteSensorId
     ) {
-        LazySparkMax sparkMax = new LazySparkMax(id);
+        LazySparkMax sparkMax = new LazySparkMax(id, name);
         if (pidConfigList != null) {
             pidConfigList.forEach(
                 (slot, slotConfig) -> {

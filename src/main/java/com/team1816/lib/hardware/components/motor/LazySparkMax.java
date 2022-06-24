@@ -20,12 +20,14 @@ public class LazySparkMax implements IGreenMotor {
     private RelativeEncoder mEncoder;
 
     protected double mLastSet = Double.NaN;
+    protected String mName = "";
     protected CANSparkMax.ControlType mLastControlMode = null;
 
-    public LazySparkMax(int deviceNumber) {
+    public LazySparkMax(int deviceNumber, String name) {
         mMotor = new CANSparkMax(deviceNumber, CANSparkMaxLowLevel.MotorType.kBrushless);
         mPidController = mMotor.getPIDController();
         mEncoder = mMotor.getEncoder();
+        mName = name;
     }
 
     @Override
@@ -665,5 +667,10 @@ public class LazySparkMax implements IGreenMotor {
     @Override
     public double getLastSet() {
         return mLastSet;
+    }
+
+    @Override
+    public String getName() {
+        return mName;
     }
 }

@@ -69,26 +69,26 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             currentLimitConfig,
             Constants.kLongCANTimeoutMs
         );
-        ((IGreenMotor) leftFollowerA).configSupplyCurrentLimit(
-                currentLimitConfig,
-                Constants.kLongCANTimeoutMs
-            );
-        ((IGreenMotor) leftFollowerB).configSupplyCurrentLimit(
-                currentLimitConfig,
-                Constants.kLongCANTimeoutMs
-            );
+        leftFollowerA.configSupplyCurrentLimit(
+            currentLimitConfig,
+            Constants.kLongCANTimeoutMs
+        );
+        leftFollowerB.configSupplyCurrentLimit(
+            currentLimitConfig,
+            Constants.kLongCANTimeoutMs
+        );
         rightMain.configSupplyCurrentLimit(
             currentLimitConfig,
             Constants.kLongCANTimeoutMs
         );
-        ((IGreenMotor) rightFollowerA).configSupplyCurrentLimit(
-                currentLimitConfig,
-                Constants.kLongCANTimeoutMs
-            );
-        ((IGreenMotor) rightFollowerB).configSupplyCurrentLimit(
-                currentLimitConfig,
-                Constants.kLongCANTimeoutMs
-            );
+        rightFollowerA.configSupplyCurrentLimit(
+            currentLimitConfig,
+            Constants.kLongCANTimeoutMs
+        );
+        rightFollowerB.configSupplyCurrentLimit(
+            currentLimitConfig,
+            Constants.kLongCANTimeoutMs
+        );
 
         setOpenLoop(DriveSignal.NEUTRAL);
 
@@ -223,16 +223,8 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     public boolean checkSystem() {
         setBrakeMode(false);
 
-        boolean leftSide = EnhancedMotorChecker.checkMotors(
-            this,
-            getTalonCheckerConfig(leftMain),
-            new EnhancedMotorChecker.NamedMotor("left_master", leftMain)
-        );
-        boolean rightSide = EnhancedMotorChecker.checkMotors(
-            this,
-            getTalonCheckerConfig(rightMain),
-            new EnhancedMotorChecker.NamedMotor("right_master", rightMain)
-        );
+        boolean leftSide = EnhancedMotorChecker.checkMotor(this, leftMain);
+        boolean rightSide = EnhancedMotorChecker.checkMotor(this, rightMain);
 
         boolean checkPigeon = mPigeon == null;
 
@@ -375,10 +367,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     @Override
     public double getRightVelocityNativeUnits() {
         return rightMain.getSelectedSensorVelocity(0);
-    }
-
-    private EnhancedMotorChecker.CheckerConfig getTalonCheckerConfig(IGreenMotor talon) {
-        return EnhancedMotorChecker.CheckerConfig.getForSubsystemMotor(this, talon);
     }
 
     public double getLeftVelocityActual() {

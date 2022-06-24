@@ -1,4 +1,4 @@
-package com.team254.lib.util;
+package com.team1816.lib.util;
 
 import java.util.List;
 
@@ -6,6 +6,7 @@ import java.util.List;
  * Contains basic functions that are used often.
  */
 public class Util {
+
     public static final double kEpsilon = 1e-12;
 
     /**
@@ -28,7 +29,7 @@ public class Util {
         return inRange(v, -maxMagnitude, maxMagnitude);
     }
 
-    public static double deadBand(double val, double deadband){
+    public static double deadBand(double val, double deadband) {
         return (Math.abs(val) > Math.abs(deadband)) ? val : 0.0;
     }
 
@@ -67,7 +68,11 @@ public class Util {
         return (a - epsilon <= b) && (a + epsilon >= b);
     }
 
-    public static boolean allCloseTo(final List<Double> list, double value, double epsilon) {
+    public static boolean allCloseTo(
+        final List<Double> list,
+        double value,
+        double epsilon
+    ) {
         boolean result = true;
         for (Double value_in : list) {
             result &= epsilonEquals(value_in, value, epsilon);
@@ -75,10 +80,14 @@ public class Util {
         return result;
     }
 
-    public static double boundAngle0to360Degrees(double angle){
+    public static double boundAngle0to360Degrees(double angle) {
         // Naive algorithm
-        while(angle >= 360.0) {angle -= 360.0;}
-        while(angle < 0.0) {angle += 360.0;}
+        while (angle >= 360.0) {
+            angle -= 360.0;
+        }
+        while (angle < 0.0) {
+            angle += 360.0;
+        }
         return angle;
     }
 }
