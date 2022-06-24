@@ -47,7 +47,11 @@ public abstract class Drive
     protected boolean trajectoryStarted = false;
     protected final double tickRatioPerLoop = Constants.kLooperDt / .01d;
 
-    protected final double heatThreshold = factory.getConstant(NAME, "heatThreshold", 100);
+    protected final double heatThreshold = factory.getConstant(
+        NAME,
+        "heatThreshold",
+        100
+    );
 
     // hardware states
     protected boolean mIsBrakeMode;

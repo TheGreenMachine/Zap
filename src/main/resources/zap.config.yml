@@ -70,6 +70,7 @@ subsystems:
             isSwerve: 1
             encPPR: 14255
             azimuthEncPPR: 4096
+            heatThreshold: 100 # C
     ledmanager:
         implemented: true
         canifier: -1

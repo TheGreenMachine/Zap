@@ -127,9 +127,10 @@ public class SwerveModule implements ISwerveModule {
         return new SwerveModuleState(velocity, angle);
     }
 
-    public double getMotorTemp(){
+    public double getMotorTemp() {
         return motorTemp;
     }
+
     @Override
     public String getName() {
         return mConstants.kModuleName;

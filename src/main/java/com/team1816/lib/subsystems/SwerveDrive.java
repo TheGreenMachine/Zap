@@ -173,8 +173,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 mPeriodicIO.chassisSpeed.omegaRadiansPerSecond
             );
         // check if motors are overheating - if yes, update robotState and shut down this checker
-        if(!robotState.hasOverheated){
-            for(int i = 0; i < 4; i++){
+        if (!robotState.hasOverheated) {
+            for (int i = 0; i < 4; i++) {
                 if (mPeriodicIO.motorTemperatures[i] > heatThreshold) {
                     robotState.hasOverheated = true;
                     break;

@@ -55,7 +55,7 @@ public class RobotState {
         resetPosition(Constants.StartingPose);
     }
 
-    public synchronized void resetAllStates(){
+    public synchronized void resetAllStates() {
         collectorState = Collector.STATE.STOP;
         spinState = Spindexer.STATE.STOP;
         elevatorState = Elevator.STATE.STOP;

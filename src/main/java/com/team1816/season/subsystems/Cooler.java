@@ -27,17 +27,17 @@ public class Cooler extends Subsystem {
 
     @Override
     public void readFromHardware() {
-        if(robotState.hasOverheated){
+        if (robotState.hasOverheated) {
             needsDump = true;
         }
-        if(dumpIn.get()){
+        if (dumpIn.get()) {
             robotState.coolState = STATE.DUMP;
         }
     }
 
     @Override
     public void writeToHardware() {
-        if(needsDump && robotState.coolState == STATE.WAIT){
+        if (needsDump && robotState.coolState == STATE.WAIT) {
             dumpIn.set(true);
             dumpOut.set(true);
         }
