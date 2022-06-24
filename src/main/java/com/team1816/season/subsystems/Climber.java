@@ -8,6 +8,8 @@ import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
+import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.TrapezoidProfileSubsystem;
@@ -26,6 +28,7 @@ public class Climber extends Subsystem {
     // Config
     private double maxVel = 2; // arbitrary constants TODO: tune and move to yaml
     private double maxAccel = 1; // arbitrary constants TODO: tune and move to yaml
+    private double feedForward = 0;
 
     // State
     private ControlMode controlMode = ControlMode.MANUAL;
@@ -219,8 +222,7 @@ public class Climber extends Subsystem {
             if (controlMode == ControlMode.POSITION) {
                 Stage stage = stages[currentStage];
                 setClamps(stage.topClamped, stage.bottomClamped, stage.topFirst);
-                //positionControl(stages[currentStage].position);
-                positionControl(curProfile.calculate(profileTime-curProfile.timeLeftUntil(stages[currentStage].position)).position); // gets current position in profile
+                positionControl(stages[currentStage].position); // gets current position in profile
             } else {
                 setClamps(topClamped, bottomClamped, false);
                 climber.set(PercentOutput, climberPower);
