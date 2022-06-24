@@ -3,8 +3,8 @@ package com.team1816.season.subsystems;
 import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
 import static com.ctre.phoenix.motorcontrol.ControlMode.Position;
 
-import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
+import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
@@ -16,8 +16,8 @@ public class Climber extends Subsystem {
     private static final String NAME = "climber";
 
     // Components
-    private final IMotorControllerEnhanced climber;
-    private final IMotorControllerEnhanced climberFollower;
+    private final IGreenMotor climberMain;
+    private final IGreenMotor climberFollower;
     private final ISolenoid topClamp;
     private final ISolenoid bottomClamp;
 
@@ -26,8 +26,8 @@ public class Climber extends Subsystem {
     private double error;
     private boolean unlocked;
     private boolean needsOverShoot = false;
-    private boolean climbDelay = false;
     private boolean needsClamp = false;
+    private boolean climbDelay = false;
     // Position
     private int currentStage;
     private final Stage[] stages;
@@ -40,22 +40,21 @@ public class Climber extends Subsystem {
     private boolean outputsChanged = false;
 
     private final double ALLOWABLE_ERROR;
-    private final String pidSlot = "slot0";
 
     public Climber() {
         super(NAME);
-        climber = factory.getMotor(NAME, "climber");
+        climberMain = factory.getMotor(NAME, "climberMain");
         climberFollower =
-            (IMotorControllerEnhanced) factory.getMotor(NAME, "climberFollower", climber);
+            (IGreenMotor) factory.getMotor(NAME, "climberFollower", climberMain);
         climberFollower.setInverted(true);
         topClamp = factory.getSolenoid(NAME, "topClamp");
         bottomClamp = factory.getSolenoid(NAME, "bottomClamp");
 
-        PIDSlotConfiguration config = factory.getPidSlotConfig(NAME, pidSlot);
+        PIDSlotConfiguration config = factory.getPidSlotConfig(NAME);
 
         ALLOWABLE_ERROR = config.allowableError;
 
-        climber.configClosedloopRamp(.20, Constants.kCANTimeoutMs);
+        climberMain.configClosedloopRamp(.20, Constants.kCANTimeoutMs);
         climberFollower.configClosedloopRamp(.20, Constants.kCANTimeoutMs);
 
         currentStage = 0;
@@ -63,7 +62,7 @@ public class Climber extends Subsystem {
 
         stages =
             new Stage[] {
-                new Stage(factory.getConstant(NAME, "startPos", 0), true, false, false), // just here as an init value
+                new Stage(factory.getConstant(NAME, "startPos", 0), true, false, false),
                 new Stage(
                     factory.getConstant(NAME, "unlockPos", -20),
                     true,
@@ -158,7 +157,7 @@ public class Climber extends Subsystem {
 
     private void positionControl(double position) {
         if (needsOverShoot) { // keep looping if we aren't past the overshoot value
-            climber.set(Position, position);
+            climberMain.set(Position, position);
             if (climbDelay) {
                 climbDelay = false;
                 Timer.delay(1);
@@ -168,7 +167,7 @@ public class Climber extends Subsystem {
             }
             outputsChanged = true;
         } else {
-            climber.set(PercentOutput, 0); // coast so that the climber falls down to lock
+            climberMain.set(PercentOutput, 0); // coast so that the climber falls down to lock
         }
     }
 
@@ -191,10 +190,9 @@ public class Climber extends Subsystem {
 
     @Override
     public void readFromHardware() {
-        error = climber.getSelectedSensorPosition(0) - stages[currentStage].position;
-        climberPosition = climber.getSelectedSensorPosition(0);
-        currentDraw = climber.getOutputCurrent();
-        //        System.out.println("climber position = " + climberPosition);
+        error = climberMain.getSelectedSensorPosition(0) - stages[currentStage].position;
+        climberPosition = climberMain.getSelectedSensorPosition(0);
+        //        currentDraw = climberMain.getOutputCurrent();
     }
 
     @Override
@@ -207,7 +205,7 @@ public class Climber extends Subsystem {
                 positionControl(stages[currentStage].position);
             } else {
                 setClamps(topClamped, bottomClamped, false);
-                climber.set(PercentOutput, climberPower);
+                climberMain.set(PercentOutput, climberPower);
             }
         }
     }
@@ -231,7 +229,11 @@ public class Climber extends Subsystem {
         needsClamp = false;
         climbDelay = false;
         needsOverShoot = false;
-        climber.setSelectedSensorPosition(stages[0].position, 0, Constants.kCANTimeoutMs);
+        climberMain.setSelectedSensorPosition(
+            stages[0].position,
+            0,
+            Constants.kCANTimeoutMs
+        );
     }
 
     @Override
@@ -241,13 +243,13 @@ public class Climber extends Subsystem {
     public boolean checkSystem() {
         // currently just running the climber in percent output to make sure it can unclamp and spin
         // WARNING - pos/neg values may be inverted!
-        climber.set(PercentOutput, 0.2);
+        climberMain.set(PercentOutput, 0.2);
         Timer.delay(.5);
-        climber.set(PercentOutput, 0);
+        climberMain.set(PercentOutput, 0);
         Timer.delay(1);
-        climber.set(PercentOutput, -0.2);
+        climberMain.set(PercentOutput, -0.2);
         Timer.delay(2);
-        climber.set(PercentOutput, 0);
+        climberMain.set(PercentOutput, 0);
 
         return true;
     }

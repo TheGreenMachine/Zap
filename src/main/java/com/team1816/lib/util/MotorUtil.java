@@ -1,9 +1,9 @@
 package com.team1816.lib.util;
 
 import com.ctre.phoenix.ErrorCode;
-import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import edu.wpi.first.wpilibj.DriverStation;
 
 public class MotorUtil {
@@ -20,7 +20,7 @@ public class MotorUtil {
         }
     }
 
-    public static double getSupplyCurrent(IMotorControllerEnhanced motor) {
+    public static double getSupplyCurrent(IGreenMotor motor) {
         // If only CTRE had these methods in the interface...
         if (motor instanceof TalonFX) {
             return ((TalonFX) motor).getSupplyCurrent();

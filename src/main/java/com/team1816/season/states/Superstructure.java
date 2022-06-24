@@ -50,7 +50,6 @@ public class Superstructure {
     private boolean revving;
     private boolean firing;
     private final boolean useVision;
-    private final boolean usePoseTrack;
     private double maxAllowablePoseError = factory.getConstant(
         "maxAllowablePoseError",
         0.2
@@ -62,11 +61,10 @@ public class Superstructure {
         revving = false;
         firing = false;
         useVision = Constants.kUseVision;
-        usePoseTrack = Constants.kUsePoseTrack;
     }
 
     public void setStopped(boolean notCoasting) {
-        collector.setDesiredState(Collector.STATE.STOP); // stop states auto-set subsystems to stop moving
+        collector.setDesiredState(Collector.STATE.STOP);
         elevator.setDesiredState(Elevator.STATE.STOP);
         if (notCoasting) {
             shooter.setDesiredState(Shooter.STATE.STOP);
@@ -107,7 +105,6 @@ public class Superstructure {
             shooter.setDesiredState(Shooter.STATE.REVVING);
             if (camera.isEnabled() && !manual) {
                 shooter.setVelocity(getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
-                shooter.setHood(getDistance(DistanceManager.SUBSYSTEM.HOOD) > 0);
             } else {
                 shooter.setVelocity(shooterVel);
             }

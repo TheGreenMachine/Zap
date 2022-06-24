@@ -158,6 +158,7 @@ subsystems:
 pcm: 2
 canivoreBusName: highSpeed
 constants:
+    pdID: 0
     # pigeon
     pigeonId: 13
     isPigeon2: 1
@@ -168,9 +169,9 @@ constants:
     wheelbaseLength: 21.5 #inches
     wheelDiameter: 4
     kTrackScrubFactor: 1.0
-    maxVelOpenLoop: 3 # 160 # 240 # inches/s # 22560 native units ---30
-    maxVelPathFollowing: 2.2 # 160 # 240 # inches/s # 22560 native units ---30
-    maxAccel: 100 # inches/s^ 2
+    maxVelOpenLoop: 3 # meters/s
+    maxVelPathFollowing: 2.2 # meters/s
+    maxAccel: 2.54 # meters/s^ 2
     maxAllowablePoseError: 0.1
     ## Logging ##
     logTeleOp: 1 # 0 or 1
@@ -183,6 +184,6 @@ constants:
     teleopFieldCentric: 1 # 0 or 1
     compressorEnabled: 1 # 0 or 1
     kLooperDt: .035 # seconds
-    pdIsRev: 1 # power distribution
+    pdIsRev: 0 # power distribution
     phIsRev: 0 # pneumatics control
     resetFactoryDefaults: 0 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret

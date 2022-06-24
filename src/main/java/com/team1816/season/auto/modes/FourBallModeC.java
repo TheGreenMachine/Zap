@@ -36,7 +36,7 @@ public class FourBallModeC extends AutoModeBase {
         runAction(
             new SeriesAction(
                 new ParallelAction(
-                    new TurretAction(Turret.CARDINAL_NORTH - 10), // to be changed
+                    new TurretAction(Turret.NORTH - 10), // to be changed
                     new CollectAction(true)
                 ),
                 trajectory,
@@ -46,7 +46,7 @@ public class FourBallModeC extends AutoModeBase {
                 new ShootAction(false, true),
                 trajectory1,
                 new WaitAction(1),
-                new TurretAction(Turret.CARDINAL_SOUTH), // this is in dead zone so tune heading or turret angle
+                new TurretAction(Turret.SOUTH), // this is in dead zone so tune heading or turret angle
                 trajectory2,
                 new AutoAimAndRev(1, 11000),
                 new ShootAction(true, true),

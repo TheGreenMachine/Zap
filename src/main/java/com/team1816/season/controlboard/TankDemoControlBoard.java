@@ -11,14 +11,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import javax.inject.Singleton;
 
 @Singleton
-public class TankDemoModeControlBoard implements IControlBoard {
-
-    private static TankDemoModeControlBoard INSTANCE = null;
+public class TankDemoControlBoard implements IControlBoard {
 
     private final Controller mController;
     private double drivetrainMultiplier = 0.25;
 
-    public TankDemoModeControlBoard() {
+    public TankDemoControlBoard() {
         mController = new LogitechController(Constants.kDriveGamepadPort);
         SendableChooser<Double> speedChooser = new SendableChooser<>();
         speedChooser.setDefaultOption("Comfort", 0.25);

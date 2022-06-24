@@ -13,19 +13,21 @@ import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 
-public class LazySparkMax implements IMotorControllerEnhanced {
+public class LazySparkMax implements IGreenMotor {
 
-    private CANSparkMax mMotor;
-    private SparkMaxPIDController mPidController;
-    private RelativeEncoder mEncoder;
+    private CANSparkMax motor;
+    private SparkMaxPIDController pidController;
+    private RelativeEncoder encoder;
 
-    protected double mLastSet = Double.NaN;
-    protected CANSparkMax.ControlType mLastControlMode = null;
+    protected double lastSet = Double.NaN;
+    protected String name = "";
+    protected CANSparkMax.ControlType lastControlMode = null;
 
-    public LazySparkMax(int deviceNumber) {
-        mMotor = new CANSparkMax(deviceNumber, CANSparkMaxLowLevel.MotorType.kBrushless);
-        mPidController = mMotor.getPIDController();
-        mEncoder = mMotor.getEncoder();
+    public LazySparkMax(int deviceNumber, String motorName) {
+        motor = new CANSparkMax(deviceNumber, CANSparkMaxLowLevel.MotorType.kBrushless);
+        pidController = motor.getPIDController();
+        encoder = motor.getEncoder();
+        name = motorName;
     }
 
     @Override
@@ -45,16 +47,15 @@ public class LazySparkMax implements IMotorControllerEnhanced {
 
     private void canMaxSet(ControlMode mode, double demand) {
         CANSparkMax.ControlType controlType = convertControlMode(mode);
-        if (demand != mLastSet || controlType != mLastControlMode) {
-            mLastSet = demand;
-            mLastControlMode = controlType;
-            mPidController.setReference(demand, controlType); // note that this uses rpm for velocity!
-            //            mMotor.set(demand);
+        if (demand != lastSet || controlType != lastControlMode) {
+            lastSet = demand;
+            lastControlMode = controlType;
+            pidController.setReference(demand, controlType); // note that this uses rpm for velocity!
         }
     }
 
     public CANSparkMax getSpark() {
-        return mMotor;
+        return motor;
     }
 
     @Override
@@ -65,7 +66,7 @@ public class LazySparkMax implements IMotorControllerEnhanced {
 
     @Override
     public void setInverted(boolean isInverted) {
-        mMotor.setInverted(isInverted);
+        motor.setInverted(isInverted);
     }
 
     @Override
@@ -73,12 +74,12 @@ public class LazySparkMax implements IMotorControllerEnhanced {
 
     @Override
     public boolean getInverted() {
-        return mMotor.getInverted();
+        return motor.getInverted();
     }
 
     @Override
     public ErrorCode configOpenloopRamp(double secondsFromNeutralToFull, int timeoutMs) {
-        mMotor.setOpenLoopRampRate(secondsFromNeutralToFull);
+        motor.setOpenLoopRampRate(secondsFromNeutralToFull);
         return ErrorCode.OK;
     }
 
@@ -87,7 +88,7 @@ public class LazySparkMax implements IMotorControllerEnhanced {
         double secondsFromNeutralToFull,
         int timeoutMs
     ) {
-        mMotor.setClosedLoopRampRate(secondsFromNeutralToFull);
+        motor.setClosedLoopRampRate(secondsFromNeutralToFull);
         return ErrorCode.OK;
     }
 
@@ -209,12 +210,12 @@ public class LazySparkMax implements IMotorControllerEnhanced {
 
     @Override
     public double getSelectedSensorPosition(int pidIdx) {
-        return mEncoder.getPosition();
+        return encoder.getPosition();
     } // native position value
 
     @Override
     public double getSelectedSensorVelocity(int pidIdx) {
-        return mEncoder.getCountsPerRevolution();
+        return encoder.getCountsPerRevolution();
     } // RPM
 
     @Override
@@ -223,7 +224,7 @@ public class LazySparkMax implements IMotorControllerEnhanced {
         int pidIdx,
         int timeoutMs
     ) {
-        mEncoder.setPosition(sensorPos);
+        encoder.setPosition(sensorPos);
         return ErrorCode.OK;
     }
 
@@ -300,25 +301,25 @@ public class LazySparkMax implements IMotorControllerEnhanced {
 
     @Override
     public ErrorCode config_kP(int slotIdx, double value, int timeoutMs) {
-        mPidController.setP(value, slotIdx);
+        pidController.setP(value, slotIdx);
         return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode config_kI(int slotIdx, double value, int timeoutMs) {
-        mPidController.setI(value, slotIdx);
+        pidController.setI(value, slotIdx);
         return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode config_kD(int slotIdx, double value, int timeoutMs) {
-        mPidController.setD(value, slotIdx);
+        pidController.setD(value, slotIdx);
         return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode config_kF(int slotIdx, double value, int timeoutMs) {
-        mPidController.setFF(value, slotIdx); // is FF the same as F? This may be wrong!
+        pidController.setFF(value, slotIdx); // is FF the same as F? This may be wrong!
         return ErrorCode.OK;
     }
 
@@ -551,7 +552,7 @@ public class LazySparkMax implements IMotorControllerEnhanced {
     }
 
     public int getDeviceID() {
-        return mMotor.getDeviceId();
+        return motor.getDeviceId();
     }
 
     @Override
@@ -643,23 +644,33 @@ public class LazySparkMax implements IMotorControllerEnhanced {
     }
 
     public CANSparkMax getMotor() {
-        return mMotor;
+        return motor;
     }
 
     @Override
     public void follow(IMotorController masterToFollow) { // only use if not inverted
-        mMotor.follow(((LazySparkMax) masterToFollow).getMotor());
+        motor.follow(((LazySparkMax) masterToFollow).getMotor());
     }
 
-    public void follow(IMotorController masterToFollow, boolean inverted) {
-        mMotor.follow(((LazySparkMax) masterToFollow).getMotor(), inverted);
+    public void follow(IGreenMotor masterToFollow, boolean inverted) {
+        motor.follow(((LazySparkMax) masterToFollow).getMotor(), inverted);
     }
 
     @Override
     public double getOutputCurrent() {
-        return mMotor.getOutputCurrent();
+        return motor.getOutputCurrent();
     }
 
     @Override
     public void valueUpdated() {}
+
+    @Override
+    public double getLastSet() {
+        return lastSet;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
 }

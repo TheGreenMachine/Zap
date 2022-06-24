@@ -1,6 +1,4 @@
-package com.team254.lib.util;
-
-import com.team254.lib.geometry.Rotation2d;
+package com.team1816.lib.util;
 
 import java.util.List;
 
@@ -8,6 +6,7 @@ import java.util.List;
  * Contains basic functions that are used often.
  */
 public class Util {
+
     public static final double kEpsilon = 1e-12;
 
     /**
@@ -30,7 +29,7 @@ public class Util {
         return inRange(v, -maxMagnitude, maxMagnitude);
     }
 
-    public static double deadBand(double val, double deadband){
+    public static double deadBand(double val, double deadband) {
         return (Math.abs(val) > Math.abs(deadband)) ? val : 0.0;
     }
 
@@ -69,7 +68,11 @@ public class Util {
         return (a - epsilon <= b) && (a + epsilon >= b);
     }
 
-    public static boolean allCloseTo(final List<Double> list, double value, double epsilon) {
+    public static boolean allCloseTo(
+        final List<Double> list,
+        double value,
+        double epsilon
+    ) {
         boolean result = true;
         for (Double value_in : list) {
             result &= epsilonEquals(value_in, value, epsilon);
@@ -77,31 +80,14 @@ public class Util {
         return result;
     }
 
-    public static double toTurretSafeAngleDegrees(Rotation2d rotation2d) {
-        double result = rotation2d.getDegrees() % 360.0;
-        if (result > 270) {
-            result -= 360;
-        } else if (result < -90) {
-            result += 360;
-        }
-        return result;
-    }
-
-    public static double boundAngle0to360Degrees(double angle){
+    public static double boundAngle0to360Degrees(double angle) {
         // Naive algorithm
-        while(angle >= 360.0) {angle -= 360.0;}
-        while(angle < 0.0) {angle += 360.0;}
+        while (angle >= 360.0) {
+            angle -= 360.0;
+        }
+        while (angle < 0.0) {
+            angle += 360.0;
+        }
         return angle;
-    }
-
-    public static boolean shouldReverse(double goalAngle, double currentAngle){
-        goalAngle = boundAngle0to360Degrees(goalAngle);
-        currentAngle = boundAngle0to360Degrees(currentAngle);
-        double reversedAngle = boundAngle0to360Degrees(currentAngle + 180);
-        double angleDifference = Math.abs(goalAngle - currentAngle);
-        double reversedAngleDifference = Math.abs(goalAngle - reversedAngle);
-        angleDifference = (angleDifference > 180) ? 360-angleDifference : angleDifference;
-        reversedAngleDifference = (reversedAngleDifference > 180) ? 360-reversedAngleDifference : reversedAngleDifference;
-        return reversedAngleDifference < angleDifference;
     }
 }

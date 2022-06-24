@@ -5,7 +5,6 @@ import com.google.inject.Singleton;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.vision.VisionSocket;
 import com.team1816.season.Constants;
-import com.team1816.season.states.RobotState;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -14,9 +13,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Camera extends Subsystem {
 
     // Components
-    @Inject
-    static RobotState state;
-
     @Inject
     static LedManager led;
 
@@ -53,7 +49,7 @@ public class Camera extends Subsystem {
         if (RobotBase.isSimulation()) { //simulate feedback loop
             return simulateDeltaX();
         } else {
-            return parseDeltaX(state.visionPoint.cX);
+            return parseDeltaX(robotState.visionPoint.cX);
         }
     }
 
@@ -68,7 +64,10 @@ public class Camera extends Subsystem {
                     Math.toRadians(
                         Constants.kCameraMountingAngleY +
                         (
-                            ((VIDEO_HEIGHT - state.visionPoint.cY) - (VIDEO_HEIGHT / 2)) *
+                            (
+                                (VIDEO_HEIGHT - robotState.visionPoint.cY) -
+                                (VIDEO_HEIGHT / 2)
+                            ) *
                             CAMERA_VFOV /
                             VIDEO_HEIGHT
                         )
@@ -79,7 +78,7 @@ public class Camera extends Subsystem {
     }
 
     public double getRawCenterX() {
-        return state.visionPoint.cX;
+        return robotState.visionPoint.cX;
     }
 
     public void setCameraEnabled(boolean cameraEnabled) {
@@ -107,8 +106,8 @@ public class Camera extends Subsystem {
             if (data != null) System.out.println("CAMERA DEBUG: Malformed point line: ");
             return;
         }
-        state.visionPoint.cX = Double.parseDouble(data[1]);
-        state.visionPoint.cY = Double.parseDouble(data[2]);
+        robotState.visionPoint.cX = Double.parseDouble(data[1]);
+        robotState.visionPoint.cY = Double.parseDouble(data[2]);
     }
 
     public void stop() {

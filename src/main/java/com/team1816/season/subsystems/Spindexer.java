@@ -1,9 +1,8 @@
 package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.google.inject.Singleton;
-import com.team1816.lib.hardware.components.pcm.ISolenoid;
+import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.subsystems.Subsystem;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
@@ -14,14 +13,11 @@ public class Spindexer extends Subsystem {
     private static final String NAME = "spindexer";
 
     // Components
-    private final ISolenoid feederFlap;
-    private final IMotorControllerEnhanced spindexer;
+    private final IGreenMotor spindexer;
 
     // State
-    private STATE state = STATE.STOP;
-    private boolean feederFlapOut = false; // leave for future addition if needed
-    private boolean distanceManaged = false;
-    private double spindexerPower;
+    private STATE desiredState = STATE.STOP;
+    private double desiredPower;
     private boolean outputsChanged;
 
     // Constants
@@ -29,25 +25,23 @@ public class Spindexer extends Subsystem {
     private final double INDEX;
     private final double FLUSH;
     private final double FIRE;
-    private final double POWER_THRESHOLD;
     private final double COAST;
 
     public Spindexer() {
         super(NAME);
-        this.feederFlap = factory.getSolenoid(NAME, "feederFlap");
-        this.spindexer = factory.getMotor(NAME, "spindexer");
+        // Components
+        spindexer = factory.getMotor(NAME, "spindexer");
 
+        // Constants
         COLLECT = factory.getConstant(NAME, "collectPow", 0.5);
         INDEX = factory.getConstant(NAME, "indexPow", -0.25);
         FLUSH = factory.getConstant(NAME, "flushPow", -1);
         FIRE = factory.getConstant(NAME, "firePow", 1);
         COAST = factory.getConstant(NAME, "coastPow", -.1);
-        POWER_THRESHOLD = .1;
     }
 
     private void setSpindexer(double spindexerPower) {
-        this.spindexerPower = spindexerPower;
-        //        System.out.println("spindexer pow: " + spindexerPower);
+        this.desiredPower = spindexerPower;
         spindexer.set(ControlMode.PercentOutput, spindexerPower);
     }
 
@@ -60,30 +54,28 @@ public class Spindexer extends Subsystem {
         }
     }
 
-    public void setFeederFlap(boolean feederFlapOut) {
-        this.feederFlapOut = feederFlapOut;
-        outputsChanged = true;
-    }
-
     public void setDesiredState(STATE state) {
-        if (this.state != state) {
-            this.state = state;
+        if (desiredState != state) {
+            desiredState = state;
             outputsChanged = true;
         }
     }
 
     @Override
     public void readFromHardware() {
-        if (state != robotState.spinState) {
-            robotState.spinState = state;
+        // since no other subsystems rely on spindexer being up to speed to perform an action,
+        // we're just claiming that the true spindexer state matches its desired state
+        if (desiredState != robotState.spinState) {
+            robotState.spinState = desiredState;
         }
     }
 
     @Override
     public void writeToHardware() {
+        // avoid setting the spindexer motor unless outputs (ie: state) are changed
         if (outputsChanged) {
             outputsChanged = false;
-            switch (state) {
+            switch (desiredState) {
                 case STOP:
                     setSpindexer(0);
                     break;
@@ -103,8 +95,6 @@ public class Spindexer extends Subsystem {
                     setSpindexer(COAST);
                     break;
             }
-            this.feederFlap.set(feederFlapOut);
-            distanceManaged = false;
         }
     }
 

@@ -6,7 +6,7 @@ import static org.mockito.Mockito.when;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.team1816.lib.hardware.components.motor.GhostMotorControllerEnhanced;
+import com.team1816.lib.hardware.components.motor.GhostMotor;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
@@ -177,14 +177,11 @@ public class TurretTest {
     public void zeroSensorsTest(int absInit, double turretPPR) {
         when(mockFactory.getConstant(Turret.NAME, "turretPPR")).thenReturn(turretPPR);
         when(mockFactory.getMotor(Turret.NAME, "turret"))
-            .thenReturn(new GhostMotorControllerEnhanced(0, absInit));
+            .thenReturn(new GhostMotor(0, absInit, "turret"));
         mTurret = new Turret();
         mTurret.zeroSensors();
         Assert.assertEquals(
-            mTurret.TURRET_PPR /
-                2.0 -
-                mTurret.TURRET_PPR ==
-                mTurret.TURRET_ABS_ENCODER_PPR
+            mTurret.TURRET_PPR / 2.0 - mTurret.TURRET_PPR == mTurret.ABS_PPR
                 ? 0
                 : absInit,
             mTurret.getActualTurretPositionTicks(),

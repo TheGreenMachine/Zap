@@ -102,7 +102,6 @@ subsystems:
         implemented: true
         falcons:
             shooterMain: 21
-            shooterFollower: -1
         invertMotor:
             - shooterMain
         solenoids:
@@ -126,7 +125,7 @@ subsystems:
     climber:
         implemented: true
         falcons:
-            climber: 34 #20
+            climberMain: 34 #20
             climberFollower: 35 #-1
         solenoids:
             topClamp: 7
@@ -198,7 +197,7 @@ subsystems:
             collecting: -5000 #-3600
             flush: 5000 #.35
     camera:
-        implemented: true
+        implemented: false
         constants:
             debug: 0
             maxDist: 400
@@ -207,19 +206,20 @@ subsystems:
 pcm: 2
 canivoreBusName: highSpeed
 constants:
+    pdID: 1
     # pigeon
     pigeonId: 13
     isPigeon2: 1
     pigeonOnTalon: -1
     # drivetrain dimensions and movement
-    maxRotVel: 7.2
+    maxRotVel: 14
     trackWidth: 21 #inches
     wheelbaseLength: 21.5 #inches
     wheelDiameter: 4
     kTrackScrubFactor: 1.0
-    maxVelOpenLoop: 3 # 160 # 240 # inches/s # 22560 native units ---30
-    maxVelPathFollowing: 2.2 # 160 # 240 # inches/s # 22560 native units ---30
-    maxAccel: 100 # inches/s^ 2
+    maxVelOpenLoop: 3 # meters/s
+    maxVelPathFollowing: 3 # meters/s (2.2)
+    maxAccel: 2.54 # meters/s^ 2
     maxAllowablePoseError: 0.1
     ## Logging ##
     logTeleOp: 1 # 0 or 1

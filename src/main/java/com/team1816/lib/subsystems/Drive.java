@@ -55,7 +55,6 @@ public abstract class Drive
     protected final double tickRatioPerLoop = Constants.kLooperDt / .01d;
 
     // hardware states
-    protected String pidSlot = "slot0";
     protected boolean mIsBrakeMode;
 
     protected PeriodicIO mPeriodicIO;

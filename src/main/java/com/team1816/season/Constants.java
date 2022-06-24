@@ -3,13 +3,13 @@ package com.team1816.season;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.factory.RobotFactory;
-import com.team254.lib.util.Units;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 
 @Singleton
 public class Constants {
@@ -18,10 +18,11 @@ public class Constants {
 
     public static final Pose2d EmptyPose = new Pose2d();
     public static final Rotation2d EmptyRotation = new Rotation2d();
-
-    public static boolean robotInitialized = false;
-
     public static final double kLooperDt = factory.getConstant("kLooperDt", .020);
+
+    // CAN Timeouts
+    public static final int kCANTimeoutMs = 10; // use for important on the fly updates
+    public static final int kLongCANTimeoutMs = 100; // use for constructors
 
     // Field characterization
     public static final double kTargetHeight = 104; // inches
@@ -54,29 +55,25 @@ public class Constants {
         kDriveWheelDiameterInches * Math.PI;
     public static final double kDriveWheelRadiusInches = kDriveWheelDiameterInches / 2.0;
 
-    public static final double kDriveWheelTrackWidthMeters = Units.inches_to_meters(
+    public static final double kDriveWheelTrackWidthMeters = Units.inchesToMeters(
         kDriveWheelTrackWidthInches
     );
-    public static final double kDriveWheelbaseLengthMeters = Units.inches_to_meters(
+    public static final double kDriveWheelbaseLengthMeters = Units.inchesToMeters(
         kDriveWheelbaseLengthInches
     );
-    public static final double kDriveWheelDiameterMeters = Units.inches_to_meters(
+    public static final double kDriveWheelDiameterMeters = Units.inchesToMeters(
         kDriveWheelDiameterInches
     );
-    public static final double kWheelCircumferenceMeters = Units.inches_to_meters(
+    public static final double kWheelCircumferenceMeters = Units.inchesToMeters(
         kWheelCircumferenceInches
     );
-    public static final double kDriveWheelRadiusMeters = Units.inches_to_meters(
+    public static final double kDriveWheelRadiusMeters = Units.inchesToMeters(
         kDriveWheelRadiusInches
     );
     public static double kTrackScrubFactor = factory.getConstant("kTrackScrubFactor");
 
     public static final Pose2d ZeroPose = new Pose2d(0.5, fieldCenterY, EmptyRotation);
     public static Pose2d StartingPose = new Pose2d(0.5, fieldCenterY, EmptyRotation);
-
-    // CAN Timeouts
-    public static final int kCANTimeoutMs = 10; // use for important on the fly updates
-    public static final int kLongCANTimeoutMs = 100; // use for constructors
 
     public static class Tank {
 
@@ -108,12 +105,8 @@ public class Constants {
         );
 
         // azimuth position
-        private static final double moduleDeltaX = Units.inches_to_meters(
-            kDriveWheelbaseLengthMeters / 2.0
-        );
-        private static final double moduleDeltaY = Units.inches_to_meters(
-            kDriveWheelTrackWidthMeters / 2.0
-        );
+        private static final double moduleDeltaX = kDriveWheelbaseLengthMeters / 2.0;
+        private static final double moduleDeltaY = kDriveWheelTrackWidthMeters / 2.0;
 
         // Module Indicies
         public static final int kFrontLeft = 0;
@@ -154,36 +147,29 @@ public class Constants {
         );
     }
 
-    // reset button
-    public static final int kResetButtonChannel = 4;
-
     // Control Board
-    public static final boolean kUseDriveGamepad = true;
     public static final int kDriveGamepadPort = 0;
-    public static final int kButtonGamepadPort = 1;
-    public static final int kMainThrottleJoystickPort = 0;
-    public static final int kMainTurnJoystickPort = 0;
+    public static final int kOperatorGamepadPort = 1;
     public static final double kJoystickThreshold = 0.04; // deadband
 
-    public static double kCameraFrameRate = 30;
-
     // Drive speed
-    public static final double kPathFollowingMaxAccel = factory.getConstant(
+    public static final double kPathFollowingMaxAccelMeters = factory.getConstant(
         "maxAccel",
         4
     );
-    public static double kPathFollowingMaxVelMeters = factory.getConstant(
+    public static final double kPathFollowingMaxVelMeters = factory.getConstant(
         "maxVelPathFollowing"
     );
-    public static double kOpenLoopMaxVelMeters = factory.getConstant("maxVelOpenLoop");
+    public static final double kOpenLoopMaxVelMeters = factory.getConstant(
+        "maxVelOpenLoop"
+    );
 
-    public static final double kPXController = 6;
-    public static final double kPYController = 6;
-    public static final double kPThetaController = 600; // find why this is so big (700)
-    public static final double kIThetaController = 0; // find why this is so big (700)
-    public static final double kDThetaController = 0; // 2000;
-    public static double kMaxAngularSpeed = factory.getConstant("maxRotVel"); // rad/sec
-    public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI;
+    public static final double kPXController = 1;
+    public static final double kPYController = 1;
+    public static final double kPThetaController = 4;
+    public static final double kMaxAngularSpeed = factory.getConstant("maxRotVel"); // rad/sec
+    public static final double kMaxAngularAccelerationRadiansPerSecondSquared =
+        2 * Math.PI;
 
     // Constraint for the motion profilied robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(

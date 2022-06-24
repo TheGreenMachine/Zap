@@ -16,7 +16,6 @@ public class DistanceManager {
     public DistanceManager() {
         lastBucketIndex = 0;
         flatBuckets = true; // set here whether to use flat bucket values
-        //        allowBucketOffset = false;
         if (flatBuckets) {
             buckets = flat_buckets;
         } else {
@@ -128,13 +127,6 @@ public class DistanceManager {
         return .5;
     }
 
-    private double getHoodRetracted(double distance) {
-        if (distance < 90) {
-            return 0;
-        }
-        return 1;
-    }
-
     public double getOutput(double distance, SUBSYSTEM subsystem) {
         switch (subsystem) {
             case SPINDEXER:
@@ -143,8 +135,6 @@ public class DistanceManager {
                 return getElevatorOutput(distance);
             case SHOOTER:
                 return getShooterVelocity(distance);
-            case HOOD:
-                return getHoodRetracted(distance);
         }
         System.out.println("not a SUBSYSTEM!");
         return 0;
@@ -154,7 +144,6 @@ public class DistanceManager {
         SPINDEXER,
         ELEVATOR,
         SHOOTER,
-        HOOD,
     }
 
     public void outputBucketOffsets() {

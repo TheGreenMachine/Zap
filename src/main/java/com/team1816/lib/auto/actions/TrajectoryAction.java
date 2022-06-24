@@ -40,7 +40,7 @@ public class TrajectoryAction implements Action {
                 new RamseteCommand(
                     trajectory,
                     mDrive::getPose,
-                    new RamseteController(),
+                    new RamseteController(), //defaults of
                     new DifferentialDriveKinematics(
                         Units.inchesToMeters(Constants.kDriveWheelTrackWidthInches)
                     ),
@@ -49,8 +49,8 @@ public class TrajectoryAction implements Action {
         } else if (mDrive instanceof SwerveDrive) {
             var thetaController = new ProfiledPIDController(
                 Constants.kPThetaController,
-                Constants.kIThetaController,
-                Constants.kDThetaController,
+                0,
+                0,
                 Constants.kThetaControllerConstraints
             );
             thetaController.enableContinuousInput(-Math.PI, Math.PI);

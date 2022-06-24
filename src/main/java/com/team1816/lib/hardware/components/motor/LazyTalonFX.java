@@ -8,24 +8,31 @@ import edu.wpi.first.wpilibj.DriverStation;
 
 public class LazyTalonFX extends TalonFX implements IConfigurableMotorController {
 
-    protected double mLastSet = Double.NaN;
-    protected ControlMode mLastControlMode = null;
+    protected double lastSet = Double.NaN;
+    protected String name = "";
+    protected ControlMode lastControlMode = null;
 
-    public LazyTalonFX(int deviceNumber, String canBus) {
+    public LazyTalonFX(int deviceNumber, String motorName, String canBus) {
         super(deviceNumber, canBus);
+        name = motorName;
     }
 
     @Override
     public double getLastSet() {
-        return mLastSet;
+        return lastSet;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override
     public void set(ControlMode mode, double value) {
-        if (value != mLastSet || mode != mLastControlMode) {
+        if (value != lastSet || mode != lastControlMode) {
             if (!super.hasResetOccurred()) {
-                mLastSet = value;
-                mLastControlMode = mode;
+                lastSet = value;
+                lastControlMode = mode;
                 super.set(mode, value);
             } else {
                 DriverStation.reportError("MOTOR " + getDeviceID() + " HAS RESET", false);
