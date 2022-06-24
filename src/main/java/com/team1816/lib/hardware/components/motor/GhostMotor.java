@@ -11,19 +11,19 @@ import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 
 public class GhostMotor implements IGreenMotor, IMotorSensor {
 
-    private ControlMode mControlMode;
-    private final int mMaxTicks;
-    private final double[] mDemand = new double[] { 0, 0 };
+    private ControlMode controlMode;
+    private final int maxTicks;
+    private final double[] demand = new double[] { 0, 0 };
 
-    protected double mLastSet = Double.NaN;
+    protected double lastSet = Double.NaN;
 
-    protected String mName = "";
-    private final int mAbsInitOffset;
+    protected String name = "";
+    private final int absInitOffset;
 
-    public GhostMotor(int maxTickVel, int absInitOffset, String name) {
-        mAbsInitOffset = absInitOffset;
-        mMaxTicks = maxTickVel;
-        mName = name;
+    public GhostMotor(int maxTickVel, int absInitOffset, String motorName) {
+        this.absInitOffset = absInitOffset;
+        maxTicks = maxTickVel;
+        name = motorName;
     }
 
     @Override
@@ -47,8 +47,8 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
             Mode == ControlMode.Velocity ||
             Mode == ControlMode.PercentOutput
         ) {
-            mDemand[0] = demand;
-            mControlMode = Mode;
+            this.demand[0] = demand;
+            controlMode = Mode;
         }
     }
 
@@ -217,19 +217,19 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     @Override
     public double getSelectedSensorPosition(int pidIdx) {
-        return mDemand[pidIdx];
+        return demand[pidIdx];
     }
 
     @Override
     public double getSelectedSensorVelocity(int pidIdx) {
-        var output = mDemand[pidIdx];
-        if (mControlMode == ControlMode.PercentOutput) {
+        var output = demand[pidIdx];
+        if (controlMode == ControlMode.PercentOutput) {
             if (Math.abs(output) > 1.1) {
                 System.out.println(
                     "Motor % output should be between -1.0 to 1.0 value:" + output
                 );
             }
-            return output * mMaxTicks;
+            return output * maxTicks;
         }
         return output;
     }
@@ -240,7 +240,7 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
         int pidIdx,
         int timeoutMs
     ) {
-        mDemand[pidIdx] = sensorPos;
+        demand[pidIdx] = sensorPos;
         return ErrorCode.OK;
     }
 
@@ -639,27 +639,27 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     @Override
     public int getQuadraturePosition() {
-        return (int) mDemand[0];
+        return (int) demand[0];
     }
 
     @Override
     public int getPulseWidthPosition() {
-        return mAbsInitOffset;
+        return absInitOffset;
     }
 
     @Override
     public ErrorCode setQuadraturePosition(int newPosition) {
-        mDemand[0] = newPosition;
+        demand[0] = newPosition;
         return ErrorCode.OK;
     }
 
     @Override
     public double getLastSet() {
-        return mLastSet;
+        return lastSet;
     }
 
     @Override
     public String getName() {
-        return mName;
+        return name;
     }
 }

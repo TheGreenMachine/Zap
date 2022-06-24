@@ -10,16 +10,16 @@ import edu.wpi.first.wpilibj.DriverStation;
 
 public class LazyVictorSPX extends VictorSPX implements IGreenMotor {
 
-    protected String mName = "";
+    protected String name = "";
 
     /**
      * Constructor
      *
      * @param deviceNumber [0,62]
      */
-    public LazyVictorSPX(int deviceNumber, String name) {
+    public LazyVictorSPX(int deviceNumber, String motorName) {
         super(deviceNumber);
-        mName = name;
+        name = motorName;
     }
 
     @Override
@@ -71,12 +71,12 @@ public class LazyVictorSPX extends VictorSPX implements IGreenMotor {
 
     @Override
     public double getLastSet() {
-        System.out.println("getLastSet not implemented in LazyVictorSPX - returning 0");
+        DriverStation.reportWarning("getLastSet not implemented in LazyVictorSPX - returning 0", false);
         return 0;
     }
 
     @Override
     public String getName() {
-        return mName;
+        return name;
     }
 }
