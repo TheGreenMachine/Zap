@@ -1,5 +1,7 @@
 package com.team1816.lib.hardware.factory;
 
+import static com.team1816.lib.subsystems.Subsystem.factory;
+
 import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifierStatusFrame;
 import com.ctre.phoenix.led.CANdle;
@@ -19,8 +21,6 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotBase;
 import java.util.Map;
 import javax.annotation.Nonnull;
-
-import static com.team1816.lib.subsystems.Subsystem.factory;
 
 public class RobotFactory {
 
@@ -326,7 +326,7 @@ public class RobotFactory {
             if (subsystem.implemented && isHardwareValid(solenoidId) && isPcmEnabled()) {
                 return new SolenoidImpl(
                     config.infrastructure.pcmId,
-                    config.infrastructure.phIsRev
+                    config.infrastructure.pcmIsRev
                         ? PneumaticsModuleType.REVPH
                         : PneumaticsModuleType.CTREPCM,
                     solenoidId
@@ -403,7 +403,7 @@ public class RobotFactory {
 
     public ICompressor getCompressor() {
         if (isPcmEnabled()) {
-            if (config.infrastructure.phIsRev) {
+            if (config.infrastructure.pcmIsRev) {
                 return new CompressorImpl(getPcmId(), PneumaticsModuleType.REVPH);
             } else {
                 return new CompressorImpl(getPcmId(), PneumaticsModuleType.CTREPCM);
@@ -514,7 +514,7 @@ public class RobotFactory {
         }
     }
 
-    public PowerDistribution getPd(){
+    public PowerDistribution getPd() {
         return new PowerDistribution(
             config.infrastructure.pdId,
             config.infrastructure.pdIsRev
@@ -522,6 +522,7 @@ public class RobotFactory {
                 : PowerDistribution.ModuleType.kCTRE
         );
     }
+
     public IPigeonIMU getPigeon() {
         int id = config.infrastructure.pigeonId;
         IPigeonIMU pigeon;
@@ -549,7 +550,7 @@ public class RobotFactory {
         return getPcmId() > -1;
     }
 
-    public boolean isCompressorEnabled(){
+    public boolean isCompressorEnabled() {
         return config.infrastructure.compressorEnabled;
     }
 

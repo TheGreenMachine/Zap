@@ -6,6 +6,12 @@
         "pcmId": {
             "type": "integer"
         },
+        "pcmIsRev": {
+            "type": "boolean"
+        },
+        "compressorEnabled": {
+            "type": "boolean"
+        },
         "canivoreBusName": {
             "type": "string"
         },
@@ -15,16 +21,10 @@
         "pdId": {
             "type": "integer"
         },
-        "phIsRev": {
-            "type": "boolean"
-        },
         "pigeonId": {
             "type": "integer"
         },
         "isPigeon2": {
-            "type": "boolean"
-        },
-        "compressorEnabled": {
             "type": "boolean"
         }
     },

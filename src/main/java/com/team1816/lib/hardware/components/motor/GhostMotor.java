@@ -226,7 +226,10 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
         if (controlMode == ControlMode.PercentOutput) {
             if (Math.abs(output) > 1.1) {
                 System.out.println(
-                    "Motor % output should be between -1.0 to 1.0 value:" + output
+                    "Motor " +
+                    name +
+                    "'s % output should be between -1.0 to 1.0 value:" +
+                    output
                 );
             }
             return output * maxTicks;

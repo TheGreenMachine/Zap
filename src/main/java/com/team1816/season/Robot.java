@@ -46,7 +46,6 @@ public class Robot extends TimedRobot {
 
     //State managers
     private final Superstructure mSuperstructure;
-    private final Infrastructure mInfrastructure;
     private final com.team1816.season.states.RobotState mRobotState;
 
     // subsystems
@@ -77,7 +76,6 @@ public class Robot extends TimedRobot {
         Turret.ControlMode.CENTER_FOLLOWING;
     private boolean faulted;
     private boolean useManualShoot = false;
-    private boolean hasAimed = false;
 
     Robot() {
         super();
@@ -93,7 +91,6 @@ public class Robot extends TimedRobot {
         mSuperstructure = injector.getInstance(Superstructure.class);
         mShooter = injector.getInstance(Shooter.class);
         mRobotState = injector.getInstance(RobotState.class);
-        mInfrastructure = injector.getInstance(Infrastructure.class);
         mDistanceManager = injector.getInstance(DistanceManager.class);
         mLedManager = injector.getInstance(LedManager.class);
         mSubsystemManager = injector.getInstance(SubsystemManager.class);
@@ -170,7 +167,7 @@ public class Robot extends TimedRobot {
                     BadLog.createTopic(
                         "PDP/Current",
                         "Amps",
-                        mInfrastructure.getPd()::getTotalCurrent
+                        Infrastructure.getPd()::getTotalCurrent
                     );
 
                     mDrive.CreateBadLogValue("Drivetrain PID", mDrive.pidToString());
@@ -449,7 +446,7 @@ public class Robot extends TimedRobot {
             mTurret.setControlMode(defaultTurretControlMode);
 
             mSuperstructure.setStopped(false);
-            mInfrastructure.startCompressor();
+            Infrastructure.startCompressor();
         } catch (Throwable t) {
             faulted = true;
             throw t;

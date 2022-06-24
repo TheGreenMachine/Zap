@@ -4,9 +4,7 @@ import static com.team1816.lib.math.DriveConversions.inchesPerSecondToTicksPer10
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
-import com.team1816.lib.hardware.components.IPigeonIMU;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.lib.loops.Loop;
 import com.team1816.season.Constants;

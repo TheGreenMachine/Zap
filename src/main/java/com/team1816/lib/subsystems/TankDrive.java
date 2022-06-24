@@ -152,7 +152,8 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
                     )
                 );
         } else {
-            mPeriodicIO.gyro_heading_no_offset = Rotation2d.fromDegrees(Infrastructure.getYaw());
+            mPeriodicIO.gyro_heading_no_offset =
+                Rotation2d.fromDegrees(Infrastructure.getYaw());
         }
         mPeriodicIO.gyro_heading = mPeriodicIO.gyro_heading_no_offset;
         // the sole purpose of the error is for logging

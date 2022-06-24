@@ -74,13 +74,19 @@ subsystems:
             farVel: 10150
             maxVel: 16500
             coast: 6000
-pcm: 8
-constants:
-    pdID: 0
-    ## Pigeon Config ##
+infrastructure:
+    canivoreBusName: rio
+    # power distribution
+    pdId: 0
+    pdIsRev: false
+    # pneumatics control
+    compressorEnabled: false
+    pcmIsRev: false
+    pcmId: 8
+    # pigeon
     pigeonId: 9
-    isPigeon2: 0
-    pigeonOnTalon: -1
+    isPigeon2: false
+constants:
     ## Drivetrain Dimensions and Parameters ##
     maxAllowablePoseError: 0.1
     maxVelPathFollowing: 3 # meters/s
@@ -99,9 +105,6 @@ constants:
     verbose: 0 # 0 or 1
     ## General ##
     kLooperDt: .020
-    compressorEnabled: 1 # 0 or 1
-    pdIsRev: 0 # power distribution
-    phIsRev: 0
     resetFactoryDefaults: 0 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret
 
 
