@@ -2,10 +2,10 @@ package com.team1816.lib;
 
 import static com.team1816.lib.subsystems.Subsystem.factory;
 
-import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.components.IPigeonIMU;
 import com.team1816.lib.hardware.components.pcm.ICompressor;
+import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.PowerDistribution;
 
@@ -16,57 +16,49 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 @Singleton
 public class Infrastructure {
 
-    private static ICompressor mCompressor;
-    private static IPigeonIMU mPigeon;
-    private static PowerDistribution pdh;
+    // Components
+    private static ICompressor compressor;
+    private static IPigeonIMU pigeon;
+    private static PowerDistribution pd;
 
     private static final boolean compressorEnabled =
-        factory.getConstant("compressorEnabled") > 0;
-    private boolean lastCompressorOn = false;
+        factory.isCompressorEnabled();
+    private static boolean compressorIsOn = false;
 
     public Infrastructure() {
-        mCompressor = factory.getCompressor();
-        mPigeon = factory.getPigeon();
-        mPigeon.configFactoryDefault();
-        mPigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_1_General, 200);
-        mPigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_6_Accel, 1000);
-        pdh =
-            new PowerDistribution(
-                (int) factory.getConstant("pdID", 1),
-                factory.getConstant("pdIsRev") > 0
-                    ? PowerDistribution.ModuleType.kRev
-                    : PowerDistribution.ModuleType.kCTRE
-            );
+        compressor = factory.getCompressor();
+        pigeon = factory.getPigeon();
+        pd = factory.getPd();
     }
 
-    public void startCompressor() { // not used because compressor currently turns on by default once robot is enabled
-        if (compressorEnabled && !lastCompressorOn) {
-            mCompressor.enableDigital();
-            lastCompressorOn = true;
+    public static void startCompressor() { // not used because compressor currently turns on by default once robot is enabled
+        if (compressorEnabled && !compressorIsOn) {
+            compressor.enableDigital();
+            compressorIsOn = true;
         }
     }
 
-    public void stopCompressor() {
-        if (compressorEnabled && lastCompressorOn) {
-            mCompressor.disable();
-            lastCompressorOn = false;
+    public static void stopCompressor() {
+        if (compressorEnabled && compressorIsOn) {
+            compressor.disable();
+            compressorIsOn = false;
         }
     }
 
-    public void resetPigeon(Rotation2d angle) {
-        System.out.println("resetting Pigeon  - - ");
-        mPigeon.setYaw(angle.getDegrees());
+    public static void resetPigeon(Rotation2d angle) {
+        System.out.println("resetting Pigeon");
+        pigeon.setYaw(angle.getDegrees());
     }
 
-    public IPigeonIMU getPigeon() {
-        return mPigeon;
+    public static IPigeonIMU getPigeon() {
+        return pigeon;
     }
 
-    public double getYaw() {
-        return mPigeon.getYaw();
+    public static double getYaw() {
+        return pigeon.getYaw();
     }
 
-    public PowerDistribution getPdh() {
-        return pdh;
+    public static PowerDistribution getPd() {
+        return pd;
     }
 }

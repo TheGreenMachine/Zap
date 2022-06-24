@@ -6,6 +6,7 @@ import static com.team1816.lib.math.DriveConversions.rotationsToInches;
 import com.ctre.phoenix.motorcontrol.*;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.math.DriveConversions;
@@ -151,7 +152,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
                     )
                 );
         } else {
-            mPeriodicIO.gyro_heading_no_offset = Rotation2d.fromDegrees(mPigeon.getYaw());
+            mPeriodicIO.gyro_heading_no_offset = Rotation2d.fromDegrees(Infrastructure.getYaw());
         }
         mPeriodicIO.gyro_heading = mPeriodicIO.gyro_heading_no_offset;
         // the sole purpose of the error is for logging
@@ -178,7 +179,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     public void zeroSensors(Pose2d pose) {
         System.out.println("Zeroing drive sensors!");
         setBrakeMode(false);
-        mPeriodicIO.gyro_heading = Rotation2d.fromDegrees(mInfrastructure.getYaw());
+        mPeriodicIO.gyro_heading = Rotation2d.fromDegrees(Infrastructure.getYaw());
         resetEncoders();
         resetOdometry(pose);
         mPeriodicIO.chassisSpeed = new ChassisSpeeds();
@@ -226,7 +227,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         boolean leftSide = EnhancedMotorChecker.checkMotor(this, leftMain);
         boolean rightSide = EnhancedMotorChecker.checkMotor(this, rightMain);
 
-        boolean checkPigeon = mPigeon == null;
+        boolean checkPigeon = Infrastructure.getPigeon() == null;
 
         System.out.println(leftSide && rightSide && checkPigeon);
         if (leftSide && rightSide && checkPigeon) {

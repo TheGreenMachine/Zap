@@ -2,6 +2,7 @@ package com.team1816.lib.subsystems;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.season.Constants;
 import com.team1816.season.auto.AutoModeSelector;
@@ -93,7 +94,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                     .rotateBy(Rotation2d.fromDegrees(sim_gyro_offset_radians))
                     .rotateBy(Rotation2d.fromDegrees(gyroDrift));
         } else {
-            mPeriodicIO.gyro_heading = Rotation2d.fromDegrees(mInfrastructure.getYaw());
+            mPeriodicIO.gyro_heading = Rotation2d.fromDegrees(Infrastructure.getYaw());
         }
 
         swerveOdometry.update(mPeriodicIO.gyro_heading, states);
@@ -245,7 +246,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     public void zeroSensors(Pose2d pose) {
         System.out.println("Zeroing drive sensors!");
         setBrakeMode(false);
-        mPeriodicIO.gyro_heading = Rotation2d.fromDegrees(mInfrastructure.getYaw());
+        mPeriodicIO.gyro_heading = Rotation2d.fromDegrees(Infrastructure.getYaw());
         resetOdometry(pose);
         for (int i = 0; i < 4; i++) {
             swerveModules[i].setDesiredState(new SwerveModuleState(), true);

@@ -127,7 +127,7 @@ public class LedManager extends Subsystem {
 
     private void writeToCameraLed(int r, int g, int b) {
         if (factory.getConstant("pdIsRev") > 0) { // TODO this is a hack because currently not using candle
-            mInfraStructure.getPdh().setSwitchableChannel(cameraLedOn); // cameraLedOn
+            mInfraStructure.getPd().setSwitchableChannel(cameraLedOn); // cameraLedOn
         } else if (candle != null) {
             if (cameraLedOn) {
                 candle.setLEDs(0, 255, 0, 0, 0, 8);

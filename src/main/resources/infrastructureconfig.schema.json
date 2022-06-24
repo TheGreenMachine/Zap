@@ -1,0 +1,37 @@
+{
+    "type": "object",
+    "title": "Infrastructure Config",
+    "additionalProperties": false,
+    "properties": {
+        "pcmId": {
+            "type": "integer"
+        },
+        "canivoreBusName": {
+            "type": "string"
+        },
+        "pdIsRev": {
+            "type": "boolean"
+        },
+        "pdId": {
+            "type": "integer"
+        },
+        "phIsRev": {
+            "type": "boolean"
+        },
+        "pigeonId": {
+            "type": "integer"
+        },
+        "isPigeon2": {
+            "type": "boolean"
+        },
+        "compressorEnabled": {
+            "type": "boolean"
+        }
+    },
+    "anyOf": [
+        {
+            "required": ["pcmId", "canivoreBusName"]
+        }
+    ]
+}
+

@@ -37,11 +37,6 @@ public abstract class Drive
     @Inject
     protected static LedManager ledManager;
 
-    @Inject
-    protected static Infrastructure mInfrastructure;
-
-    protected IPigeonIMU mPigeon;
-
     // control states
     protected DriveControlState mDriveControlState = DriveControlState.OPEN_LOOP;
 
@@ -78,7 +73,6 @@ public abstract class Drive
     protected Drive() {
         super(NAME);
         mPeriodicIO = new PeriodicIO();
-        mPigeon = mInfrastructure.getPigeon();
     }
 
     public enum DriveControlState {
@@ -234,10 +228,6 @@ public abstract class Drive
 
     public DriveControlState getControlState() {
         return mDriveControlState;
-    }
-
-    public boolean hasPigeonResetOccurred() {
-        return mPigeon.hasResetOccurred();
     }
 
     @Override

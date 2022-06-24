@@ -8,20 +8,17 @@
             "type": "object",
             "existingJavaType": "java.util.Map<String,SubsystemConfig>"
         },
-        "pcm": {
-            "type": "integer"
+        "infrastructure": {
+            "$ref": "infrastructureconfig.schema.json"
         },
         "constants": {
             "$ref": "double.map.schema.json"
-        },
-        "canivoreBusName": {
-            "type": "string"
         }
     },
     "additionalProperties": false,
     "anyOf": [
         {
-            "required": ["subsystems", "pcm", "constants", "canivoreBusName"]
+            "required": ["subsystems", "infrastructure", "constants"]
         }
     ]
 }

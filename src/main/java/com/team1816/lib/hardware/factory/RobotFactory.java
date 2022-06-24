@@ -15,14 +15,16 @@ import com.team1816.lib.subsystems.SwerveModule;
 import com.team1816.season.Constants;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotBase;
 import java.util.Map;
 import javax.annotation.Nonnull;
 
+import static com.team1816.lib.subsystems.Subsystem.factory;
+
 public class RobotFactory {
 
     private RobotConfiguration config;
-    private static boolean verbose;
     private static RobotFactory factory;
 
     private enum PIDConfig {
@@ -58,7 +60,6 @@ public class RobotFactory {
         } catch (Exception e) {
             DriverStation.reportError("Yaml Config error!", e.getStackTrace());
         }
-        verbose = getConstant("verbose") >= 1;
     }
 
     public IGreenMotor getMotor(
@@ -81,7 +82,7 @@ public class RobotFactory {
                         subsystem,
                         pidConfigs,
                         remoteSensorId,
-                        config.canivoreBusName
+                        config.infrastructure.canivoreBusName
                     );
             } else if (
                 subsystem.falcons != null && isHardwareValid(subsystem.falcons.get(name))
@@ -94,7 +95,7 @@ public class RobotFactory {
                         subsystem,
                         pidConfigs,
                         remoteSensorId,
-                        config.canivoreBusName
+                        config.infrastructure.canivoreBusName
                     );
             } else if (
                 subsystem.sparkmaxes != null &&
@@ -168,7 +169,7 @@ public class RobotFactory {
                         main,
                         subsystem,
                         subsystem.pidConfig,
-                        config.canivoreBusName
+                        config.infrastructure.canivoreBusName
                     );
             } else if (
                 subsystem.falcons != null && isHardwareValid(subsystem.falcons.get(name))
@@ -181,7 +182,7 @@ public class RobotFactory {
                         main,
                         subsystem,
                         subsystem.pidConfig,
-                        config.canivoreBusName
+                        config.infrastructure.canivoreBusName
                     );
             } else if (
                 subsystem.victors != null && isHardwareValid(subsystem.victors.get(name))
@@ -324,8 +325,8 @@ public class RobotFactory {
             Integer solenoidId = subsystem.solenoids.get(name);
             if (subsystem.implemented && isHardwareValid(solenoidId) && isPcmEnabled()) {
                 return new SolenoidImpl(
-                    config.pcm,
-                    factory.getConstant("phIsRev") > 0
+                    config.infrastructure.pcmId,
+                    config.infrastructure.phIsRev
                         ? PneumaticsModuleType.REVPH
                         : PneumaticsModuleType.CTREPCM,
                     solenoidId
@@ -353,7 +354,7 @@ public class RobotFactory {
                 isPcmEnabled()
             ) {
                 return new DoubleSolenoidImpl(
-                    config.pcm,
+                    config.infrastructure.pcmId,
                     PneumaticsModuleType.REVPH,
                     solenoidConfig.forward,
                     solenoidConfig.reverse
@@ -384,7 +385,8 @@ public class RobotFactory {
         ICANdle candle;
         var subsystem = getSubsystem(subsystemName);
         if (subsystem.implemented && isHardwareValid((subsystem.candle))) {
-            candle = new CANdleImpl(subsystem.candle, config.canivoreBusName);
+            candle =
+                new CANdleImpl(subsystem.candle, config.infrastructure.canivoreBusName);
             candle.configFactoryDefault();
             candle.configStatusLedState(true);
             candle.configLOSBehavior(true);
@@ -401,7 +403,7 @@ public class RobotFactory {
 
     public ICompressor getCompressor() {
         if (isPcmEnabled()) {
-            if (factory.getConstant("phIsRev") > 0) {
+            if (config.infrastructure.phIsRev) {
                 return new CompressorImpl(getPcmId(), PneumaticsModuleType.REVPH);
             } else {
                 return new CompressorImpl(getPcmId(), PneumaticsModuleType.CTREPCM);
@@ -512,33 +514,43 @@ public class RobotFactory {
         }
     }
 
+    public PowerDistribution getPd(){
+        return new PowerDistribution(
+            config.infrastructure.pdId,
+            config.infrastructure.pdIsRev
+                ? PowerDistribution.ModuleType.kRev
+                : PowerDistribution.ModuleType.kCTRE
+        );
+    }
     public IPigeonIMU getPigeon() {
-        int id = (int) factory.getConstant("pigeonId", -1);
-        IPigeonIMU pigeonIMU;
+        int id = config.infrastructure.pigeonId;
+        IPigeonIMU pigeon;
         if (!isHardwareValid(id)) {
-            return new GhostPigeonIMU(id);
-        } else if (factory.getConstant("isPigeon2") > 0) {
+            pigeon = new GhostPigeonIMU(id);
+        } else if (config.infrastructure.isPigeon2) {
             System.out.println("Using Pigeon 2 for id: " + id);
-            pigeonIMU = new Pigeon2Impl(id, config.canivoreBusName);
-            return pigeonIMU;
+            pigeon = new Pigeon2Impl(id, config.infrastructure.canivoreBusName);
         } else {
             System.out.println("Using old Pigeon for id: " + id);
-            pigeonIMU = new PigeonIMUImpl(id);
-            return pigeonIMU;
+            pigeon = new PigeonIMUImpl(id);
         }
+        pigeon.configFactoryDefault();
+        pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_1_General, 200);
+        pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_6_Accel, 1000);
+        return pigeon;
     }
 
     public int getPcmId() {
-        if (config.pcm == null) return -1;
-        return config.pcm;
+        if (config.infrastructure.pcmId == null) return -1;
+        return config.infrastructure.pcmId;
     }
 
     public boolean isPcmEnabled() {
         return getPcmId() > -1;
     }
 
-    public static boolean isVerbose() {
-        return verbose;
+    public boolean isCompressorEnabled(){
+        return config.infrastructure.compressorEnabled;
     }
 
     private void reportGhostWarning(

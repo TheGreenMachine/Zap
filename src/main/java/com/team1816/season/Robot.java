@@ -170,7 +170,7 @@ public class Robot extends TimedRobot {
                     BadLog.createTopic(
                         "PDP/Current",
                         "Amps",
-                        mInfrastructure.getPdh()::getTotalCurrent
+                        mInfrastructure.getPd()::getTotalCurrent
                     );
 
                     mDrive.CreateBadLogValue("Drivetrain PID", mDrive.pidToString());
