@@ -87,13 +87,17 @@ public class TrapezoidalMotionProfile {
             t1 = (cv - i.velocity) / c.maxAccel;
             t3 = (cv - t.velocity) / c.maxAccel;
 
-            double edX = c.maxAccel * (t1 * t1 - t3 * t3) / 2 + (c.maxAccel * t1 + i.velocity) * t3;
+            double edX =
+                c.maxAccel *
+                (t1 * t1 - t3 * t3) /
+                2 +
+                (c.maxAccel * t1 + i.velocity) *
+                t3;
             t2 = (dX - edX) / (c.maxAccel * t1 + i.velocity);
             cv /= 2.0;
-
         } while (t2 >= 0);
         duration = 0;
-        for(Phase ph: p){
+        for (Phase ph : p) {
             duration += Math.max(ph.duration, 0);
         }
     }
@@ -114,7 +118,12 @@ public class TrapezoidalMotionProfile {
         cx += getVelocity(tmp) * (p[2].duration);
         tmp += p[3].duration;
         if (t <= tmp) {
-            cx += getVelocity(tmp - p[3].duration) * (tmp - t) + getAcceleration(t) / 2 * Math.pow((tmp - t), 2);
+            cx +=
+                getVelocity(tmp - p[3].duration) *
+                (tmp - t) +
+                getAcceleration(t) /
+                2 *
+                Math.pow((tmp - t), 2);
             return cx;
         } else {
             return target.position;
@@ -163,7 +172,11 @@ public class TrapezoidalMotionProfile {
         return 0;
     }
 
+    public double getDuration() {
+        return duration;
+    }
+
     public boolean isFinished(double t) {
-        return t>=duration;
+        return t >= duration;
     }
 }

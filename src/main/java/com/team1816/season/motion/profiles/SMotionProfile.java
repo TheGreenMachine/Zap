@@ -95,8 +95,13 @@ public class SMotionProfile {
         double t2 = 0;
         double cV = c.maxVel;
 
-        if (Math.abs(target.velocity)>Math.abs(c.maxVel)||Math.abs(initial.velocity)>Math.abs(c.maxVel)) {
-            c.maxJerk = 0; c.maxAccel = 0; c.maxVel = 0;
+        if (
+            Math.abs(target.velocity) > Math.abs(c.maxVel) ||
+            Math.abs(initial.velocity) > Math.abs(c.maxVel)
+        ) {
+            c.maxJerk = 0;
+            c.maxAccel = 0;
+            c.maxVel = 0;
         } else {
             if (cV >= c.maxAccel * c.maxAccel / c.maxJerk) {
                 t1 = c.maxAccel / c.maxJerk;
@@ -112,16 +117,16 @@ public class SMotionProfile {
             //calculate p[3].duration
             double tdX = 0;
             double t3 = 0;
-            for(int l = 0; l<p.length; l++){
-                t3+=p[l].duration;
+            for (int l = 0; l < p.length; l++) {
+                t3 += p[l].duration;
             }
             tdX = getPosition(t3);
-            p[3].duration = Math.max(0, (Math.abs(dX) - Math.abs(tdX))/cV);
+            p[3].duration = Math.max(0, (Math.abs(dX) - Math.abs(tdX)) / cV);
             // note that if this is truly negative, you will have to reduce the velocity to corroborate for it
             // ie it assumes that the motion profile is declared sensibly.
         }
 
-        for(Phase ph: p) {
+        for (Phase ph : p) {
             duration += Math.max(ph.duration, 0);
         }
 
@@ -129,8 +134,8 @@ public class SMotionProfile {
         // J = 3P/(t1(t1+t2)(3t1+3t2+2t3))
         // A = 2P/((t1+t2)(3t1+3t2+2t3))
         // V = 2P/(3t1+3t2+2t3)
-        if(dX<0) {
-            constraints.maxJerk*=(-1);
+        if (dX < 0) {
+            constraints.maxJerk *= (-1);
         }
     }
 
@@ -145,10 +150,20 @@ public class SMotionProfile {
         cx += getJerk(tmp) / 6 * Math.pow(p[0].duration, 3); // phase 1
         tmp += p[1].duration;
         if (t <= tmp) {
-            cx += getVelocity(tmp - p[1].duration) * (tmp - t) + getAcceleration(t) / 2 * Math.pow((tmp - t), 2);
+            cx +=
+                getVelocity(tmp - p[1].duration) *
+                (tmp - t) +
+                getAcceleration(t) /
+                2 *
+                Math.pow((tmp - t), 2);
             return cx;
         }
-        cx += getVelocity(tmp - p[1].duration) * p[1].duration + getAcceleration(tmp) / 2 * Math.pow(p[1].duration, 2);
+        cx +=
+            getVelocity(tmp - p[1].duration) *
+            p[1].duration +
+            getAcceleration(tmp) /
+            2 *
+            Math.pow(p[1].duration, 2);
         tmp += p[2].duration;
         if (t <= tmp) {
             cx +=
@@ -179,16 +194,36 @@ public class SMotionProfile {
         cx += getVelocity(tmp) * p[3].duration;
         tmp += p[4].duration;
         if (t <= tmp) {
-            cx += getVelocity(tmp - p[4].duration) * (tmp - t) + getJerk(t) / 6 * Math.pow((tmp - t), 3);
+            cx +=
+                getVelocity(tmp - p[4].duration) *
+                (tmp - t) +
+                getJerk(t) /
+                6 *
+                Math.pow((tmp - t), 3);
             return cx;
         }
-        cx += getVelocity(tmp - p[4].duration) * p[4].duration + getJerk(tmp) / 6 * Math.pow(p[4].duration, 3);
+        cx +=
+            getVelocity(tmp - p[4].duration) *
+            p[4].duration +
+            getJerk(tmp) /
+            6 *
+            Math.pow(p[4].duration, 3);
         tmp += p[5].duration;
         if (t <= tmp) {
-            cx += getVelocity(tmp - p[5].duration) * (tmp - t) + getAcceleration(t) / 2 * Math.pow((tmp - t), 2);
+            cx +=
+                getVelocity(tmp - p[5].duration) *
+                (tmp - t) +
+                getAcceleration(t) /
+                2 *
+                Math.pow((tmp - t), 2);
             return cx;
         }
-        cx += getVelocity(tmp - p[5].duration) * p[5].duration + getAcceleration(tmp) / 2 * Math.pow(p[5].duration, 2);
+        cx +=
+            getVelocity(tmp - p[5].duration) *
+            p[5].duration +
+            getAcceleration(tmp) /
+            2 *
+            Math.pow(p[5].duration, 2);
         tmp += p[6].duration;
         if (t <= tmp) {
             cx +=
@@ -342,7 +377,11 @@ public class SMotionProfile {
         }
     }
 
+    public double getDuration() {
+        return duration;
+    }
+
     public boolean isFinished(double t) {
-        return t>=duration;
+        return t >= duration;
     }
 }
