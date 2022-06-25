@@ -343,6 +343,6 @@ public class SMotionProfile {
     }
 
     public boolean isFinished(double t) {
-        return t>duration;
+        return t>=duration;
     }
 }
