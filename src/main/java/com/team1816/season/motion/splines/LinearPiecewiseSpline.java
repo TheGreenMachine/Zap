@@ -2,6 +2,10 @@ package com.team1816.season.motion.splines;
 
 import java.util.ArrayList;
 
+/**
+ * This class is also not in most senses a "spline" but represents a basic linearly continuous mapping of values
+ */
+
 public class LinearPiecewiseSpline extends Spline {
 
     public static ArrayList<Double[]> coordinates;

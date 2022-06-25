@@ -27,7 +27,7 @@ public class QuinticSpline extends Spline {
         return coordinates.get(coordinates.size() - 1)[1];
     }
 
-    // This method is mathematically accurate, yet due to the need for floating point accuracy to at least 20 places, is not advisable for practical application
+    // This method is mathematically accurate, yet due to the need for floating point accuracy to at least 20 places, it is not advisable for practical application
     @Override
     public ArrayList<ArrayList<Double>> generateCoefficients() { // a less mathematically intense process, relies on the cubic spline for derivatives
         NaturalCubicSpline spline = new NaturalCubicSpline(coordinates);
