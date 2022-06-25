@@ -59,11 +59,14 @@ public class TrapezoidalMotionProfile {
     private Constraints constraints;
     private State initial;
     private State target;
+    private double duration;
 
     public TrapezoidalMotionProfile() {
-        p[0].duration = 0;
-        p[1].duration = 0;
-        p[2].duration = 0;
+        for (int i = 0; i < p.length; i++) {
+            p[i] = new Phase();
+            p[i].duration = 0;
+        }
+        duration = 0;
         new TrapezoidalMotionProfile(new Constraints(), new State(), new State());
     }
 
@@ -89,6 +92,10 @@ public class TrapezoidalMotionProfile {
             cv /= 2.0;
 
         } while (t2 >= 0);
+        duration = 0;
+        for(Phase ph: p){
+            duration += Math.max(ph.duration, 0);
+        }
     }
 
     public double getPosition(double t) {
@@ -107,7 +114,7 @@ public class TrapezoidalMotionProfile {
         cx += getVelocity(tmp) * (p[2].duration);
         tmp += p[3].duration;
         if (t <= tmp) {
-            cx += getVelocity(p[2].duration) * (tmp - t) + getAcceleration(t) / 2 * Math.pow((tmp - t), 2);
+            cx += getVelocity(tmp - p[3].duration) * (tmp - t) + getAcceleration(t) / 2 * Math.pow((tmp - t), 2);
             return cx;
         } else {
             return target.position;
@@ -154,5 +161,9 @@ public class TrapezoidalMotionProfile {
 
     public double getJerk(double t) {
         return 0;
+    }
+
+    public boolean isFinished(double t) {
+        return t>duration;
     }
 }

@@ -63,6 +63,7 @@ public class SMotionProfile {
     private Constraints constraints;
     private State initial;
     private State target;
+    private double duration;
 
     // 7 profile phases
     //    private Phase p1; // positive jerk, increasing acceleration t1
@@ -78,7 +79,9 @@ public class SMotionProfile {
     public SMotionProfile() {
         for (int i = 0; i < p.length; i++) {
             p[i] = new Phase();
+            p[i].duration = 0;
         }
+        duration = 0;
         new SMotionProfile(new Constraints(), new State(), new State());
     }
 
@@ -116,6 +119,10 @@ public class SMotionProfile {
             p[3].duration = Math.max(0, (Math.abs(dX) - Math.abs(tdX))/cV);
             // note that if this is truly negative, you will have to reduce the velocity to corroborate for it
             // ie it assumes that the motion profile is declared sensibly.
+        }
+
+        for(Phase ph: p) {
+            duration += Math.max(ph.duration, 0);
         }
 
         // back calculations
@@ -333,5 +340,9 @@ public class SMotionProfile {
         } else {
             return 0;
         }
+    }
+
+    public boolean isFinished(double t) {
+        return t>duration;
     }
 }
