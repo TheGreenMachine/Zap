@@ -213,30 +213,30 @@ public class MotionProfile {
         double tmp = 0;
         tmp += p[1].duration;
         if (t <= tmp) {
-            cv += constraints.maxJerk / 2 * Math.pow((tmp - t), 2);
+            cv += getJerk(t) / 2 * Math.pow((tmp - t), 2);
             return cv;
         }
-        cv += constraints.maxJerk / 2 * Math.pow(p[1].duration, 2);
+        cv += getJerk(tmp) / 2 * Math.pow(p[1].duration, 2);
         tmp += p[2].duration;
         if (t <= tmp) {
-            cv += constraints.maxAccel * (tmp - t);
+            cv += getAcceleration(t) * (tmp - t);
             return cv;
         }
-        cv += constraints.maxAccel * p[2].duration;
+        cv += getAcceleration(tmp) * p[2].duration;
         tmp += p[3].duration;
         if (t <= tmp) {
             cv +=
-                constraints.maxAccel *
-                (tmp - t) -
-                constraints.maxJerk /
+                getAcceleration(t) *
+                (tmp - t) +
+                getJerk(t) /
                 2 *
                 Math.pow((tmp - t), 2);
             return cv;
         }
         cv +=
-            constraints.maxAccel *
-            p[3].duration -
-            constraints.maxJerk /
+            getAcceleration(tmp) *
+            p[3].duration +
+            getJerk(tmp) /
             2 *
             Math.pow(p[3].duration, 2);
         tmp += p[4].duration;
@@ -245,23 +245,22 @@ public class MotionProfile {
         }
         tmp += p[5].duration;
         if (t <= tmp) {
-            cv -= constraints.maxJerk / 2 * Math.pow((tmp - t), 2);
+            cv += getJerk(t) / 2 * Math.pow((tmp - t), 2);
             return cv;
         }
-        cv -= constraints.maxJerk / 2 * Math.pow(p[5].duration, 2);
+        cv += getJerk(tmp) / 2 * Math.pow(p[5].duration, 2);
         tmp += p[6].duration;
         if (t <= tmp) {
-            cv -= constraints.maxAccel * (tmp - t);
+            cv += getAcceleration(t) * (tmp - t);
             return cv;
         }
-        cv -= constraints.maxAccel * p[6].duration;
+        cv += getAcceleration(tmp) * p[6].duration;
         tmp += p[7].duration;
         if (t <= tmp) {
             cv +=
-                (-1) *
-                constraints.maxAccel *
+                getAcceleration(t) *
                 (tmp - t) +
-                constraints.maxJerk /
+                getJerk(t) /
                 2 *
                 Math.pow((tmp - t), 2);
             return cv;
@@ -275,36 +274,37 @@ public class MotionProfile {
         double tmp = 0;
         tmp += p[1].duration;
         if (t <= tmp) {
-            ca += constraints.maxJerk * (tmp - t);
+            ca += getJerk(t) * (tmp - t);
             return ca;
         }
-        ca += constraints.maxJerk * p[1].duration;
+        ca += getJerk(tmp) * p[1].duration;
         tmp += p[2].duration;
         if (t <= tmp) {
             return ca;
         }
         tmp += p[3].duration;
         if (t <= tmp) {
-            ca -= constraints.maxJerk * (tmp - t);
+            ca += getJerk(t) * (tmp - t);
             return ca;
         }
-        ca -= constraints.maxJerk * p[3].duration;
+        ca += getJerk(tmp) * p[3].duration;
         tmp += p[4].duration;
         if (t <= tmp) {
             return ca;
         }
         tmp += p[5].duration;
         if (t <= tmp) {
-            ca -= constraints.maxJerk * (tmp - t);
+            ca += getJerk(t) * (tmp - t);
             return ca;
         }
+        ca += getJerk(tmp) * p[5].duration;
         tmp += p[6].duration;
         if (t <= tmp) {
             return ca;
         }
         tmp += p[7].duration;
         if (t <= tmp) {
-            ca += constraints.maxJerk * (tmp - t);
+            ca += getJerk(t) * (tmp - t);
             return ca;
         } else {
             return 0;
