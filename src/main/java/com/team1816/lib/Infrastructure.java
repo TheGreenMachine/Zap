@@ -55,4 +55,8 @@ public class Infrastructure {
     public static PowerDistribution getPd() {
         return pd;
     }
+
+    public static void simulateGyro(double radianOffsetPerLoop, double gyroDrift){
+        pigeon.setYaw(getYaw() + radianOffsetPerLoop + gyroDrift);
+    }
 }

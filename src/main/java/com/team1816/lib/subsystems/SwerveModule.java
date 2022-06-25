@@ -21,13 +21,13 @@ public class SwerveModule implements ISwerveModule {
     private final IGreenMotor driveMotor;
     private final IGreenMotor azimuthMotor; // angle motor (the pivot part of a shopping cart except motorized)
     public final CANCoder canCoder;
-    public double driveDemand;
-    public double azimuthDemand;
-
-    public double motorTemp; // drive motor temperature
 
     // State
-    private boolean isBrakeMode = false;
+    public double driveDemand;
+    public double driveActual;
+    public double azimuthDemand;
+    public double azimuthActual;
+    public double motorTemp; // drive motor temperature
 
     // Constants
     private final Constants.Swerve mConstants;
@@ -94,7 +94,7 @@ public class SwerveModule implements ISwerveModule {
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
         SwerveModuleState desired_state = SwerveKinematics.optimize(
             desiredState,
-            getState().angle
+            getActualState().angle
         );
         driveDemand =
             DriveConversions.metersPerSecondToTicksPer100ms(
@@ -111,20 +111,21 @@ public class SwerveModule implements ISwerveModule {
         azimuthMotor.set(ControlMode.Position, azimuthDemand);
     }
 
-    public SwerveModuleState getState() {
-        double velocity =
-            DriveConversions.convertTicksToMeters(
+    public SwerveModuleState getActualState() {
+        driveActual =
+            DriveConversions.ticksToMeters(
                 driveMotor.getSelectedSensorVelocity(0)
             ) *
             10;
-        Rotation2d angle = Rotation2d.fromDegrees(
-            DriveConversions.convertTicksToDegrees(
-                azimuthMotor.getSelectedSensorPosition(0) -
+        azimuthActual = DriveConversions.convertTicksToDegrees(
+            azimuthMotor.getSelectedSensorPosition(0) -
                 mConstants.kAzimuthEncoderHomeOffset
-            )
+        );
+        Rotation2d angleActual = Rotation2d.fromDegrees(
+            azimuthActual
         );
         motorTemp = driveMotor.getTemperature(); // Celsius
-        return new SwerveModuleState(velocity, angle);
+        return new SwerveModuleState(driveActual, angleActual);
     }
 
     public double getMotorTemp() {
@@ -137,8 +138,13 @@ public class SwerveModule implements ISwerveModule {
     }
 
     @Override
+    public double getDesiredAzimuth() {
+        return azimuthDemand;
+    }
+
+    @Override
     public double getActualAzimuth() {
-        return azimuthMotor.getSelectedSensorPosition(0);
+        return azimuthActual;
     }
 
     @Override
@@ -147,30 +153,18 @@ public class SwerveModule implements ISwerveModule {
     }
 
     @Override
-    public double getDesiredAzimuth() {
-        return azimuthDemand;
-    }
-
-    @Override
-    public double getActualDrive() {
-        return driveMotor.getSelectedSensorVelocity(0);
-    }
-
-    @Override
     public double getDesiredDrive() {
         return driveDemand;
     }
 
     @Override
-    public double getDriveError() {
-        return driveMotor.getClosedLoopError(0);
+    public double getActualDrive() {
+        return driveActual;
     }
 
-    public synchronized void setDriveBrakeMode(boolean brake_mode) {
-        if (brake_mode) {
-            driveMotor.set(ControlMode.Velocity, 0);
-        }
-        isBrakeMode = brake_mode;
+    @Override
+    public double getDriveError() {
+        return driveMotor.getClosedLoopError(0);
     }
 
     public boolean checkSystem() {

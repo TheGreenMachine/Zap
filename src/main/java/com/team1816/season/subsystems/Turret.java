@@ -275,7 +275,7 @@ public class Turret extends Subsystem implements PidProvider {
             followingPos %= TURRET_PPR;
         }
 
-        robotState.vehicle_to_turret =
+        robotState.vehicleToTurret =
             Rotation2d.fromDegrees(getActualTurretPositionDegrees());
     }
 
@@ -321,7 +321,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     private int fieldFollowingOffset() {
         return -convertTurretDegreesToTicks( // currently negated because motor is running counterclockwise
-            robotState.field_to_vehicle.getRotation().getDegrees()
+            robotState.fieldToVehicle.getRotation().getDegrees()
         );
     }
 
@@ -341,8 +341,8 @@ public class Turret extends Subsystem implements PidProvider {
             robotState.getLatestFieldToTurret()
         );
         Translation2d driveAxis = new Translation2d(
-            robotState.delta_vehicle.vxMetersPerSecond,
-            robotState.delta_vehicle.vyMetersPerSecond
+            robotState.deltaVehicle.vxMetersPerSecond,
+            robotState.deltaVehicle.vyMetersPerSecond
         );
         Translation2d predictedTrajectory = driveAxis.unaryMinus().plus(shooterAxis);
         double motionOffsetAngle = PoseUtil.getAngleBetween(

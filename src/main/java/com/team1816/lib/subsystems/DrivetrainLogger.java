@@ -64,14 +64,14 @@ public class DrivetrainLogger {
             subsystem.CreateBadLogTopic(
                 "Drivetrain/LeftActVel",
                 "NativeUnits",
-                ((TankDrive) drivetrain)::getLeftVelocityNativeUnits,
+                ((TankDrive) drivetrain)::getLeftVelocityActual,
                 "hide",
                 "join:Drivetrain/Velocities"
             );
             subsystem.CreateBadLogTopic(
                 "Drivetrain/RightActVel",
                 "NativeUnits",
-                ((TankDrive) drivetrain)::getRightVelocityNativeUnits,
+                ((TankDrive) drivetrain)::getRightVelocityActual,
                 "hide",
                 "join:Drivetrain/Velocities"
             );
@@ -92,14 +92,14 @@ public class DrivetrainLogger {
             subsystem.CreateBadLogTopic(
                 "Drivetrain/LeftError",
                 "NativeUnits",
-                ((TankDrive) drivetrain)::getLeftVelocityError,
+                ((TankDrive) drivetrain)::getLeftError,
                 "hide",
                 "join:Drivetrain/VelocityError"
             );
             subsystem.CreateBadLogTopic(
                 "Drivetrain/RightError",
                 "NativeUnits",
-                ((TankDrive) drivetrain)::getRightVelocityError,
+                ((TankDrive) drivetrain)::getRightError,
                 "hide",
                 "join:Drivetrain/VelocityError"
             );

@@ -15,10 +15,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class RobotState {
 
     public final Field2d field = new Field2d();
-    public Pose2d field_to_vehicle = Constants.EmptyPose;
-    public Pose2d estimated_field_to_vehicle = Constants.EmptyPose;
-    public Rotation2d vehicle_to_turret = Constants.EmptyRotation;
-    public ChassisSpeeds delta_vehicle = new ChassisSpeeds();
+    public Pose2d fieldToVehicle = Constants.EmptyPose;
+    public Pose2d estimatedFieldToVehicle = Constants.EmptyPose;
+    public Rotation2d vehicleToTurret = Constants.EmptyRotation;
+    public ChassisSpeeds deltaVehicle = new ChassisSpeeds();
     public double shooterMPS = 0; // needs to be remapped - default value
 
     // Superstructure ACTUAL states
@@ -44,11 +44,11 @@ public class RobotState {
         Rotation2d initial_vehicle_to_turret
     ) {
         resetPosition(initial_field_to_vehicle);
-        vehicle_to_turret = initial_vehicle_to_turret;
+        vehicleToTurret = initial_vehicle_to_turret;
     }
 
     public synchronized void resetPosition(Pose2d initial_field_to_vehicle) {
-        field_to_vehicle = initial_field_to_vehicle;
+        fieldToVehicle = initial_field_to_vehicle;
     }
 
     public synchronized void resetPosition() {
@@ -61,7 +61,7 @@ public class RobotState {
         elevatorState = Elevator.STATE.STOP;
         shooterState = Shooter.STATE.STOP;
         coolState = Cooler.STATE.WAIT;
-        delta_vehicle = new ChassisSpeeds();
+        deltaVehicle = new ChassisSpeeds();
         visionPoint = new Point();
         shooterMPS = 0;
         hasOverheated = false;
@@ -69,16 +69,16 @@ public class RobotState {
 
     public synchronized Pose2d getLatestFieldToVehicle() {
         // CCW rotation increases degrees
-        return field_to_vehicle;
+        return fieldToVehicle;
     }
 
     public Rotation2d getLatestFieldToTurret() {
-        return field_to_vehicle.getRotation().plus(vehicle_to_turret);
+        return fieldToVehicle.getRotation().plus(vehicleToTurret);
     }
 
     public synchronized Pose2d getFieldToTurretPos() {
         return new Pose2d(
-            field_to_vehicle
+            fieldToVehicle
                 .transformBy(
                     new Transform2d(new Translation2d(-.1, .1), Constants.EmptyRotation)
                 )
@@ -88,7 +88,7 @@ public class RobotState {
     }
 
     public double getEstimatedDistanceToGoal() {
-        double estimatedDistanceToGoalMeters = field_to_vehicle
+        double estimatedDistanceToGoalMeters = fieldToVehicle
             .getTranslation()
             .getDistance(Constants.targetPos.getTranslation());
         double distInches =
@@ -106,7 +106,7 @@ public class RobotState {
 
     public synchronized void outputToSmartDashboard() {
         //shuffleboard periodic updates should be here
-        field.setRobotPose(field_to_vehicle);
+        field.setRobotPose(fieldToVehicle);
         field.getObject(Turret.NAME).setPose(getFieldToTurretPos());
     }
 

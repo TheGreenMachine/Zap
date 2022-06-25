@@ -257,7 +257,6 @@ public class Robot extends TimedRobot {
 
             mAutoModeSelector.updateModeCreator();
 
-            //
             actionManager =
                 new ActionManager(
                     createHoldAction(
@@ -283,6 +282,7 @@ public class Robot extends TimedRobot {
                             mDrive.zeroSensors(Constants.ZeroPose);
                         }
                     ),
+                    createHoldAction(mControlBoard::getBrakeMode, brake -> mDrive.setOpenLoop(SwerveDriveSignal.BRAKE)),
                     createHoldAction(mControlBoard::getSlowMode, mDrive::setSlowMode),
                     // Operator Gamepad
                     createAction(
@@ -399,8 +399,7 @@ public class Robot extends TimedRobot {
 
             mDisabledLooper.start();
 
-            mDrive.stop();
-            mDrive.setBrakeMode(false);
+            mDrive.setBraking(false);
         } catch (Throwable t) {
             faulted = true;
             throw t;
@@ -421,7 +420,7 @@ public class Robot extends TimedRobot {
 
             mSuperstructure.setStopped(false);
 
-            mDrive.setControlState(Drive.DriveControlState.TRAJECTORY_FOLLOWING);
+            mDrive.setControlState(Drive.ControlState.TRAJECTORY_FOLLOWING);
             mAutoModeExecutor.start();
 
             mEnabledLooper.start();
@@ -440,7 +439,6 @@ public class Robot extends TimedRobot {
                 mAutoModeExecutor.stop();
             }
 
-            mDrive.stop();
             mTurret.zeroSensors();
             mClimber.zeroSensors();
 
@@ -608,18 +606,12 @@ public class Robot extends TimedRobot {
             mSuperstructure.setRevving(true, -1, true);
         }
 
-        // If brake button is held, disable drivetrain joystick controls
-        if (mControlBoard.getBrakeMode()) {
-            mDrive.setOpenLoop(SwerveDriveSignal.BRAKE);
-        } else {
-            mDrive.setTeleopInputs(
-                mControlBoard.getThrottle(),
-                mControlBoard.getStrafe(),
-                mControlBoard.getTurn(),
-                mControlBoard.getSlowMode(),
-                false
-            );
-        }
+        mDrive.setTeleopInputs(
+            mControlBoard.getThrottle(),
+            mControlBoard.getStrafe(),
+            mControlBoard.getTurn()
+        );
+
     }
 
     @Override
