@@ -8,11 +8,7 @@ import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
-import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.TrapezoidProfileSubsystem;
 
 public class Climber extends Subsystem {
 
@@ -64,7 +60,6 @@ public class Climber extends Subsystem {
 
         PIDSlotConfiguration config = factory.getPidSlotConfig(NAME, pidSlot);
 
-
         ALLOWABLE_ERROR = config.allowableError;
 
         climber.configClosedloopRamp(.20, Constants.kCANTimeoutMs);
@@ -113,7 +108,7 @@ public class Climber extends Subsystem {
                 controlMode = ControlMode.POSITION;
             }
             System.out.println(
-                "incrementing climber to stage " + (currentStage+1) + " ....."
+                "incrementing climber to stage " + (currentStage + 1) + " ....."
             );
             currentStage++;
             needsOverShoot = true;
