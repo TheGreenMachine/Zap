@@ -81,6 +81,7 @@ public class MotionProfile {
         double t1 = constraints.maxAccel / constraints.maxJerk;
         double t2 = constraints.maxVel / constraints.maxAccel - constraints.maxAccel / constraints.maxJerk;
 
+        //TODO: Corroborate these
         p[1].duration = t1;
         p[2].duration = t2;
         p[3].duration = t1;
@@ -279,5 +280,4 @@ public class MotionProfile {
             return 0;
         }
     }
-
 }

@@ -32,7 +32,7 @@ public class Climber extends Subsystem {
 
     // State
     private ControlMode controlMode = ControlMode.MANUAL;
-    private TrapezoidProfile curProfile;
+
     private double profileTime = 0;
     private double error;
     private boolean unlocked;
@@ -63,7 +63,7 @@ public class Climber extends Subsystem {
         bottomClamp = factory.getSolenoid(NAME, "bottomClamp");
 
         PIDSlotConfiguration config = factory.getPidSlotConfig(NAME, pidSlot);
-        curProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxVel, maxAccel), new TrapezoidProfile.State());
+
 
         ALLOWABLE_ERROR = config.allowableError;
 
@@ -115,7 +115,6 @@ public class Climber extends Subsystem {
             System.out.println(
                 "incrementing climber to stage " + (currentStage+1) + " ....."
             );
-            setProfile(stages[currentStage].position, stages[currentStage+1].position);
             currentStage++;
             needsOverShoot = true;
             climbDelay = true;
@@ -200,11 +199,6 @@ public class Climber extends Subsystem {
             System.out.println("setting climber clamps!");
             Timer.delay(.25);
         }
-    }
-
-    private void setProfile(double initial, double goal) {
-        curProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxVel, maxAccel), new TrapezoidProfile.State(goal, 0), new TrapezoidProfile.State(initial, 0));
-        profileTime = curProfile.timeLeftUntil(goal);
     }
 
     @Override
