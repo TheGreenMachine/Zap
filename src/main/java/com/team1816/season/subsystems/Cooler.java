@@ -46,12 +46,13 @@ public class Cooler extends Subsystem {
     @Override
     public void zeroSensors() {
         needsDump = false;
-        dumpIn.set(false);
-        dumpOut.set(false);
     }
 
     @Override
-    public void stop() {}
+    public void stop() {
+        dumpIn.set(false);
+        dumpOut.set(false);
+    }
 
     @Override
     public boolean checkSystem() {

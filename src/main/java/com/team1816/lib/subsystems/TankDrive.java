@@ -1,12 +1,13 @@
 package com.team1816.lib.subsystems;
 
+import static com.team1816.lib.math.DriveConversions.*;
+
 import com.ctre.phoenix.motorcontrol.*;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
-import com.team1816.lib.math.DriveConversions;
 import com.team1816.lib.util.EnhancedMotorChecker;
 import com.team1816.season.Constants;
 import com.team1816.season.auto.AutoModeSelector;
@@ -18,12 +19,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
-import java.util.List;
-
-import static com.team1816.lib.math.DriveConversions.*;
 
 @Singleton
 public class TankDrive extends Drive implements DifferentialDrivetrain {
@@ -33,6 +29,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     // Components
     private final IGreenMotor leftMain, rightMain;
     private final IGreenMotor leftFollowerA, rightFollowerA, leftFollowerB, rightFollowerB;
+
     @Inject
     private static AutoModeSelector autoModeSelector;
 
@@ -40,7 +37,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     private DifferentialDriveOdometry tankOdometry;
     private final CheesyDriveHelper driveHelper = new CheesyDriveHelper();
     private final double tickRatioPerLoop = Constants.kLooperDt / .1d; // Convert Ticks/100MS into Ticks/Robot Loop
-
 
     // States
     public double leftPowerDemand, rightPowerDemand; // % Output (-1 to 1) - used in OPEN_LOOP
@@ -57,7 +53,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
      * Constructor
      */
     public TankDrive() {
-        super(); // calls into the constructor of the abstract super class Drive, configures PeriodicIO and Pigeon (gyro) along with basic subsystem features
+        super();
         // configure motors
         leftMain = factory.getMotor(NAME, "leftMain");
         leftFollowerA = factory.getMotor(NAME, "leftFollower", leftMain);
@@ -100,11 +96,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
         setOpenLoop(DriveSignal.NEUTRAL);
 
-        // force a CAN message across
-        isBraking = false;
-        setBraking(isBraking);
-
-        tankOdometry = new DifferentialDriveOdometry(getHeading());
+        tankOdometry = new DifferentialDriveOdometry(getActualHeading());
     }
 
     /**
@@ -114,8 +106,14 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     @Override
     public synchronized void writeToHardware() { // sets the demands for hardware from the inputs provided
         if (controlState == ControlState.OPEN_LOOP) {
-            leftMain.set(ControlMode.PercentOutput, isSlowMode ? (leftPowerDemand * 0.5) : leftPowerDemand);
-            rightMain.set(ControlMode.PercentOutput, isSlowMode ? (rightPowerDemand * 0.5) : rightPowerDemand);
+            leftMain.set(
+                ControlMode.PercentOutput,
+                isSlowMode ? (leftPowerDemand * 0.5) : leftPowerDemand
+            );
+            rightMain.set(
+                ControlMode.PercentOutput,
+                isSlowMode ? (rightPowerDemand * 0.5) : rightPowerDemand
+            );
         } else {
             leftMain.set(ControlMode.Velocity, leftVelDemand);
             rightMain.set(ControlMode.Velocity, rightVelDemand);
@@ -123,51 +121,34 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     }
 
     @Override
-    public synchronized void readFromHardware() { // reads the actual output from robot and updates state
+    public synchronized void readFromHardware() {
+        // update current motor velocities and distance traveled
         leftActualVelocity = leftMain.getSelectedSensorVelocity(0);
         rightActualVelocity = rightMain.getSelectedSensorVelocity(0);
         leftActualDistance += ticksToMeters(leftActualVelocity * tickRatioPerLoop);
         rightActualDistance += ticksToMeters(rightActualVelocity * tickRatioPerLoop);
 
-        mPeriodicIO.chassisSpeed =
-            Constants.Tank.tankKinematics.toChassisSpeeds(
-                new DifferentialDriveWheelSpeeds(
-                    getLeftMPSActual(),
-                    getRightMPSActual()
-                )
-            );
-        if (RobotBase.isSimulation()) {
-            simulateGyroOffset();
-        } else {
-            mPeriodicIO.actualHeading =
-                Rotation2d.fromDegrees(Infrastructure.getYaw());
-        }
-        // the sole purpose of the error is for logging
+        // update error (only if in closed loop where knowing it is useful)
         if (controlState == ControlState.TRAJECTORY_FOLLOWING) {
             leftErrorClosedLoop = leftMain.getClosedLoopError(0);
             rightErrorClosedLoop = rightMain.getClosedLoopError(0);
         }
 
-        tankOdometry.update(
-            mPeriodicIO.actualHeading,
-            leftActualDistance,
-            rightActualDistance
-        );
-        updateRobotState();
-    }
-
-    private void simulateTankDrive() {
-        // simulate rotational motion
-        mPeriodicIO.actualHeading =
-            mPeriodicIO.actualHeading.rotateBy(
-                new Rotation2d(
-                    mPeriodicIO.chassisSpeed.omegaRadiansPerSecond *
-                        Constants.kLooperDt *
-                        180 /
-                        Math.PI *
-                        0.01
-                )
+        // update current movement of the whole drivetrain
+        chassisSpeed =
+            Constants.Tank.tankKinematics.toChassisSpeeds(
+                new DifferentialDriveWheelSpeeds(getLeftMPSActual(), getRightMPSActual())
             );
+
+        // update actual heading from gyro (pigeon)
+        if (RobotBase.isSimulation()) {
+            simulateGyroOffset();
+        }
+        actualHeading = Rotation2d.fromDegrees(Infrastructure.getYaw());
+
+        // send updated information to robotState and odometry calculator
+        tankOdometry.update(actualHeading, leftActualDistance, rightActualDistance);
+        updateRobotState();
     }
 
     /**
@@ -177,17 +158,23 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     @Override
     public void zeroSensors(Pose2d pose) {
         System.out.println("Zeroing drive sensors!");
-        setBraking(false);
-        mPeriodicIO.gyro_heading = Rotation2d.fromDegrees(Infrastructure.getYaw());
+
+        actualHeading = Rotation2d.fromDegrees(Infrastructure.getYaw());
         resetEncoders();
         resetOdometry(pose);
-        mPeriodicIO.chassisSpeed = new ChassisSpeeds();
-        autoModeSelector.setHardwareFailure(false);
+
+        chassisSpeed = new ChassisSpeeds();
+        isBraking = false;
     }
 
     @Override
     public synchronized void stop() {
-        setOpenLoop(controlState == ControlState.OPEN_LOOP ? DriveSignal.NEUTRAL : DriveSignal.BRAKE);
+        setOpenLoop(
+            controlState == ControlState.OPEN_LOOP
+                ? DriveSignal.NEUTRAL
+                : DriveSignal.BRAKE
+        );
+        setBraking(controlState == ControlState.TRAJECTORY_FOLLOWING);
     }
 
     public synchronized void resetEncoders() {
@@ -199,8 +186,9 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     @Override
     public void resetOdometry(Pose2d pose) {
-        tankOdometry.resetPosition(pose, getHeading());
-        robotState.fieldToVehicle = pose;
+        tankOdometry.resetPosition(pose, getActualHeading());
+        tankOdometry.update(actualHeading, leftActualDistance, rightActualDistance);
+        updateRobotState();
     }
 
     @Override
@@ -208,9 +196,9 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         robotState.fieldToVehicle = tankOdometry.getPoseMeters();
         robotState.deltaVehicle =
             new ChassisSpeeds(
-                mPeriodicIO.chassisSpeed.vxMetersPerSecond,
-                mPeriodicIO.chassisSpeed.vyMetersPerSecond,
-                mPeriodicIO.chassisSpeed.omegaRadiansPerSecond
+                chassisSpeed.vxMetersPerSecond,
+                chassisSpeed.vyMetersPerSecond,
+                chassisSpeed.omegaRadiansPerSecond
             );
     }
 
@@ -226,7 +214,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             leftErrorClosedLoop = 0;
             rightErrorClosedLoop = 0;
         }
-        setBraking(signal.getBrakeMode());
         leftPowerDemand = signal.getLeft();
         rightPowerDemand = signal.getRight();
 
@@ -235,11 +222,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     }
 
     @Override
-    public void setTeleopInputs(
-        double forward,
-        double strafe,
-        double rotation
-    ) {
+    public void setTeleopInputs(double forward, double strafe, double rotation) {
         if (controlState != ControlState.OPEN_LOOP) {
             controlState = ControlState.OPEN_LOOP;
         }
@@ -251,7 +234,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         );
 
         // To avoid overriding brake command
-        if(isBraking){
+        if (!isBraking) {
             setOpenLoop(driveSignal);
         }
     }
@@ -267,8 +250,8 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
             rightMain.configNeutralDeadband(0.0, 0);
         }
 
-        leftPowerDemand = signal.getLeft();
-        rightPowerDemand = signal.getRight();
+        leftVelDemand = signal.getLeft();
+        rightVelDemand = signal.getRight();
     }
 
     public void updateTrajectoryVelocities(Double leftVel, Double rightVel) {
@@ -286,23 +269,25 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     @Override
     public synchronized void setBraking(boolean braking) {
-        System.out.println("braking: " + braking);
-        isBraking = braking;
+        if (isBraking != braking) {
+            System.out.println("braking: " + braking);
+            isBraking = braking;
 
-        if(braking){
-            leftMain.set(ControlMode.Velocity, 0);
-            rightMain.set(ControlMode.Velocity, 0);
+            if (braking) {
+                leftMain.set(ControlMode.Velocity, 0);
+                rightMain.set(ControlMode.Velocity, 0);
+            }
+            // TODO ensure that changing neutral modes won't backfire while we're using brushless motors
+            NeutralMode mode = braking ? NeutralMode.Brake : NeutralMode.Coast;
+
+            rightMain.setNeutralMode(mode);
+            rightFollowerA.setNeutralMode(mode);
+            rightFollowerB.setNeutralMode(mode);
+
+            leftMain.setNeutralMode(mode);
+            leftFollowerA.setNeutralMode(mode);
+            leftFollowerB.setNeutralMode(mode);
         }
-        // TODO ensure that changing neutral modes won't backfire while we're using brushless motors
-        NeutralMode mode = braking ? NeutralMode.Brake : NeutralMode.Coast;
-
-        rightMain.setNeutralMode(mode);
-        rightFollowerA.setNeutralMode(mode);
-        rightFollowerB.setNeutralMode(mode);
-
-        leftMain.setNeutralMode(mode);
-        leftFollowerA.setNeutralMode(mode);
-        leftFollowerB.setNeutralMode(mode);
     }
 
     public double getLeftMPSActual() {
@@ -355,7 +340,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     @Override
     public boolean checkSystem() {
-
         boolean leftSide = EnhancedMotorChecker.checkMotor(this, leftMain);
         boolean rightSide = EnhancedMotorChecker.checkMotor(this, rightMain);
 

@@ -56,7 +56,7 @@ public class Infrastructure {
         return pd;
     }
 
-    public static void simulateGyro(double radianOffsetPerLoop, double gyroDrift){
+    public static void simulateGyro(double radianOffsetPerLoop, double gyroDrift) {
         pigeon.setYaw(getYaw() + radianOffsetPerLoop + gyroDrift);
     }
 }

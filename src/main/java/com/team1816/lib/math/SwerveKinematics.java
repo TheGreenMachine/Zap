@@ -215,7 +215,7 @@ public class SwerveKinematics {
     ) {
         List<Translation2d> driveVectors = new ArrayList<>(4);
         var mDrive = mDriveFactory.getInstance();
-        var curRot = mDrive.getHeading();
+        var curRot = mDrive.getActualHeading();
 
         return driveVectors;
     }

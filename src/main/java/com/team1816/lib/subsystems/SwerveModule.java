@@ -113,21 +113,18 @@ public class SwerveModule implements ISwerveModule {
 
     public SwerveModuleState getActualState() {
         driveActual =
-            DriveConversions.ticksToMeters(
-                driveMotor.getSelectedSensorVelocity(0)
-            ) *
-            10;
-        azimuthActual = DriveConversions.convertTicksToDegrees(
-            azimuthMotor.getSelectedSensorPosition(0) -
+            DriveConversions.ticksToMeters(driveMotor.getSelectedSensorVelocity(0)) * 10;
+        azimuthActual =
+            DriveConversions.convertTicksToDegrees(
+                azimuthMotor.getSelectedSensorPosition(0) -
                 mConstants.kAzimuthEncoderHomeOffset
-        );
-        Rotation2d angleActual = Rotation2d.fromDegrees(
-            azimuthActual
-        );
+            );
+        Rotation2d angleActual = Rotation2d.fromDegrees(azimuthActual);
         motorTemp = driveMotor.getTemperature(); // Celsius
         return new SwerveModuleState(driveActual, angleActual);
     }
 
+    @Override
     public double getMotorTemp() {
         return motorTemp;
     }

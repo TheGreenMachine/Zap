@@ -12,4 +12,7 @@ public interface ISwerveModule {
     double getActualDrive();
     double getDesiredDrive();
     double getDriveError();
+
+    // Temperature C
+    double getMotorTemp();
 }

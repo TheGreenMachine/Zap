@@ -59,6 +59,13 @@ public class DrivetrainLogger {
                     "hide",
                     "join:Drivetrain/DriveError"
                 );
+                subsystem.CreateBadLogTopic(
+                    prefix + "DriveTemperature",
+                    "degrees C",
+                    module::getMotorTemp,
+                    "hide",
+                    "join:Drivetrain/Temperature"
+                );
             }
         } else {
             subsystem.CreateBadLogTopic(
@@ -135,14 +142,14 @@ public class DrivetrainLogger {
         subsystem.CreateBadLogTopic(
             "Drivetrain/ActualHeading",
             "Angle",
-            drivetrain::getHeadingDegrees,
+            drivetrain::getActualHeadingDegrees,
             "hide",
             "join:Drivetrain/Heading"
         );
         subsystem.CreateBadLogTopic(
             "Drivetrain/DesiredHeading",
             "Angle",
-            drivetrain::getDesiredHeading,
+            drivetrain::getDesiredHeadingDegrees,
             "hide",
             "join:Drivetrain/Heading"
         );
