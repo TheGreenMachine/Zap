@@ -1,4 +1,4 @@
-package com.team1816.lib.util.motion.splines;
+package com.team1816.season.motion.splines;
 
 import java.util.ArrayList;
 
