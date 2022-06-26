@@ -1,5 +1,7 @@
 package com.team1816.season.motion.curves;
 
+import com.team1816.season.motion.splines.NaturalCubicSpline;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -31,7 +33,7 @@ public class BezierCurve {
     private ArrayList<ControlPoint> controlPoints; // defined sequentially
     private ArrayList<Double> xCoefficients; // defined such that index refers to exponent
     private ArrayList<Double> yCoefficients; // defined such that index refers to exponent
-    private HashMap<Double, Double> lookUpTable;
+    private NaturalCubicSpline LUT;
     public BezierCurve() {
         controlPoints = new ArrayList<>();
         xCoefficients = yCoefficients = new ArrayList<>();
