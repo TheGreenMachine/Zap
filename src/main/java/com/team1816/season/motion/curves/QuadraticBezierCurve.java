@@ -1,41 +1,50 @@
 package com.team1816.season.motion.curves;
 
 import com.team1816.season.motion.splines.NaturalCubicSpline;
-
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class QuadraticBezierCurve {
+
     public static class ControlPoint {
+
         private double x;
         private double y;
+
         public ControlPoint() {
             x = 0;
             y = 0;
         }
+
         public ControlPoint(double a, double b) {
             x = a;
             y = b;
         }
+
         public void add(ControlPoint c) {
-            x+=c.x;
-            y+=c.x;
+            x += c.x;
+            y += c.x;
         }
+
         public void multiply(double z) {
-            x*=z;
-            y*=z;
+            x *= z;
+            y *= z;
         }
+
         public double getDistance(ControlPoint c) {
-            return Math.hypot(c.x-x, c.y-y);
+            return Math.hypot(c.x - x, c.y - y);
         }
+
         public Double[] convertToDoubleArray() {
-            return new Double[] {x, y};
+            return new Double[] { x, y };
         }
     }
+
     private ArrayList<ControlPoint> controlPoints; // defined sequentially
     private ArrayList<Double> xCoefficients; // defined such that index refers to exponent
     private ArrayList<Double> yCoefficients; // defined such that index refers to exponent
     private NaturalCubicSpline LUT;
+
     public QuadraticBezierCurve() {
         controlPoints = new ArrayList<>();
         xCoefficients = yCoefficients = new ArrayList<>();
@@ -47,10 +56,10 @@ public class QuadraticBezierCurve {
         controlPoints.add(p1);
         controlPoints.add(p2);
         // calculating the Bernstein polynomial form
-        xCoefficients.add(p0.x-2*p1.x+p2.x);
-        yCoefficients.add(p0.y-2*p1.y+p2.y);
-        xCoefficients.add((-2)*p0.x+2*p1.x);
-        yCoefficients.add((-2)*p0.y+2*p1.y);
+        xCoefficients.add(p0.x - 2 * p1.x + p2.x);
+        yCoefficients.add(p0.y - 2 * p1.y + p2.y);
+        xCoefficients.add((-2) * p0.x + 2 * p1.x);
+        yCoefficients.add((-2) * p0.y + 2 * p1.y);
         xCoefficients.add(p0.x);
         yCoefficients.add(p0.y);
         Collections.reverse(xCoefficients);
@@ -60,16 +69,16 @@ public class QuadraticBezierCurve {
 
     public void generateLookUpTable(int resolution) {
         ArrayList<Double[]> knotPoints = new ArrayList<>();
-        for(int i = 0; i <= resolution; i++) {
-            double t1 = (double) i/resolution;
-            double dist = getPortionLength((i+1)*resolution, 0, t1);
-            knotPoints.add(new Double[] {dist, t1});
+        for (int i = 0; i <= resolution; i++) {
+            double t1 = (double) i / resolution;
+            double dist = getPortionLength((i + 1) * resolution, 0, t1);
+            knotPoints.add(new Double[] { dist, t1 });
         }
         LUT = new NaturalCubicSpline(knotPoints);
     }
 
     private ControlPoint lerp(ControlPoint p1, ControlPoint p2, double t) {
-        p1.multiply(1-t);
+        p1.multiply(1 - t);
         p2.multiply(t);
         p1.add(p2);
         return p1;
@@ -77,9 +86,9 @@ public class QuadraticBezierCurve {
 
     public ControlPoint getValue(double t) {
         double x = 0, y = 0;
-        for(int i = 0; i < xCoefficients.size() && i < yCoefficients.size(); i++) {
-            x+=xCoefficients.get(i)*Math.pow(t, i);
-            y+=yCoefficients.get(i)*Math.pow(t, i);
+        for (int i = 0; i < xCoefficients.size() && i < yCoefficients.size(); i++) {
+            x += xCoefficients.get(i) * Math.pow(t, i);
+            y += yCoefficients.get(i) * Math.pow(t, i);
         }
         return new ControlPoint(x, y);
     }
@@ -93,8 +102,8 @@ public class QuadraticBezierCurve {
         double distance = 0;
         ControlPoint p1 = controlPoints.get(0);
         ControlPoint p2 = new ControlPoint();
-        for(int i = 0; i < resolution - 1; i++) {
-            p2 = getValue((double)(i+1)/resolution);
+        for (int i = 0; i < resolution - 1; i++) {
+            p2 = getValue((double) (i + 1) / resolution);
             distance += p1.getDistance(p2);
             p1 = p2;
         }
@@ -105,7 +114,7 @@ public class QuadraticBezierCurve {
         double distance = 0;
         ControlPoint p1 = getValue(i);
         ControlPoint p2 = new ControlPoint();
-        for(double j = i; j <= f; j+=1.0/resolution) {
+        for (double j = i; j <= f; j += 1.0 / resolution) {
             p2 = getValue(j);
             distance += p1.getDistance(p2);
             p1 = p2;
