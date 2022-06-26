@@ -103,11 +103,6 @@ public class SinusodalMotionProfile {
         }
     }
     public double getPosition(double t) {
-        double cx = 0;
-        double tmp = p[0].duration;
-        if(t <= tmp) {
-            return 0;
-        }
         return 0;
     }
 
