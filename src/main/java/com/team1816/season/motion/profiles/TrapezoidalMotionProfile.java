@@ -19,7 +19,7 @@ public class TrapezoidalMotionProfile {
             maxJerk = 0;
         }
 
-        public Constraints(double mv, double ma) {
+        public Constraints(double mv, double ma, double mj) {
             maxVel = mv;
             maxAccel = ma;
             maxJerk = 0;

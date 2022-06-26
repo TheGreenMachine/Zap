@@ -5,7 +5,7 @@ package com.team1816.season.motion.profiles;
  * of position, maximum rate of change of velocity, and maximum rate of change of acceleration and then construct the
  * appropriate motion profile. Note, that this is not the same as a trapezoidal motion profile but one degree higher.
  */
-public class SMotionProfile {
+public class SmoothTrapezoidalMotionProfile {
 
     /**
      * Internal Definitions
@@ -76,16 +76,16 @@ public class SMotionProfile {
 
     // the duration of odd phases can be computed by abs(Δa/j) and the duration of the even phases can be computed by abs(Δv/a)
 
-    public SMotionProfile() {
+    public SmoothTrapezoidalMotionProfile() {
         for (int i = 0; i < p.length; i++) {
             p[i] = new Phase();
             p[i].duration = 0;
         }
         duration = 0;
-        new SMotionProfile(new Constraints(), new State(), new State());
+        new SmoothTrapezoidalMotionProfile(new Constraints(), new State(), new State());
     }
 
-    public SMotionProfile(Constraints c, State i, State t) { // with absolutely no troubleshooting :)
+    public SmoothTrapezoidalMotionProfile(Constraints c, State i, State t) { // with absolutely no troubleshooting :)
         constraints = c;
         initial = i;
         target = t;
