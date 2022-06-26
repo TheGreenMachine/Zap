@@ -1,6 +1,6 @@
 package com.team1816.season.motion.profiles;
 
-public class SinusodalMotionProfile {
+public class SinusoidalMotionProfile {
 
     /**
      * Internal Definitions
@@ -62,17 +62,17 @@ public class SinusodalMotionProfile {
     private double duration;
     private boolean positive;
 
-    public SinusodalMotionProfile() {
+    public SinusoidalMotionProfile() {
         for (int i = 0; i < p.length; i++) {
             p[i] = new Phase();
             p[i].duration = 0;
         }
         duration = 0;
         positive = true;
-        new SinusodalMotionProfile(new Constraints(), new State(), new State());
+        new SinusoidalMotionProfile(new Constraints(), new State(), new State());
     }
 
-    public SinusodalMotionProfile(Constraints c, State i, State t) {
+    public SinusoidalMotionProfile(Constraints c, State i, State t) {
         constraints = c;
         initial = i;
         target = t;
