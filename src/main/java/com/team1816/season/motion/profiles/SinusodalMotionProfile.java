@@ -115,17 +115,17 @@ public class SinusodalMotionProfile {
         double cv = 0;
         double tmp = p[0].duration;
         if(t <= tmp) {
-            cv+=(constraints.maxVel-initial.velocity)/(-2.0)*Math.cos(2*(t)*constraints.maxAccel/(constraints.maxVel-initial.velocity))+(constraints.maxVel+ initial.velocity)/2.0;
+            cv+=(constraints.maxVel+initial.velocity)/(-2.0)*Math.cos(2*(t)*constraints.maxAccel/(constraints.maxVel-initial.velocity))+(constraints.maxVel+ initial.velocity)/2.0;
             return cv;
         }
-        cv += (constraints.maxVel-initial.velocity)/(-2.0)*Math.cos(2*(tmp)*constraints.maxAccel/(constraints.maxVel-initial.velocity))+(constraints.maxVel+ initial.velocity)/2.0;
+        cv += (constraints.maxVel+initial.velocity)/(-2.0)*Math.cos(2*(tmp)*constraints.maxAccel/(constraints.maxVel-initial.velocity))+(constraints.maxVel+ initial.velocity)/2.0;
         tmp+=p[1].duration;
         if(t <= tmp) {
             return cv; // flat
         }
         tmp+=p[2].duration;
         if(t <= tmp) {
-            cv+=(constraints.maxVel-target.velocity)/(2.0)*Math.cos(2*(tmp-t-p[2].duration)*constraints.maxAccel/(constraints.maxVel-target.velocity))+(constraints.maxVel+target.velocity)/2.0;
+            cv+=(constraints.maxVel+target.velocity)/(2.0)*Math.cos(2*(tmp-t-p[2].duration)*constraints.maxAccel/(constraints.maxVel-target.velocity))+(constraints.maxVel+target.velocity)/2.0;
             return cv;
         }
         return 0;
