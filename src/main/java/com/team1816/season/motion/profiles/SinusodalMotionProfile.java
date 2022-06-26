@@ -132,10 +132,38 @@ public class SinusodalMotionProfile {
     }
 
     public double getAcceleration(double t) {
+        double ca = 0;
+        double tmp = p[0].duration;
+        if(t <= tmp) {
+            ca+=-constraints.maxAccel*Math.sin(2*(t)*constraints.maxAccel/(constraints.maxVel-initial.velocity));
+            return ca;
+        }
+        tmp+= p[1].duration;
+        if(t <= tmp) {
+            return 0;
+        }
+        tmp+= p[2].duration;
+        if(t <= tmp) {
+            ca+=constraints.maxAccel*Math.sin(2*(tmp-t-p[2].duration)*constraints.maxAccel/(constraints.maxVel-target.velocity));
+            return ca;
+        }
         return 0;
     }
 
     public double getJerk(double t) {
+        double cj = 0;
+        double tmp = p[0].duration;
+        if(t <= tmp) {
+            return -getVelocity(t)*Math.pow(2*constraints.maxAccel/(constraints.maxVel-initial.velocity), 2);
+        }
+        tmp += p[1].duration;
+        if(t <= tmp) {
+            return 0;
+        }
+        tmp += p[2].duration;
+        if(t <= tmp) {
+            return -getVelocity(t)*Math.pow(2*constraints.maxAccel/(constraints.maxVel-target.velocity), 2);
+        }
         return 0;
     }
 
