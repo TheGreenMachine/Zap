@@ -58,6 +58,7 @@ public class SinusodalMotionProfile {
     private State initial;
     private State target;
     private double duration;
+    private boolean positive;
 
     public SinusodalMotionProfile() {
         for (int i = 0; i < p.length; i++) {
@@ -65,6 +66,7 @@ public class SinusodalMotionProfile {
             p[i].duration = 0;
         }
         duration = 0;
+        positive = true;
         new SinusodalMotionProfile(new Constraints(), new State(), new State());
     }
     public SinusodalMotionProfile(Constraints c, State i, State t) {
@@ -74,22 +76,26 @@ public class SinusodalMotionProfile {
 
         double dX = t.position - i.position; // need to deal with dX sign
         double cx = 0;
+        positive = dX>0;
 
-        double t1 = Math.PI/2*(c.maxVel-i.velocity)/c.maxAccel;
+        double t1 = Math.abs(Math.PI/2*Math.abs((positive?(1):(-1))*c.maxVel-i.velocity)/c.maxAccel);
         double t2 = 0;
-        double t3 = Math.PI/2*(c.maxVel-t.velocity)/c.maxAccel;
+        double t3 = Math.abs(Math.PI/2*Math.abs((positive?(1):(-1))*c.maxVel-t.velocity)/c.maxAccel);
 
         // cx calculations
-        cx+=Math.pow((c.maxVel-i.velocity),2)/c.maxAccel*Math.PI/4;
-        cx+=Math.pow((c.maxVel-t.velocity),2)/c.maxAccel*Math.PI/4;
+        cx+=Math.pow((positive?(1):(-1))*(c.maxVel)+i.velocity,2)/c.maxAccel*((positive?(1):(-1))*c.maxVel-i.velocity)*Math.PI/4;
+        cx+=Math.pow((positive?(1):(-1))*(c.maxVel)+t.velocity,2)/c.maxAccel*((positive?(1):(-1))*c.maxVel-t.velocity)*Math.PI/4;
         cx+=initial.velocity*t1;
-        cx+= target.velocity*t3;
+        cx+=target.velocity*t3;
 
         t2+=(Math.abs(dX)-cx)/c.maxVel;
 
         p[0].duration = t1;
         p[1].duration = t2;
         p[2].duration = t3;
+
+        if(!positive)
+            c.maxVel*=-1;
 
         duration = 0;
         for (Phase ph : p) {
@@ -98,14 +104,30 @@ public class SinusodalMotionProfile {
     }
     public double getPosition(double t) {
         double cx = 0;
-        double tmp = p[1].duration;
-        if(t<tmp) {
+        double tmp = p[0].duration;
+        if(t <= tmp) {
             return 0;
         }
         return 0;
     }
 
     public double getVelocity(double t) {
+        double cv = 0;
+        double tmp = p[0].duration;
+        if(t <= tmp) {
+            cv+=(constraints.maxVel-initial.velocity)/(-2.0)*Math.cos(2*(t)*constraints.maxAccel/(constraints.maxVel-initial.velocity))+(constraints.maxVel+ initial.velocity)/2.0;
+            return cv;
+        }
+        cv += (constraints.maxVel-initial.velocity)/(-2.0)*Math.cos(2*(tmp)*constraints.maxAccel/(constraints.maxVel-initial.velocity))+(constraints.maxVel+ initial.velocity)/2.0;
+        tmp+=p[1].duration;
+        if(t <= tmp) {
+            return cv; // flat
+        }
+        tmp+=p[2].duration;
+        if(t <= tmp) {
+            cv+=(constraints.maxVel-target.velocity)/(2.0)*Math.cos(2*(tmp-t-p[2].duration)*constraints.maxAccel/(constraints.maxVel-target.velocity))+(constraints.maxVel+target.velocity)/2.0;
+            return cv;
+        }
         return 0;
     }
 
