@@ -112,12 +112,12 @@ jsonSchema2Pojo {
     includeToString = true
     includeHashcodeAndEquals = false
     source.setFrom files(
-        "${project.rootDir}/src/main/resources/subsystemconfig.schema.json",
-        "${project.rootDir}/src/main/resources/pidconfig.schema.json",
-        "${project.rootDir}/src/main/resources/swervemoduleconfig.schema.json",
-        "${project.rootDir}/src/main/resources/moduleconfig.schema.json",
-        "${project.rootDir}/src/main/resources/double.solenoid.schema.json",
-        "${project.rootDir}/src/main/resources/robotconfig.schema.json"
+        "${project.rootDir}/src/main/resources/generated-json/subsystemconfig.schema.json",
+        "${project.rootDir}/src/main/resources/generated-json/pidconfig.schema.json",
+        "${project.rootDir}/src/main/resources/generated-json/swervemoduleconfig.schema.json",
+        "${project.rootDir}/src/main/resources/generated-json/moduleconfig.schema.json",
+        "${project.rootDir}/src/main/resources/generated-json/double.solenoid.schema.json",
+        "${project.rootDir}/src/main/resources/generated-json/robotconfig.schema.json"
     )}
 
 spotless {

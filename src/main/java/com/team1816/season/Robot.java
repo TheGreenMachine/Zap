@@ -77,7 +77,7 @@ public class Robot extends TimedRobot {
 
     // hack variables
     private final Turret.ControlMode defaultTurretControlMode =
-        Turret.ControlMode.CENTER_FOLLOWING;
+        Turret.ControlMode.FIELD_FOLLOWING;
     private boolean faulted;
     private boolean useManualShoot = false;
 
@@ -173,7 +173,7 @@ public class Robot extends TimedRobot {
                     BadLog.createTopic(
                         "PDP/Current",
                         "Amps",
-                        Infrastructure.getPd()::getTotalCurrent
+                        infrastructure.getPd()::getTotalCurrent
                     );
 
                     drive.CreateBadLogValue("Drivetrain PID", drive.pidToString());
@@ -453,7 +453,7 @@ public class Robot extends TimedRobot {
             turret.setControlMode(defaultTurretControlMode);
 
             superstructure.setStopped(false);
-            Infrastructure.startCompressor();
+            infrastructure.startCompressor();
         } catch (Throwable t) {
             faulted = true;
             throw t;

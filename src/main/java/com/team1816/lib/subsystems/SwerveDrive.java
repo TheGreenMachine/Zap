@@ -1,7 +1,6 @@
 package com.team1816.lib.subsystems;
 
 import com.google.inject.Singleton;
-import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.season.Constants;
 import com.team254.lib.util.DriveSignal;
@@ -91,7 +90,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             simulateGyroOffset();
         }
 
-        actualHeading = Rotation2d.fromDegrees(Infrastructure.getYaw());
+        actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
 
         swerveOdometry.update(actualHeading, actualModuleStates);
         updateRobotState();
@@ -232,7 +231,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     @Override
     public void resetOdometry(Pose2d pose) {
-        actualHeading = Rotation2d.fromDegrees(Infrastructure.getYaw());
+        actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
         swerveOdometry.resetPosition(pose, actualHeading);
         swerveOdometry.update(actualHeading, actualModuleStates);
         updateRobotState();

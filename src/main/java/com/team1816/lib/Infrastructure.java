@@ -29,38 +29,38 @@ public class Infrastructure {
         pd = factory.getPd();
     }
 
-    public static void startCompressor() { // not used because compressor currently turns on by default once robot is enabled
+    public void startCompressor() { // not used because compressor currently turns on by default once robot is enabled
         if (compressorEnabled && !compressorIsOn) {
             compressor.enableDigital();
             compressorIsOn = true;
         }
     }
 
-    public static void stopCompressor() {
+    public void stopCompressor() {
         if (compressorEnabled && compressorIsOn) {
             compressor.disable();
             compressorIsOn = false;
         }
     }
 
-    public static void resetPigeon(Rotation2d angle) {
+    public void resetPigeon(Rotation2d angle) {
         System.out.println("resetting Pigeon");
         pigeon.setYaw(angle.getDegrees());
     }
 
-    public static IPigeonIMU getPigeon() {
+    public IPigeonIMU getPigeon() {
         return pigeon;
     }
 
-    public static double getYaw() {
+    public double getYaw() {
         return pigeon.getYaw();
     }
 
-    public static PowerDistribution getPd() {
+    public PowerDistribution getPd() {
         return pd;
     }
 
-    public static void simulateGyro(double radianOffsetPerLoop, double gyroDrift) {
+    public void simulateGyro(double radianOffsetPerLoop, double gyroDrift) {
         pigeon.setYaw(getYaw() + radianOffsetPerLoop + gyroDrift);
     }
 }

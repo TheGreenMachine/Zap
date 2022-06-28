@@ -1,7 +1,6 @@
 package com.team1816.lib.subsystems;
 
 import com.google.inject.Inject;
-import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.lib.loops.Loop;
@@ -222,7 +221,7 @@ public abstract class Drive
         double simGyroOffset = chassisSpeed.omegaRadiansPerSecond * tickRatioPerLoop;
         // increment gyro drift
         gyroDrift -= 0;
-        Infrastructure.simulateGyro(simGyroOffset, gyroDrift);
+        infrastructure.simulateGyro(simGyroOffset, gyroDrift);
     }
 
     public enum ControlState {

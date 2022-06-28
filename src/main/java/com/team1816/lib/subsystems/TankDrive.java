@@ -5,7 +5,6 @@ import static com.team1816.lib.math.DriveConversions.*;
 import com.ctre.phoenix.motorcontrol.*;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.util.EnhancedMotorChecker;
@@ -144,7 +143,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         if (RobotBase.isSimulation()) {
             simulateGyroOffset();
         }
-        actualHeading = Rotation2d.fromDegrees(Infrastructure.getYaw());
+        actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
 
         // send updated information to robotState and odometry calculator
         tankOdometry.update(actualHeading, leftActualDistance, rightActualDistance);
@@ -159,7 +158,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     public void zeroSensors(Pose2d pose) {
         System.out.println("Zeroing drive sensors!");
 
-        actualHeading = Rotation2d.fromDegrees(Infrastructure.getYaw());
+        actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
         resetEncoders();
         resetOdometry(pose);
 
@@ -343,7 +342,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         boolean leftSide = EnhancedMotorChecker.checkMotor(this, leftMain);
         boolean rightSide = EnhancedMotorChecker.checkMotor(this, rightMain);
 
-        boolean checkPigeon = Infrastructure.getPigeon() == null;
+        boolean checkPigeon = infrastructure.getPigeon() == null;
 
         System.out.println(leftSide && rightSide && checkPigeon);
         if (leftSide && rightSide && checkPigeon) {
