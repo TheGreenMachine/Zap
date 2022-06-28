@@ -77,15 +77,13 @@ public class TrapezoidalMotionProfile {
         double dX = t.position - i.position;
         double dV = t.velocity - i.velocity;
         double cv = c.maxVel;
-        if (dX < 0) {
-            c.maxAccel *= -1;
-        }
+
         double t1 = 0;
         double t2 = 0;
         double t3 = 0;
         do {
-            t1 = (cv - i.velocity) / c.maxAccel;
-            t3 = (cv - t.velocity) / c.maxAccel;
+            t1 = Math.abs((cv - i.velocity) / c.maxAccel);
+            t3 = Math.abs((cv - t.velocity) / c.maxAccel);
 
             double edX =
                 c.maxAccel *
@@ -94,8 +92,11 @@ public class TrapezoidalMotionProfile {
                 (c.maxAccel * t1 + i.velocity) *
                 t3;
             t2 = (dX - edX) / (c.maxAccel * t1 + i.velocity);
-            cv /= 2.0;
+            cv /= 1.5;
         } while (t2 >= 0);
+        if (dX < 0) {
+            c.maxAccel = Math.min(c.maxAccel, c.maxAccel*-1); // quick fix to get accurate position and velocity calculations
+        }
         duration = 0;
         for (Phase ph : p) {
             duration += Math.max(ph.duration, 0);

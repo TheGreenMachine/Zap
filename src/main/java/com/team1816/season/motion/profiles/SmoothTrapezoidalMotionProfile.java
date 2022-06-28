@@ -111,7 +111,7 @@ public class SmoothTrapezoidalMotionProfile {
                 t2 = 0;
             }
             p[0].duration = p[2].duration = p[4].duration = p[6].duration = t1;
-            p[1].duration = p[5].duration = t2;
+            p[1].duration = p[5].duration = t2; // this is false
             p[3].duration = 0;
 
             //calculate p[3].duration
