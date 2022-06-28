@@ -16,14 +16,18 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 public class Infrastructure {
 
     // Components
-    private static ICompressor compressor = factory.getCompressor();
-    private static IPigeonIMU pigeon = factory.getPigeon();
-    private static PowerDistribution pd = factory.getPd();
+    private static ICompressor compressor;
+    private static IPigeonIMU pigeon;
+    private static PowerDistribution pd;
 
     private static final boolean compressorEnabled = factory.isCompressorEnabled();
     private static boolean compressorIsOn = false;
 
-    public Infrastructure() {}
+    public Infrastructure() {
+        compressor = factory.getCompressor();
+        pigeon = factory.getPigeon();
+        pd = factory.getPd();
+    }
 
     public static void startCompressor() { // not used because compressor currently turns on by default once robot is enabled
         if (compressorEnabled && !compressorIsOn) {

@@ -43,7 +43,7 @@ public class Robot extends TimedRobot {
     private IControlBoard controlBoard;
     private ActionManager actionManager;
 
-
+    private final Infrastructure infrastructure;
     private final SubsystemManager subsystemManager;
 
     //State managers
@@ -93,6 +93,7 @@ public class Robot extends TimedRobot {
         camera = injector.getInstance(Camera.class);
         spindexer = injector.getInstance(Spindexer.class);
         superstructure = injector.getInstance(Superstructure.class);
+        infrastructure = injector.getInstance(Infrastructure.class);
         shooter = injector.getInstance(Shooter.class);
         cooler = injector.getInstance(Cooler.class);
         robotState = injector.getInstance(RobotState.class);
