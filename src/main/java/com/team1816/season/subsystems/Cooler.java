@@ -3,6 +3,8 @@ package com.team1816.season.subsystems;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.lib.subsystems.Subsystem;
+import edu.wpi.first.wpilibj.DriverStation;
+
 import javax.inject.Singleton;
 
 /*
@@ -20,6 +22,7 @@ public class Cooler extends Subsystem {
 
     private boolean needsDump = false;
     private boolean outputsChanged = false;
+    private boolean shutDown = false;
 
     private AsyncTimer coolTimer;
 
@@ -42,13 +45,23 @@ public class Cooler extends Subsystem {
         } else {
             robotState.coolState = STATE.WAIT;
         }
+        if(DriverStation.getMatchTime() > 60){
+            shutDown = true;
+            outputsChanged = true;
+        }
     }
 
     @Override
     public void writeToHardware() {
         if(outputsChanged){
             outputsChanged = false;
-            coolControl();
+            if(shutDown){
+                // TODO actually figure out whether true or false is in or out
+                dumpIn.set(true);
+                dumpOut.set(false);
+            } else {
+                coolControl();
+            }
         }
     }
 
@@ -65,6 +78,7 @@ public class Cooler extends Subsystem {
     public void zeroSensors() {
         needsDump = false;
         outputsChanged = false;
+        shutDown = false;
         coolTimer.reset();
     }
 
