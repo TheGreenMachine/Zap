@@ -234,6 +234,7 @@ public class Robot extends TimedRobot {
 
             logger.finishInitialization();
 
+            // UNHINGED Sets all the subsystems to run periodically (Specifically Read and Write to hardware methods)
             mSubsystemManager.setSubsystems(
                 mDrive,
                 mElevator,
@@ -258,7 +259,7 @@ public class Robot extends TimedRobot {
 
             mAutoModeSelector.updateModeCreator();
 
-            //
+            // UNHINGED takes buttons from GamepadDriveControlBaord and maps it to action, and what they actually do
             actionManager =
                 new ActionManager(
                     createHoldAction(

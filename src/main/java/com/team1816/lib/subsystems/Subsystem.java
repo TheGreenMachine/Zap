@@ -36,7 +36,7 @@ public abstract class Subsystem implements Sendable {
 
     public void writeToLog() {}
 
-    // Optional design pattern for caching periodic reads to avoid hammering the HAL/CAN.
+    // UNHINGED: Core things for each system. Optional design pattern for caching periodic reads to avoid hammering the HAL/CAN.
     public void readFromHardware() {}
 
     // Optional design pattern for caching periodic writes to avoid hammering the HAL/CAN.
