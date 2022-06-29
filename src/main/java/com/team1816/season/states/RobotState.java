@@ -29,7 +29,7 @@ public class RobotState {
     public Elevator.STATE elevatorState = Elevator.STATE.STOP;
     public Cooler.STATE coolState = Cooler.STATE.WAIT;
 
-    public boolean hasOverheated = false;
+    public boolean overheating = false;
 
     public RobotState() {
         SmartDashboard.putData("Field", field);
@@ -64,7 +64,7 @@ public class RobotState {
         deltaVehicle = new ChassisSpeeds();
         visionPoint = new Point();
         shooterMPS = 0;
-        hasOverheated = false;
+        overheating = false;
     }
 
     public synchronized Pose2d getLatestFieldToVehicle() {
