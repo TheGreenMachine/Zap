@@ -65,7 +65,7 @@ subsystems:
                     kF: 0
                     allowableError: 5
         constants:
-            maxTicks: 12275.7 # ticks per 100ms
+            maxVelTicks100ms: 12275.7 # ticks per 100ms
             openLoopRampRate: 0.8
             isSwerve: 1
             encPPR: 14255
@@ -116,7 +116,7 @@ subsystems:
                 allowableError: 100
         constants:
             usingPoseForSpeed: 0
-            maxTicks: 20700
+            maxVelTicks100ms: 20700
             nearVel: 4500
             midVel: 8450
             tarmacTapeVel: 8125
@@ -139,7 +139,7 @@ subsystems:
                 kF: 0.0
                 allowableError: 5000
         constants:
-            maxTicks: 1
+            maxVelTicks100ms: 1
             unlockPos: -14400
             startPos: 0
             returnPos: 0
@@ -161,7 +161,7 @@ subsystems:
             - elevator
         constants:
             isVelocity: 1
-            maxTicks: 20000
+            maxVelTicks100ms: 20000
             ballSensor: 0
             firePow: 0.35
             flushPow: -0.3
@@ -181,7 +181,7 @@ subsystems:
     collector:
         implemented: true
         sparkmaxes:
-            intake: 23 # maxTicks 10617
+            intake: 23 # maxVelTicks100ms 10617
         invertMotor:
             - intake
         solenoids:

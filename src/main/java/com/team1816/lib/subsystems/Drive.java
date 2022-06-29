@@ -53,7 +53,10 @@ public abstract class Drive
         "heatThreshold",
         100
     );
-    public static final double maxTicks = factory.getConstant(NAME, "maxTicks");
+    public static final double maxVelTicks100ms = factory.getConstant(
+        NAME,
+        "maxVelTicks100ms"
+    );
     public static final double driveEncPPR = factory.getConstant(NAME, "encPPR");
 
     protected Drive() {

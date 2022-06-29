@@ -15,7 +15,7 @@ subsystems:
         invertMotor:
             - rightMain
         constants:
-            maxTicks: 12275.7
+            maxVelTicks100ms: 12275.7
             openLoopRampRate: 0.8
             isSwerve: 0
             encPPR: 22220.8
@@ -64,7 +64,7 @@ subsystems:
                 allowableError: 50
         constants:
             usingPoseForSpeed: 0
-            maxTicks: 20700 #
+            maxVelTicks100ms: 20700 #
             currentFloorCheck: .12
             currentEpsilonCheck: .2
             rpmFloorCheck: 2000

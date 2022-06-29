@@ -4,7 +4,6 @@ import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.lib.subsystems.Subsystem;
 import edu.wpi.first.wpilibj.DriverStation;
-
 import javax.inject.Singleton;
 
 /*
@@ -31,7 +30,12 @@ public class Cooler extends Subsystem {
         dumpIn = factory.getSolenoid(NAME, "dumpIn");
         dumpOut = factory.getSolenoid(NAME, "dumpOut");
 
-        coolTimer = new AsyncTimer(0.5, () -> dumpIn.set(needsDump), () -> dumpOut.set(!needsDump));
+        coolTimer =
+            new AsyncTimer(
+                0.5,
+                () -> dumpIn.set(needsDump),
+                () -> dumpOut.set(!needsDump)
+            );
     }
 
     @Override
@@ -45,7 +49,7 @@ public class Cooler extends Subsystem {
         } else {
             robotState.coolState = STATE.WAIT;
         }
-        if(DriverStation.getMatchTime() > 60){
+        if (DriverStation.getMatchTime() > 60) {
             shutDown = true;
             outputsChanged = true;
         }
@@ -53,9 +57,9 @@ public class Cooler extends Subsystem {
 
     @Override
     public void writeToHardware() {
-        if(outputsChanged){
+        if (outputsChanged) {
             outputsChanged = false;
-            if(shutDown){
+            if (shutDown) {
                 // TODO actually figure out whether true or false is in or out
                 dumpIn.set(true);
                 dumpOut.set(false);
@@ -65,8 +69,8 @@ public class Cooler extends Subsystem {
         }
     }
 
-    public void coolControl(){
-        if(!coolTimer.isCompleted()){
+    public void coolControl() {
+        if (!coolTimer.isCompleted()) {
             coolTimer.update();
             outputsChanged = true;
         } else {

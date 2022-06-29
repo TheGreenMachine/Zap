@@ -114,7 +114,7 @@ public class RobotFactory {
             reportGhostWarning("Motor", subsystemName, name);
             motor =
                 CtreMotorFactory.createGhostMotor(
-                    (int) (factory.getConstant(subsystemName, "maxTicks", 1)),
+                    (int) (factory.getConstant(subsystemName, "maxVelTicks100ms", 1)),
                     0,
                     name
                 );
@@ -205,7 +205,7 @@ public class RobotFactory {
             if (subsystem.implemented) reportGhostWarning("Motor", subsystemName, name);
             followerMotor =
                 CtreMotorFactory.createGhostMotor(
-                    (int) factory.getConstant(subsystemName, "maxTicks"),
+                    (int) factory.getConstant(subsystemName, "maxVelTicks100ms"),
                     0,
                     name
                 );
@@ -236,7 +236,7 @@ public class RobotFactory {
             if (subsystem.implemented) reportGhostWarning("Motor", subsystemName, name);
             followerMotor =
                 CtreMotorFactory.createGhostMotor(
-                    (int) factory.getConstant(subsystemName, "maxTicks"),
+                    (int) factory.getConstant(subsystemName, "maxVelTicks100ms"),
                     0,
                     name
                 );

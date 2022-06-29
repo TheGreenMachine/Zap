@@ -1,7 +1,7 @@
 package com.team1816.lib.subsystems;
 
 public interface ISwerveModule {
-    String getName();
+    String getModuleName();
 
     // angle degrees
     double getActualAzimuth();

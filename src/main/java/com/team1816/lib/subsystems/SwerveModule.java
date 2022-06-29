@@ -130,7 +130,7 @@ public class SwerveModule implements ISwerveModule {
     }
 
     @Override
-    public String getName() {
+    public String getModuleName() {
         return mConstants.kModuleName;
     }
 
@@ -166,12 +166,14 @@ public class SwerveModule implements ISwerveModule {
 
     public boolean checkSystem() {
         boolean checkDrive = true;
-        double actualMaxTicks = factory.getConstant(NAME, "maxTicks"); // if this isn't calculated right this test will fail
+        double actualmaxVelTicks100ms = factory.getConstant(NAME, "maxVelTicks100ms"); // if this isn't calculated right this test will fail
         driveMotor.set(ControlMode.PercentOutput, 0.2);
         Timer.delay(1);
         if (
-            Math.abs(driveMotor.getSelectedSensorVelocity(0) - 0.2 * actualMaxTicks) >
-            actualMaxTicks /
+            Math.abs(
+                driveMotor.getSelectedSensorVelocity(0) - 0.2 * actualmaxVelTicks100ms
+            ) >
+            actualmaxVelTicks100ms /
             50
         ) {
             checkDrive = false;
@@ -179,8 +181,10 @@ public class SwerveModule implements ISwerveModule {
         driveMotor.set(ControlMode.PercentOutput, -0.2);
         Timer.delay(1);
         if (
-            Math.abs(driveMotor.getSelectedSensorVelocity(0) + 0.2 * actualMaxTicks) >
-            actualMaxTicks /
+            Math.abs(
+                driveMotor.getSelectedSensorVelocity(0) + 0.2 * actualmaxVelTicks100ms
+            ) >
+            actualmaxVelTicks100ms /
             50
         ) {
             checkDrive = false;

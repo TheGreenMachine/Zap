@@ -216,8 +216,8 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         leftPowerDemand = signal.getLeft();
         rightPowerDemand = signal.getRight();
 
-        leftVelDemand = leftPowerDemand * maxTicks;
-        rightVelDemand = rightPowerDemand * maxTicks;
+        leftVelDemand = leftPowerDemand * maxVelTicks100ms;
+        rightVelDemand = rightPowerDemand * maxVelTicks100ms;
     }
 
     @Override
@@ -298,12 +298,12 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     }
 
     @Override
-    public double getLeftVelocityDemand() {
+    public double getLeftVelocityTicksDemand() {
         return leftVelDemand;
     }
 
     @Override
-    public double getRightVelocityDemand() {
+    public double getRightVelocityTicksDemand() {
         return rightVelDemand;
     }
 

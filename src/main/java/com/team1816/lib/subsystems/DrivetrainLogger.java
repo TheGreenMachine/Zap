@@ -12,7 +12,7 @@ public class DrivetrainLogger {
                 i++
             ) {
                 var module = ((SwerveDrivetrain) drivetrain).getSwerveModules()[i];
-                var name = module.getName();
+                var name = module.getModuleName();
                 var prefix = "Drivetrain/" + name;
                 // Azimuth
                 subsystem.CreateBadLogTopic(
@@ -85,14 +85,14 @@ public class DrivetrainLogger {
             subsystem.CreateBadLogTopic(
                 "Drivetrain/LeftVel",
                 "NativeUnits",
-                ((TankDrive) drivetrain)::getLeftVelocityDemand,
+                ((TankDrive) drivetrain)::getLeftVelocityTicksDemand,
                 "hide",
                 "join:Drivetrain/Velocities"
             );
             subsystem.CreateBadLogTopic(
                 "Drivetrain/RightVel",
                 "NativeUnits",
-                ((TankDrive) drivetrain)::getRightVelocityDemand,
+                ((TankDrive) drivetrain)::getRightVelocityTicksDemand,
                 "hide",
                 "join:Drivetrain/Velocities"
             );
