@@ -80,7 +80,7 @@ constants:
     wheelbaseLength: 20
     wheelDiameter: 4.058 # inches
     trackWidth: 15.75 # inches
-    maxTicks: 2000 # ticks per 100ms
+    maxVelTicks100ms: 2000 # ticks per 100ms
     maxAccel: 1.27 # m/s^2
     maxVelPathFollowing: 3 # m/s
     maxVelOpenLoop: 3 # m/s

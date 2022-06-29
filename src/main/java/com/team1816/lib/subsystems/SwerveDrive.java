@@ -1,10 +1,8 @@
 package com.team1816.lib.subsystems;
 
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.season.Constants;
-import com.team1816.season.auto.AutoModeSelector;
 import com.team254.lib.util.DriveSignal;
 import com.team254.lib.util.SwerveDriveHelper;
 import com.team254.lib.util.SwerveDriveSignal;
@@ -22,15 +20,22 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     public static final String NAME = "drivetrain";
 
-    private final SwerveDriveHelper swerveDriveHelper = new SwerveDriveHelper();
-
+    // Components
     public SwerveModule[] swerveModules;
 
-    @Inject
-    private static AutoModeSelector autoModeSelector;
+    // Trajectory
+    protected List<Rotation2d> headingsList;
+    protected int trajectoryIndex = 0;
 
     // Odometry variables
     private SwerveDriveOdometry swerveOdometry;
+    private final SwerveDriveHelper swerveDriveHelper = new SwerveDriveHelper();
+
+    // States
+
+    public SwerveModuleState[] desiredModuleStates = new SwerveModuleState[4];
+    SwerveModuleState[] actualModuleStates = new SwerveModuleState[4];
+    public double[] motorTemperatures = new double[4];
 
     public SwerveDrive() {
         super();
@@ -48,111 +53,100 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
         setOpenLoop(SwerveDriveSignal.NEUTRAL);
 
-        // force a CAN message across
-        mIsBrakeMode = false;
-        setBrakeMode(mIsBrakeMode);
-
         swerveOdometry =
-            new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getHeading());
+            new SwerveDriveOdometry(
+                Constants.Swerve.swerveKinematics,
+                getActualHeading()
+            );
     }
 
     // autonomous (Trajectory_Following) loop is in setModuleStates
     @Override
     public synchronized void writeToHardware() {
-        if (mDriveControlState == DriveControlState.OPEN_LOOP) {
+        if (controlState == ControlState.OPEN_LOOP) {
             SwerveDriveKinematics.desaturateWheelSpeeds(
-                mPeriodicIO.desiredModuleStates,
+                desiredModuleStates,
                 Constants.kOpenLoopMaxVelMeters
-            ); // TODO get swerve max speed in meters/s
+            );
             for (int i = 0; i < 4; i++) {
-                swerveModules[i].setDesiredState(
-                        mPeriodicIO.desiredModuleStates[i],
-                        !mIsBrakeMode
-                    );
+                swerveModules[i].setDesiredState(desiredModuleStates[i], true);
             }
         }
     }
 
     @Override
     public synchronized void readFromHardware() {
-        SwerveModuleState[] states = new SwerveModuleState[4];
         for (int i = 0; i < 4; i++) {
-            states[i] = swerveModules[i].getState();
-        }
-        mPeriodicIO.chassisSpeed =
-            Constants.Swerve.swerveKinematics.toChassisSpeeds(states);
+            // logging actual angle and velocity of swerve motors (azimuth & drive)
+            actualModuleStates[i] = swerveModules[i].getActualState();
 
-        if (RobotBase.isSimulation()) { // calculate rotation based on actualModeStates
-            // simulates rotation by computing the rotational motion per interval
-            double sim_gyro_offset_radians =
-                mPeriodicIO.chassisSpeed.omegaRadiansPerSecond * tickRatioPerLoop;
-            // calculate rotation with gyro drift
-            gyroDrift -= 0;
-            mPeriodicIO.gyro_heading =
-                mPeriodicIO.gyro_heading
-                    .rotateBy(Rotation2d.fromDegrees(sim_gyro_offset_radians))
-                    .rotateBy(Rotation2d.fromDegrees(gyroDrift));
-        } else {
-            mPeriodicIO.gyro_heading = Rotation2d.fromDegrees(mInfrastructure.getYaw());
+            // logging current temperatures of each module's drive motor
+            motorTemperatures[i] = swerveModules[i].getMotorTemp();
+        }
+        chassisSpeed =
+            Constants.Swerve.swerveKinematics.toChassisSpeeds(actualModuleStates);
+
+        if (RobotBase.isSimulation()) {
+            simulateGyroOffset();
         }
 
-        swerveOdometry.update(mPeriodicIO.gyro_heading, states);
+        actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
+
+        swerveOdometry.update(actualHeading, actualModuleStates);
         updateRobotState();
     }
 
     public Rotation2d getTrajectoryHeadings() {
-        if (mHeadings == null) {
+        if (headingsList == null) {
             System.out.println("headings are empty!");
             return Constants.EmptyRotation;
-        } else if (mTrajectoryIndex > mHeadings.size() - 1) {
+        } else if (trajectoryIndex > headingsList.size() - 1) {
             //System.out.println("heck the headings aren't long enough");
             return Constants.EmptyRotation;
         }
         if (
             getTrajectoryTimestamp() >
-            mTrajectory.getStates().get(mTrajectoryIndex).timeSeconds ||
-            mTrajectoryIndex == 0
-        ) mTrajectoryIndex++;
-        if (mTrajectoryIndex >= mHeadings.size()) {
-            System.out.println(mHeadings.get(mHeadings.size() - 1) + " = max");
-            return mHeadings.get(mHeadings.size() - 1);
+            trajectory.getStates().get(trajectoryIndex).timeSeconds ||
+            trajectoryIndex == 0
+        ) trajectoryIndex++;
+        if (trajectoryIndex >= headingsList.size()) {
+            System.out.println(headingsList.get(headingsList.size() - 1) + " = max");
+            return headingsList.get(headingsList.size() - 1);
         }
         double timeBetweenPoints =
             (
-                mTrajectory.getStates().get(mTrajectoryIndex).timeSeconds -
-                mTrajectory.getStates().get(mTrajectoryIndex - 1).timeSeconds
+                trajectory.getStates().get(trajectoryIndex).timeSeconds -
+                trajectory.getStates().get(trajectoryIndex - 1).timeSeconds
             );
         Rotation2d heading;
         heading =
-            mHeadings
-                .get(mTrajectoryIndex - 1)
+            headingsList
+                .get(trajectoryIndex - 1)
                 .interpolate(
-                    mHeadings.get(mTrajectoryIndex),
+                    headingsList.get(trajectoryIndex),
                     getTrajectoryTimestamp() / timeBetweenPoints
                 );
         return heading;
     }
 
     // autonomous (trajectory following)
+    @Override
     public void startTrajectory(Trajectory trajectory, List<Rotation2d> headings) {
-        mPeriodicIO.timestamp = 0;
-        mTrajectoryStart = 0;
-        mTrajectory = trajectory;
-        mHeadings = headings;
-        mTrajectoryIndex = 0;
-        updateRobotState();
-        mDriveControlState = DriveControlState.TRAJECTORY_FOLLOWING;
-        mOverrideTrajectory = false;
+        super.startTrajectory(trajectory, headings);
+        headingsList = headings;
+        trajectoryIndex = 0;
     }
 
     /* Used by SwerveControllerCommand in Auto */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
-        mDriveControlState = DriveControlState.TRAJECTORY_FOLLOWING;
+        if (controlState != ControlState.TRAJECTORY_FOLLOWING) {
+            controlState = ControlState.TRAJECTORY_FOLLOWING;
+        }
         SwerveDriveKinematics.desaturateWheelSpeeds(
             desiredStates,
             (Constants.kPathFollowingMaxVelMeters)
         );
-        mPeriodicIO.desiredModuleStates = desiredStates;
+        desiredModuleStates = desiredStates;
         for (int i = 0; i < 4; i++) {
             swerveModules[i].setDesiredState(desiredStates[i], false);
         }
@@ -160,67 +154,75 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     @Override
     public void updateRobotState() {
-        robotState.field_to_vehicle = swerveOdometry.getPoseMeters();
-        robotState.delta_vehicle =
+        robotState.fieldToVehicle = swerveOdometry.getPoseMeters();
+        robotState.deltaVehicle =
             new ChassisSpeeds(
-                mPeriodicIO.chassisSpeed.vxMetersPerSecond,
-                mPeriodicIO.chassisSpeed.vyMetersPerSecond,
-                mPeriodicIO.chassisSpeed.omegaRadiansPerSecond
+                chassisSpeed.vxMetersPerSecond,
+                chassisSpeed.vyMetersPerSecond,
+                chassisSpeed.omegaRadiansPerSecond
             );
+        // check if motors are overheating - update robotState
+        if (!robotState.overheating) {
+            for (int i = 0; i < 4; i++) {
+                if (motorTemperatures[i] > heatThreshold) {
+                    robotState.overheating = true;
+                    break;
+                }
+            }
+        } else {
+            for (int i = 0; i < 4; i++) {
+                if (motorTemperatures[i] < heatThreshold - 10) { // TODO make yml or other const for point where overheating is no longer true
+                    robotState.overheating = false;
+                    break;
+                }
+            }
+        }
     }
 
     // general setters
     @Override
     public void setOpenLoop(DriveSignal signal) {
-        if (mDriveControlState != DriveControlState.OPEN_LOOP) {
+        if (controlState != ControlState.OPEN_LOOP) {
             System.out.println("switching to open loop");
-            System.out.println(signal);
-            mDriveControlState = DriveControlState.OPEN_LOOP;
+            controlState = ControlState.OPEN_LOOP;
         }
-        SwerveModuleState[] states = new SwerveModuleState[4];
-        for (int i = 0; i < states.length; i++) {
-            states[i] =
+        SwerveModuleState[] desiredStatesSignal = new SwerveModuleState[4];
+        for (int i = 0; i < desiredStatesSignal.length; i++) {
+            desiredStatesSignal[i] =
                 new SwerveModuleState(
                     ((SwerveDriveSignal) signal).getWheelSpeeds()[i],
                     ((SwerveDriveSignal) signal).getWheelAzimuths()[i]
                 );
         }
 
-        mPeriodicIO.desiredModuleStates = states;
+        desiredModuleStates = desiredStatesSignal;
     }
 
     @Override
-    public void setTeleopInputs(
-        double forward,
-        double strafe,
-        double rotation,
-        boolean low_power,
-        boolean use_heading_controller
-    ) {
-        if (mDriveControlState != DriveControlState.OPEN_LOOP) {
-            mDriveControlState = DriveControlState.OPEN_LOOP;
-            mPeriodicIO.use_heading_controller = use_heading_controller;
+    public void setTeleopInputs(double forward, double strafe, double rotation) {
+        if (controlState != ControlState.OPEN_LOOP) {
+            controlState = ControlState.OPEN_LOOP;
         }
         SwerveDriveSignal signal = swerveDriveHelper.calculateDriveSignal(
             forward,
             strafe,
             rotation,
-            low_power,
+            isSlowMode,
             true,
-            use_heading_controller
+            false
         );
 
-        setOpenLoop(signal);
+        // To avoid overriding brake command
+        if (!isBraking) {
+            setOpenLoop(signal);
+        }
     }
 
     @Override
-    public synchronized void setBrakeMode(boolean on) {
-        super.setBrakeMode(on);
-        for (int i = 0; i < swerveModules.length; i++) {
-            if (on) {
-                setOpenLoop(SwerveDriveSignal.BRAKE);
-            }
-            swerveModules[i].setDriveBrakeMode(on);
+    public synchronized void setBraking(boolean braking) {
+        isBraking = braking;
+        if (braking) {
+            setOpenLoop(SwerveDriveSignal.BRAKE);
         }
     }
 
@@ -231,51 +233,49 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     public SwerveModuleState[] getStates() {
-        return Constants.Swerve.swerveKinematics.toSwerveModuleStates(
-            mPeriodicIO.chassisSpeed
-        );
+        return Constants.Swerve.swerveKinematics.toSwerveModuleStates(chassisSpeed);
     }
 
     @Override
     public void resetOdometry(Pose2d pose) {
-        swerveOdometry.resetPosition(pose, mPeriodicIO.gyro_heading);
+        actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
+        swerveOdometry.resetPosition(pose, actualHeading);
+        swerveOdometry.update(actualHeading, actualModuleStates);
+        updateRobotState();
     }
 
     @Override
     public void zeroSensors(Pose2d pose) {
         System.out.println("Zeroing drive sensors!");
-        setBrakeMode(false);
-        mPeriodicIO.gyro_heading = Rotation2d.fromDegrees(mInfrastructure.getYaw());
-        resetOdometry(pose);
+
+        // resetting ACTUAL module states
         for (int i = 0; i < 4; i++) {
-            swerveModules[i].setDesiredState(new SwerveModuleState(), true);
-            mPeriodicIO.desiredModuleStates[i] = new SwerveModuleState();
-            mPeriodicIO.chassisSpeed = new ChassisSpeeds();
+            actualModuleStates[i] = new SwerveModuleState();
         }
-        autoModeSelector.setHardwareFailure(false);
+
+        resetOdometry(pose);
+        chassisSpeed = new ChassisSpeeds();
+        isBraking = false;
     }
 
     @Override
     public synchronized void stop() {
-        if (mDriveControlState == DriveControlState.OPEN_LOOP || mTrajectory == null) {
-            setOpenLoop(SwerveDriveSignal.NEUTRAL);
-            writeToHardware();
-        } else if (mDriveControlState == DriveControlState.TRAJECTORY_FOLLOWING) {
-            SwerveModuleState[] states = new SwerveModuleState[4];
-            for (int i = 0; i < swerveModules.length; i++) {
-                states[i] = new SwerveModuleState();
-                states[i].speedMetersPerSecond = 0;
-                states[i].angle = swerveModules[i].getState().angle;
-                swerveModules[i].setDesiredState(states[i], false);
-            }
+        for (int i = 0; i < 4; i++) {
+            SwerveModuleState stoppedState = new SwerveModuleState(
+                0,
+                swerveModules[i].getActualState().angle
+            );
+            swerveModules[i].setDesiredState(
+                    stoppedState,
+                    controlState == ControlState.OPEN_LOOP
+                );
+            desiredModuleStates[i] = stoppedState;
         }
-        mTrajectoryIndex = 0;
     }
 
     // other
     @Override
     public boolean checkSystem() {
-        setBrakeMode(false);
         boolean modulesPassed = true;
         for (SwerveModule swerveModule : swerveModules) {
             if (!swerveModule.checkSystem()) {

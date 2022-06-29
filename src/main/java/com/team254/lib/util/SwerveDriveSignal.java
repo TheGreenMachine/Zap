@@ -23,7 +23,6 @@ public class SwerveDriveSignal extends DriveSignal {
 
     public static final SwerveDriveSignal NEUTRAL = new SwerveDriveSignal(ZERO_SPEED, ZERO_AZIMUTH, false);
     public static final SwerveDriveSignal BRAKE = new SwerveDriveSignal(ZERO_SPEED, X_AZIMUTH, false);
-    public static final SwerveDriveSignal SET_CLIMB = new SwerveDriveSignal(ZERO_SPEED, AZIMUTH_90_DEGREES, false);
 
 
     private double[] mWheelSpeeds;

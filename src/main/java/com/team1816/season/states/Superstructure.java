@@ -76,10 +76,6 @@ public class Superstructure {
         collecting = false;
         revving = false;
         firing = false;
-        robotState.collectorState = Collector.STATE.STOP;
-        robotState.spinState = Spindexer.STATE.STOP;
-        robotState.elevatorState = Elevator.STATE.STOP;
-        robotState.shooterState = Shooter.STATE.STOP;
         System.out.println("stopping/starting superstructure");
     }
 
@@ -174,8 +170,8 @@ public class Superstructure {
 
     public void shootWhileMoving(double currentCamDist) {
         Translation2d chassisVelocity = new Translation2d(
-            robotState.delta_vehicle.vxMetersPerSecond,
-            robotState.delta_vehicle.vyMetersPerSecond
+            robotState.deltaVehicle.vxMetersPerSecond,
+            robotState.deltaVehicle.vyMetersPerSecond
         );
         Translation2d shooterDirection = new Translation2d( //important to make sure that this is a unit vector
             1,
@@ -213,21 +209,21 @@ public class Superstructure {
         Pose2d newRobotPose = Constants.targetPos.transformBy(
             new Transform2d(
                 deltaToHub.unaryMinus(),
-                robotState.field_to_vehicle.getRotation()
+                robotState.fieldToVehicle.getRotation()
             )
         );
         if (
             Math.abs(
                 Math.hypot(
-                    robotState.field_to_vehicle.getX() - newRobotPose.getX(),
-                    robotState.field_to_vehicle.getY() - newRobotPose.getY()
+                    robotState.fieldToVehicle.getX() - newRobotPose.getX(),
+                    robotState.fieldToVehicle.getY() - newRobotPose.getY()
                 )
             ) >
             maxAllowablePoseError
         ) {
             System.out.println(newRobotPose + " = new robot pose");
             drive.resetOdometry(newRobotPose);
-            robotState.field_to_vehicle = newRobotPose;
+            robotState.fieldToVehicle = newRobotPose;
         }
     }
 }

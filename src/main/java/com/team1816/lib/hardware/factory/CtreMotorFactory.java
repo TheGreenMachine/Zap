@@ -124,11 +124,11 @@ public class CtreMotorFactory {
     }
 
     public static IGreenMotor createGhostMotor(
-        int maxTicks,
+        int maxVelTicks100ms,
         int absInitOffset,
         String name
     ) {
-        return new GhostMotor(maxTicks, absInitOffset, name);
+        return new GhostMotor(maxVelTicks100ms, absInitOffset, name);
     }
 
     public static IGreenMotor createDefaultVictor(int id, String name) {

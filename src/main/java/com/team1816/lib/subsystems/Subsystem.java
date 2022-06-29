@@ -2,6 +2,7 @@ package com.team1816.lib.subsystems;
 
 import badlog.lib.BadLog;
 import com.google.inject.Inject;
+import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.season.Robot;
@@ -28,6 +29,9 @@ public abstract class Subsystem implements Sendable {
 
     @Inject
     public static RobotState robotState;
+
+    @Inject
+    public static Infrastructure infrastructure;
 
     protected Subsystem(String name) {
         this.name = name;

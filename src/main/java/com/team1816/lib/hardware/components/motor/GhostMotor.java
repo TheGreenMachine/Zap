@@ -12,7 +12,7 @@ import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     private ControlMode controlMode;
-    private final int maxTicks;
+    private final int maxVelTicks100ms;
     private final double[] demand = new double[] { 0, 0 };
 
     protected double lastSet = Double.NaN;
@@ -22,7 +22,7 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     public GhostMotor(int maxTickVel, int absInitOffset, String motorName) {
         this.absInitOffset = absInitOffset;
-        maxTicks = maxTickVel;
+        maxVelTicks100ms = maxTickVel;
         name = motorName;
     }
 
@@ -226,10 +226,13 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
         if (controlMode == ControlMode.PercentOutput) {
             if (Math.abs(output) > 1.1) {
                 System.out.println(
-                    "Motor % output should be between -1.0 to 1.0 value:" + output
+                    "Motor " +
+                    name +
+                    "'s % output should be between -1.0 to 1.0 value:" +
+                    output
                 );
             }
-            return output * maxTicks;
+            return output * maxVelTicks100ms;
         }
         return output;
     }

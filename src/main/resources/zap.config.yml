@@ -65,11 +65,12 @@ subsystems:
                     kF: 0
                     allowableError: 5
         constants:
-            maxTicks: 12275.7 # ticks per 100ms
+            maxVelTicks100ms: 12275.7 # ticks per 100ms
             openLoopRampRate: 0.8
             isSwerve: 1
             encPPR: 14255
             azimuthEncPPR: 4096
+            heatThreshold: 100 # C
     ledmanager:
         implemented: true
         canifier: -1
@@ -115,7 +116,7 @@ subsystems:
                 allowableError: 100
         constants:
             usingPoseForSpeed: 0
-            maxTicks: 20700
+            maxVelTicks100ms: 20700
             nearVel: 4500
             midVel: 8450
             tarmacTapeVel: 8125
@@ -138,7 +139,7 @@ subsystems:
                 kF: 0.0
                 allowableError: 5000
         constants:
-            maxTicks: 1
+            maxVelTicks100ms: 1
             unlockPos: -14400
             startPos: 0
             returnPos: 0
@@ -160,7 +161,7 @@ subsystems:
             - elevator
         constants:
             isVelocity: 1
-            maxTicks: 20000
+            maxVelTicks100ms: 20000
             ballSensor: 0
             firePow: 0.35
             flushPow: -0.3
@@ -180,7 +181,7 @@ subsystems:
     collector:
         implemented: true
         sparkmaxes:
-            intake: 23 # maxTicks 10617
+            intake: 23 # maxVelTicks100ms 10617
         invertMotor:
             - intake
         solenoids:
@@ -203,14 +204,24 @@ subsystems:
             maxDist: 400
             maxDeltaX: 1200
             allowableDistanceError: 50
-pcm: 2
-canivoreBusName: highSpeed
-constants:
-    pdID: 1
+    cooler:
+        implemented: false
+        solenoids:
+            dumpIn: -1
+            dumpOut: -1
+infrastructure:
+    canivoreBusName: highSpeed
+    # power distribution
+    pdId: 1
+    pdIsRev: true
+    # pneumatics control
+    compressorEnabled: true
+    pcmIsRev: false
+    pcmId: 2
     # pigeon
     pigeonId: 13
-    isPigeon2: 1
-    pigeonOnTalon: -1
+    isPigeon2: true
+constants:
     # drivetrain dimensions and movement
     maxRotVel: 14
     trackWidth: 21 #inches
@@ -230,9 +241,6 @@ constants:
     ## General ##
     EnableBucketTuning: 1
     teleopFieldCentric: 1 # 0 or 1
-    compressorEnabled: 1 # 0 or 1
     kLooperDt: .035 # seconds
-    pdIsRev: 1 # power distribution
-    phIsRev: 0 # pneumatics control
     resetFactoryDefaults: 0 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret
 

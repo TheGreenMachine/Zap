@@ -19,8 +19,8 @@ public class DriveOpenLoopAction implements Action {
         this.driveTimer =
             new AsyncTimer(
                 driveTime,
-                () -> drive.setTeleopInputs(percentOutput, 0, 0, false, false),
-                () -> drive.setTeleopInputs(0, 0, 0, false, false)
+                () -> drive.setTeleopInputs(percentOutput, 0, 0),
+                () -> drive.setTeleopInputs(0, 0, 0)
             );
     }
 
@@ -41,6 +41,6 @@ public class DriveOpenLoopAction implements Action {
 
     @Override
     public void done() {
-        drive.setTeleopInputs(0, 0, 0, false, false);
+        drive.setTeleopInputs(0, 0, 0);
     }
 }
