@@ -71,14 +71,14 @@ public class DrivetrainLogger {
             subsystem.CreateBadLogTopic(
                 "Drivetrain/LeftActVel",
                 "NativeUnits",
-                ((TankDrive) drivetrain)::getLeftVelocityActual,
+                ((TankDrive) drivetrain)::getLeftVelocityTicksActual,
                 "hide",
                 "join:Drivetrain/Velocities"
             );
             subsystem.CreateBadLogTopic(
                 "Drivetrain/RightActVel",
                 "NativeUnits",
-                ((TankDrive) drivetrain)::getRightVelocityActual,
+                ((TankDrive) drivetrain)::getRightVelocityTicksActual,
                 "hide",
                 "join:Drivetrain/Velocities"
             );

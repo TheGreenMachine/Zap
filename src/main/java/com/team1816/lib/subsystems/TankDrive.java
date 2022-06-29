@@ -308,12 +308,12 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     }
 
     @Override
-    public double getLeftVelocityActual() {
+    public double getLeftVelocityTicksActual() {
         return leftMain.getSelectedSensorVelocity(0);
     }
 
     @Override
-    public double getRightVelocityActual() {
+    public double getRightVelocityTicksActual() {
         return rightMain.getSelectedSensorVelocity(0);
     }
 
