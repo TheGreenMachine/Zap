@@ -195,6 +195,20 @@ public class Superstructure {
         shooter.setVelocity(extrapolatedShooterOutput);
     }
 
+    public void dopeShots(double currentCamDist,double cameraLatency) {
+       // Latency is in ms
+       // Camera distance in meters
+
+        Translation2d drivetrainVelo2D = new Translation2d(
+            robotState.delta_vehicle.vxMetersPerSecond,
+            robotState.delta_vehicle.vyMetersPerSecond
+        );
+
+
+
+
+    }
+
     public double getBallVel(double distance) {
         return 0.0248 * distance - 0.53;
     }
