@@ -58,10 +58,12 @@ public class BezierCurve {
         return p1;
     }
 
-    public double getValue(double t) {
-        double val = 0;
+    public ControlPoint getValue(double t) {
+        ControlPoint val = new ControlPoint();
         for(int i = 0; i <= controlPoints.size()-1; i++) {
-            val += Math.pow(t, i)*Math.pow((1-t), controlPoints.size()-i-1)*combination(controlPoints.size()-1, i);
+            ControlPoint c = controlPoints.get(i);
+            c.multiply(Math.pow(t, i)*Math.pow((1-t), controlPoints.size()-i-1)*combination(controlPoints.size()-1, i));
+            val.add(c);
         }
         return val;
     }
