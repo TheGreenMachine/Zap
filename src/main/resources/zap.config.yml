@@ -70,7 +70,7 @@ subsystems:
             isSwerve: 1
             encPPR: 14255
             azimuthEncPPR: 4096
-            heatThreshold: 100 # C
+            heatThreshold: 65 # degrees C
     ledmanager:
         implemented: true
         canifier: -1
@@ -81,7 +81,7 @@ subsystems:
             cameraLed: 1
             maxLevel: 255
     turret:
-        implemented: true
+        implemented: false
         pidConfig:
             slot0:
                 kP: 1.25
@@ -100,13 +100,11 @@ subsystems:
             encPPR: 4096
             turretPPR: 53248 # 4096 * 13
     shooter:
-        implemented: true
+        implemented: false
         falcons:
             shooterMain: 21
         invertMotor:
             - shooterMain
-        solenoids:
-            hood: 0
         pidConfig:
             slot0:
                 kP: 0.38 #.45
@@ -147,7 +145,7 @@ subsystems:
             secondToLastRungPos: 342000
             lastPos: 370000
     elevator:
-        implemented: true
+        implemented: false
         talons:
             elevator: 32
         pidConfig:
@@ -167,11 +165,9 @@ subsystems:
             flushPow: -0.3
             intakePow: 0.3
     spindexer:
-        implemented: true
+        implemented: false
         talons:
             spindexer: 31
-        solenoids:
-            feederFlap: -1
         constants:
             collectPow: 0.5
             indexPow: -0.5
@@ -205,10 +201,10 @@ subsystems:
             maxDeltaX: 1200
             allowableDistanceError: 50
     cooler:
-        implemented: false
+        implemented: true
         solenoids:
-            dumpIn: -1
-            dumpOut: -1
+            lock: 1
+            dump: 3
 infrastructure:
     canivoreBusName: highSpeed
     # power distribution

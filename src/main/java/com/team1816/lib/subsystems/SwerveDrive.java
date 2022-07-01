@@ -13,6 +13,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.List;
 
 @Singleton
@@ -162,6 +163,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 chassisSpeed.omegaRadiansPerSecond
             );
         // check if motors are overheating - update robotState
+        SmartDashboard.putNumber("Drive/Temperature", motorTemperatures[0]);
         if (!robotState.overheating) {
             for (int i = 0; i < 4; i++) {
                 if (motorTemperatures[i] > heatThreshold) {

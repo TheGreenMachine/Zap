@@ -246,7 +246,8 @@ public class Robot extends TimedRobot {
                 turret,
                 climber,
                 camera,
-                ledManager
+                ledManager,
+                cooler
             );
 
             subsystemManager.zeroSensors();
@@ -314,7 +315,15 @@ public class Robot extends TimedRobot {
                             }
                         }
                     ),
-                    createAction(controlBoard::getCameraToggle, camera::toggleEnabled),
+                    createAction(
+                        controlBoard::getCameraToggle,
+                        () -> {
+                            robotState.overheating = !robotState.overheating;
+                            System.out.println(
+                                "overheating changed to = " + robotState.overheating
+                            );
+                        }
+                    ),
                     createHoldAction(
                         controlBoard::getYeetShot,
                         yeet -> {
