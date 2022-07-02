@@ -397,7 +397,6 @@ public class Robot extends TimedRobot {
             drive.zeroSensors();
 
             // Reset all auto mode states.
-            autoModeExecutor.stop();
             autoModeSelector.update();
 
             disabledLoop.start();
@@ -435,10 +434,6 @@ public class Robot extends TimedRobot {
         try {
             disabledLoop.stop();
             ledManager.setDefaultStatus(LedManager.RobotStatus.ENABLED);
-
-            if (autoModeExecutor != null) {
-                autoModeExecutor.stop();
-            }
 
             turret.zeroSensors();
             climber.zeroSensors();
@@ -522,12 +517,12 @@ public class Robot extends TimedRobot {
             // Periodically check if drivers changed desired auto - if yes, then update the actual auto mode
             autoModeSelector.update();
 
-            AutoMode autoMode = autoModeSelector.getAutoMode();
-            if (autoMode != autoModeExecutor.getAutoMode()) {
-                Constants.StartingPose = autoMode.getTrajectory().getInitialPose();
-                robotState.field.getObject("Trajectory");
-                autoModeExecutor.setAutoMode(autoMode);
-            }
+            AutoMode autoMode = autoModeSelector.getAutoMode(); a fix me - also need all modes to call super
+//            if (autoMode != autoModeExecutor.getAutoMode()) {
+//                Constants.StartingPose = autoMode.getTrajectory().getInitialPose();
+//                robotState.field.getObject("Trajectory");
+//                autoModeExecutor.setAutoMode(autoMode);
+//            }
         } catch (Throwable t) {
             faulted = true;
             throw t;

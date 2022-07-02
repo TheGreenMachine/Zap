@@ -25,12 +25,6 @@ public class AutoModeExecutor {
         }
     }
 
-    public boolean isStarted() {
-        return (
-            autoMode != null && autoMode.isActive() && thread != null && thread.isAlive()
-        );
-    }
-
     public void reset() {
         if (isStarted()) {
             stop();
