@@ -6,19 +6,19 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import java.util.List;
 
-public class DriveStraight extends AutoPath {
+public class DriveStraightPath extends AutoPath {
 
     private final int driveDistance;
 
-    public DriveStraight(int driveDistance, double maxVel) {
+    public DriveStraightPath(int driveDistance, double maxVel) {
         this.driveDistance = driveDistance;
     }
 
-    public DriveStraight(int driveDistance) {
+    public DriveStraightPath(int driveDistance) {
         this(driveDistance, Constants.kPathFollowingMaxVelMeters);
     }
 
-    public DriveStraight() {
+    public DriveStraightPath() {
         this(12);
     }
 

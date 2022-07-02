@@ -1,7 +1,6 @@
 package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.CANifier;
-import com.ctre.phoenix.led.CANdle;
 import com.team1816.lib.hardware.components.ICANdle;
 import com.team1816.lib.hardware.components.ICanifier;
 import com.team1816.lib.subsystems.Subsystem;
@@ -47,21 +46,12 @@ public class LedManager extends Subsystem {
         super(NAME);
         canifier = factory.getCanifier(NAME);
         candle = factory.getCandle(NAME);
-        configureCandle();
 
         ledR = 0;
         ledG = 0;
         ledB = 0;
 
         cameraLedOn = false;
-    }
-
-    private void configureCandle() {
-        if (candle == null) return;
-        candle.configStatusLedState(true);
-        candle.configLOSBehavior(true);
-        candle.configLEDType(CANdle.LEDStripType.BRG);
-        candle.configBrightnessScalar(1);
     }
 
     public void setCameraLed(boolean cameraOn) {

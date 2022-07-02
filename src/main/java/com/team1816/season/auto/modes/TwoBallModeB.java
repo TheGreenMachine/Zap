@@ -1,21 +1,21 @@
 package com.team1816.season.auto.modes;
 
-import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.actions.*;
 import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.season.auto.actions.*;
 import com.team1816.season.auto.paths.TwoBallPathB;
 import com.team1816.season.subsystems.Shooter;
 import com.team1816.season.subsystems.Turret;
+import java.util.List;
 
 public class TwoBallModeB extends AutoMode {
 
     public TwoBallModeB() {
-        trajectoryAction = new TrajectoryAction(new TwoBallPathB());
+        super(List.of(new TrajectoryAction(new TwoBallPathB())));
     }
 
     @Override
-    protected void routine() throws AutoModeEndedException {
+    protected void routine() {
         System.out.println("Running Two Ball B Mode");
         runAction(new WaitAction(.5));
         runAction(
@@ -25,7 +25,7 @@ public class TwoBallModeB extends AutoMode {
                     new CollectAction(true),
                     new RampUpShooterAction(Shooter.MID_VELOCITY)
                 ),
-                trajectoryAction,
+                trajectoryActions.get(0),
                 new ShootAction(true, true),
                 new WaitAction(3)
             )

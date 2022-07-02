@@ -2,6 +2,7 @@ package com.team1816.season.auto;
 
 import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.lib.auto.modes.DoNothingMode;
+import com.team1816.season.Constants;
 import com.team1816.season.auto.modes.*;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -59,6 +60,7 @@ public class AutoModeSelector {
                 desiredMode.name()
             );
             autoMode = generateAutoMode(desiredMode);
+            Constants.StartingPose = autoMode.getInitialPose();
         }
         lastDesiredMode = desiredMode;
     }
@@ -97,6 +99,10 @@ public class AutoModeSelector {
     }
 
     public void reset() {
+        if (autoMode != null) {
+            autoMode.reset();
+        }
+
         autoMode = new DriveStraightMode();
         lastDesiredMode = DesiredMode.DRIVE_STRAIGHT;
     }
@@ -107,7 +113,7 @@ public class AutoModeSelector {
         }
     }
 
-    public AutoMode getAutoMode() {
+    public AutoMode getSelectedAutoMode() {
         return autoMode;
     }
 }

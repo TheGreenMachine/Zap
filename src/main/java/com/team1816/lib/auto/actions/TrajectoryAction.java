@@ -94,7 +94,7 @@ public class TrajectoryAction implements Action {
     @Override
     public void start() {
         System.out.println(
-            "Starting trajectory! (seconds=" + trajectory.getTotalTimeSeconds() + ")"
+            "Starting trajectory! (seconds = " + trajectory.getTotalTimeSeconds() + ")"
         );
         drive.startTrajectory(trajectory, headings);
         command.initialize();

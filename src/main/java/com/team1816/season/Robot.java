@@ -7,8 +7,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.LibModule;
-import com.team1816.lib.auto.AutoModeExecutor;
-import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.Looper;
@@ -62,7 +60,6 @@ public class Robot extends TimedRobot {
 
     // autonomous
     private final AutoModeSelector autoModeSelector;
-    private final AutoModeExecutor autoModeExecutor;
 
     // timing
     private double loopStart;
@@ -93,7 +90,6 @@ public class Robot extends TimedRobot {
         ledManager = injector.getInstance(LedManager.class);
         subsystemManager = injector.getInstance(SubsystemManager.class);
         autoModeSelector = injector.getInstance(AutoModeSelector.class);
-        autoModeExecutor = injector.getInstance(AutoModeExecutor.class);
     }
 
     public static RobotFactory getFactory() {
@@ -397,7 +393,7 @@ public class Robot extends TimedRobot {
             drive.zeroSensors();
 
             // Reset all auto mode states.
-            autoModeSelector.update();
+            autoModeSelector.reset();
 
             disabledLoop.start();
         } catch (Throwable t) {
@@ -417,11 +413,10 @@ public class Robot extends TimedRobot {
 
             drive.zeroSensors();
             turret.zeroSensors();
-
             superstructure.setStopped(false);
 
             drive.setControlState(Drive.ControlState.TRAJECTORY_FOLLOWING);
-            autoModeExecutor.start();
+            autoModeSelector.getSelectedAutoMode().start();
 
             enabledLoop.start();
         } catch (Throwable t) {
@@ -437,14 +432,14 @@ public class Robot extends TimedRobot {
 
             turret.zeroSensors();
             climber.zeroSensors();
-
-            enabledLoop.start();
+            superstructure.setStopped(false);
 
             turret.setTurretAngle(Turret.SOUTH);
             turret.setControlMode(defaultTurretControlMode);
 
-            superstructure.setStopped(false);
             infrastructure.startCompressor();
+
+            enabledLoop.start();
         } catch (Throwable t) {
             faulted = true;
             throw t;
@@ -516,13 +511,6 @@ public class Robot extends TimedRobot {
 
             // Periodically check if drivers changed desired auto - if yes, then update the actual auto mode
             autoModeSelector.update();
-
-            AutoMode autoMode = autoModeSelector.getAutoMode(); a fix me - also need all modes to call super
-//            if (autoMode != autoModeExecutor.getAutoMode()) {
-//                Constants.StartingPose = autoMode.getTrajectory().getInitialPose();
-//                robotState.field.getObject("Trajectory");
-//                autoModeExecutor.setAutoMode(autoMode);
-//            }
         } catch (Throwable t) {
             faulted = true;
             throw t;
