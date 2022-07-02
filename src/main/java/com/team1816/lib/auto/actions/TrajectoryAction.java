@@ -1,6 +1,7 @@
 package com.team1816.lib.auto.actions;
 
 import com.google.inject.Inject;
+import com.team1816.lib.auto.paths.AutoPath;
 import com.team1816.lib.subsystems.Drive;
 import com.team1816.lib.subsystems.SwerveDrive;
 import com.team1816.lib.subsystems.TankDrive;
@@ -27,8 +28,8 @@ public class TrajectoryAction implements Action {
     private final List<Rotation2d> headings;
     private final Drive drive;
 
-    public TrajectoryAction(Trajectory trajectory) {
-        this(trajectory, null);
+    public TrajectoryAction(AutoPath autoPath) {
+        this(autoPath.getAsTrajectory(), autoPath.getAsTrajectoryHeadings());
     }
 
     public TrajectoryAction(Trajectory trajectory, List<Rotation2d> headings) {

@@ -1,6 +1,6 @@
 package com.team1816.lib.auto;
 
-import com.team1816.lib.auto.modes.AutoModeBase;
+import com.team1816.lib.auto.modes.AutoMode;
 import javax.inject.Singleton;
 
 /**
@@ -9,28 +9,25 @@ import javax.inject.Singleton;
 @Singleton
 public class AutoModeExecutor {
 
-    private AutoModeBase mAutoMode = null;
-    private Thread mThread = null;
+    private AutoMode autoMode = null;
+    private Thread thread = null;
 
     public AutoModeExecutor() {}
 
-    public void setAutoMode(AutoModeBase new_auto_mode) {
-        mAutoMode = new_auto_mode;
-        mThread = new Thread(() -> mAutoMode.run());
+    public void setAutoMode(AutoMode new_auto_mode) {
+        autoMode = new_auto_mode;
+        thread = new Thread(() -> autoMode.run());
     }
 
     public void start() {
-        if (mThread != null) {
-            mThread.start();
+        if (thread != null) {
+            thread.start();
         }
     }
 
     public boolean isStarted() {
         return (
-            mAutoMode != null &&
-            mAutoMode.isActive() &&
-            mThread != null &&
-            mThread.isAlive()
+            autoMode != null && autoMode.isActive() && thread != null && thread.isAlive()
         );
     }
 
@@ -39,39 +36,18 @@ public class AutoModeExecutor {
             stop();
         }
 
-        mAutoMode = null;
+        autoMode = null;
     }
 
     public void stop() {
-        if (mAutoMode != null) {
-            mAutoMode.stop();
+        if (autoMode != null) {
+            autoMode.stop();
         }
 
-        mThread = null;
+        thread = null;
     }
 
-    public AutoModeBase getAutoMode() {
-        return mAutoMode;
-    }
-
-    public boolean isInterrupted() {
-        if (mAutoMode == null) {
-            return false;
-        }
-        return mAutoMode.getIsInterrupted();
-    }
-
-    public void interrupt() {
-        if (mAutoMode == null) {
-            return;
-        }
-        mAutoMode.interrupt();
-    }
-
-    public void resume() {
-        if (mAutoMode == null) {
-            return;
-        }
-        mAutoMode.resume();
+    public AutoMode getAutoMode() {
+        return autoMode;
     }
 }

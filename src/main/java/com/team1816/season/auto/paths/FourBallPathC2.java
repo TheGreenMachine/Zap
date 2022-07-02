@@ -1,14 +1,14 @@
 package com.team1816.season.auto.paths;
 
-import com.team1816.lib.auto.paths.PathContainer;
+import com.team1816.lib.auto.paths.AutoPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import java.util.List;
 
-public class FourBallAutoC2 implements PathContainer {
+public class FourBallPathC2 extends AutoPath {
 
     @Override
-    public List<Pose2d> buildWaypoints() {
+    public List<Pose2d> getWaypoints() {
         return List.of(
             new Pose2d(299, 28, Rotation2d.fromDegrees(-179)),
             new Pose2d(55, 55, Rotation2d.fromDegrees(-189))
@@ -16,7 +16,7 @@ public class FourBallAutoC2 implements PathContainer {
     }
 
     @Override
-    public List<Rotation2d> buildHeadings() {
+    public List<Rotation2d> getWaypointHeadings() {
         return List.of(Rotation2d.fromDegrees(-179), Rotation2d.fromDegrees(-160));
     }
 

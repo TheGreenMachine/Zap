@@ -2,32 +2,22 @@ package com.team1816.season.auto.modes;
 
 import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.actions.*;
-import com.team1816.lib.auto.modes.AutoModeBase;
+import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.season.auto.actions.*;
-import com.team1816.season.auto.paths.TrajectorySet;
+import com.team1816.season.auto.paths.FourBallPathB2;
+import com.team1816.season.auto.paths.FourBallPathB3;
+import com.team1816.season.auto.paths.TwoBallPathB;
 import com.team1816.season.subsystems.Turret;
 
-public class FourBallModeB extends AutoModeBase {
+public class FourBallModeB extends AutoMode {
 
     private final TrajectoryAction trajectory1;
     private final TrajectoryAction trajectory2;
 
     public FourBallModeB() {
-        trajectory =
-            new TrajectoryAction(
-                TrajectorySet.TWO_BALL_B,
-                TrajectorySet.TWO_BALL_B_HEADINGS
-            );
-        trajectory1 =
-            new TrajectoryAction(
-                TrajectorySet.FOUR_BALL_B2,
-                TrajectorySet.FOUR_BALL_B2_HEADINGS
-            );
-        trajectory2 =
-            new TrajectoryAction(
-                TrajectorySet.FOUR_BALL_B3,
-                TrajectorySet.FOUR_BALL_B3_HEADINGS
-            );
+        trajectoryAction = new TrajectoryAction(new TwoBallPathB());
+        trajectory1 = new TrajectoryAction(new FourBallPathB2());
+        trajectory2 = new TrajectoryAction(new FourBallPathB3());
     }
 
     @Override
@@ -40,7 +30,7 @@ public class FourBallModeB extends AutoModeBase {
                     new CollectAction(true)
                 ),
                 new WaitAction(0.5),
-                trajectory,
+                trajectoryAction,
                 new RampUpShooterAction(8650),
                 new WaitAction(0.75),
                 new ShootAction(true, true),

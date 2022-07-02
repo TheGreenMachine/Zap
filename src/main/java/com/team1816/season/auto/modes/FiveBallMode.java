@@ -2,39 +2,23 @@ package com.team1816.season.auto.modes;
 
 import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.actions.*;
-import com.team1816.lib.auto.modes.AutoModeBase;
+import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.season.auto.actions.*;
-import com.team1816.season.auto.paths.TrajectorySet;
+import com.team1816.season.auto.paths.*;
 import com.team1816.season.subsystems.Turret;
 import edu.wpi.first.math.geometry.Translation2d;
 
-public class FiveBallMode extends AutoModeBase {
+public class FiveBallMode extends AutoMode {
 
-    private final TrajectoryAction trajectory1;
-    private final TrajectoryAction trajectory2;
-    private final TrajectoryAction trajectory3;
+    private final TrajectoryAction trajectoryAction1;
+    private final TrajectoryAction trajectoryAction2;
+    private final TrajectoryAction trajectoryAction3;
 
     public FiveBallMode() {
-        trajectory =
-            new TrajectoryAction(
-                TrajectorySet.FIVE_BALL_A,
-                TrajectorySet.FIVE_BALL_A_HEADINGS
-            );
-        trajectory1 =
-            new TrajectoryAction(
-                TrajectorySet.FIVE_BALL_B,
-                TrajectorySet.FIVE_BALL_B_HEADINGS
-            );
-        trajectory2 =
-            new TrajectoryAction(
-                TrajectorySet.FIVE_BALL_C,
-                TrajectorySet.FIVE_BALL_C_HEADINGS
-            );
-        trajectory3 =
-            new TrajectoryAction(
-                TrajectorySet.FIVE_BALL_D,
-                TrajectorySet.FIVE_BALL_D_HEADINGS
-            );
+        trajectoryAction = new TrajectoryAction(new FiveBallPathA());
+        trajectoryAction1 = new TrajectoryAction(new FiveBallPathB());
+        trajectoryAction2 = new TrajectoryAction(new FiveBallPathC());
+        trajectoryAction3 = new TrajectoryAction(new FiveBallPathD());
     }
 
     @Override
@@ -47,10 +31,10 @@ public class FiveBallMode extends AutoModeBase {
                     new CollectAction(true),
                     new RampUpShooterAction(13000), // make actual shooting vel
                     new TurretAction(Turret.WEST + 15), // setting this doesn't seem to work right in simulator - magically relative to field and not the robot
-                    trajectory
+                    trajectoryAction
                 ),
                 new ParallelAction(
-                    trajectory1,
+                    trajectoryAction1,
                     new SeriesAction(
                         new ShootAction(true, true),
                         new WaitUntilInsideRegion(
@@ -75,12 +59,12 @@ public class FiveBallMode extends AutoModeBase {
                 ),
                 new WaitAction(1),
                 new ShootAction(false, true),
-                trajectory2,
+                trajectoryAction2,
                 new WaitAction(1),
                 new ParallelAction(
                     new RampUpShooterAction(14000),
                     new TurretAction(Turret.SOUTH),
-                    trajectory3
+                    trajectoryAction3
                 ),
                 new ShootAction(true, true),
                 new WaitAction(2),

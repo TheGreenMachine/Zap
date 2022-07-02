@@ -2,20 +2,16 @@ package com.team1816.season.auto.modes;
 
 import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.actions.*;
-import com.team1816.lib.auto.modes.AutoModeBase;
+import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.season.auto.actions.*;
-import com.team1816.season.auto.paths.TrajectorySet;
+import com.team1816.season.auto.paths.OneBallA_BPath;
 import com.team1816.season.subsystems.Shooter;
 import com.team1816.season.subsystems.Turret;
 
-public class OneBallA_BMode extends AutoModeBase {
+public class OneBallA_BMode extends AutoMode {
 
     public OneBallA_BMode() {
-        trajectory =
-            new TrajectoryAction(
-                TrajectorySet.ONE_BALL_A_B,
-                TrajectorySet.ONE_BALL_A_B_HEADINGS
-            );
+        trajectoryAction = new TrajectoryAction(new OneBallA_BPath());
     }
 
     @Override
@@ -29,7 +25,7 @@ public class OneBallA_BMode extends AutoModeBase {
                     new RampUpShooterAction(Shooter.MID_VELOCITY),
                     new WaitAction(10)
                 ),
-                trajectory,
+                trajectoryAction,
                 new ShootAction(true, true),
                 new WaitAction(3)
             )

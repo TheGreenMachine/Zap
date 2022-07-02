@@ -8,7 +8,7 @@ import com.google.inject.Injector;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.LibModule;
 import com.team1816.lib.auto.AutoModeExecutor;
-import com.team1816.lib.auto.modes.AutoModeBase;
+import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.Looper;
@@ -16,19 +16,16 @@ import com.team1816.lib.subsystems.Drive;
 import com.team1816.lib.subsystems.DrivetrainLogger;
 import com.team1816.lib.subsystems.SubsystemManager;
 import com.team1816.season.auto.AutoModeSelector;
-import com.team1816.season.auto.paths.TrajectorySet;
 import com.team1816.season.controlboard.ActionManager;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.states.Superstructure;
 import com.team1816.season.subsystems.*;
-import com.team254.lib.util.LatchedBoolean;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Optional;
 
 public class Robot extends TimedRobot {
 
@@ -63,14 +60,9 @@ public class Robot extends TimedRobot {
     private final LedManager ledManager;
     private final DistanceManager distanceManager;
 
-    // debugging / testing
-    private final LatchedBoolean wantExecution = new LatchedBoolean();
-    private final LatchedBoolean wantInterrupt = new LatchedBoolean();
-
     // autonomous
     private final AutoModeSelector autoModeSelector;
     private final AutoModeExecutor autoModeExecutor;
-    private TrajectorySet trajectorySet;
 
     // timing
     private double loopStart;
@@ -102,7 +94,6 @@ public class Robot extends TimedRobot {
         subsystemManager = injector.getInstance(SubsystemManager.class);
         autoModeSelector = injector.getInstance(AutoModeSelector.class);
         autoModeExecutor = injector.getInstance(AutoModeExecutor.class);
-        trajectorySet = injector.getInstance(TrajectorySet.class);
     }
 
     public static RobotFactory getFactory() {
@@ -260,8 +251,6 @@ public class Robot extends TimedRobot {
             // Robot starts forwards.
             robotState.resetPosition();
 
-            autoModeSelector.updateModeCreator();
-
             actionManager =
                 new ActionManager(
                     createHoldAction(
@@ -408,10 +397,8 @@ public class Robot extends TimedRobot {
             drive.zeroSensors();
 
             // Reset all auto mode states.
-            if (autoModeExecutor != null) {
-                autoModeExecutor.stop();
-            }
-            autoModeSelector.updateModeCreator();
+            autoModeExecutor.stop();
+            autoModeSelector.update();
 
             disabledLoop.start();
         } catch (Throwable t) {
@@ -533,17 +520,13 @@ public class Robot extends TimedRobot {
             }
 
             // Periodically check if drivers changed desired auto - if yes, then update the actual auto mode
-            autoModeSelector.updateModeCreator();
+            autoModeSelector.update();
 
-            Optional<AutoModeBase> autoMode = autoModeSelector.getAutoMode();
-            if (
-                autoMode.isPresent() && autoMode.get() != autoModeExecutor.getAutoMode()
-            ) {
-                var auto = autoMode.get();
-                System.out.println("Set auto mode to: " + auto.getClass().toString());
+            AutoMode autoMode = autoModeSelector.getAutoMode();
+            if (autoMode != autoModeExecutor.getAutoMode()) {
+                Constants.StartingPose = autoMode.getTrajectory().getInitialPose();
                 robotState.field.getObject("Trajectory");
-                autoModeExecutor.setAutoMode(auto);
-                Constants.StartingPose = auto.getTrajectory().getInitialPose();
+                autoModeExecutor.setAutoMode(autoMode);
             }
         } catch (Throwable t) {
             faulted = true;
@@ -554,20 +537,6 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         loopStart = Timer.getFPGATimestamp();
-
-        // Debugging functionality to stop autos mid-path - Currently not in use
-        boolean signalToResume = !controlBoard.getUnlockClimber();
-        boolean signalToStop = controlBoard.getUnlockClimber();
-        if (autoModeExecutor.isInterrupted()) {
-            manualControl();
-
-            if (wantExecution.update(signalToResume)) {
-                autoModeExecutor.resume();
-            }
-        }
-        if (wantInterrupt.update(signalToStop)) {
-            autoModeExecutor.interrupt();
-        }
 
         if (Constants.kIsLoggingAutonomous) {
             logger.updateTopics();
