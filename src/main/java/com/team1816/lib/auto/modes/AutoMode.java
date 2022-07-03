@@ -15,7 +15,9 @@ import java.util.List;
 public abstract class AutoMode {
 
     private static final long looperDtInMS = (long) (Constants.kLooperDt * 1000);
-    private Thread autoModeThread = new Thread(this::run);
+
+    private boolean needsStop;
+
     protected List<TrajectoryAction> trajectoryActions;
     protected Pose2d initialPose;
 
@@ -26,44 +28,43 @@ public abstract class AutoMode {
         initialPose = trajectoryActions.get(0).getTrajectory().getInitialPose();
     }
 
-    protected abstract void routine();
-
-    public void start() {
-        if (autoModeThread != null) {
-            autoModeThread.start();
-        }
-    }
-
     public void run() {
-        try {
-            if (!autoModeThread.isAlive()) {
-                throw new AutoModeEndedException();
-            }
+        start();
 
+        try {
             routine();
         } catch (AutoModeEndedException e) {
-            DriverStation.reportError("AUTO MODE ENDED EARLY!", false);
-            return;
+            DriverStation.reportError("AUTO MODE STOPPED EARLY ! ! !", false);
         }
 
         done();
     }
 
-    public void done() {
-        System.out.println("Auto mode done");
-        reset();
+    private void start() {
+        System.out.println("Starting " + this.getClass().getName());
+        needsStop = false;
     }
 
-    public void reset() {
-        autoModeThread.stop();
-        autoModeThread = new Thread(this::run);
+    // what actions each auto mode runs when thread calls autoMode's run method
+    protected abstract void routine() throws AutoModeEndedException;
+
+    private void done() {
+        System.out.println(this.getClass().getName() + " Done");
     }
 
-    public void runAction(Action action) {
+    public void stop() {
+        needsStop = true;
+    }
+
+    protected void runAction(Action action) throws AutoModeEndedException {
         action.start();
 
         // Run action, stop action on interrupt or done
         while (!action.isFinished()) {
+            if (needsStop) {
+                throw new AutoModeEndedException();
+            }
+
             action.update();
 
             try {
@@ -78,7 +79,7 @@ public abstract class AutoMode {
 
     public Pose2d getInitialPose() {
         if (initialPose == null) {
-            return Constants.StartingPose;
+            return Constants.kDefaultZeroingPose;
         }
         return initialPose;
     }

@@ -1,5 +1,6 @@
 package com.team1816.season.auto.modes;
 
+import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.actions.*;
 import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.season.auto.actions.*;
@@ -15,7 +16,7 @@ public class TwoBallModeB extends AutoMode {
     }
 
     @Override
-    protected void routine() {
+    protected void routine() throws AutoModeEndedException {
         System.out.println("Running Two Ball B Mode");
         runAction(new WaitAction(.5));
         runAction(

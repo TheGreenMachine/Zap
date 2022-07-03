@@ -71,9 +71,11 @@ public class Constants {
         kDriveWheelRadiusInches
     );
     public static double kTrackScrubFactor = factory.getConstant("kTrackScrubFactor");
-
-    public static final Pose2d ZeroPose = new Pose2d(0.5, fieldCenterY, EmptyRotation);
-    public static Pose2d StartingPose = new Pose2d(0.5, fieldCenterY, EmptyRotation);
+    public static final Pose2d kDefaultZeroingPose = new Pose2d(
+        0.5,
+        fieldCenterY,
+        EmptyRotation
+    );
 
     public static class Tank {
 

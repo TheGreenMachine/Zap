@@ -39,8 +39,8 @@ public class PathUtil {
             baseTrajectory =
                 baseTrajectory.transformBy(
                     new Transform2d(
-                        Constants.StartingPose.getTranslation(),
-                        Constants.StartingPose.getRotation()
+                        Constants.kDefaultZeroingPose.getTranslation(),
+                        Constants.kDefaultZeroingPose.getRotation()
                     )
                 );
         }

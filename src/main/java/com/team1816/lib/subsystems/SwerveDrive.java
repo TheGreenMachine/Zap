@@ -255,6 +255,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
 
         resetOdometry(pose);
+        startingPose = pose;
         chassisSpeed = new ChassisSpeeds();
         isBraking = false;
     }

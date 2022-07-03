@@ -40,6 +40,8 @@ public abstract class Drive
 
     // Trajectory
     protected double trajectoryStartTime = 0;
+
+    protected Pose2d startingPose = Constants.kDefaultZeroingPose;
     protected Trajectory trajectory;
     protected static double timestamp;
 
@@ -165,22 +167,22 @@ public abstract class Drive
 
     @Override
     public double getFieldXDistance() {
-        return getPose().getX() - Constants.StartingPose.getX();
+        return getPose().getX() - startingPose.getX();
     }
 
     @Override
     public double getFieldYDistance() {
-        return getPose().getY() - Constants.StartingPose.getY();
+        return getPose().getY() - startingPose.getY();
     }
 
     @Override
     public double getFieldDesiredXDistance() {
-        return desiredPose.getX() - Constants.StartingPose.getX();
+        return desiredPose.getX() - startingPose.getX();
     }
 
     @Override
     public double getFieldDesiredYDistance() {
-        return desiredPose.getY() - Constants.StartingPose.getY();
+        return desiredPose.getY() - startingPose.getY();
     }
 
     // calls used during initialization || game phase change

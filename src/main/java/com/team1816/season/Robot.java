@@ -13,7 +13,7 @@ import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.Drive;
 import com.team1816.lib.subsystems.DrivetrainLogger;
 import com.team1816.lib.subsystems.SubsystemManager;
-import com.team1816.season.auto.AutoModeSelector;
+import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.controlboard.ActionManager;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.states.Superstructure;
@@ -59,7 +59,7 @@ public class Robot extends TimedRobot {
     private final DistanceManager distanceManager;
 
     // autonomous
-    private final AutoModeSelector autoModeSelector;
+    private final AutoModeManager autoModeManager;
 
     // timing
     private double loopStart;
@@ -89,7 +89,7 @@ public class Robot extends TimedRobot {
         distanceManager = injector.getInstance(DistanceManager.class);
         ledManager = injector.getInstance(LedManager.class);
         subsystemManager = injector.getInstance(SubsystemManager.class);
-        autoModeSelector = injector.getInstance(AutoModeSelector.class);
+        autoModeManager = injector.getInstance(AutoModeManager.class);
     }
 
     public static RobotFactory getFactory() {
@@ -244,9 +244,6 @@ public class Robot extends TimedRobot {
             subsystemManager.registerEnabledLoops(enabledLoop);
             subsystemManager.registerDisabledLoops(disabledLoop);
 
-            // Robot starts forwards.
-            robotState.resetPosition();
-
             actionManager =
                 new ActionManager(
                     createHoldAction(
@@ -269,7 +266,7 @@ public class Robot extends TimedRobot {
                         controlBoard::getZeroPose,
                         () -> {
                             turret.setTurretAngle(Turret.SOUTH);
-                            drive.zeroSensors(Constants.ZeroPose);
+                            drive.zeroSensors(Constants.kDefaultZeroingPose);
                         }
                     ),
                     createHoldAction(controlBoard::getBrakeMode, drive::setBraking),
@@ -382,6 +379,9 @@ public class Robot extends TimedRobot {
         try {
             enabledLoop.stop();
 
+            // Stop any running autos
+            autoModeManager.stopAuto();
+
             ledManager.setDefaultStatus(LedManager.RobotStatus.DISABLED);
             camera.setCameraEnabled(false);
 
@@ -391,9 +391,6 @@ public class Robot extends TimedRobot {
             robotState.resetAllStates();
             cooler.zeroSensors();
             drive.zeroSensors();
-
-            // Reset all auto mode states.
-            autoModeSelector.reset();
 
             disabledLoop.start();
         } catch (Throwable t) {
@@ -408,15 +405,12 @@ public class Robot extends TimedRobot {
             disabledLoop.stop();
             ledManager.setDefaultStatus(LedManager.RobotStatus.AUTONOMOUS);
 
-            // Robot starts at first waypoint (Pose2D) of current auto path chosen
-            robotState.resetPosition();
-
-            drive.zeroSensors();
+            drive.zeroSensors(autoModeManager.getSelectedAuto().getInitialPose());
             turret.zeroSensors();
             superstructure.setStopped(false);
 
             drive.setControlState(Drive.ControlState.TRAJECTORY_FOLLOWING);
-            autoModeSelector.getSelectedAutoMode().start();
+            autoModeManager.startAuto();
 
             enabledLoop.start();
         } catch (Throwable t) {
@@ -486,7 +480,8 @@ public class Robot extends TimedRobot {
             subsystemManager.outputToSmartDashboard();
             // update robot state on field for Field2D widget
             robotState.outputToSmartDashboard();
-            autoModeSelector.outputToSmartDashboard();
+            // update shuffleboard selected auto mode
+            autoModeManager.outputToSmartDashboard();
         } catch (Throwable t) {
             faulted = true;
             System.out.println(t.getMessage());
@@ -498,7 +493,7 @@ public class Robot extends TimedRobot {
         loopStart = Timer.getFPGATimestamp();
         try {
             if (RobotController.getUserButton()) {
-                drive.zeroSensors(Constants.ZeroPose);
+                drive.zeroSensors(Constants.kDefaultZeroingPose);
                 ledManager.indicateStatus(LedManager.RobotStatus.SEEN_TARGET);
             } else {
                 // non-camera LEDs will flash red if robot periodic updates fail
@@ -509,8 +504,10 @@ public class Robot extends TimedRobot {
                 }
             }
 
-            // Periodically check if drivers changed desired auto - if yes, then update the actual auto mode
-            autoModeSelector.update();
+            // Periodically check if drivers changed desired auto - if yes, then update the robot's position on the field
+            if (autoModeManager.update()) {
+                drive.zeroSensors(autoModeManager.getSelectedAuto().getInitialPose());
+            }
         } catch (Throwable t) {
             faulted = true;
             throw t;

@@ -36,6 +36,8 @@ public class TrajectoryAction implements Action {
         drive = driveFactory.getInstance();
         this.trajectory = trajectory;
         this.headings = headings;
+
+        // create command (wpi version of an action)
         if (drive instanceof TankDrive) {
             command =
                 new RamseteCommand(

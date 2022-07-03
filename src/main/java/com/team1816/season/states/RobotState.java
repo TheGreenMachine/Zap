@@ -52,7 +52,7 @@ public class RobotState {
     }
 
     public synchronized void resetPosition() {
-        resetPosition(Constants.StartingPose);
+        resetPosition(Constants.kDefaultZeroingPose);
     }
 
     public synchronized void resetAllStates() {

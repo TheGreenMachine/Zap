@@ -3,13 +3,11 @@ package com.team1816.lib.subsystems;
 import static com.team1816.lib.math.DriveConversions.*;
 
 import com.ctre.phoenix.motorcontrol.*;
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.util.EnhancedMotorChecker;
 import com.team1816.season.Constants;
-import com.team1816.season.auto.AutoModeSelector;
 import com.team1816.season.subsystems.LedManager;
 import com.team254.lib.util.CheesyDriveHelper;
 import com.team254.lib.util.DriveSignal;
@@ -28,9 +26,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     // Components
     private final IGreenMotor leftMain, rightMain;
     private final IGreenMotor leftFollowerA, rightFollowerA, leftFollowerB, rightFollowerB;
-
-    @Inject
-    private static AutoModeSelector autoModeSelector;
 
     // Odometry
     private DifferentialDriveOdometry tankOdometry;
@@ -161,6 +156,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
         resetEncoders();
         resetOdometry(pose);
+        startingPose = pose;
 
         chassisSpeed = new ChassisSpeeds();
         isBraking = false;
