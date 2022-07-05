@@ -119,6 +119,10 @@ public class TrapezoidalMotionProfile {
         return constraints;
     }
 
+    public Phase[] getPhases() {
+        return p;
+    }
+
     public double getPosition(double t) {
         double cx = initial.position;
         double tmp = p[1].duration;

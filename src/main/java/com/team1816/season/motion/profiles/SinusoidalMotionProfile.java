@@ -141,6 +141,10 @@ public class SinusoidalMotionProfile {
         return constraints;
     }
 
+    public Phase[] getPhases() {
+        return p;
+    }
+
     public double getPosition(double t) {
         return 0;
     }

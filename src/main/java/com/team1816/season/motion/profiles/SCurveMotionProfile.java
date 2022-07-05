@@ -72,6 +72,7 @@ public class SCurveMotionProfile {
      * Profile properties
      */
     private Phase[] p = new Phase[3];
+    private Phase[] pa = new Phase[7];
     private Constraints constraints;
     private TrapezoidalMotionProfile p1, p2;
     private double targetMaxVel;
@@ -130,6 +131,15 @@ public class SCurveMotionProfile {
         p[0].duration = p1.getDuration();
         p[2].duration = p2.getDuration();
         p[1].duration = (Math.abs(dX)-Math.abs(cx))/(constraints.maxVel);
+
+        pa[0].duration = p1.getPhases()[0].duration;
+        pa[1].duration = p1.getPhases()[0].duration;
+        pa[2].duration = p1.getPhases()[0].duration;
+        pa[3].duration = p[1].duration;
+        pa[4].duration = p2.getPhases()[0].duration;
+        pa[5].duration = p2.getPhases()[1].duration;
+        pa[6].duration = p2.getPhases()[2].duration;
+
         // alternate method
         /*
         if (
@@ -180,11 +190,107 @@ public class SCurveMotionProfile {
         return constraints;
     }
 
+    public Phase[] getPhases() {
+        return pa;
+    }
+
     public double getPosition(double t) {
         double cx = initial.position;
-        double tmp = p[0].duration;
+        double tmp = 0;
+        tmp += pa[0].duration;
         if (t <= tmp) {
-            //TODO: finish this
+            cx += getJerk(t) / 6 * Math.pow(tmp - t, 3); // phase 1
+            return cx;
+        }
+        cx += getJerk(tmp) / 6 * Math.pow(pa[0].duration, 3); // phase 1
+        tmp += pa[1].duration;
+        if (t <= tmp) {
+            cx +=
+                getVelocity(tmp - pa[1].duration) *
+                    (tmp - t) +
+                    getAcceleration(t) /
+                        2 *
+                        Math.pow((tmp - t), 2);
+            return cx;
+        }
+        cx +=
+            getVelocity(tmp - pa[1].duration) *
+                pa[1].duration +
+                getAcceleration(tmp) /
+                    2 *
+                    Math.pow(pa[1].duration, 2);
+        tmp += pa[2].duration;
+        if (t <= tmp) {
+            cx +=
+                getVelocity(tmp - pa[2].duration) *
+                    (tmp - t) +
+                    getAcceleration(tmp - pa[2].duration) /
+                        2 *
+                        Math.pow((tmp - t), 2) +
+                    getJerk(t) /
+                        6 *
+                        Math.pow((tmp - t), 3);
+            return cx;
+        }
+        cx +=
+            getVelocity(tmp - pa[2].duration) *
+                pa[2].duration +
+                getAcceleration(tmp - pa[2].duration) /
+                    2 *
+                    Math.pow(pa[2].duration, 2) +
+                getJerk(tmp) /
+                    6 *
+                    Math.pow(pa[2].duration, 3);
+        tmp += pa[3].duration;
+        if (t <= tmp) {
+            cx += getVelocity(t) * (tmp - t);
+            return cx;
+        }
+        cx += getVelocity(tmp) * pa[3].duration;
+        tmp += pa[4].duration;
+        if (t <= tmp) {
+            cx +=
+                getVelocity(tmp - pa[4].duration) *
+                    (tmp - t) +
+                    getJerk(t) /
+                        6 *
+                        Math.pow((tmp - t), 3);
+            return cx;
+        }
+        cx +=
+            getVelocity(tmp - pa[4].duration) *
+                pa[4].duration +
+                getJerk(tmp) /
+                    6 *
+                    Math.pow(pa[4].duration, 3);
+        tmp += pa[5].duration;
+        if (t <= tmp) {
+            cx +=
+                getVelocity(tmp - pa[5].duration) *
+                    (tmp - t) +
+                    getAcceleration(t) /
+                        2 *
+                        Math.pow((tmp - t), 2);
+            return cx;
+        }
+        cx +=
+            getVelocity(tmp - pa[5].duration) *
+                pa[5].duration +
+                getAcceleration(tmp) /
+                    2 *
+                    Math.pow(pa[5].duration, 2);
+        tmp += pa[6].duration;
+        if (t <= tmp) {
+            cx +=
+                getVelocity(tmp - pa[6].duration) *
+                    (tmp - t) +
+                    getAcceleration(tmp - pa[6].duration) /
+                        2 *
+                        Math.pow((tmp - t), 2) +
+                    getJerk(t) /
+                        6 *
+                        Math.pow((tmp - t), 3);
+            return cx;
         }
         return target.position;
     }
