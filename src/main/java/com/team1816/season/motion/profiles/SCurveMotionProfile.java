@@ -25,6 +25,18 @@ public class SCurveMotionProfile {
             maxAccel = ma;
             maxJerk = mj;
         }
+
+        public double getMaxVel() {
+            return maxVel;
+        }
+
+        public double getMaxAccel() {
+            return maxAccel;
+        }
+
+        public double getMaxJerk() {
+            return maxJerk;
+        }
     }
 
     public static class State {
@@ -162,6 +174,10 @@ public class SCurveMotionProfile {
         if (dX < 0) {
             constraints.maxJerk *= (-1);
         }*/
+    }
+
+    public Constraints getConstraints() {
+        return constraints;
     }
 
     public double getPosition(double t) {

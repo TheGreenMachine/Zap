@@ -20,6 +20,18 @@ public class SinusoidalMotionProfile {
             maxAccel = ma;
             maxJerk = 0;
         }
+
+        public double getMaxVel() {
+            return maxVel;
+        }
+
+        public double getMaxAccel() {
+            return maxAccel;
+        }
+
+        public double getMaxJerk() {
+            return maxJerk;
+        }
     }
 
     public static class State {
@@ -123,6 +135,10 @@ public class SinusoidalMotionProfile {
         for (Phase ph : p) {
             duration += Math.max(ph.duration, 0);
         }
+    }
+
+    public Constraints getConstraints() {
+        return constraints;
     }
 
     public double getPosition(double t) {
