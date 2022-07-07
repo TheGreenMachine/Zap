@@ -3,6 +3,7 @@ package com.team1816.season.subsystems;
 import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
 import static com.ctre.phoenix.motorcontrol.ControlMode.Position;
 
+import com.google.inject.Singleton;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
@@ -10,6 +11,7 @@ import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
 import edu.wpi.first.wpilibj.Timer;
 
+@Singleton
 public class Climber extends Subsystem {
 
     // this class uses some logic from the turret (positionControl logic) and from the distanceManager (Stage behaves like bucket Entries)

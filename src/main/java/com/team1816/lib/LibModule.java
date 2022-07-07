@@ -15,5 +15,6 @@ public class LibModule extends AbstractModule {
         requestStaticInjection(TrajectoryAction.class);
         requestStaticInjection(AutoModeBase.class);
         requestStaticInjection(WaitUntilInsideRegion.class);
+        requestStaticInjection(ControlBoardBridge.class);
     }
 }

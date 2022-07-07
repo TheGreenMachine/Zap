@@ -1,8 +1,9 @@
 package com.team1816.lib.hardware.factory;
 
+import com.team1816.lib.controlboard.ControlBoardBridge;
+import com.team1816.lib.controlboard.ControlBoardConfig;
 import com.team1816.lib.hardware.RobotConfiguration;
 import java.io.InputStream;
-import java.util.*;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.BeanAccess;
@@ -24,13 +25,25 @@ public class YamlConfig {
     }
 
     static RobotConfiguration loadInternal(InputStream input) {
-        return loadRaw(input);
+        return loadFromRaw(input);
     }
 
-    static RobotConfiguration loadRaw(InputStream input) {
+    static RobotConfiguration loadFromRaw(InputStream input) {
         Representer representer = new Representer();
         representer.getPropertyUtils().setSkipMissingProperties(true);
         Yaml yaml = new Yaml(new Constructor(RobotConfiguration.class), representer);
+        yaml.setBeanAccess(BeanAccess.FIELD);
+
+        return yaml.load(input);
+    }
+
+    public static ControlBoardConfig loadFromRaw(
+        InputStream input,
+        boolean controlboard
+    ) {
+        Representer representer = new Representer();
+        representer.getPropertyUtils().setSkipMissingProperties(true);
+        Yaml yaml = new Yaml(new Constructor(ControlBoardBridge.class), representer);
         yaml.setBeanAccess(BeanAccess.FIELD);
 
         return yaml.load(input);

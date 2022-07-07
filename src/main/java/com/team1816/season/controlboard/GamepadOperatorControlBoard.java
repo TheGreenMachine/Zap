@@ -2,6 +2,7 @@ package com.team1816.season.controlboard;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.team1816.lib.controlboard.ControlBoardBridge;
 import com.team1816.lib.controlboard.Controller;
 import com.team1816.lib.controlboard.IOperatorControlBoard;
 import com.team1816.season.Constants;
@@ -12,6 +13,8 @@ import com.team1816.season.Constants;
  */
 @Singleton
 public class GamepadOperatorControlBoard implements IOperatorControlBoard {
+
+    private static ControlBoardBridge controlBoardBridge = new ControlBoardBridge();
 
     private final Controller mController;
 
@@ -31,103 +34,225 @@ public class GamepadOperatorControlBoard implements IOperatorControlBoard {
 
     @Override
     public boolean getSuperstructure() {
-        return mController.getButton(Controller.Button.B);
+        var name = "getSuperstructure"; // yaml name
+        return getBooleanFromControllerYaml(
+            name,
+            mController.getButton(Controller.Button.B)
+        ); // default
     }
 
     // Turret teleop control - note that X VAL doesn't necessarily correspond to joystick X AXIS
+    // TODO: might want to add inverted property to axis config
     @Override
     public double getTurretXVal() {
-        return -mController.getJoystick(Controller.Axis.LEFT_Y);
+        var name = "getTurretXVal"; // yaml name
+        return getDoubleFromControllerYaml(
+            name,
+            mController.getJoystick(Controller.Axis.LEFT_X)
+        );
     }
 
     @Override
     public double getTurretYVal() {
-        return -mController.getJoystick(Controller.Axis.LEFT_X);
+        var name = "getTurretYVal";
+        return getDoubleFromControllerYaml(
+            name,
+            mController.getJoystick(Controller.Axis.LEFT_Y)
+        );
     }
 
     // Turret manual teleop control - use if turret position control not working
     @Override
     public boolean getTurretJogLeft() {
-        return mController.getDPad() == 270;
+        var name = "getTurretJogLeft";
+        return getBooleanFromControllerYaml(name, mController.getDPad() == 270);
     }
 
     @Override
     public boolean getTurretJogRight() {
-        return mController.getDPad() == 90;
+        var name = "getTurretJogRight";
+        return getBooleanFromControllerYaml(name, mController.getDPad() == 90);
     }
 
     @Override
     public boolean getFieldFollowing() {
-        return mController.getButton(Controller.Button.A);
+        var name = "getFieldFollowing";
+        return getBooleanFromControllerYaml(
+            name,
+            mController.getButton(Controller.Button.A)
+        );
     }
 
     @Override
     public boolean getCameraToggle() {
-        return mController.getButton(Controller.Button.X);
+        var name = "getCameraToggle";
+        return getBooleanFromControllerYaml(
+            name,
+            mController.getButton(Controller.Button.X)
+        );
     }
 
     @Override
     public boolean getRaiseBucket() {
-        return mController.getDPad() == 0;
+        var name = "getRaiseBucket";
+        return getBooleanFromControllerYaml(name, mController.getDPad() == 0);
     }
 
     @Override
     public boolean getLowerBucket() {
-        return (mController.getDPad() == 180);
+        var name = "getLowerBucket";
+        return getBooleanFromControllerYaml(name, mController.getDPad() == 180);
     }
 
     @Override
     public boolean getIncrementCamDeviation() {
-        return false;
+        var name = "getIncrementCamDeviation";
+        return getBooleanFromControllerYaml(name);
     }
 
     @Override
     public boolean getDecrementCamDeviation() {
-        return false;
+        var name = "getDecrementCamDeviation";
+        return getBooleanFromControllerYaml(name);
     }
 
     @Override
     public boolean getHood() {
-        return mController.getButton(Controller.Button.RIGHT_BUMPER);
+        var name = "getHood";
+        return getBooleanFromControllerYaml(
+            name,
+            mController.getButton(Controller.Button.RIGHT_BUMPER)
+        );
     }
 
     @Override
     public boolean getClimberUp() {
-        return mController.getJoystick(Controller.Axis.RIGHT_Y) > 0.5;
+        var name = "getClimberUpDown";
+        return (
+            getDoubleFromControllerYaml(
+                name,
+                mController.getJoystick(Controller.Axis.RIGHT_Y)
+            ) >
+            0.5
+        );
     }
 
     @Override
     public boolean getClimberDown() {
-        return mController.getJoystick(Controller.Axis.RIGHT_Y) < -0.5;
+        var name = "getClimberUpDown";
+        return (
+            getDoubleFromControllerYaml(
+                name,
+                mController.getJoystick(Controller.Axis.RIGHT_Y)
+            ) <
+            -0.5
+        );
     }
 
     @Override
     public boolean getYeetShot() {
-        return mController.getTrigger(Controller.Axis.LEFT_TRIGGER);
+        var name = "getYeetShot";
+        return getBooleanFromControllerYaml(
+            name,
+            mController.getTrigger(Controller.Axis.LEFT_TRIGGER)
+        );
     }
 
     @Override
     public boolean getAutoClimb() {
-        return mController.getButton(Controller.Button.Y);
+        var name = "getAutoClimb";
+        return getBooleanFromControllerYaml(
+            name,
+            mController.getButton(Controller.Button.Y)
+        );
     }
 
     @Override
     public boolean getBottomClamp() {
-        return mController.getButton(Controller.Button.BACK);
+        var name = "getBottomClamp";
+        return getBooleanFromControllerYaml(
+            name,
+            mController.getButton(Controller.Button.BACK)
+        );
     }
 
     @Override
     public boolean getTopClamp() {
-        return mController.getButton(Controller.Button.START);
+        var name = "getTopClamp";
+        return getBooleanFromControllerYaml(
+            name,
+            mController.getButton(Controller.Button.START)
+        );
     }
 
     @Override
     public boolean getAutoAim() {
-        return mController.getButton(Controller.Button.LEFT_BUMPER);
+        var name = "getAutoAim";
+        return getBooleanFromControllerYaml(
+            name,
+            mController.getButton(Controller.Button.LEFT_BUMPER)
+        );
     }
 
     @Override
     public boolean getShoot() { // This Shoot Method Fires and Revs currently.
-        return mController.getTrigger(Controller.Axis.RIGHT_TRIGGER);
+        var name = "getShoot";
+        return getBooleanFromControllerYaml(
+            name,
+            mController.getTrigger(Controller.Axis.RIGHT_TRIGGER)
+        );
+    }
+
+    public double getDoubleFromControllerYaml(String name) {
+        return getDoubleFromControllerYaml(name, 0);
+    }
+
+    public boolean getBooleanFromControllerYaml(String name) {
+        return getBooleanFromControllerYaml(name, false);
+    }
+
+    public double getDoubleFromControllerYaml(String name, double defaultVal) {
+        if (controlBoardBridge != null) if (
+            controlBoardBridge.getDriverAxisMap().containsKey(name)
+        ) {
+            return mController.getJoystick(
+                controlBoardBridge.getDriverAxisMap().get(name)
+            );
+        }
+        if (controlBoardBridge.getDriverButtonMap().containsKey(name)) {
+            return mController.getButton(
+                    controlBoardBridge.getOperatorButtonMap().get(name)
+                )
+                ? 1
+                : 0;
+        }
+        if (controlBoardBridge.getDriverDpadMap().containsKey(name)) {
+            return (
+                    mController.getDPad() ==
+                    controlBoardBridge.getOperatorDpadMap().get(name)
+                )
+                ? 1
+                : 0;
+        }
+        return defaultVal;
+    }
+
+    public boolean getBooleanFromControllerYaml(String name, boolean defaultVal) {
+        if (controlBoardBridge.getDriverAxisMap().containsKey(name)) {
+            return mController.getTrigger(
+                controlBoardBridge.getDriverAxisMap().get(name)
+            );
+        }
+        if (controlBoardBridge.getDriverButtonMap().containsKey(name)) {
+            return mController.getButton(
+                controlBoardBridge.getDriverButtonMap().get(name)
+            );
+        }
+        if (controlBoardBridge.getDriverDpadMap().containsKey(name)) {
+            return (
+                mController.getDPad() == controlBoardBridge.getDriverDpadMap().get(name)
+            );
+        }
+        return defaultVal;
     }
 }

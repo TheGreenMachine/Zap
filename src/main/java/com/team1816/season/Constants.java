@@ -150,7 +150,7 @@ public class Constants {
     // Control Board
     public static final int kDriveGamepadPort = 0;
     public static final int kOperatorGamepadPort = 1;
-    public static final double kJoystickThreshold = 0.04; // deadband
+    public static final double kJoystickThreshold = 0.04; // deadband //TODO: might want to increase this
 
     // Drive speed
     public static final double kPathFollowingMaxAccelMeters = factory.getConstant(

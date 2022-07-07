@@ -2,6 +2,7 @@ package com.team1816.season.controlboard;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.team1816.lib.controlboard.ControlBoardBridge;
 import com.team1816.lib.controlboard.Controller;
 import com.team1816.lib.controlboard.IDriveControlBoard;
 import com.team1816.lib.controlboard.XboxController;
@@ -14,6 +15,8 @@ import com.team1816.season.Constants;
 @Singleton
 public class GamepadDriveControlBoard implements IDriveControlBoard {
 
+    private static ControlBoardBridge controlBoardBridge = new ControlBoardBridge();
+
     private final Controller mController;
 
     @Inject
@@ -23,71 +26,172 @@ public class GamepadDriveControlBoard implements IDriveControlBoard {
 
     @Override
     public double getStrafe() {
-        return mController.getJoystick(Controller.Axis.LEFT_X);
+        var name = "getStrafe";
+        return getDoubleFromControllerYaml(
+            name,
+            mController.getJoystick(Controller.Axis.LEFT_X)
+        );
     }
 
     @Override
     public double getThrottle() {
-        return -mController.getJoystick(Controller.Axis.LEFT_Y);
+        var name = "getThrottle";
+        return getDoubleFromControllerYaml(
+            name,
+            -mController.getJoystick(Controller.Axis.LEFT_Y)
+        ); //TODO: why is this still negative???
     }
 
     @Override
     public double getTurn() {
-        return mController.getJoystick(Controller.Axis.RIGHT_X);
+        var name = "getTurn";
+        return getDoubleFromControllerYaml(
+            name,
+            mController.getJoystick(Controller.Axis.RIGHT_X)
+        );
     }
 
     @Override
     public boolean getSlowMode() {
-        return mController.getTrigger(Controller.Axis.RIGHT_TRIGGER);
+        var name = "getSlowMode";
+        return getBooleanFromControllerYaml(
+            name,
+            mController.getTrigger(Controller.Axis.RIGHT_TRIGGER)
+        );
     }
 
     @Override
     public boolean getUnlockClimber() {
-        return mController.getButton(Controller.Button.Y);
+        var name = "getUnlockClimber";
+        return getBooleanFromControllerYaml(
+            name,
+            mController.getButton(Controller.Button.Y)
+        );
     }
 
     @Override
     public boolean getBrakeMode() {
-        return mController.getTrigger(Controller.Axis.LEFT_TRIGGER);
+        var name = "getBrakeMode";
+        return getBooleanFromControllerYaml(
+            name,
+            mController.getTrigger(Controller.Axis.LEFT_TRIGGER)
+        );
     }
 
     @Override
     public boolean getCollectorToggle() {
-        return mController.getButton(Controller.Button.LEFT_BUMPER);
+        var name = "getCollectorToggle";
+        return getBooleanFromControllerYaml(
+            name,
+            mController.getButton(Controller.Button.LEFT_BUMPER)
+        );
     }
 
     @Override
     public boolean getCollectorBackspin() {
-        return mController.getButton(Controller.Button.RIGHT_BUMPER);
+        var name = "getCollectorBackspin";
+        return getBooleanFromControllerYaml(
+            name,
+            mController.getButton(Controller.Button.RIGHT_BUMPER)
+        );
     }
 
     @Override
     public boolean getUseManualShoot() {
-        return mController.getButton(Controller.Button.X);
+        var name = "getUseManualShoot";
+        return getBooleanFromControllerYaml(
+            name,
+            mController.getButton(Controller.Button.X)
+        );
     }
 
     @Override
     public boolean getZeroPose() {
-        return mController.getButton(Controller.Button.START);
+        var name = "getZeroPose";
+        return getBooleanFromControllerYaml(
+            name,
+            mController.getButton(Controller.Button.START)
+        );
     }
 
     @Override
     public boolean getQuickTurnMode() {
-        return mController.getTrigger(Controller.Axis.LEFT_TRIGGER);
+        var name = "getBrakeMode";
+        return getBooleanFromControllerYaml(
+            name,
+            mController.getTrigger(Controller.Axis.LEFT_TRIGGER)
+        );
     }
 
     @Override
     public boolean getFieldRelative() {
-        return !mController.getButton(XboxController.Button.LEFT_BUMPER);
+        var name = "getFieldRelative";
+        return getBooleanFromControllerYaml(
+            name,
+            !mController.getButton(XboxController.Button.LEFT_BUMPER)
+        );
     }
 
     @Override
-    public double getDPad() {
+    public double getDPad() { //TODO: futile
         return -1;
     }
 
     @Override
-    public int getDriverClimber() {
+    public int getDriverClimber() { //TODO: futile
         return 0;
+    }
+
+    public double getDoubleFromControllerYaml(String name) {
+        return getDoubleFromControllerYaml(name, 0);
+    }
+
+    public boolean getBooleanFromControllerYaml(String name) {
+        return getBooleanFromControllerYaml(name, false);
+    }
+
+    public double getDoubleFromControllerYaml(String name, double defaultVal) {
+        if (controlBoardBridge.getDriverAxisMap().containsKey(name)) {
+            return mController.getJoystick(
+                controlBoardBridge.getDriverAxisMap().get(name)
+            );
+        }
+        if (controlBoardBridge.getDriverButtonMap().containsKey(name)) {
+            return mController.getButton(
+                    controlBoardBridge.getOperatorButtonMap().get(name)
+                )
+                ? 1
+                : 0;
+        }
+        if (controlBoardBridge.getDriverDpadMap().containsKey(name)) {
+            return (
+                    mController.getDPad() ==
+                    controlBoardBridge.getOperatorDpadMap().get(name)
+                )
+                ? 1
+                : 0;
+        }
+
+        return defaultVal;
+    }
+
+    public boolean getBooleanFromControllerYaml(String name, boolean defaultVal) {
+        if (controlBoardBridge.getDriverAxisMap().containsKey(name)) {
+            return mController.getTrigger(
+                controlBoardBridge.getDriverAxisMap().get(name)
+            );
+        }
+        if (controlBoardBridge.getDriverButtonMap().containsKey(name)) {
+            return mController.getButton(
+                controlBoardBridge.getDriverButtonMap().get(name)
+            );
+        }
+        if (controlBoardBridge.getDriverDpadMap().containsKey(name)) {
+            return (
+                mController.getDPad() == controlBoardBridge.getDriverDpadMap().get(name)
+            );
+        }
+
+        return defaultVal;
     }
 }

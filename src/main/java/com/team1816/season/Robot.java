@@ -604,8 +604,8 @@ public class Robot extends TimedRobot {
             turret.setFollowingAngle(
                 (
                     new Rotation2d(
-                        controlBoard.getTurretXVal(),
-                        controlBoard.getTurretYVal()
+                        (-1) * controlBoard.getTurretYVal(),
+                        (-1) * controlBoard.getTurretXVal()
                     )
                 ).getDegrees()
             );
