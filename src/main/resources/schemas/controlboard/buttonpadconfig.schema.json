@@ -1,0 +1,19 @@
+{
+    "type": "object",
+    "title": "Buttonpad Config",
+    "additionalProperties": "false",
+    "properties": {
+        "X": {
+            "$ref": "buttonconfig.schema.json"
+        },
+        "Y": {
+            "$ref": "buttonconfig.schema.json"
+        },
+        "A": {
+            "$ref": "buttonconfig.schema.json"
+        },
+        "B": {
+            "$ref": "buttonconfig.schema.json"
+        }
+    }
+}
