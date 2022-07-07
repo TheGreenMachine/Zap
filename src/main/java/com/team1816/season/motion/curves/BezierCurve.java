@@ -3,10 +3,6 @@ package com.team1816.season.motion.curves;
 import com.team1816.season.motion.splines.NaturalCubicSpline;
 import java.util.ArrayList;
 
-/**
- * TODO: NOTE THIS CLASS IS STILL IN PROGRESS
- */
-
 public class BezierCurve {
 
     public static class ControlPoint {
@@ -60,9 +56,13 @@ public class BezierCurve {
 
     public ControlPoint getValue(double t) {
         ControlPoint val = new ControlPoint();
-        for(int i = 0; i <= controlPoints.size()-1; i++) {
+        for (int i = 0; i <= controlPoints.size() - 1; i++) {
             ControlPoint c = controlPoints.get(i);
-            c.multiply(Math.pow(t, i)*Math.pow((1-t), controlPoints.size()-i-1)*combination(controlPoints.size()-1, i));
+            c.multiply(
+                Math.pow(t, i) *
+                Math.pow((1 - t), controlPoints.size() - i - 1) *
+                combination(controlPoints.size() - 1, i)
+            );
             val.add(c);
         }
         return val;
@@ -70,11 +70,11 @@ public class BezierCurve {
 
     public double combination(int n, int x) {
         double ans = 1;
-        for(int i = n; i > x; i--) {
-            ans*=i;
+        for (int i = n; i > x; i--) {
+            ans *= i;
         }
-        for(int i = 1; i <= x; i++) {
-            ans/=i;
+        for (int i = 1; i <= x; i++) {
+            ans /= i;
         }
         return ans;
     }

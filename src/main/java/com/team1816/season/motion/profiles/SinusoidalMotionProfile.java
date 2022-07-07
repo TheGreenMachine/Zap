@@ -1,71 +1,15 @@
 package com.team1816.season.motion.profiles;
 
-public class SinusoidalMotionProfile {
+/**
+ * This class will construct a sinusoidal motion profile.
+ * Unlike a simple trapezoidal motion profile, this will allow for arbitrary n-levels of smooth continuity
+ */
+
+public class SinusoidalMotionProfile extends MotionProfile {
 
     /**
-     * Internal Definitions
+     * Profile properties
      */
-    public static class Constraints {
-
-        private double maxVel, maxAccel, maxJerk;
-
-        public Constraints() {
-            maxVel = 0;
-            maxAccel = 0;
-            maxJerk = 0;
-        }
-
-        public Constraints(double mv, double ma, double mj) {
-            maxVel = mv;
-            maxAccel = ma;
-            maxJerk = 0;
-        }
-
-        public double getMaxVel() {
-            return maxVel;
-        }
-
-        public double getMaxAccel() {
-            return maxAccel;
-        }
-
-        public double getMaxJerk() {
-            return maxJerk;
-        }
-    }
-
-    public static class State {
-
-        public double position, velocity;
-
-        public State() {
-            position = 0;
-            velocity = 0;
-        }
-
-        public State(double p) {
-            position = p;
-            velocity = 0;
-        }
-
-        public State(double p, double v) {
-            position = p;
-            velocity = v;
-        }
-    }
-
-    public static class Phase {
-
-        public double duration;
-
-        public Phase() {
-            duration = 0;
-        }
-
-        public Phase(double d) {
-            duration = d;
-        }
-    }
 
     private Phase[] p = new Phase[3]; // sinusodal acceleration, flat, deceleration
     private Constraints constraints;
@@ -85,6 +29,7 @@ public class SinusoidalMotionProfile {
     }
 
     public SinusoidalMotionProfile(Constraints c, State i, State t) {
+        super();
         constraints = c;
         initial = i;
         target = t;
@@ -124,6 +69,10 @@ public class SinusoidalMotionProfile {
         cx += target.velocity * t3;
 
         t2 += (Math.abs(dX) - cx) / c.maxVel;
+
+        for (int x = 0; x < p.length; x++) {
+            p[x] = new Phase();
+        }
 
         p[0].duration = t1;
         p[1].duration = t2;
