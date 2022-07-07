@@ -4,19 +4,18 @@ import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifierStatusFrame;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdleStatusFrame;
-import com.ctre.phoenix.motorcontrol.IMotorController;
-import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.sensors.*;
 import com.team1816.lib.hardware.*;
 import com.team1816.lib.hardware.components.*;
+import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.hardware.components.motor.LazySparkMax;
 import com.team1816.lib.hardware.components.pcm.*;
-import com.team1816.lib.math.DriveConversions;
 import com.team1816.lib.subsystems.SwerveModule;
 import com.team1816.season.Constants;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotBase;
 import java.util.Map;
 import javax.annotation.Nonnull;
@@ -24,7 +23,6 @@ import javax.annotation.Nonnull;
 public class RobotFactory {
 
     private RobotConfiguration config;
-    private static boolean verbose;
     private static RobotFactory factory;
 
     private enum PIDConfig {
@@ -60,16 +58,15 @@ public class RobotFactory {
         } catch (Exception e) {
             DriverStation.reportError("Yaml Config error!", e.getStackTrace());
         }
-        verbose = getConstant("verbose") >= 1;
     }
 
-    public IMotorControllerEnhanced getMotor(
+    public IGreenMotor getMotor(
         String subsystemName,
         String name,
         Map<String, PIDSlotConfiguration> pidConfigs,
         int remoteSensorId
     ) {
-        IMotorControllerEnhanced motor = null;
+        IGreenMotor motor = null;
         var subsystem = getSubsystem(subsystemName);
 
         // Motor creation
@@ -83,7 +80,7 @@ public class RobotFactory {
                         subsystem,
                         pidConfigs,
                         remoteSensorId,
-                        config.canivoreBusName
+                        config.infrastructure.canivoreBusName
                     );
             } else if (
                 subsystem.falcons != null && isHardwareValid(subsystem.falcons.get(name))
@@ -96,7 +93,7 @@ public class RobotFactory {
                         subsystem,
                         pidConfigs,
                         remoteSensorId,
-                        config.canivoreBusName
+                        config.infrastructure.canivoreBusName
                     );
             } else if (
                 subsystem.sparkmaxes != null &&
@@ -111,19 +108,15 @@ public class RobotFactory {
                         remoteSensorId
                     );
             }
-            // Never make the victor a master
+            // Never make the victor a main
         }
         if (motor == null) {
             reportGhostWarning("Motor", subsystemName, name);
             motor =
-                CtreMotorFactory.createGhostTalon(
-                    //                    config.constants.get("maxTicks").intValue()
-                    (int) (
-                        DriveConversions.inchesPerSecondToTicksPer100ms(
-                            Constants.kOpenLoopMaxVelMeters / 0.0254 // this may not work if 2 diff velocities are used depending on if in auto or not
-                        )
-                    ),
-                    0
+                CtreMotorFactory.createGhostMotor(
+                    (int) (factory.getConstant(subsystemName, "maxVelTicks100ms", 1)),
+                    0,
+                    name
                 );
         } else {
             System.out.println(
@@ -156,100 +149,100 @@ public class RobotFactory {
         return motor;
     }
 
-    public IMotorControllerEnhanced getMotor(String subsystemName, String name) {
+    public IGreenMotor getMotor(String subsystemName, String name) {
         return getMotor(subsystemName, name, getSubsystem(subsystemName).pidConfig, -1); // not implemented for tank need to fix this
     }
 
-    public IMotorController getMotor(
-        String subsystemName,
-        String name,
-        IMotorController master
-    ) { // TODO: optimize this method
-        IMotorController followerMotor = null;
+    public IGreenMotor getMotor(String subsystemName, String name, IGreenMotor main) { // TODO: optimize this method
+        IGreenMotor followerMotor = null;
         var subsystem = getSubsystem(subsystemName);
-        if (subsystem.implemented && master != null) {
+        if (subsystem.implemented && main != null) {
             if (subsystem.talons != null && isHardwareValid(subsystem.talons.get(name))) {
                 // Talons must be following another Talon, cannot follow a Victor.
                 followerMotor =
-                    CtreMotorFactory.createPermanentSlaveTalon(
+                    CtreMotorFactory.createFollowerTalon(
                         subsystem.talons.get(name),
                         name,
                         false,
-                        master,
+                        main,
                         subsystem,
                         subsystem.pidConfig,
-                        config.canivoreBusName
+                        config.infrastructure.canivoreBusName
                     );
             } else if (
                 subsystem.falcons != null && isHardwareValid(subsystem.falcons.get(name))
             ) {
                 followerMotor =
-                    CtreMotorFactory.createPermanentSlaveTalon(
+                    CtreMotorFactory.createFollowerTalon(
                         subsystem.falcons.get(name),
                         name,
                         true,
-                        master,
+                        main,
                         subsystem,
                         subsystem.pidConfig,
-                        config.canivoreBusName
+                        config.infrastructure.canivoreBusName
                     );
             } else if (
                 subsystem.victors != null && isHardwareValid(subsystem.victors.get(name))
             ) {
                 // Victors can follow Talons or another Victor.
                 followerMotor =
-                    CtreMotorFactory.createPermanentSlaveVictor(
+                    CtreMotorFactory.createFollowerVictor(
                         subsystem.victors.get(name),
-                        master
+                        name,
+                        main
                     );
             } else if (
                 subsystem.sparkmaxes != null &&
                 isHardwareValid(subsystem.sparkmaxes.get(name))
             ) {
                 followerMotor =
-                    RevMotorFactory.createSpark(subsystem.sparkmaxes.get(name));
-                followerMotor.follow(master);
+                    RevMotorFactory.createSpark(subsystem.sparkmaxes.get(name), name);
+                followerMotor.follow(main);
             }
         }
         if (followerMotor == null) {
             if (subsystem.implemented) reportGhostWarning("Motor", subsystemName, name);
             followerMotor =
-                CtreMotorFactory.createGhostTalon(
-                    (int) factory.getConstant(subsystemName, "maxTicks"),
-                    0
+                CtreMotorFactory.createGhostMotor(
+                    (int) factory.getConstant(subsystemName, "maxVelTicks100ms"),
+                    0,
+                    name
                 );
         }
-        if (master != null) {
-            followerMotor.setInverted(master.getInverted());
+        if (main != null) {
+            followerMotor.setInverted(main.getInverted());
         }
         return followerMotor;
     }
 
-    public IMotorController getMotor( // a hack to circumnavigate sparkMax follower methods
+    public IGreenMotor getMotor( // a hack to circumnavigate sparkMax follower methods
         String subsystemName,
         String name,
-        IMotorController master,
+        IGreenMotor main,
         boolean invert
     ) { // TODO: optimize this method
-        IMotorController followerMotor = null;
+        IGreenMotor followerMotor = null;
         var subsystem = getSubsystem(subsystemName);
         if (
             subsystem.sparkmaxes != null &&
             isHardwareValid(subsystem.sparkmaxes.get(name))
         ) {
-            followerMotor = RevMotorFactory.createSpark(subsystem.sparkmaxes.get(name));
-            ((LazySparkMax) followerMotor).follow(master, invert);
+            followerMotor =
+                RevMotorFactory.createSpark(subsystem.sparkmaxes.get(name), name);
+            ((LazySparkMax) followerMotor).follow(main, invert);
         }
         if (followerMotor == null) {
             if (subsystem.implemented) reportGhostWarning("Motor", subsystemName, name);
             followerMotor =
-                CtreMotorFactory.createGhostTalon(
-                    (int) factory.getConstant(subsystemName, "maxTicks"),
-                    0
+                CtreMotorFactory.createGhostMotor(
+                    (int) factory.getConstant(subsystemName, "maxVelTicks100ms"),
+                    0,
+                    name
                 );
         }
-        if (master != null) {
-            followerMotor.setInverted(master.getInverted());
+        if (main != null) {
+            followerMotor.setInverted(main.getInverted());
         }
         return followerMotor;
     }
@@ -270,7 +263,7 @@ public class RobotFactory {
         }
 
         var swerveConstants = new Constants.Swerve();
-        swerveConstants.kName = name;
+        swerveConstants.kModuleName = name;
         swerveConstants.kAzimuthMotorName = module.azimuth; //getAzimuth and drive give ID i think - not the module name (ex: leftRear)
         swerveConstants.kAzimuthPid =
             getPidSlotConfig(subsystemName, "slot0", PIDConfig.Azimuth);
@@ -330,8 +323,8 @@ public class RobotFactory {
             Integer solenoidId = subsystem.solenoids.get(name);
             if (subsystem.implemented && isHardwareValid(solenoidId) && isPcmEnabled()) {
                 return new SolenoidImpl(
-                    config.pcm,
-                    factory.getConstant("phIsRev") > 0
+                    config.infrastructure.pcmId,
+                    config.infrastructure.pcmIsRev
                         ? PneumaticsModuleType.REVPH
                         : PneumaticsModuleType.CTREPCM,
                     solenoidId
@@ -359,7 +352,7 @@ public class RobotFactory {
                 isPcmEnabled()
             ) {
                 return new DoubleSolenoidImpl(
-                    config.pcm,
+                    config.infrastructure.pcmId,
                     PneumaticsModuleType.REVPH,
                     solenoidConfig.forward,
                     solenoidConfig.reverse
@@ -390,7 +383,8 @@ public class RobotFactory {
         ICANdle candle;
         var subsystem = getSubsystem(subsystemName);
         if (subsystem.implemented && isHardwareValid((subsystem.candle))) {
-            candle = new CANdleImpl(subsystem.candle, config.canivoreBusName);
+            candle =
+                new CANdleImpl(subsystem.candle, config.infrastructure.canivoreBusName);
             candle.configFactoryDefault();
             candle.configStatusLedState(true);
             candle.configLOSBehavior(true);
@@ -407,7 +401,7 @@ public class RobotFactory {
 
     public ICompressor getCompressor() {
         if (isPcmEnabled()) {
-            if (factory.getConstant("phIsRev") > 0) {
+            if (config.infrastructure.pcmIsRev) {
                 return new CompressorImpl(getPcmId(), PneumaticsModuleType.REVPH);
             } else {
                 return new CompressorImpl(getPcmId(), PneumaticsModuleType.CTREPCM);
@@ -469,6 +463,10 @@ public class RobotFactory {
         return getSubsystem(subsystemName).constants.get(name);
     }
 
+    public PIDSlotConfiguration getPidSlotConfig(String subsystemName) {
+        return getPidSlotConfig(subsystemName, "slot0", PIDConfig.Generic);
+    }
+
     public PIDSlotConfiguration getPidSlotConfig(String subsystemName, String slot) {
         return getPidSlotConfig(subsystemName, slot, PIDConfig.Generic);
     }
@@ -514,33 +512,44 @@ public class RobotFactory {
         }
     }
 
+    public PowerDistribution getPd() {
+        return new PowerDistribution(
+            config.infrastructure.pdId,
+            config.infrastructure.pdIsRev
+                ? PowerDistribution.ModuleType.kRev
+                : PowerDistribution.ModuleType.kCTRE
+        );
+    }
+
     public IPigeonIMU getPigeon() {
-        int id = (int) factory.getConstant("pigeonId", -1);
-        IPigeonIMU pigeonIMU;
+        int id = config.infrastructure.pigeonId;
+        IPigeonIMU pigeon;
         if (!isHardwareValid(id)) {
-            return new GhostPigeonIMU(id);
-        } else if (factory.getConstant("isPigeon2") > 0) {
+            pigeon = new GhostPigeonIMU(id);
+        } else if (config.infrastructure.isPigeon2) {
             System.out.println("Using Pigeon 2 for id: " + id);
-            pigeonIMU = new Pigeon2Impl(id, config.canivoreBusName);
-            return pigeonIMU;
+            pigeon = new Pigeon2Impl(id, config.infrastructure.canivoreBusName);
         } else {
             System.out.println("Using old Pigeon for id: " + id);
-            pigeonIMU = new PigeonIMUImpl(id);
-            return pigeonIMU;
+            pigeon = new PigeonIMUImpl(id);
         }
+        pigeon.configFactoryDefault();
+        pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_1_General, 200);
+        pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_6_Accel, 1000);
+        return pigeon;
     }
 
     public int getPcmId() {
-        if (config.pcm == null) return -1;
-        return config.pcm;
+        if (config.infrastructure.pcmId == null) return -1;
+        return config.infrastructure.pcmId;
     }
 
     public boolean isPcmEnabled() {
         return getPcmId() > -1;
     }
 
-    public static boolean isVerbose() {
-        return verbose;
+    public boolean isCompressorEnabled() {
+        return config.infrastructure.compressorEnabled;
     }
 
     private void reportGhostWarning(
@@ -561,7 +570,7 @@ public class RobotFactory {
 
     private final int canMaxStatus = 100;
 
-    private void setStatusFrame(IMotorControllerEnhanced device) {
+    private void setStatusFrame(IGreenMotor device) {
         device.setStatusFramePeriod(StatusFrame.Status_1_General, canMaxStatus, 100);
         device.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, canMaxStatus, 100);
         device.setStatusFramePeriod(StatusFrame.Status_4_AinTempVbat, canMaxStatus, 100);

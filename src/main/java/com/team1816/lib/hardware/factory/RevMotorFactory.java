@@ -1,6 +1,5 @@
 package com.team1816.lib.hardware.factory;
 
-import com.ctre.phoenix.motorcontrol.*;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.SubsystemConfig;
 import com.team1816.lib.hardware.components.motor.*;
@@ -8,28 +7,28 @@ import java.util.Map;
 
 public class RevMotorFactory {
 
-    public static IMotorControllerEnhanced createDefaultSpark(
+    public static IGreenMotor createDefaultSpark(
         int id,
         String name,
         SubsystemConfig subsystems,
         Map<String, PIDSlotConfiguration> pidConfigList,
         int remoteSensorId
     ) {
-        return createSpark(id);
+        return createSpark(id, name);
     }
 
-    public static IMotorControllerEnhanced createSpark(int id) {
-        return new LazySparkMax(id);
+    public static IGreenMotor createSpark(int id, String name) {
+        return new LazySparkMax(id, name);
     }
 
-    public static IMotorControllerEnhanced createSpark(
+    public static IGreenMotor createSpark(
         int id,
         String name,
         SubsystemConfig subsystems,
         Map<String, PIDSlotConfiguration> pidConfigList,
         int remoteSensorId
     ) {
-        LazySparkMax sparkMax = new LazySparkMax(id);
+        LazySparkMax sparkMax = new LazySparkMax(id, name);
         if (pidConfigList != null) {
             pidConfigList.forEach(
                 (slot, slotConfig) -> {

@@ -87,7 +87,7 @@ subsystems:
             azimuthHomeAdjustmentDegrees: 1
 pcm: 8
 constants:
-    maxTicks: 12275.7 # ticks per 100ms TODO make into constant unique to each subsystem
+    maxVelTicks100ms: 12275.7 # ticks per 100ms TODO make into constant unique to each subsystem
     maxRotVel: 11.5
     maxVel: 120 # 160 # 240 # inches/s # 22560 native units ---30
     maxAccel: 100 # inches/s^2

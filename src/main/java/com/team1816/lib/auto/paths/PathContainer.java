@@ -1,13 +1,13 @@
 package com.team1816.lib.auto.paths;
 
 import com.team1816.season.Constants;
-import com.team254.lib.util.Units;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.util.Units;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +17,8 @@ import java.util.List;
  */
 public interface PathContainer {
     // velocities are in/sec
-    double kMaxVelocity = (Constants.kPathFollowingMaxVelMeters);
-    double kMaxAccel = Units.inches_to_meters(Constants.kPathFollowingMaxAccel);
+    double kMaxVelocity = Constants.kPathFollowingMaxVelMeters;
+    double kMaxAccel = Constants.kPathFollowingMaxAccelMeters;
 
     List<Pose2d> buildWaypoints();
     List<Rotation2d> buildHeadings();
@@ -36,8 +36,8 @@ public interface PathContainer {
             waypointsMeters.add(
                 new Pose2d(
                     // manually adding the starting pose to each waypoint - wpilib transformBy acts up when transforming FiveBall - bug?
-                    Units.inches_to_meters(pose2d.getX()), // + Constants.StartingPose.getTranslation().getX(),
-                    Units.inches_to_meters(pose2d.getY()), // + Constants.StartingPose.getTranslation().getY(),
+                    Units.inchesToMeters(pose2d.getX()), // + Constants.StartingPose.getTranslation().getX(),
+                    Units.inchesToMeters(pose2d.getY()), // + Constants.StartingPose.getTranslation().getY(),
                     pose2d.getRotation() // .plus(Constants.StartingPose.getRotation())
                 )
             );
@@ -74,8 +74,8 @@ public interface PathContainer {
         for (Pose2d pose2d : buildWaypoints()) {
             waypointsMeters.add(
                 new Pose2d(
-                    Units.inches_to_meters(pose2d.getX()) + startX,
-                    Units.inches_to_meters(pose2d.getY()) + startY,
+                    Units.inchesToMeters(pose2d.getX()) + startX,
+                    Units.inchesToMeters(pose2d.getY()) + startY,
                     pose2d.getRotation()
                 )
             );

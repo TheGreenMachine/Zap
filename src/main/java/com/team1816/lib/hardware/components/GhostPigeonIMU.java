@@ -1,8 +1,8 @@
 package com.team1816.lib.hardware.components;
 
 import com.ctre.phoenix.ErrorCode;
-import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
+import com.team1816.lib.hardware.components.motor.IGreenMotor;
 
 public class GhostPigeonIMU implements IPigeonIMU {
 
@@ -12,7 +12,7 @@ public class GhostPigeonIMU implements IPigeonIMU {
         dummyYaw = 0;
     }
 
-    public GhostPigeonIMU(IMotorControllerEnhanced motor) {}
+    public GhostPigeonIMU(IGreenMotor motor) {}
 
     @Override
     public double getYaw() {

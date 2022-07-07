@@ -8,54 +8,48 @@ import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
 
-public class LazySparkMax implements IGreenMotor {
+public class GhostMotor implements IGreenMotor, IMotorSensor {
 
-    private CANSparkMax motor;
-    private SparkMaxPIDController pidController;
-    private RelativeEncoder encoder;
+    private ControlMode controlMode;
+    private final int maxVelTicks100ms;
+    private final double[] demand = new double[] { 0, 0 };
 
     protected double lastSet = Double.NaN;
-    protected String name = "";
-    protected CANSparkMax.ControlType lastControlMode = null;
 
-    public LazySparkMax(int deviceNumber, String motorName) {
-        motor = new CANSparkMax(deviceNumber, CANSparkMaxLowLevel.MotorType.kBrushless);
-        pidController = motor.getPIDController();
-        encoder = motor.getEncoder();
+    protected String name = "";
+    private final int absInitOffset;
+
+    public GhostMotor(int maxTickVel, int absInitOffset, String motorName) {
+        this.absInitOffset = absInitOffset;
+        maxVelTicks100ms = maxTickVel;
         name = motorName;
     }
 
     @Override
-    public void set(ControlMode mode, double demand) {
-        canMaxSet(mode, demand);
+    public void set(ControlMode Mode, double demand) {
+        processSet(Mode, demand);
     }
 
     @Override
     public void set(
-        ControlMode mode,
+        ControlMode Mode,
         double demand0,
         DemandType demand1Type,
         double demand1
     ) {
-        canMaxSet(mode, demand0);
+        processSet(Mode, demand0);
     }
 
-    private void canMaxSet(ControlMode mode, double demand) {
-        CANSparkMax.ControlType controlType = convertControlMode(mode);
-        if (demand != lastSet || controlType != lastControlMode) {
-            lastSet = demand;
-            lastControlMode = controlType;
-            pidController.setReference(demand, controlType); // note that this uses rpm for velocity!
+    private void processSet(ControlMode Mode, double demand) {
+        if (
+            Mode == ControlMode.Position ||
+            Mode == ControlMode.Velocity ||
+            Mode == ControlMode.PercentOutput
+        ) {
+            this.demand[0] = demand;
+            controlMode = Mode;
         }
-    }
-
-    public CANSparkMax getSpark() {
-        return motor;
     }
 
     @Override
@@ -65,21 +59,21 @@ public class LazySparkMax implements IGreenMotor {
     public void setNeutralMode(NeutralMode neutralMode) {}
 
     @Override
-    public void setInverted(boolean isInverted) {
-        motor.setInverted(isInverted);
-    }
+    public void setSensorPhase(boolean PhaseSensor) {}
+
+    @Override
+    public void setInverted(boolean invert) {}
 
     @Override
     public void setInverted(InvertType invertType) {}
 
     @Override
     public boolean getInverted() {
-        return motor.getInverted();
+        return false;
     }
 
     @Override
     public ErrorCode configOpenloopRamp(double secondsFromNeutralToFull, int timeoutMs) {
-        motor.setOpenLoopRampRate(secondsFromNeutralToFull);
         return ErrorCode.OK;
     }
 
@@ -88,38 +82,37 @@ public class LazySparkMax implements IGreenMotor {
         double secondsFromNeutralToFull,
         int timeoutMs
     ) {
-        motor.setClosedLoopRampRate(secondsFromNeutralToFull);
         return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode configPeakOutputForward(double percentOut, int timeoutMs) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode configPeakOutputReverse(double percentOut, int timeoutMs) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode configNominalOutputForward(double percentOut, int timeoutMs) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode configNominalOutputReverse(double percentOut, int timeoutMs) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode configNeutralDeadband(double percentDeadband, int timeoutMs) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode configVoltageCompSaturation(double voltage, int timeoutMs) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
@@ -127,7 +120,7 @@ public class LazySparkMax implements IGreenMotor {
         int filterWindowSamples,
         int timeoutMs
     ) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
@@ -149,6 +142,20 @@ public class LazySparkMax implements IGreenMotor {
     }
 
     @Override
+    @Deprecated
+    public double getOutputCurrent() {
+        return 0;
+    }
+
+    @Override
+    public ErrorCode configVelocityMeasurementPeriod(
+        SensorVelocityMeasPeriod period,
+        int timeoutMs
+    ) {
+        return null;
+    }
+
+    @Override
     public double getTemperature() {
         return 0;
     }
@@ -159,7 +166,7 @@ public class LazySparkMax implements IGreenMotor {
         int pidIdx,
         int timeoutMs
     ) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
@@ -168,7 +175,7 @@ public class LazySparkMax implements IGreenMotor {
         int pidIdx,
         int timeoutMs
     ) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
@@ -178,7 +185,7 @@ public class LazySparkMax implements IGreenMotor {
         int remoteOrdinal,
         int timeoutMs
     ) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
@@ -205,18 +212,30 @@ public class LazySparkMax implements IGreenMotor {
         FeedbackDevice feedbackDevice,
         int timeoutMs
     ) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
     public double getSelectedSensorPosition(int pidIdx) {
-        return encoder.getPosition();
-    } // native position value
+        return demand[pidIdx];
+    }
 
     @Override
     public double getSelectedSensorVelocity(int pidIdx) {
-        return encoder.getCountsPerRevolution();
-    } // RPM
+        var output = demand[pidIdx];
+        if (controlMode == ControlMode.PercentOutput) {
+            if (Math.abs(output) > 1.1) {
+                System.out.println(
+                    "Motor " +
+                    name +
+                    "'s % output should be between -1.0 to 1.0 value:" +
+                    output
+                );
+            }
+            return output * maxVelTicks100ms;
+        }
+        return output;
+    }
 
     @Override
     public ErrorCode setSelectedSensorPosition(
@@ -224,13 +243,13 @@ public class LazySparkMax implements IGreenMotor {
         int pidIdx,
         int timeoutMs
     ) {
-        encoder.setPosition(sensorPos);
+        demand[pidIdx] = sensorPos;
         return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode setControlFramePeriod(ControlFrame frame, int periodMs) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
@@ -239,7 +258,7 @@ public class LazySparkMax implements IGreenMotor {
         int periodMs,
         int timeoutMs
     ) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
@@ -254,7 +273,7 @@ public class LazySparkMax implements IGreenMotor {
         int deviceID,
         int timeoutMs
     ) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
@@ -264,7 +283,7 @@ public class LazySparkMax implements IGreenMotor {
         int deviceID,
         int timeoutMs
     ) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
@@ -275,7 +294,7 @@ public class LazySparkMax implements IGreenMotor {
         double forwardSensorLimit,
         int timeoutMs
     ) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
@@ -283,17 +302,17 @@ public class LazySparkMax implements IGreenMotor {
         double reverseSensorLimit,
         int timeoutMs
     ) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode configForwardSoftLimitEnable(boolean enable, int timeoutMs) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode configReverseSoftLimitEnable(boolean enable, int timeoutMs) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
@@ -301,31 +320,27 @@ public class LazySparkMax implements IGreenMotor {
 
     @Override
     public ErrorCode config_kP(int slotIdx, double value, int timeoutMs) {
-        pidController.setP(value, slotIdx);
         return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode config_kI(int slotIdx, double value, int timeoutMs) {
-        pidController.setI(value, slotIdx);
         return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode config_kD(int slotIdx, double value, int timeoutMs) {
-        pidController.setD(value, slotIdx);
         return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode config_kF(int slotIdx, double value, int timeoutMs) {
-        pidController.setFF(value, slotIdx); // is FF the same as F? This may be wrong!
         return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode config_IntegralZone(int slotIdx, double izone, int timeoutMs) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
@@ -334,7 +349,7 @@ public class LazySparkMax implements IGreenMotor {
         double allowableCloseLoopError,
         int timeoutMs
     ) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
@@ -343,7 +358,7 @@ public class LazySparkMax implements IGreenMotor {
         double iaccum,
         int timeoutMs
     ) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
@@ -352,22 +367,22 @@ public class LazySparkMax implements IGreenMotor {
         double percentOut,
         int timeoutMs
     ) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode configClosedLoopPeriod(int slotIdx, int loopTimeMs, int timeoutMs) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode configAuxPIDPolarity(boolean invert, int timeoutMs) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode setIntegralAccumulator(double iaccum, int pidIdx, int timeoutMs) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
@@ -408,7 +423,7 @@ public class LazySparkMax implements IGreenMotor {
         double sensorUnitsPer100ms,
         int timeoutMs
     ) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
@@ -416,12 +431,12 @@ public class LazySparkMax implements IGreenMotor {
         double sensorUnitsPer100msPerSec,
         int timeoutMs
     ) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode configMotionSCurveStrength(int curveStrength, int timeoutMs) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
@@ -429,12 +444,12 @@ public class LazySparkMax implements IGreenMotor {
         int baseTrajDurationMs,
         int timeoutMs
     ) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode clearMotionProfileTrajectories() {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
@@ -444,7 +459,7 @@ public class LazySparkMax implements IGreenMotor {
 
     @Override
     public ErrorCode pushMotionProfileTrajectory(TrajectoryPoint trajPt) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
@@ -457,37 +472,37 @@ public class LazySparkMax implements IGreenMotor {
 
     @Override
     public ErrorCode getMotionProfileStatus(MotionProfileStatus statusToFill) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode clearMotionProfileHasUnderrun(int timeoutMs) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode changeMotionControlFramePeriod(int periodMs) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode getLastError() {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode getFaults(Faults toFill) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode getStickyFaults(StickyFaults toFill) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode clearStickyFaults(int timeoutMs) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
@@ -502,11 +517,11 @@ public class LazySparkMax implements IGreenMotor {
 
     @Override
     public ErrorCode configSetCustomParam(int newValue, int paramIndex, int timeoutMs) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
-    public int configGetCustomParam(int paramIndex, int timeoutMs) {
+    public int configGetCustomParam(int paramIndex, int timoutMs) {
         return 0;
     }
 
@@ -518,7 +533,7 @@ public class LazySparkMax implements IGreenMotor {
         int ordinal,
         int timeoutMs
     ) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
@@ -547,12 +562,9 @@ public class LazySparkMax implements IGreenMotor {
         return 0;
     }
 
-    public void setSensorPhase(boolean isInverted) {
-        System.out.println("missing op for inverting a Rev motor!");
-    }
-
+    @Override
     public int getDeviceID() {
-        return motor.getDeviceId();
+        return -1;
     }
 
     @Override
@@ -560,18 +572,11 @@ public class LazySparkMax implements IGreenMotor {
         return null;
     }
 
-    public static CANSparkMax.ControlType convertControlMode(ControlMode controlMode) {
-        if (controlMode == ControlMode.PercentOutput) {
-            return CANSparkMax.ControlType.kDutyCycle;
-        } else if (controlMode == ControlMode.Velocity) {
-            return CANSparkMax.ControlType.kVelocity;
-        } else if (controlMode == ControlMode.Position) {
-            return CANSparkMax.ControlType.kPosition;
-        } else {
-            System.out.println("spark motor not set to a control mode!");
-            return CANSparkMax.ControlType.kDutyCycle; // what should be default?
-        }
-    }
+    @Override
+    public void follow(IMotorController masterToFollow) {}
+
+    @Override
+    public void valueUpdated() {}
 
     @Override
     public ErrorCode configSelectedFeedbackSensor(
@@ -579,7 +584,7 @@ public class LazySparkMax implements IGreenMotor {
         int pidIdx,
         int timeoutMs
     ) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
@@ -587,7 +592,7 @@ public class LazySparkMax implements IGreenMotor {
         SupplyCurrentLimitConfiguration currLimitCfg,
         int timeoutMs
     ) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
@@ -596,7 +601,7 @@ public class LazySparkMax implements IGreenMotor {
         int periodMs,
         int timeoutMs
     ) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
@@ -606,23 +611,15 @@ public class LazySparkMax implements IGreenMotor {
 
     @Override
     public ErrorCode configVelocityMeasurementPeriod(
-        SensorVelocityMeasPeriod period,
-        int timeoutMs
-    ) {
-        return null;
-    }
-
-    @Override
-    public ErrorCode configVelocityMeasurementPeriod(
         VelocityMeasPeriod period,
         int timeoutMs
     ) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode configVelocityMeasurementWindow(int windowSize, int timeoutMs) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
@@ -631,7 +628,7 @@ public class LazySparkMax implements IGreenMotor {
         LimitSwitchNormal normalOpenOrClose,
         int timeoutMs
     ) {
-        return null;
+        return ErrorCode.OK;
     }
 
     @Override
@@ -640,29 +637,24 @@ public class LazySparkMax implements IGreenMotor {
         LimitSwitchNormal normalOpenOrClose,
         int timeoutMs
     ) {
-        return null;
-    }
-
-    public CANSparkMax getMotor() {
-        return motor;
+        return ErrorCode.OK;
     }
 
     @Override
-    public void follow(IMotorController masterToFollow) { // only use if not inverted
-        motor.follow(((LazySparkMax) masterToFollow).getMotor());
-    }
-
-    public void follow(IGreenMotor masterToFollow, boolean inverted) {
-        motor.follow(((LazySparkMax) masterToFollow).getMotor(), inverted);
+    public int getQuadraturePosition() {
+        return (int) demand[0];
     }
 
     @Override
-    public double getOutputCurrent() {
-        return motor.getOutputCurrent();
+    public int getPulseWidthPosition() {
+        return absInitOffset;
     }
 
     @Override
-    public void valueUpdated() {}
+    public ErrorCode setQuadraturePosition(int newPosition) {
+        demand[0] = newPosition;
+        return ErrorCode.OK;
+    }
 
     @Override
     public double getLastSet() {

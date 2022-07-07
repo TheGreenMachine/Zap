@@ -1,15 +1,15 @@
 package com.team1816.lib.subsystems;
 
 public interface DifferentialDrivetrain extends TrackableDrivetrain {
-    double getLeftVelocityNativeUnits();
-    double getRightVelocityNativeUnits();
+    double getLeftVelocityTicksActual();
+    double getRightVelocityTicksActual();
 
-    double getLeftVelocityDemand();
-    double getRightVelocityDemand();
+    double getLeftVelocityTicksDemand();
+    double getRightVelocityTicksDemand();
 
-    double getLeftVelocityError();
-    double getRightVelocityError();
+    double getLeftError();
+    double getRightError();
 
-    double getLeftEncoderDistance();
-    double getRightEncoderDistance();
+    double getLeftDistance();
+    double getRightDistance();
 }

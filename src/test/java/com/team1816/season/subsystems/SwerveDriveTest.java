@@ -71,7 +71,7 @@ public class SwerveDriveTest {
     public void setUp() {
         when(mDriveFactory.getInstance()).thenReturn(mDrive);
         mDrive.zeroSensors();
-        state.reset();
+        state.resetPosition();
     }
 
     private SwerveModuleState[] getExpectedState(
@@ -106,7 +106,7 @@ public class SwerveDriveTest {
 
     @Test
     public void testTeleopRotation() {
-        mDrive.setTeleopInputs(0, 0, 1, false, false);
+        mDrive.setTeleopInputs(0, 0, 1);
         mDrive.writeToHardware();
         mDrive.readFromHardware();
         verifyStates(mDrive.getStates(), 0, 0, maxRotVel);
@@ -114,7 +114,7 @@ public class SwerveDriveTest {
 
     @Test
     public void testTeleopForward() {
-        mDrive.setTeleopInputs(1, 0, 0, false, false);
+        mDrive.setTeleopInputs(1, 0, 0);
         mDrive.writeToHardware();
         mDrive.readFromHardware();
         verifyStates(mDrive.getStates(), maxVel, 0, 0);
@@ -122,7 +122,7 @@ public class SwerveDriveTest {
 
     @Test
     public void testTeleopStrafe() {
-        mDrive.setTeleopInputs(0, 1, 0, false, false);
+        mDrive.setTeleopInputs(0, 1, 0);
         mDrive.writeToHardware();
         mDrive.readFromHardware();
         verifyStates(mDrive.getStates(), 0, maxVel, 0);

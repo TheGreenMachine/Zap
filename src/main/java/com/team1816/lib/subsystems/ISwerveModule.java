@@ -1,16 +1,18 @@
 package com.team1816.lib.subsystems;
 
 public interface ISwerveModule {
-    String getSubsystemName();
+    String getModuleName();
 
-    //    double getAzimuthVelocity();
-    double getAzimuthActual();
-    //    double getAzimuthPositionDemand();
+    // angle degrees
+    double getActualAzimuth();
     double getAzimuthError();
-    double getAzimuthDemand();
+    double getDesiredAzimuth();
 
-    double getDriveActual();
-    double getDriveDemand();
-    //    double getDriveDistance();
+    // velocity ticks/100ms
+    double getActualDrive();
+    double getDesiredDrive();
     double getDriveError();
+
+    // Temperature C
+    double getMotorTemp();
 }

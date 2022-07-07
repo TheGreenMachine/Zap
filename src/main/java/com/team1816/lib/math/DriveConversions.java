@@ -1,37 +1,26 @@
 package com.team1816.lib.math;
 
 import com.team1816.lib.subsystems.Drive;
+import com.team1816.lib.util.Util;
 import com.team1816.season.Constants;
-import com.team254.lib.util.Util;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 
 public class DriveConversions {
 
     private static final double azimuthPPR = Constants.Swerve.kAzimuthPPR;
-    private static final double wheelCircumferenceInches =
-        Constants.kWheelCircumferenceInches;
-    private static final double DRIVE_ENCODER_PPR = Drive.DRIVE_ENCODER_PPR;
+    private static final double drivePPR = Drive.driveEncPPR;
 
-    // make the degree stuff to ticks/radians/ whatnot come into here instead of being spread out everywhere
-    public static double convertTicksToMeters(double ticks) {
-        return ticks / DRIVE_ENCODER_PPR * Constants.kWheelCircumferenceMeters;
+    public static double ticksToMeters(double ticks) {
+        return ticks / drivePPR * Constants.kWheelCircumferenceMeters;
     }
 
-    public static double convertInchesToTicks(double inches) {
-        return inches / Math.PI * azimuthPPR / wheelCircumferenceInches;
+    public static double inchesToTicks(double inches) {
+        return inches / Math.PI * azimuthPPR / Constants.kWheelCircumferenceInches;
     }
 
-    public static double convertMetersToTicks(double meters) {
-        return convertInchesToTicks(Units.metersToInches(meters));
-    }
-
-    public static double convertDegreesToRadians(double degrees) {
-        return degrees * Math.PI / 180;
-    }
-
-    public static double convertRadiansToDegrees(double radians) {
-        return radians * 180 / Math.PI;
+    public static double metersToTicks(double meters) {
+        return inchesToTicks(Units.metersToInches(meters));
     }
 
     public static double convertTicksToRadians(double ticks) {
@@ -43,15 +32,19 @@ public class DriveConversions {
     }
 
     public static double convertTicksToDegrees(double ticks) {
-        return convertRadiansToDegrees(convertTicksToRadians(ticks));
+        return Units.radiansToDegrees(convertTicksToRadians(ticks));
     }
 
     public static double convertDegreesToTicks(double degrees) {
-        return convertRadiansToTicks(convertDegreesToRadians(degrees));
+        return convertRadiansToTicks(Units.degreesToRadians(degrees));
     }
 
     public static double rotationsToInches(double rotations) {
         return rotations * (Constants.kWheelCircumferenceInches);
+    }
+
+    public static double rotationsToMeters(double rotations) {
+        return rotations * (Constants.kWheelCircumferenceMeters);
     }
 
     public static double rpmToInchesPerSecond(double rpm) {
@@ -71,15 +64,19 @@ public class DriveConversions {
     }
 
     public static double inchesPerSecondToTicksPer100ms(double inches_per_second) {
-        return inchesToRotations(inches_per_second) * DRIVE_ENCODER_PPR / 10.0;
+        return inchesToRotations(inches_per_second) * drivePPR / 10.0;
     }
 
     public static double ticksPerSecondToInchesPer100ms(double ticks_per_second) {
-        return rotationsToInches(ticks_per_second / DRIVE_ENCODER_PPR) / 10.0;
+        return rotationsToInches(ticks_per_second / drivePPR) / 10.0;
+    }
+
+    public static double ticksPer100MSToMPS(double ticksPer100MS) { // ticks/100ms to meters / second
+        return rotationsToMeters(ticksPer100MS / drivePPR) * 10.0;
     }
 
     public static double radiansPerSecondToTicksPer100ms(double rad_s) {
-        return rad_s / (Math.PI * 2.0) * DRIVE_ENCODER_PPR / 10.0;
+        return rad_s / (Math.PI * 2.0) * drivePPR / 10.0;
     }
 
     public static boolean epsilonEquals(

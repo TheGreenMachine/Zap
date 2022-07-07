@@ -16,26 +16,33 @@ public class LazyTalonSRX
     extends TalonSRX
     implements IConfigurableMotorController, IMotorSensor {
 
-    protected double mLastSet = Double.NaN;
-    protected ControlMode mLastControlMode = null;
-    private final SensorCollection mSensors;
+    protected double lastSet = Double.NaN;
+    protected String name = "";
+    protected ControlMode lastControlMode = null;
+    private final SensorCollection sensors;
 
-    public LazyTalonSRX(int deviceNumber) {
+    public LazyTalonSRX(int deviceNumber, String motorName) {
         super(deviceNumber);
-        mSensors = super.getSensorCollection();
+        sensors = super.getSensorCollection();
+        name = motorName;
     }
 
     @Override
     public double getLastSet() {
-        return mLastSet;
+        return lastSet;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override
     public void set(ControlMode mode, double value) {
-        if (value != mLastSet || mode != mLastControlMode) {
+        if (value != lastSet || mode != lastControlMode) {
             if (!super.hasResetOccurred()) {
-                mLastSet = value;
-                mLastControlMode = mode;
+                lastSet = value;
+                lastControlMode = mode;
                 super.set(mode, value);
             } else {
                 DriverStation.reportError("MOTOR " + getDeviceID() + " HAS RESET", false);
@@ -50,16 +57,16 @@ public class LazyTalonSRX
 
     @Override
     public int getQuadraturePosition() {
-        return mSensors.getQuadraturePosition();
+        return sensors.getQuadraturePosition();
     }
 
     @Override
     public int getPulseWidthPosition() {
-        return mSensors.getPulseWidthPosition();
+        return sensors.getPulseWidthPosition();
     }
 
     @Override
     public ErrorCode setQuadraturePosition(int newPosition) {
-        return mSensors.setQuadraturePosition(newPosition, Constants.kLongCANTimeoutMs);
+        return sensors.setQuadraturePosition(newPosition, Constants.kLongCANTimeoutMs);
     }
 }

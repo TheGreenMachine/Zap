@@ -4,10 +4,10 @@ import static com.team1816.lib.subsystems.Drive.NAME;
 import static com.team1816.lib.subsystems.Drive.factory;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.sensors.CANCoder;
+import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.math.DriveConversions;
 import com.team1816.lib.math.SwerveKinematics;
 import com.team1816.season.Constants;
@@ -18,14 +18,16 @@ import edu.wpi.first.wpilibj.Timer;
 public class SwerveModule implements ISwerveModule {
 
     // Components
-    private final IMotorControllerEnhanced mDriveMotor;
-    private final IMotorControllerEnhanced mAzimuthMotor;
-    public static CANCoder mCanCoder;
-    public double mVelDemand;
-    public double mAzmDemand;
+    private final IGreenMotor driveMotor;
+    private final IGreenMotor azimuthMotor; // angle motor (the pivot part of a shopping cart except motorized)
+    public final CANCoder canCoder;
 
     // State
-    private boolean isBrakeMode = false;
+    public double driveDemand;
+    public double driveActual;
+    public double azimuthDemand;
+    public double azimuthActual;
+    public double motorTemp; // drive motor temperature
 
     // Constants
     private final Constants.Swerve mConstants;
@@ -40,13 +42,13 @@ public class SwerveModule implements ISwerveModule {
 
         System.out.println(
             "Configuring Swerve Module " +
-            constants.kName +
+            constants.kModuleName +
             " on subsystem " +
             subsystemName
         );
 
         /* Drive Motor Config */
-        mDriveMotor =
+        driveMotor =
             factory.getMotor(
                 subsystemName,
                 constants.kDriveMotorName,
@@ -55,7 +57,7 @@ public class SwerveModule implements ISwerveModule {
             );
 
         /* Azimuth (Angle) Motor Config */
-        mAzimuthMotor =
+        azimuthMotor =
             factory.getMotor(
                 subsystemName,
                 constants.kAzimuthMotorName,
@@ -63,19 +65,19 @@ public class SwerveModule implements ISwerveModule {
                 canCoder.getDeviceID()
             );
 
-        mDriveMotor.configOpenloopRamp(0.25, Constants.kCANTimeoutMs);
-        mAzimuthMotor.configSupplyCurrentLimit(
+        driveMotor.configOpenloopRamp(0.25, Constants.kCANTimeoutMs);
+        azimuthMotor.configSupplyCurrentLimit(
             new SupplyCurrentLimitConfiguration(true, 18, 28, 1),
             Constants.kLongCANTimeoutMs
         );
 
-        mAzimuthMotor.configPeakOutputForward(.4, Constants.kLongCANTimeoutMs);
-        mAzimuthMotor.configPeakOutputReverse(-.4, Constants.kLongCANTimeoutMs);
+        azimuthMotor.configPeakOutputForward(.4, Constants.kLongCANTimeoutMs);
+        azimuthMotor.configPeakOutputReverse(-.4, Constants.kLongCANTimeoutMs);
 
-        mAzimuthMotor.setSensorPhase(constants.kInvertAzimuthSensorPhase);
-        mAzimuthMotor.setNeutralMode(NeutralMode.Brake);
+        azimuthMotor.setSensorPhase(constants.kInvertAzimuthSensorPhase);
+        azimuthMotor.setNeutralMode(NeutralMode.Brake);
 
-        mAzimuthMotor.configAllowableClosedloopError(
+        azimuthMotor.configAllowableClosedloopError(
             0,
             constants.kAzimuthPid.allowableError,
             Constants.kLongCANTimeoutMs
@@ -84,7 +86,7 @@ public class SwerveModule implements ISwerveModule {
         allowableError = 5; // TODO this is a dummy value for checkSystem
 
         /* Angle Encoder Config */
-        mCanCoder = canCoder;
+        this.canCoder = canCoder;
 
         System.out.println("  " + this);
     }
@@ -92,101 +94,97 @@ public class SwerveModule implements ISwerveModule {
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
         SwerveModuleState desired_state = SwerveKinematics.optimize(
             desiredState,
-            getState().angle
-        ); // desiredState; //
-        mVelDemand =
+            getActualState().angle
+        );
+        driveDemand =
             DriveConversions.metersPerSecondToTicksPer100ms(
                 desired_state.speedMetersPerSecond
             );
         if (!isOpenLoop) {
-            mDriveMotor.set(ControlMode.Velocity, mVelDemand);
+            driveMotor.set(ControlMode.Velocity, driveDemand);
         } else {
-            mDriveMotor.set(
-                ControlMode.PercentOutput,
-                desired_state.speedMetersPerSecond
-            ); // lying to it - speedMetersPerSecond passed in is actually percent output (1 to -1)
+            driveMotor.set(ControlMode.PercentOutput, desired_state.speedMetersPerSecond); // lying to it - speedMetersPerSecond passed in is actually percent output (1 to -1)
         }
-        mAzmDemand =
+        azimuthDemand =
             DriveConversions.convertDegreesToTicks(desired_state.angle.getDegrees()) +
             mConstants.kAzimuthEncoderHomeOffset;
-        mAzimuthMotor.set(ControlMode.Position, mAzmDemand);
+        azimuthMotor.set(ControlMode.Position, azimuthDemand);
     }
 
-    public SwerveModuleState getState() {
-        double velocity =
-            DriveConversions.convertTicksToMeters(
-                mDriveMotor.getSelectedSensorVelocity(0)
-            ) *
-            10;
-        Rotation2d angle = Rotation2d.fromDegrees(
+    public SwerveModuleState getActualState() {
+        driveActual =
+            DriveConversions.ticksToMeters(driveMotor.getSelectedSensorVelocity(0)) * 10;
+        azimuthActual =
             DriveConversions.convertTicksToDegrees(
-                mAzimuthMotor.getSelectedSensorPosition(0) -
+                azimuthMotor.getSelectedSensorPosition(0) -
                 mConstants.kAzimuthEncoderHomeOffset
-            )
-        );
-        return new SwerveModuleState(velocity, angle);
+            );
+        Rotation2d angleActual = Rotation2d.fromDegrees(azimuthActual);
+        motorTemp = driveMotor.getTemperature(); // Celsius
+        return new SwerveModuleState(driveActual, angleActual);
     }
 
     @Override
-    public String getSubsystemName() {
-        return mConstants.kName;
+    public double getMotorTemp() {
+        return motorTemp;
     }
 
     @Override
-    public double getAzimuthActual() {
-        return mAzimuthMotor.getSelectedSensorPosition(0);
+    public String getModuleName() {
+        return mConstants.kModuleName;
+    }
+
+    @Override
+    public double getDesiredAzimuth() {
+        return azimuthDemand;
+    }
+
+    @Override
+    public double getActualAzimuth() {
+        return azimuthActual;
     }
 
     @Override
     public double getAzimuthError() {
-        return mAzimuthMotor.getClosedLoopError(0);
+        return azimuthMotor.getClosedLoopError(0);
     }
 
     @Override
-    public double getAzimuthDemand() {
-        return mAzmDemand;
+    public double getDesiredDrive() {
+        return driveDemand;
     }
 
     @Override
-    public double getDriveActual() {
-        return mDriveMotor.getSelectedSensorVelocity(0);
-    }
-
-    @Override
-    public double getDriveDemand() {
-        return mVelDemand;
+    public double getActualDrive() {
+        return driveActual;
     }
 
     @Override
     public double getDriveError() {
-        return mDriveMotor.getClosedLoopError(0);
-    }
-
-    public synchronized void setDriveBrakeMode(boolean brake_mode) {
-        //        mDriveMotor.setNeutralMode(brake_mode ? NeutralMode.Brake : NeutralMode.Coast);
-        if (brake_mode) {
-            mDriveMotor.set(ControlMode.Velocity, 0);
-        }
-        isBrakeMode = brake_mode;
+        return driveMotor.getClosedLoopError(0);
     }
 
     public boolean checkSystem() {
         boolean checkDrive = true;
-        double actualMaxTicks = factory.getConstant(NAME, "maxTicks"); // if this isn't calculated right this test will fail
-        mDriveMotor.set(ControlMode.PercentOutput, 0.2);
+        double actualmaxVelTicks100ms = factory.getConstant(NAME, "maxVelTicks100ms"); // if this isn't calculated right this test will fail
+        driveMotor.set(ControlMode.PercentOutput, 0.2);
         Timer.delay(1);
         if (
-            Math.abs(mDriveMotor.getSelectedSensorVelocity(0) - 0.2 * actualMaxTicks) >
-            actualMaxTicks /
+            Math.abs(
+                driveMotor.getSelectedSensorVelocity(0) - 0.2 * actualmaxVelTicks100ms
+            ) >
+            actualmaxVelTicks100ms /
             50
         ) {
             checkDrive = false;
         }
-        mDriveMotor.set(ControlMode.PercentOutput, -0.2);
+        driveMotor.set(ControlMode.PercentOutput, -0.2);
         Timer.delay(1);
         if (
-            Math.abs(mDriveMotor.getSelectedSensorVelocity(0) + 0.2 * actualMaxTicks) >
-            actualMaxTicks /
+            Math.abs(
+                driveMotor.getSelectedSensorVelocity(0) + 0.2 * actualmaxVelTicks100ms
+            ) >
+            actualmaxVelTicks100ms /
             50
         ) {
             checkDrive = false;
@@ -196,10 +194,10 @@ public class SwerveModule implements ISwerveModule {
         double setPoint = mConstants.kAzimuthEncoderHomeOffset;
         Timer.delay(1);
         for (int i = 0; i < 4; i++) {
-            mAzimuthMotor.set(ControlMode.Position, setPoint);
+            azimuthMotor.set(ControlMode.Position, setPoint);
             Timer.delay(1);
             if (
-                Math.abs(mAzimuthMotor.getSelectedSensorPosition(0) - setPoint) >
+                Math.abs(azimuthMotor.getSelectedSensorPosition(0) - setPoint) >
                 allowableError
             ) {
                 checkAzimuth = false;
@@ -217,11 +215,11 @@ public class SwerveModule implements ISwerveModule {
             "SwerveModule{ " +
             mConstants.kDriveMotorName +
             " id: " +
-            mDriveMotor.getDeviceID() +
+            driveMotor.getDeviceID() +
             "  " +
             mConstants.kAzimuthMotorName +
             " id: " +
-            mAzimuthMotor.getDeviceID() +
+            azimuthMotor.getDeviceID() +
             " offset: " +
             mConstants.kAzimuthEncoderHomeOffset +
             " invertSensor: " +

@@ -65,11 +65,12 @@ subsystems:
                     kF: 0
                     allowableError: 5
         constants:
-            maxTicks: 12275.7 # ticks per 100ms
+            maxVelTicks100ms: 12275.7 # ticks per 100ms
             openLoopRampRate: 0.8
             isSwerve: 1
             encPPR: 14255
             azimuthEncPPR: 4096
+            heatThreshold: 65 # degrees C
     ledmanager:
         implemented: true
         canifier: -1
@@ -80,7 +81,7 @@ subsystems:
             cameraLed: 1
             maxLevel: 255
     turret:
-        implemented: true
+        implemented: false
         pidConfig:
             slot0:
                 kP: 1.25
@@ -99,14 +100,11 @@ subsystems:
             encPPR: 4096
             turretPPR: 53248 # 4096 * 13
     shooter:
-        implemented: true
+        implemented: false
         falcons:
             shooterMain: 21
-            shooterFollower: -1
         invertMotor:
             - shooterMain
-        solenoids:
-            hood: 0
         pidConfig:
             slot0:
                 kP: 0.38 #.45
@@ -118,7 +116,7 @@ subsystems:
             useLinearPiecewise: 0
             useCubicSpline: 0
             usingPoseForSpeed: 0
-            maxTicks: 20700
+            maxVelTicks100ms: 20700
             nearVel: 4500
             midVel: 8450
             tarmacTapeVel: 8125
@@ -128,7 +126,7 @@ subsystems:
     climber:
         implemented: true
         falcons:
-            climber: 34 #20
+            climberMain: 34 #20
             climberFollower: 35 #-1
         solenoids:
             topClamp: 7
@@ -141,7 +139,7 @@ subsystems:
                 kF: 0.0
                 allowableError: 5000
         constants:
-            maxTicks: 1
+            maxVelTicks100ms: 1
             unlockPos: -14400
             startPos: 0
             returnPos: 0
@@ -149,7 +147,7 @@ subsystems:
             secondToLastRungPos: 342000
             lastPos: 370000
     elevator:
-        implemented: true
+        implemented: false
         talons:
             elevator: 32
         pidConfig:
@@ -163,17 +161,15 @@ subsystems:
             - elevator
         constants:
             isVelocity: 1
-            maxTicks: 20000
+            maxVelTicks100ms: 20000
             ballSensor: 0
             firePow: 0.35
             flushPow: -0.3
             intakePow: 0.3
     spindexer:
-        implemented: true
+        implemented: false
         talons:
             spindexer: 31
-        solenoids:
-            feederFlap: -1
         constants:
             collectPow: 0.5
             indexPow: -0.5
@@ -183,7 +179,7 @@ subsystems:
     collector:
         implemented: true
         sparkmaxes:
-            intake: 23 # maxTicks 10617
+            intake: 23 # maxVelTicks100ms 10617
         invertMotor:
             - intake
         solenoids:
@@ -200,28 +196,39 @@ subsystems:
             collecting: -5000 #-3600
             flush: 5000 #.35
     camera:
-        implemented: true
+        implemented: false
         constants:
             debug: 0
             maxDist: 400
             maxDeltaX: 1200
             allowableDistanceError: 50
-pcm: 2
-canivoreBusName: highSpeed
-constants:
+    cooler:
+        implemented: true
+        solenoids:
+            lock: 1
+            dump: 3
+infrastructure:
+    canivoreBusName: highSpeed
+    # power distribution
+    pdId: 1
+    pdIsRev: true
+    # pneumatics control
+    compressorEnabled: true
+    pcmIsRev: false
+    pcmId: 2
     # pigeon
     pigeonId: 13
-    isPigeon2: 1
-    pigeonOnTalon: -1
+    isPigeon2: true
+constants:
     # drivetrain dimensions and movement
-    maxRotVel: 7.2
+    maxRotVel: 14
     trackWidth: 21 #inches
     wheelbaseLength: 21.5 #inches
     wheelDiameter: 4
     kTrackScrubFactor: 1.0
-    maxVelOpenLoop: 3 # 160 # 240 # inches/s # 22560 native units ---30
-    maxVelPathFollowing: 2.2 # 160 # 240 # inches/s # 22560 native units ---30
-    maxAccel: 100 # inches/s^ 2
+    maxVelOpenLoop: 3 # meters/s
+    maxVelPathFollowing: 3 # meters/s (2.2)
+    maxAccel: 2.54 # meters/s^ 2
     maxAllowablePoseError: 0.1
     ## Logging ##
     logTeleOp: 1 # 0 or 1
@@ -232,9 +239,6 @@ constants:
     ## General ##
     EnableBucketTuning: 1
     teleopFieldCentric: 1 # 0 or 1
-    compressorEnabled: 1 # 0 or 1
     kLooperDt: .035 # seconds
-    pdIsRev: 1 # power distribution
-    phIsRev: 0 # pneumatics control
     resetFactoryDefaults: 0 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret
 

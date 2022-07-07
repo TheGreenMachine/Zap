@@ -47,10 +47,10 @@ public class CtreMotorFactory {
     }
 
     private static final Configuration kDefaultConfiguration = new Configuration();
-    private static final Configuration kSlaveConfiguration = new Configuration();
+    private static final Configuration kFollowerConfiguration = new Configuration();
 
     // Create a CANTalon with the default (out of the box) configuration.
-    public static IMotorControllerEnhanced createDefaultTalon(
+    public static IGreenMotor createDefaultTalon(
         int id,
         String name,
         boolean isFalcon,
@@ -71,33 +71,33 @@ public class CtreMotorFactory {
         );
     }
 
-    public static IMotorControllerEnhanced createPermanentSlaveTalon(
+    public static IGreenMotor createFollowerTalon(
         int id,
         String name,
         boolean isFalcon,
-        IMotorController master,
+        IGreenMotor main,
         SubsystemConfig subsystem,
         Map<String, PIDSlotConfiguration> pidConfigList,
         String canBus
     ) {
-        final IMotorControllerEnhanced talon = createTalon(
+        final IGreenMotor talon = createTalon(
             id,
             name,
-            kSlaveConfiguration,
+            kFollowerConfiguration,
             isFalcon,
             subsystem,
             pidConfigList,
-            -1, // never can have a remote sensor on slave,
+            -1, // never can have a remote sensor on Follower,
             canBus
         );
         System.out.println(
-            "Slaving talon on " + id + " to talon on " + master.getDeviceID()
+            "Slaving talon on " + id + " to talon on " + main.getDeviceID()
         );
-        talon.follow(master);
+        talon.follow(main);
         return talon;
     }
 
-    private static IMotorControllerEnhanced createTalon(
+    private static IGreenMotor createTalon(
         int id,
         String name,
         Configuration config,
@@ -108,8 +108,8 @@ public class CtreMotorFactory {
         String canBus
     ) {
         IConfigurableMotorController talon = isFalcon
-            ? new LazyTalonFX(id, canBus)
-            : new LazyTalonSRX(id);
+            ? new LazyTalonFX(id, name, canBus)
+            : new LazyTalonSRX(id, name);
         configureMotorController(
             talon,
             name,
@@ -123,35 +123,37 @@ public class CtreMotorFactory {
         return talon;
     }
 
-    public static IMotorControllerEnhanced createGhostTalon(
-        int maxTicks,
-        int absInitOffset
+    public static IGreenMotor createGhostMotor(
+        int maxVelTicks100ms,
+        int absInitOffset,
+        String name
     ) {
-        return new GhostMotorControllerEnhanced(maxTicks, absInitOffset);
+        return new GhostMotor(maxVelTicks100ms, absInitOffset, name);
     }
 
-    public static IMotorController createDefaultVictor(int id) {
-        return createVictor(id, kDefaultConfiguration);
+    public static IGreenMotor createDefaultVictor(int id, String name) {
+        return createVictor(id, name, kDefaultConfiguration);
     }
 
-    public static IMotorController createPermanentSlaveVictor(
+    public static IGreenMotor createFollowerVictor(
         int id,
-        IMotorController master
+        String name,
+        IGreenMotor main
     ) {
-        final IMotorController victor = createVictor(id, kSlaveConfiguration);
+        final IGreenMotor victor = createVictor(id, name, kFollowerConfiguration);
         System.out.println(
-            "Slaving victor on " + id + " to talon on " + master.getDeviceID()
+            "Slaving victor on " + id + " to talon on " + main.getDeviceID()
         );
-        victor.follow(master);
+        victor.follow(main);
         return victor;
     }
 
-    public static IMotorController createVictor(int id, Configuration config) {
-        VictorSPX victor = new VictorSPX(id);
-        //configureMotorController(victor, config);
+    // This is currently treating a VictorSPX, which implements IMotorController as an IGreenMotor, which implements IMotorControllerEnhanced
+    public static IGreenMotor createVictor(int id, String name, Configuration config) {
+        IGreenMotor victor = new LazyVictorSPX(id, name);
 
         victor.configReverseLimitSwitchSource(
-            RemoteLimitSwitchSource.Deactivated,
+            LimitSwitchSource.Deactivated,
             LimitSwitchNormal.NormallyOpen,
             kTimeoutMs
         );
@@ -283,9 +285,8 @@ public class CtreMotorFactory {
         talonConfiguration.enableOptimizations = true;
 
         if (factory.getConstant("resetFactoryDefaults", 0) > 0) {
+            System.out.println("Resetting motor factory defaults");
             motor.configFactoryDefault(kTimeoutMs);
-        } else {
-            System.out.println("NOT RESETTING DEFAULTS");
         }
 
         motor.overrideLimitSwitchesEnable(config.ENABLE_LIMIT_SWITCH);

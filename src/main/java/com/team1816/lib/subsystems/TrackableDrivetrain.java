@@ -7,6 +7,6 @@ public interface TrackableDrivetrain {
     double getFieldDesiredXDistance();
     double getFieldDesiredYDistance();
 
-    double getHeadingDegrees();
-    double getDesiredHeading();
+    double getActualHeadingDegrees();
+    double getDesiredHeadingDegrees();
 }

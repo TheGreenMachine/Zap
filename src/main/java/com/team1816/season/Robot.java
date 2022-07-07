@@ -22,7 +22,6 @@ import com.team1816.season.states.RobotState;
 import com.team1816.season.states.Superstructure;
 import com.team1816.season.subsystems.*;
 import com.team254.lib.util.LatchedBoolean;
-import com.team254.lib.util.SwerveDriveSignal;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.*;
 import java.nio.file.Files;
@@ -37,68 +36,72 @@ public class Robot extends TimedRobot {
 
     private final Injector injector;
 
-    private final Looper mEnabledLooper = new Looper(this);
-    private final Looper mDisabledLooper = new Looper(this);
+    private final Looper enabledLoop = new Looper(this);
+    private final Looper disabledLoop = new Looper(this);
 
-    private IControlBoard mControlBoard;
-
-    private final SubsystemManager mSubsystemManager;
-
-    //State managers
-    private final Superstructure mSuperstructure;
-    private final Infrastructure mInfrastructure;
-    private final com.team1816.season.states.RobotState mRobotState;
-
-    // subsystems
-    private final Drive mDrive;
-    private final Collector mCollector;
-    private final Shooter mShooter;
-    private final Turret mTurret;
-    private final Spindexer mSpindexer;
-    private final Elevator mElevator;
-    private final Climber mClimber;
-    private final Camera mCamera;
-    private final LedManager mLedManager;
-    private final DistanceManager mDistanceManager;
-
-    private final LatchedBoolean mWantsAutoExecution = new LatchedBoolean();
-    private final LatchedBoolean mWantsAutoInterrupt = new LatchedBoolean();
-
-    private final AutoModeSelector mAutoModeSelector;
-    private final AutoModeExecutor mAutoModeExecutor;
-    private TrajectorySet trajectorySet;
-
-    private double loopStart;
-
+    // controls
+    private IControlBoard controlBoard;
     private ActionManager actionManager;
 
-    // private PowerDistributionPanel pdp = new PowerDistributionPanel();
+    private final Infrastructure infrastructure;
+    private final SubsystemManager subsystemManager;
+
+    //State managers
+    private final Superstructure superstructure;
+    private final RobotState robotState;
+
+    // subsystems
+    private final Drive drive;
+    private final Collector collector;
+    private final Shooter shooter;
+    private final Turret turret;
+    private final Spindexer spindexer;
+    private final Elevator elevator;
+    private final Climber climber;
+    private final Cooler cooler;
+    private final Camera camera;
+    private final LedManager ledManager;
+    private final DistanceManager distanceManager;
+
+    // debugging / testing
+    private final LatchedBoolean wantExecution = new LatchedBoolean();
+    private final LatchedBoolean wantInterrupt = new LatchedBoolean();
+
+    // autonomous
+    private final AutoModeSelector autoModeSelector;
+    private final AutoModeExecutor autoModeExecutor;
+    private TrajectorySet trajectorySet;
+
+    // timing
+    private double loopStart;
+
+    // hack variables
     private final Turret.ControlMode defaultTurretControlMode =
-        Turret.ControlMode.CENTER_FOLLOWING;
+        Turret.ControlMode.FIELD_FOLLOWING;
     private boolean faulted;
     private boolean useManualShoot = false;
-    private boolean hasAimed = false;
 
     Robot() {
         super();
         // initialize injector
         injector = Guice.createInjector(new LibModule(), new SeasonModule());
-        mDrive = (injector.getInstance(Drive.Factory.class)).getInstance();
-        mTurret = injector.getInstance(Turret.class);
-        mClimber = injector.getInstance(Climber.class);
-        mCollector = injector.getInstance(Collector.class);
-        mElevator = injector.getInstance(Elevator.class);
-        mCamera = injector.getInstance(Camera.class);
-        mSpindexer = injector.getInstance(Spindexer.class);
-        mSuperstructure = injector.getInstance(Superstructure.class);
-        mShooter = injector.getInstance(Shooter.class);
-        mRobotState = injector.getInstance(RobotState.class);
-        mInfrastructure = injector.getInstance(Infrastructure.class);
-        mDistanceManager = injector.getInstance(DistanceManager.class);
-        mLedManager = injector.getInstance(LedManager.class);
-        mSubsystemManager = injector.getInstance(SubsystemManager.class);
-        mAutoModeSelector = injector.getInstance(AutoModeSelector.class);
-        mAutoModeExecutor = injector.getInstance(AutoModeExecutor.class);
+        drive = (injector.getInstance(Drive.Factory.class)).getInstance();
+        turret = injector.getInstance(Turret.class);
+        climber = injector.getInstance(Climber.class);
+        collector = injector.getInstance(Collector.class);
+        elevator = injector.getInstance(Elevator.class);
+        camera = injector.getInstance(Camera.class);
+        spindexer = injector.getInstance(Spindexer.class);
+        superstructure = injector.getInstance(Superstructure.class);
+        infrastructure = injector.getInstance(Infrastructure.class);
+        shooter = injector.getInstance(Shooter.class);
+        cooler = injector.getInstance(Cooler.class);
+        robotState = injector.getInstance(RobotState.class);
+        distanceManager = injector.getInstance(DistanceManager.class);
+        ledManager = injector.getInstance(LedManager.class);
+        subsystemManager = injector.getInstance(SubsystemManager.class);
+        autoModeSelector = injector.getInstance(AutoModeSelector.class);
+        autoModeExecutor = injector.getInstance(AutoModeExecutor.class);
         trajectorySet = injector.getInstance(TrajectorySet.class);
     }
 
@@ -113,7 +116,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         try {
-            mControlBoard = injector.getInstance(IControlBoard.class);
+            controlBoard = injector.getInstance(IControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
             if (Constants.kIsBadlogEnabled) {
                 var logFile = new SimpleDateFormat("MMdd_HH-mm").format(new Date());
@@ -140,13 +143,13 @@ public class Robot extends TimedRobot {
                 );
                 BadLog.createValue(
                     "Max Acceleration",
-                    String.valueOf(Constants.kPathFollowingMaxAccel)
+                    String.valueOf(Constants.kPathFollowingMaxAccelMeters)
                 );
 
                 BadLog.createTopic(
                     "Timings/Looper",
                     "ms",
-                    mEnabledLooper::getLastLoop,
+                    enabledLoop::getLastLoop,
                     "hide",
                     "join:Timings"
                 );
@@ -165,244 +168,221 @@ public class Robot extends TimedRobot {
                     "hide"
                 );
 
-                DrivetrainLogger.init(mDrive);
+                DrivetrainLogger.init(drive);
                 if (RobotBase.isReal()) {
                     BadLog.createTopic(
                         "PDP/Current",
                         "Amps",
-                        mInfrastructure.getPdh()::getTotalCurrent
+                        infrastructure.getPd()::getTotalCurrent
                     );
 
-                    mDrive.CreateBadLogValue("Drivetrain PID", mDrive.pidToString());
-                    mTurret.CreateBadLogValue("Turret PID", mTurret.pidToString());
-                    mShooter.CreateBadLogValue("Shooter PID", mShooter.pidToString());
+                    drive.CreateBadLogValue("Drivetrain PID", drive.pidToString());
+                    turret.CreateBadLogValue("Turret PID", turret.pidToString());
+                    shooter.CreateBadLogValue("Shooter PID", shooter.pidToString());
 
-                    if (mCamera.isImplemented()) {
+                    if (camera.isImplemented()) {
                         BadLog.createTopic(
                             "Vision/DeltaXAngle",
                             "Degrees",
-                            mCamera::getDeltaX
+                            camera::getDeltaX
                         );
                         BadLog.createTopic(
                             "Vision/Distance",
                             "inches",
-                            mCamera::getDistance
-                        );
-                        BadLog.createTopic(
-                            "Vision/CenterX",
-                            "pixels",
-                            mCamera::getRawCenterX
+                            camera::getDistance
                         );
                     }
                 }
-                BadLog.createTopic(
-                    "ClimberPosition",
-                    "NativeRotationUnits",
-                    mClimber::getClimberPosition,
-                    "hide",
-                    "join:Tracking/Angles"
-                );
-                mShooter.CreateBadLogTopic(
+                shooter.CreateBadLogTopic(
                     "Shooter/ActVel",
                     "NativeUnits",
-                    mShooter::getActualVelocity,
+                    shooter::getActualVelocity,
                     "hide",
                     "join:Shooter/Velocities"
                 );
-                mShooter.CreateBadLogTopic(
+                shooter.CreateBadLogTopic(
                     "Shooter/TargetVel",
                     "NativeUnits",
-                    mShooter::getTargetVelocity,
+                    shooter::getTargetVelocity,
                     "hide",
                     "join:Shooter/Velocities"
                 );
-                mShooter.CreateBadLogTopic(
+                shooter.CreateBadLogTopic(
                     "Shooter/Error",
                     "NativeUnits",
-                    mShooter::getError,
+                    shooter::getError,
                     "hide",
                     "join:Shooter/Velocities"
                 );
-                mTurret.CreateBadLogTopic(
+                turret.CreateBadLogTopic(
                     "Turret/ActPos",
                     "NativeUnits",
-                    mTurret::getActualTurretPositionTicks,
+                    turret::getActualTurretPositionTicks,
                     "hide",
                     "join:Turret/Positions"
                 );
-                mTurret.CreateBadLogTopic(
+                turret.CreateBadLogTopic(
                     "Turret/TargetPos",
                     "NativeUnits",
-                    mTurret::getTargetPosition,
+                    turret::getTargetPosition,
                     "hide",
                     "join:Turret/Positions"
                 );
-                mTurret.CreateBadLogTopic(
+                turret.CreateBadLogTopic(
                     "Turret/ErrorPos",
                     "NativeUnits",
-                    mTurret::getPositionError
+                    turret::getPositionError
                 );
             }
 
             logger.finishInitialization();
 
-            mSubsystemManager.setSubsystems(
-                mDrive,
-                mElevator,
-                mSpindexer,
-                mShooter,
-                mCollector,
-                mTurret,
-                mClimber,
-                mCamera,
-                mLedManager
+            subsystemManager.setSubsystems(
+                drive,
+                elevator,
+                spindexer,
+                shooter,
+                collector,
+                turret,
+                climber,
+                camera,
+                ledManager,
+                cooler
             );
 
-            mSubsystemManager.zeroSensors();
-            mSuperstructure.setStopped(true); // bool statement is for shooter state (stop or coast)
-            mDistanceManager.outputBucketOffsets();
+            subsystemManager.zeroSensors();
+            superstructure.setStopped(true); // bool statement is for shooter state (stop or coast)
+            distanceManager.outputBucketOffsets();
 
-            mSubsystemManager.registerEnabledLoops(mEnabledLooper);
-            mSubsystemManager.registerDisabledLoops(mDisabledLooper);
+            subsystemManager.registerEnabledLoops(enabledLoop);
+            subsystemManager.registerDisabledLoops(disabledLoop);
 
             // Robot starts forwards.
-            mRobotState.reset();
+            robotState.resetPosition();
 
-            mAutoModeSelector.updateModeCreator();
+            autoModeSelector.updateModeCreator();
 
             actionManager =
                 new ActionManager(
-                    // Driver Gamepad
-                    //                    createAction(
-                    //                        mControlBoard::getRunAutoModeInTeleop,
-                    //                        () -> {
-                    //                            System.out.println("Running trajectory !");
-                    //                            SmartDashboard.putString("Teleop Spline", "TWO_BALL_B");
-                    //                            var trajectory = new TrajectoryAction(
-                    //                                TrajectorySet.TWO_BALL_B,
-                    //                                TrajectorySet.TWO_BALL_B_HEADINGS
-                    //                            );
-                    //                            mDrive.zeroSensors(
-                    //                                trajectory.getTrajectory().getInitialPose()
-                    //                            );
-                    //                            trajectory.start();
-                    //                        }
-                    //                    ),
                     createHoldAction(
-                        mControlBoard::getCollectorToggle,
-                        pressed -> mSuperstructure.setCollecting(pressed, true)
+                        controlBoard::getCollectorToggle,
+                        pressed -> superstructure.setCollecting(pressed, true)
                     ),
                     createHoldAction(
-                        mControlBoard::getCollectorBackspin,
-                        pressed -> mSuperstructure.setCollecting(pressed, false)
+                        controlBoard::getCollectorBackspin,
+                        pressed -> superstructure.setCollecting(pressed, false)
                     ),
-                    createAction(mControlBoard::getUnlockClimber, mClimber::unlock),
+                    createAction(controlBoard::getUnlockClimber, climber::unlock),
                     createAction(
-                        mControlBoard::getUseManualShoot,
+                        controlBoard::getUseManualShoot,
                         () -> {
                             useManualShoot = !useManualShoot;
                             System.out.println("manual shooting toggled!");
                         }
                     ),
                     createAction(
-                        mControlBoard::getZeroPose, // line up against ally field wall -> zero
+                        controlBoard::getZeroPose,
                         () -> {
-                            mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
-                            mDrive.zeroSensors(Constants.ZeroPose);
+                            turret.setTurretAngle(Turret.SOUTH);
+                            drive.zeroSensors(Constants.ZeroPose);
                         }
                     ),
-                    createHoldAction(mControlBoard::getSlowMode, mDrive::setSlowMode),
+                    createHoldAction(controlBoard::getBrakeMode, drive::setBraking),
+                    createHoldAction(controlBoard::getSlowMode, drive::setSlowMode),
                     // Operator Gamepad
                     createAction(
-                        mControlBoard::getRaiseBucket,
-                        () -> mDistanceManager.incrementBucket(100)
+                        controlBoard::getRaiseBucket,
+                        () -> distanceManager.incrementBucket(100)
                     ),
                     createAction(
-                        mControlBoard::getLowerBucket,
-                        () -> mDistanceManager.incrementBucket(-100)
+                        controlBoard::getLowerBucket,
+                        () -> distanceManager.incrementBucket(-100)
                     ),
                     createHoldAction(
-                        mControlBoard::getAutoAim,
+                        controlBoard::getAutoAim,
                         aim -> {
                             if (aim) {
-                                mTurret.snapWithCamera();
+                                turret.snapWithCamera();
                             } else {
-                                mSuperstructure.updatePoseWithCamera();
+                                superstructure.updatePoseWithCamera();
                                 if (
                                     defaultTurretControlMode ==
                                     Turret.ControlMode.CENTER_FOLLOWING
                                 ) {
-                                    mTurret.setFollowingAngle(Turret.CARDINAL_SOUTH);
+                                    turret.setFollowingAngle(Turret.SOUTH);
                                 }
-                                mTurret.setControlMode(defaultTurretControlMode);
+                                turret.setControlMode(defaultTurretControlMode);
                             }
                         }
                     ),
-                    createAction(mControlBoard::getCameraToggle, mCamera::toggleEnabled),
+                    createAction(
+                        controlBoard::getCameraToggle,
+                        () -> {
+                            robotState.overheating = !robotState.overheating;
+                            System.out.println(
+                                "overheating changed to = " + robotState.overheating
+                            );
+                        }
+                    ),
                     createHoldAction(
-                        mControlBoard::getYeetShot,
+                        controlBoard::getYeetShot,
                         yeet -> {
-                            mShooter.setHood(false);
                             if (useManualShoot) {
-                                mSuperstructure.setRevving(
+                                superstructure.setRevving(
                                     yeet,
                                     Shooter.TARMAC_TAPE_VEL,
                                     true
                                 ); // Tarmac
                             } else {
-                                mSuperstructure.setRevving(
+                                superstructure.setRevving(
                                     yeet,
                                     Shooter.NEAR_VELOCITY,
                                     true
                                 ); // Barf shot
                             }
-                            mSuperstructure.setFiring(yeet);
+                            superstructure.setFiring(yeet);
                         }
                     ),
                     createHoldAction(
-                        mControlBoard::getShoot,
+                        controlBoard::getShoot,
                         shooting -> {
-                            mShooter.setHood(true);
-                            mSuperstructure.setRevving(
+                            superstructure.setRevving(
                                 shooting,
                                 Shooter.LAUNCHPAD_VEL,
                                 useManualShoot
                             ); // Launchpad
-                            mSuperstructure.setFiring(shooting);
+                            superstructure.setFiring(shooting);
                         }
                     ),
-                    createAction(mControlBoard::getHood, mShooter::setHood),
                     createHoldAction(
-                        mControlBoard::getTurretJogLeft,
-                        moving ->
-                            mTurret.setTurretSpeed(moving ? Turret.TURRET_JOG_SPEED : 0)
+                        controlBoard::getTurretJogLeft,
+                        moving -> turret.setTurretSpeed(moving ? Turret.JOG_SPEED : 0)
                     ),
                     createHoldAction(
-                        mControlBoard::getTurretJogRight,
-                        moving ->
-                            mTurret.setTurretSpeed(moving ? -Turret.TURRET_JOG_SPEED : 0)
+                        controlBoard::getTurretJogRight,
+                        moving -> turret.setTurretSpeed(moving ? -Turret.JOG_SPEED : 0)
                     ),
                     createHoldAction(
-                        mControlBoard::getClimberUp,
-                        moving -> mClimber.setClimberPower(moving ? -.5 : 0)
+                        controlBoard::getClimberUp,
+                        moving -> climber.setClimberPower(moving ? -.5 : 0)
                     ),
                     createHoldAction(
-                        mControlBoard::getClimberDown,
-                        moving -> mClimber.setClimberPower(moving ? .5 : 0)
+                        controlBoard::getClimberDown,
+                        moving -> climber.setClimberPower(moving ? .5 : 0)
                     ),
-                    createAction(mControlBoard::getTopClamp, mClimber::setTopClamp),
-                    createAction(mControlBoard::getBottomClamp, mClimber::setBottomClamp),
+                    createAction(controlBoard::getTopClamp, climber::setTopClamp),
+                    createAction(controlBoard::getBottomClamp, climber::setBottomClamp),
                     createAction(
-                        mControlBoard::getAutoClimb,
+                        controlBoard::getAutoClimb,
                         () -> {
-                            if (mClimber.getCurrentStage() == 0) {
-                                mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
-                                mSuperstructure.setStopped(true);
+                            if (climber.getCurrentStage() == 0) {
+                                turret.setTurretAngle(Turret.SOUTH);
+                                superstructure.setStopped(true);
                             } else {
-                                mTurret.setTurretAngle(Turret.CARDINAL_SOUTH - 30);
+                                turret.setTurretAngle(Turret.SOUTH - 30);
                             }
 
-                            mClimber.incrementClimberStage();
+                            climber.incrementClimberStage();
                         }
                     )
                 );
@@ -415,23 +395,25 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         try {
-            mEnabledLooper.stop();
+            enabledLoop.stop();
 
-            mLedManager.setDefaultStatus(LedManager.RobotStatus.DISABLED);
-            mCamera.setCameraEnabled(false);
+            ledManager.setDefaultStatus(LedManager.RobotStatus.DISABLED);
+            camera.setCameraEnabled(false);
 
-            mSuperstructure.setStopped(true);
+            superstructure.setStopped(true);
+            subsystemManager.stop();
 
-            // Reset all auto mode state.
-            if (mAutoModeExecutor != null) {
-                mAutoModeExecutor.stop();
+            robotState.resetAllStates();
+            cooler.zeroSensors();
+            drive.zeroSensors();
+
+            // Reset all auto mode states.
+            if (autoModeExecutor != null) {
+                autoModeExecutor.stop();
             }
-            mAutoModeSelector.updateModeCreator();
+            autoModeSelector.updateModeCreator();
 
-            mDisabledLooper.start();
-
-            mDrive.stop();
-            mDrive.setBrakeMode(false);
+            disabledLoop.start();
         } catch (Throwable t) {
             faulted = true;
             throw t;
@@ -441,22 +423,21 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         try {
-            mDisabledLooper.stop();
-            mLedManager.setDefaultStatus(LedManager.RobotStatus.AUTONOMOUS);
+            disabledLoop.stop();
+            ledManager.setDefaultStatus(LedManager.RobotStatus.AUTONOMOUS);
 
-            // Robot starts where it's told for auto path
-            mRobotState.reset();
+            // Robot starts at first waypoint (Pose2D) of current auto path chosen
+            robotState.resetPosition();
 
-            mDrive.zeroSensors();
-            mTurret.zeroSensors();
+            drive.zeroSensors();
+            turret.zeroSensors();
 
-            mSuperstructure.setStopped(false);
-            mCamera.setCameraEnabled(false);
+            superstructure.setStopped(false);
 
-            mDrive.setControlState(Drive.DriveControlState.TRAJECTORY_FOLLOWING);
-            mAutoModeExecutor.start();
+            drive.setControlState(Drive.ControlState.TRAJECTORY_FOLLOWING);
+            autoModeExecutor.start();
 
-            mEnabledLooper.start();
+            enabledLoop.start();
         } catch (Throwable t) {
             throw t;
         }
@@ -465,24 +446,23 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         try {
-            mDisabledLooper.stop();
-            mLedManager.setDefaultStatus(LedManager.RobotStatus.ENABLED);
+            disabledLoop.stop();
+            ledManager.setDefaultStatus(LedManager.RobotStatus.ENABLED);
 
-            if (mAutoModeExecutor != null) {
-                mAutoModeExecutor.stop();
+            if (autoModeExecutor != null) {
+                autoModeExecutor.stop();
             }
 
-            mDrive.stop();
-            mTurret.zeroSensors();
-            mClimber.zeroSensors();
+            turret.zeroSensors();
+            climber.zeroSensors();
 
-            mEnabledLooper.start();
+            enabledLoop.start();
 
-            mTurret.setTurretAngle(Turret.CARDINAL_SOUTH);
-            mTurret.setControlMode(defaultTurretControlMode);
+            turret.setTurretAngle(Turret.SOUTH);
+            turret.setControlMode(defaultTurretControlMode);
 
-            mSuperstructure.setStopped(false);
-            mInfrastructure.startCompressor();
+            superstructure.setStopped(false);
+            infrastructure.startCompressor();
         } catch (Throwable t) {
             faulted = true;
             throw t;
@@ -494,27 +474,27 @@ public class Robot extends TimedRobot {
         try {
             double initTime = System.currentTimeMillis();
 
-            mLedManager.blinkStatus(LedManager.RobotStatus.DRIVETRAIN_FLIPPED);
+            ledManager.blinkStatus(LedManager.RobotStatus.DRIVETRAIN_FLIPPED);
             // Warning - blocks thread - intended behavior?
             while (System.currentTimeMillis() - initTime <= 3000) {
-                mLedManager.writeToHardware();
+                ledManager.writeToHardware();
             }
 
-            mSuperstructure.setStopped(false);
+            superstructure.setStopped(false);
 
-            mEnabledLooper.stop();
-            mDisabledLooper.start();
-            mTurret.zeroSensors();
-            mDrive.zeroSensors();
+            enabledLoop.stop();
+            disabledLoop.start();
+            turret.zeroSensors();
+            drive.zeroSensors();
 
-            mLedManager.blinkStatus(LedManager.RobotStatus.DISABLED);
+            ledManager.blinkStatus(LedManager.RobotStatus.DISABLED);
 
-            if (mSubsystemManager.checkSubsystems()) {
+            if (subsystemManager.checkSubsystems()) {
                 System.out.println("ALL SYSTEMS PASSED");
-                mLedManager.indicateStatus(LedManager.RobotStatus.ENABLED);
+                ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
             } else {
                 System.err.println("CHECK ABOVE OUTPUT SOME SYSTEMS FAILED!!!");
-                mLedManager.indicateStatus(LedManager.RobotStatus.ERROR);
+                ledManager.indicateStatus(LedManager.RobotStatus.ERROR);
             }
         } catch (Throwable t) {
             faulted = true;
@@ -526,10 +506,10 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         try {
             // update shuffleboard for subsystem values
-            mSubsystemManager.outputToSmartDashboard();
+            subsystemManager.outputToSmartDashboard();
             // update robot state on field for Field2D widget
-            mRobotState.outputToSmartDashboard();
-            mAutoModeSelector.outputToSmartDashboard();
+            robotState.outputToSmartDashboard();
+            autoModeSelector.outputToSmartDashboard();
         } catch (Throwable t) {
             faulted = true;
             System.out.println(t.getMessage());
@@ -541,28 +521,28 @@ public class Robot extends TimedRobot {
         loopStart = Timer.getFPGATimestamp();
         try {
             if (RobotController.getUserButton()) {
-                mDrive.zeroSensors(Constants.ZeroPose);
-                mLedManager.indicateStatus(LedManager.RobotStatus.SEEN_TARGET);
+                drive.zeroSensors(Constants.ZeroPose);
+                ledManager.indicateStatus(LedManager.RobotStatus.SEEN_TARGET);
             } else {
                 // non-camera LEDs will flash red if robot periodic updates fail
                 if (faulted) {
-                    mLedManager.blinkStatus(LedManager.RobotStatus.ERROR);
+                    ledManager.blinkStatus(LedManager.RobotStatus.ERROR);
                 } else {
-                    mLedManager.indicateStatus(LedManager.RobotStatus.DISABLED);
+                    ledManager.indicateStatus(LedManager.RobotStatus.DISABLED);
                 }
             }
 
             // Periodically check if drivers changed desired auto - if yes, then update the actual auto mode
-            mAutoModeSelector.updateModeCreator();
+            autoModeSelector.updateModeCreator();
 
-            Optional<AutoModeBase> autoMode = mAutoModeSelector.getAutoMode();
+            Optional<AutoModeBase> autoMode = autoModeSelector.getAutoMode();
             if (
-                autoMode.isPresent() && autoMode.get() != mAutoModeExecutor.getAutoMode()
+                autoMode.isPresent() && autoMode.get() != autoModeExecutor.getAutoMode()
             ) {
                 var auto = autoMode.get();
                 System.out.println("Set auto mode to: " + auto.getClass().toString());
-                mRobotState.field.getObject("Trajectory");
-                mAutoModeExecutor.setAutoMode(auto);
+                robotState.field.getObject("Trajectory");
+                autoModeExecutor.setAutoMode(auto);
                 Constants.StartingPose = auto.getTrajectory().getInitialPose();
             }
         } catch (Throwable t) {
@@ -575,25 +555,18 @@ public class Robot extends TimedRobot {
     public void autonomousPeriodic() {
         loopStart = Timer.getFPGATimestamp();
 
-        // debugging functionality to stop autos mid-path
-        boolean signalToResume = !mControlBoard.getUnlockClimber();
-        boolean signalToStop = mControlBoard.getUnlockClimber();
-        if (mAutoModeExecutor.isInterrupted()) {
+        // Debugging functionality to stop autos mid-path - Currently not in use
+        boolean signalToResume = !controlBoard.getUnlockClimber();
+        boolean signalToStop = controlBoard.getUnlockClimber();
+        if (autoModeExecutor.isInterrupted()) {
             manualControl();
 
-            if (mWantsAutoExecution.update(signalToResume)) {
-                mAutoModeExecutor.resume();
+            if (wantExecution.update(signalToResume)) {
+                autoModeExecutor.resume();
             }
         }
-
-        // Interrupt if switch flipped down
-        if (mWantsAutoInterrupt.update(signalToStop)) {
-            System.out.println("Auto mode interrupted ");
-            mAutoModeExecutor.interrupt();
-        }
-
-        if (mAutoModeExecutor.isInterrupted()) {
-            manualControl();
+        if (wantInterrupt.update(signalToStop)) {
+            autoModeExecutor.interrupt();
         }
 
         if (Constants.kIsLoggingAutonomous) {
@@ -619,42 +592,39 @@ public class Robot extends TimedRobot {
     }
 
     public void manualControl() {
+        // update what's currently being imputed from both driver and operator controllers
         actionManager.update();
 
+        // Field-relative controls for turret (ie: left on joystick makes turret point left on the field, instead of left relative to the robot)
         if (
-            Math.abs(mControlBoard.getTurretXVal()) > 0.90 ||
-            Math.abs(mControlBoard.getTurretYVal()) > 0.90
+            Math.abs(controlBoard.getTurretXVal()) > 0.90 ||
+            Math.abs(controlBoard.getTurretYVal()) > 0.90
         ) {
-            mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
-            mTurret.setFollowingAngle(
+            turret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
+            turret.setFollowingAngle(
                 (
                     new Rotation2d(
-                        mControlBoard.getTurretXVal(),
-                        mControlBoard.getTurretYVal()
+                        controlBoard.getTurretXVal(),
+                        controlBoard.getTurretYVal()
                     )
                 ).getDegrees()
             );
         }
 
+        // Optional functionality making shooter always rev to velocity needed to score based on predicted position on field
         if (
-            !mControlBoard.getShoot() &&
-            !mControlBoard.getYeetShot() &&
+            !controlBoard.getShoot() &&
+            !controlBoard.getYeetShot() &&
             Constants.kUsePoseTrack
         ) {
-            mSuperstructure.setRevving(true, -1, true);
+            superstructure.setRevving(true, -1, true);
         }
 
-        if (mControlBoard.getBrakeMode()) {
-            mDrive.setOpenLoop(SwerveDriveSignal.BRAKE);
-        } else {
-            mDrive.setTeleopInputs(
-                mControlBoard.getThrottle(),
-                mControlBoard.getStrafe(),
-                mControlBoard.getTurn(),
-                mControlBoard.getSlowMode(),
-                false
-            );
-        }
+        drive.setTeleopInputs(
+            controlBoard.getThrottle(),
+            controlBoard.getStrafe(),
+            controlBoard.getTurn()
+        );
     }
 
     @Override

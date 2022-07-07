@@ -11,6 +11,7 @@ public class LibModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(Controller.Factory.class).to(ControlUtils.class);
+        requestStaticInjection(Infrastructure.class);
         requestStaticInjection(TrajectoryAction.class);
         requestStaticInjection(AutoModeBase.class);
         requestStaticInjection(WaitUntilInsideRegion.class);

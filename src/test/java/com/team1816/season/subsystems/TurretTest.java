@@ -6,7 +6,7 @@ import static org.mockito.Mockito.when;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.team1816.lib.hardware.components.motor.GhostMotorControllerEnhanced;
+import com.team1816.lib.hardware.components.motor.GhostMotor;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
@@ -56,7 +56,7 @@ public class TurretTest {
     public void setUp() {
         mTurret = new Turret();
         mTurret.zeroSensors();
-        state.reset();
+        state.resetPosition();
     }
 
     @Test
@@ -66,7 +66,7 @@ public class TurretTest {
         mTurret.writeToHardware();
         mTurret.readFromHardware();
         assertEquals(0, state.getLatestFieldToTurret().getDegrees(), 0.1);
-        assertEquals(0, state.vehicle_to_turret.getDegrees(), .01);
+        assertEquals(0, state.vehicleToTurret.getDegrees(), .01);
         assertEquals(encTickSouth, mTurret.getActualTurretPositionTicks(), .01);
     }
 
@@ -74,10 +74,10 @@ public class TurretTest {
     public void fieldFollowing45Test() {
         mTurret.setTurretAngle(0);
         mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
-        state.field_to_vehicle = new Pose2d(0, 0, Rotation2d.fromDegrees(45));
+        state.fieldToVehicle = new Pose2d(0, 0, Rotation2d.fromDegrees(45));
         mTurret.writeToHardware();
         mTurret.readFromHardware();
-        assertEquals(45, state.vehicle_to_turret.getDegrees(), .01);
+        assertEquals(45, state.vehicleToTurret.getDegrees(), .01);
         assertEquals(0, state.getLatestFieldToTurret().getDegrees(), 0.1);
         // Turret should move CW
         assertEquals(encTick45, mTurret.getActualTurretPositionTicks(), .01);
@@ -87,10 +87,10 @@ public class TurretTest {
     public void fieldFollowing315Test() {
         mTurret.setTurretAngle(0);
         mTurret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
-        state.field_to_vehicle = new Pose2d(0, 0, Rotation2d.fromDegrees(-45));
+        state.fieldToVehicle = new Pose2d(0, 0, Rotation2d.fromDegrees(-45));
         mTurret.writeToHardware();
         mTurret.readFromHardware();
-        assertEquals(315, state.vehicle_to_turret.getDegrees(), .01);
+        assertEquals(315, state.vehicleToTurret.getDegrees(), .01);
         assertEquals(0, state.getLatestFieldToTurret().getDegrees(), 0.1);
         // Turret should move CCW
         assertEquals(encTick315, mTurret.getActualTurretPositionTicks(), .01);
@@ -151,7 +151,7 @@ public class TurretTest {
         when(mockFactory.getConstant(Turret.NAME, "turretPPR")).thenReturn(encPPR * 2);
         mTurret = new Turret();
         mTurret.zeroSensors();
-        state.reset();
+        state.resetPosition();
     }
 
     @Test
@@ -177,14 +177,11 @@ public class TurretTest {
     public void zeroSensorsTest(int absInit, double turretPPR) {
         when(mockFactory.getConstant(Turret.NAME, "turretPPR")).thenReturn(turretPPR);
         when(mockFactory.getMotor(Turret.NAME, "turret"))
-            .thenReturn(new GhostMotorControllerEnhanced(0, absInit));
+            .thenReturn(new GhostMotor(0, absInit, "turret"));
         mTurret = new Turret();
         mTurret.zeroSensors();
         Assert.assertEquals(
-            mTurret.TURRET_PPR /
-                2.0 -
-                mTurret.TURRET_PPR ==
-                mTurret.TURRET_ABS_ENCODER_PPR
+            mTurret.TURRET_PPR / 2.0 - mTurret.TURRET_PPR == mTurret.ABS_PPR
                 ? 0
                 : absInit,
             mTurret.getActualTurretPositionTicks(),

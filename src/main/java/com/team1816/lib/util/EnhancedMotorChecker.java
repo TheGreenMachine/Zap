@@ -1,10 +1,9 @@
 package com.team1816.lib.util;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
+import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Robot;
-import com.team254.lib.util.Util;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.ArrayList;
@@ -28,7 +27,7 @@ public class EnhancedMotorChecker {
 
         public static CheckerConfig getForSubsystemMotor(
             Subsystem subsystem,
-            IMotorControllerEnhanced motor
+            IGreenMotor motor
         ) {
             var name = subsystem.getSubsystemName();
             var factory = Robot.getFactory();
@@ -44,29 +43,19 @@ public class EnhancedMotorChecker {
         }
     }
 
-    public static class NamedMotor {
-
-        public String name;
-        public IMotorControllerEnhanced motor;
-
-        public NamedMotor(String name, IMotorControllerEnhanced motor) {
-            this.name = name;
-            this.motor = motor;
-        }
-    }
-
-    public static boolean checkMotors(
-        Subsystem subsystem,
-        CheckerConfig checkerConfig,
-        NamedMotor... motorsToCheck
-    ) {
+    public static boolean checkMotor(Subsystem subsystem, IGreenMotor... motorToCheck) {
+        // Note: We've only checked one motor at a time - the checkerConfig is only for the first motor but is used for all motors!
+        CheckerConfig checkerConfig = CheckerConfig.getForSubsystemMotor(
+            subsystem,
+            motorToCheck[0]
+        );
         boolean failure = false;
         System.out.println("////////////////////////////////////////////////");
         System.out.println(
             "Checking subsystem " +
             subsystem.getClass() +
             " for " +
-            motorsToCheck.length +
+            motorToCheck.length +
             " motors."
         );
 
@@ -75,9 +64,8 @@ public class EnhancedMotorChecker {
         List<ControlMode> storedControlModes = new ArrayList<>();
 
         // Record previous configuration for all motors.
-        for (NamedMotor config : motorsToCheck) {
-            if (config.motor.getDeviceID() < 0) continue;
-            IMotorControllerEnhanced motor = config.motor;
+        for (IGreenMotor motor : motorToCheck) {
+            if (motor.getDeviceID() < 0) continue;
 
             storedControlModes.add(motor.getControlMode());
 
@@ -85,22 +73,19 @@ public class EnhancedMotorChecker {
             motor.set(ControlMode.PercentOutput, 0.0);
         }
 
-        for (NamedMotor config : motorsToCheck) {
-            System.out.println("Checking: " + config.name);
+        for (IGreenMotor motor : motorToCheck) {
+            System.out.println("Checking: " + motor.getName());
 
-            if (config.motor.getDeviceID() < 0) {
+            if (motor.getDeviceID() < 0) {
                 System.out.println("Motor Disabled, Checks Skipped!!");
                 continue;
             }
 
-            config.motor.set(
-                ControlMode.PercentOutput,
-                checkerConfig.mRunOutputPercentage
-            );
+            motor.set(ControlMode.PercentOutput, checkerConfig.mRunOutputPercentage);
             Timer.delay(checkerConfig.mRunTimeSec);
 
             // Now poll the interesting information.
-            double current = MotorUtil.getSupplyCurrent(config.motor);
+            double current = MotorUtil.getSupplyCurrent(motor);
             currents.add(current);
             System.out.print("Current: " + current);
 
@@ -112,12 +97,12 @@ public class EnhancedMotorChecker {
             }
             System.out.print('\n');
 
-            config.motor.set(ControlMode.PercentOutput, 0.0);
+            motor.set(ControlMode.PercentOutput, 0.0);
 
             // And perform checks.
             if (current < checkerConfig.mCurrentFloor) {
                 DriverStation.reportError(
-                    config.name +
+                    motor.getName() +
                     " has failed current floor check vs " +
                     checkerConfig.mCurrentFloor +
                     "!!!!!!!!!!!!",
@@ -128,7 +113,7 @@ public class EnhancedMotorChecker {
             if (checkerConfig.mRPMSupplier != null) {
                 if (rpm < checkerConfig.mRPMFloor) {
                     DriverStation.reportError(
-                        config.name +
+                        motor.getName() +
                         " has failed rpm floor check vs " +
                         checkerConfig.mRPMFloor +
                         "!!!!!!!!!!!!!",
@@ -170,8 +155,8 @@ public class EnhancedMotorChecker {
         }
 
         // Restore Talon configurations
-        for (int i = 0; i < motorsToCheck.length; ++i) {
-            IMotorControllerEnhanced motor = motorsToCheck[i].motor;
+        for (int i = 0; i < motorToCheck.length; ++i) {
+            IGreenMotor motor = motorToCheck[i];
             if (motor.getDeviceID() >= 0) {
                 motor.set(storedControlModes.get(i), 0);
             }

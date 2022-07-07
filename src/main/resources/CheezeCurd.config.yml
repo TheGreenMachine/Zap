@@ -67,11 +67,6 @@ subsystems:
         implemented: false
 canivoreBusName: rio
 constants:
-    wheelDiameter: 4.058
-    trackWidth: 15.75
-    maxVel: 30
-    maxTicks: 2000 # ticks per 100ms
-    maxAccel: 50
     sensorPhase: 0
     kLooperDt: .020
     kTrackScrubFactor: 2
@@ -83,8 +78,12 @@ constants:
     useAutoAim: 0
     compressorEnabled: 0
     wheelbaseLength: 20
-    maxVelPathFollowing: 3
-    maxVelOpenLoop: 3
+    wheelDiameter: 4.058 # inches
+    trackWidth: 15.75 # inches
+    maxVelTicks100ms: 2000 # ticks per 100ms
+    maxAccel: 1.27 # m/s^2
+    maxVelPathFollowing: 3 # m/s
+    maxVelOpenLoop: 3 # m/s
     maxRotVel: 1
     configStatusFrames: 0
     pdIsRev: 0
