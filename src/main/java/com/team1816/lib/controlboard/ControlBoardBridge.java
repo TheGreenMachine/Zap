@@ -1,7 +1,6 @@
 package com.team1816.lib.controlboard;
 
 import edu.wpi.first.wpilibj.DriverStation;
-
 import java.util.HashMap;
 
 // This is a bridging class that allows for yaml functionality and it's sole purpose is to map controls to their respective methods
