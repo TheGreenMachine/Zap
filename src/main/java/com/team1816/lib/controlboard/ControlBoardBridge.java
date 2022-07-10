@@ -240,7 +240,7 @@ public class ControlBoardBridge {
                         config.operator.dpad.down,
                         180
                     );
-                    if (config.driver.dpad.left != null) operatorDpadMap.put(
+                    if (config.operator.dpad.left != null) operatorDpadMap.put(
                         config.operator.dpad.up,
                         270
                     );
