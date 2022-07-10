@@ -86,6 +86,7 @@ infrastructure:
     # pigeon
     pigeonId: 9
     isPigeon2: false
+controlboard: example
 constants:
     ## Drivetrain Dimensions and Parameters ##
     maxAllowablePoseError: 0.1

@@ -1,5 +1,7 @@
 package com.team1816.lib.controlboard;
 
+import com.team1816.lib.hardware.factory.RobotFactory;
+import com.team1816.season.Robot;
 import edu.wpi.first.wpilibj.DriverStation;
 import java.util.HashMap;
 
@@ -7,6 +9,7 @@ import java.util.HashMap;
 public class ControlBoardBridge {
 
     private ControlBoardConfig config;
+    public static RobotFactory factory = Robot.getFactory();
 
     private HashMap<String, Controller.Button> driverButtonMap = new HashMap<>();
     private HashMap<String, Controller.Axis> driverAxisMap = new HashMap<>();
@@ -19,31 +22,33 @@ public class ControlBoardBridge {
     private boolean operatorRumble = false;
 
     public ControlBoardBridge() {
-        var controlBoardConfigName = "example"; //TODO read this from somewhere probably going to be robotConfig yaml
-        try {
-            //            File file = new File(
-            //                "src/main/resources/" +
-            //                controlBoardConfigName +
-            //                ".controlboard.config.yml"
-            //            );
-            //            config = ControlBoardYamlConfig.loadFrom(new FileInputStream(file));
-            config =
-                ControlBoardYamlConfig.loadFrom(
-                    this.getClass()
-                        .getClassLoader()
-                        .getResourceAsStream(
-                            controlBoardConfigName + ".controlboard.config.yml"
-                        )
+        var controlBoardConfigName = factory.getControlBoard();
+        if (controlBoardConfigName != "empty") {
+            try {
+                //            File file = new File(
+                //                "src/main/resources/" +
+                //                controlBoardConfigName +
+                //                ".controlboard.config.yml"
+                //            );
+                //            config = ControlBoardYamlConfig.loadFrom(new FileInputStream(file));
+                config =
+                    ControlBoardYamlConfig.loadFrom(
+                        this.getClass()
+                            .getClassLoader()
+                            .getResourceAsStream(
+                                controlBoardConfigName + ".controlboard.config.yml"
+                            )
+                    );
+                System.out.println(
+                    "Loading " + controlBoardConfigName + " control board config"
                 );
-            System.out.println(
-                "Loading " + controlBoardConfigName + " control board config"
-            );
-        } catch (Exception e) {
-            System.out.println(e);
-            DriverStation.reportError(
-                "Control Board Yaml Config error!",
-                e.getStackTrace()
-            );
+            } catch (Exception e) {
+                System.out.println(e);
+                DriverStation.reportError(
+                    "Control Board Yaml Config error!",
+                    e.getStackTrace()
+                );
+            }
         }
 
         //TODO: make sure that config is not null and actually does read from yaml
