@@ -69,4 +69,8 @@ public abstract class Controller {
         if (!mJoystickAxisMap.containsKey(axis)) return 0;
         return mController.getRawAxis(mJoystickAxisMap.get(axis));
     }
+
+    public double getJoystick(Axis axis, boolean inverted) {
+        return (inverted?(-1):(1)) * mController.getRawAxis(mJoystickAxisMap.get(axis));
+    }
 }
