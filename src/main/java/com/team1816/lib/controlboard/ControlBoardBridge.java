@@ -1,12 +1,8 @@
 package com.team1816.lib.controlboard;
 
-import com.team1816.lib.hardware.factory.YamlConfig;
 import edu.wpi.first.wpilibj.DriverStation;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+
 import java.util.HashMap;
-import org.yaml.snakeyaml.Yaml;
 
 // This is a bridging class that allows for yaml functionality and it's sole purpose is to map controls to their respective methods
 public class ControlBoardBridge {
@@ -26,25 +22,31 @@ public class ControlBoardBridge {
     public ControlBoardBridge() {
         var controlBoardConfigName = "example"; //TODO read this from somewhere probably going to be robotConfig yaml
         try {
-            File file = new File(
-                "src/main/resources/" +
-                controlBoardConfigName +
-                ".controlboard.config.yml"
-            );
-            config = YamlConfig.loadFromRaw(new FileInputStream(file), true);
-            InputStream stream =
-                this.getClass()
-                    .getClassLoader()
-                    .getResourceAsStream(
-                        controlBoardConfigName + ".controlboard.config.yml"
-                    );
-            config = new Yaml().load(stream);
+            //            File file = new File(
+            //                "src/main/resources/" +
+            //                controlBoardConfigName +
+            //                ".controlboard.config.yml"
+            //            );
+            //            config = ControlBoardYamlConfig.loadFrom(new FileInputStream(file));
+            config =
+                ControlBoardYamlConfig.loadFrom(
+                    this.getClass()
+                        .getClassLoader()
+                        .getResourceAsStream(
+                            controlBoardConfigName + ".controlboard.config.yml"
+                        )
+                );
             System.out.println(
                 "Loading " + controlBoardConfigName + " control board config"
             );
         } catch (Exception e) {
-            DriverStation.reportError("Yaml Config error!", e.getStackTrace());
+            System.out.println(e);
+            DriverStation.reportError(
+                "Control Board Yaml Config error!",
+                e.getStackTrace()
+            );
         }
+
         //TODO: make sure that config is not null and actually does read from yaml
         if (config != null) {
             if (config.driver != null) {
