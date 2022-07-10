@@ -3,16 +3,16 @@
     "title": "Buttonpad Config",
     "additionalProperties": "false",
     "properties": {
-        "X": {
+        "x": {
             "$ref": "buttonconfig.schema.json"
         },
-        "Y": {
+        "y": {
             "$ref": "buttonconfig.schema.json"
         },
-        "A": {
+        "a": {
             "$ref": "buttonconfig.schema.json"
         },
-        "B": {
+        "b": {
             "$ref": "buttonconfig.schema.json"
         }
     }

@@ -31,9 +31,7 @@ public class ControlBoardBridge {
                 ControlBoardYamlConfig.loadFrom(
                     this.getClass()
                         .getClassLoader()
-                        .getResourceAsStream(
-                            controlBoardConfigName + ".controlboard.config.yml"
-                        )
+                        .getResourceAsStream(controlBoardConfigName + ".config.yml")
                 );
             System.out.println(
                 "Loading " + controlBoardConfigName + " control board config"

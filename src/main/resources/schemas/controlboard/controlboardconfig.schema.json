@@ -3,10 +3,10 @@
     "title": "controlBoardConfig",
     "additionalProperties": false,
     "properties": {
-        "Driver": {
+        "driver": {
             "$ref": "controllerconfig.schema.json"
         },
-        "Operator": {
+        "operator": {
             "$ref": "controllerconfig.schema.json"
         }
     }
