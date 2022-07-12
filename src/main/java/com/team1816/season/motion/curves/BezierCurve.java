@@ -7,8 +7,8 @@ public class BezierCurve {
 
     public static class ControlPoint {
 
-        private double x;
-        private double y;
+        public double x;
+        public double y;
 
         public ControlPoint() {
             x = 0;
@@ -29,6 +29,14 @@ public class BezierCurve {
             x *= z;
             y *= z;
         }
+
+        public double getDistance(ControlPoint c) {
+            return Math.hypot(c.x - x, c.y - y);
+        }
+
+        public Double[] convertToDoubleArray() {
+            return new Double[] { x, y };
+        }
     }
 
     private ArrayList<ControlPoint> controlPoints; // defined sequentially
@@ -39,13 +47,23 @@ public class BezierCurve {
     public BezierCurve() {
         controlPoints = new ArrayList<>();
         xCoefficients = yCoefficients = new ArrayList<>();
+        LUT = new NaturalCubicSpline(new ArrayList<Double[]>());
     }
 
     public BezierCurve(ArrayList<ControlPoint> arr) {
         controlPoints = arr;
+        generateLookUpTable(100);
     }
 
-    public void generateLookUpTable(int resolution) {}
+    public void generateLookUpTable(int resolution) {
+        ArrayList<Double[]> knotPoints = new ArrayList<>();
+        for (int i = 0; i <= resolution; i++) {
+            double t1 = (double) i / resolution;
+            double dist = getPortionLength((i + 1) * resolution, 0, t1);
+            knotPoints.add(new Double[] { dist, t1 });
+        }
+        LUT = new NaturalCubicSpline(knotPoints);
+    }
 
     private ControlPoint lerp(ControlPoint p1, ControlPoint p2, double t) {
         p1.multiply(1 - t);
@@ -68,6 +86,11 @@ public class BezierCurve {
         return val;
     }
 
+    public ControlPoint getValueWithDistance(double d) {
+        double t = Math.min(LUT.getValue(d), 1.0);
+        return getValue(t);
+    }
+
     public double combination(int n, int x) {
         double ans = 1;
         for (int i = n; i > x; i--) {
@@ -79,7 +102,27 @@ public class BezierCurve {
         return ans;
     }
 
-    public double getLength() {
-        return 0;
+    public double getLength(int resolution) {
+        double distance = 0;
+        ControlPoint p1 = controlPoints.get(0);
+        ControlPoint p2 = new ControlPoint();
+        for (int i = 0; i < resolution - 1; i++) {
+            p2 = getValue((double) (i + 1) / resolution);
+            distance += p1.getDistance(p2);
+            p1 = p2;
+        }
+        return distance;
+    }
+
+    public double getPortionLength(int resolution, double i, double f) {
+        double distance = 0;
+        ControlPoint p1 = getValue(i);
+        ControlPoint p2 = new ControlPoint();
+        for (double j = i; j <= f; j += 1.0 / resolution) {
+            p2 = getValue(j);
+            distance += p1.getDistance(p2);
+            p1 = p2;
+        }
+        return distance;
     }
 }
