@@ -38,6 +38,7 @@ public class ControlBoardBridge {
                         this.getClass()
                             .getClassLoader()
                             .getResourceAsStream(
+                                "yaml/controlboard/" +
                                 controlBoardConfigName +
                                 ".controlboard.config.yml"
                             )

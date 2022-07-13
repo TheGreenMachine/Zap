@@ -54,7 +54,7 @@ public class RobotFactory {
                 YamlConfig.loadFrom(
                     this.getClass()
                         .getClassLoader()
-                        .getResourceAsStream(robotName + ".config.yml")
+                        .getResourceAsStream("yaml/" + robotName + ".config.yml")
                 );
         } catch (Exception e) {
             DriverStation.reportError("Yaml Config error!", e.getStackTrace());
