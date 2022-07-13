@@ -15,7 +15,7 @@ import com.team1816.season.Constants;
 @Singleton
 public class GamepadDriveControlBoard implements IDriveControlBoard {
 
-    private static ControlBoardBridge controlBoardBridge = new ControlBoardBridge();
+    private static ControlBoardBridge controlBoardBridge = ControlBoardBridge.getInstance();
 
     private final Controller mController;
 

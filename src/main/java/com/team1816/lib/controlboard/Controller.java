@@ -71,6 +71,8 @@ public abstract class Controller {
     }
 
     public double getJoystick(Axis axis, boolean inverted) {
-        return (inverted?(-1):(1)) * mController.getRawAxis(mJoystickAxisMap.get(axis));
+        return (
+            (inverted ? (-1) : (1)) * mController.getRawAxis(mJoystickAxisMap.get(axis))
+        );
     }
 }

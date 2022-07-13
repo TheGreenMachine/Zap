@@ -14,7 +14,7 @@ import com.team1816.season.Constants;
 @Singleton
 public class GamepadOperatorControlBoard implements IOperatorControlBoard {
 
-    private static ControlBoardBridge controlBoardBridge = new ControlBoardBridge();
+    private static ControlBoardBridge controlBoardBridge = ControlBoardBridge.getInstance();
 
     private final Controller mController;
 

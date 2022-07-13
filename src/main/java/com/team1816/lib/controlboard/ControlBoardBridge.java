@@ -1,15 +1,16 @@
 package com.team1816.lib.controlboard;
 
 import com.team1816.lib.hardware.factory.RobotFactory;
-import com.team1816.season.Robot;
 import edu.wpi.first.wpilibj.DriverStation;
 import java.util.HashMap;
 
 // This is a bridging class that allows for yaml functionality and it's sole purpose is to map controls to their respective methods
 public class ControlBoardBridge {
 
+    public static RobotFactory factory = RobotFactory.getInstance();
+
     private ControlBoardConfig config;
-    public static RobotFactory factory = Robot.getFactory();
+    private static ControlBoardBridge bridge;
 
     private HashMap<String, Controller.Button> driverButtonMap = new HashMap<>();
     private HashMap<String, Controller.Axis> driverAxisMap = new HashMap<>();
@@ -21,22 +22,24 @@ public class ControlBoardBridge {
     private HashMap<String, Integer> operatorDpadMap = new HashMap<>();
     private boolean operatorRumble = false;
 
+    public static ControlBoardBridge getInstance() {
+        if (bridge == null) {
+            bridge = new ControlBoardBridge();
+        }
+        return bridge;
+    }
+
     public ControlBoardBridge() {
         var controlBoardConfigName = factory.getControlBoard();
         if (controlBoardConfigName != "empty") {
             try {
-                //            File file = new File(
-                //                "src/main/resources/" +
-                //                controlBoardConfigName +
-                //                ".controlboard.config.yml"
-                //            );
-                //            config = ControlBoardYamlConfig.loadFrom(new FileInputStream(file));
                 config =
                     ControlBoardYamlConfig.loadFrom(
                         this.getClass()
                             .getClassLoader()
                             .getResourceAsStream(
-                                controlBoardConfigName + ".controlboard.config.yml"
+                                controlBoardConfigName +
+                                ".controlboard.config.yml"
                             )
                     );
                 System.out.println(
