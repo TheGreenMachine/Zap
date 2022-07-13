@@ -217,6 +217,7 @@ infrastructure:
     # pigeon
     pigeonId: 13
     isPigeon2: true
+controlboard: example
 constants:
     # drivetrain dimensions and movement
     maxRotVel: 14
