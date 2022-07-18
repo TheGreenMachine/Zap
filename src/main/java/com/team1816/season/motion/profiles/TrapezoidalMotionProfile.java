@@ -3,13 +3,74 @@ package com.team1816.season.motion.profiles;
 /**
  * This class will construct a standard trapezoidal motion profile.
  */
-public class TrapezoidalMotionProfile extends MotionProfile {
+public class TrapezoidalMotionProfile {
+
+    public static class Constraints {
+
+        public double maxVel, maxAccel, maxJerk;
+
+        public Constraints() {
+            maxVel = 0;
+            maxAccel = 0;
+            maxJerk = 0;
+        }
+
+        public Constraints(double mv, double ma, double mj) {
+            maxVel = mv;
+            maxAccel = ma;
+            maxJerk = mj;
+        }
+
+        public double getMaxVel() {
+            return maxVel;
+        }
+
+        public double getMaxAccel() {
+            return maxAccel;
+        }
+
+        public double getMaxJerk() {
+            return maxJerk;
+        }
+    }
+
+    public static class State {
+
+        public double position, velocity;
+
+        public State() {
+            position = 0;
+            velocity = 0;
+        }
+
+        public State(double p) {
+            position = p;
+            velocity = 0;
+        }
+
+        public State(double p, double v) {
+            position = p;
+            velocity = v;
+        }
+    }
+
+    public static class Phase {
+
+        public double duration;
+
+        public Phase() {
+            duration = 0;
+        }
+    }
 
     private Phase[] p = new Phase[3];
     private Constraints constraints;
     private State initial;
     private State target;
     private double duration;
+
+    private double targetMaxVelocity = 0;
+    private double targetMaxAcceleration = 0;
 
     public TrapezoidalMotionProfile() {
         for (int i = 0; i < p.length; i++) {
@@ -25,35 +86,49 @@ public class TrapezoidalMotionProfile extends MotionProfile {
         constraints = c;
         initial = i;
         target = t;
+
         double dX = t.position - i.position;
         double dV = t.velocity - i.velocity;
-        double cv = c.maxVel;
 
         double t1 = 0;
         double t2 = 0;
         double t3 = 0;
+
+        if (dX >= 0) {
+            targetMaxVelocity = c.getMaxVel();
+            targetMaxAcceleration = c.getMaxAccel();
+        } else if (dX < 0) {
+            targetMaxVelocity = c.getMaxVel() * (-1);
+            targetMaxAcceleration = c.getMaxAccel() * (-1); // quick fix to get accurate position and velocity calculations
+        }
+        if (c.getMaxAccel() == 0) {
+            c.maxAccel = 1;
+        }
         do {
-            t1 = Math.abs((cv - i.velocity) / c.maxAccel);
-            t3 = Math.abs((cv - t.velocity) / c.maxAccel);
+            t1 = Math.abs((targetMaxVelocity - i.velocity) / targetMaxAcceleration);
+            t3 = Math.abs((targetMaxVelocity - t.velocity) / targetMaxAcceleration);
 
             double edX =
-                c.maxAccel *
-                (t1 * t1 - t3 * t3) /
+                (targetMaxVelocity - i.velocity) *
+                (t1) /
                 2 +
-                (c.maxAccel * t1 + i.velocity) *
-                t3;
-            t2 = (dX - edX) / (c.maxAccel * t1 + i.velocity);
-            cv /= 1.5;
-        } while (t2 >= 0);
-        if (dX < 0) {
-            c.maxAccel = Math.min(c.maxAccel, c.maxAccel * -1); // quick fix to get accurate position and velocity calculations
-        }
+                (targetMaxVelocity - t.velocity) *
+                (t3) /
+                2;
+
+            t2 = (dX - edX) / (targetMaxVelocity);
+
+            if (t2 < 0) targetMaxVelocity *= 0.8;
+        } while (t2 < 0);
+
         for (int x = 0; x < p.length; x++) {
             p[x] = new Phase();
         }
+
         p[0].duration = t1;
         p[1].duration = t2;
         p[2].duration = t3;
+
         duration = 0;
         for (Phase ph : p) {
             duration += Math.max(ph.duration, 0);
@@ -120,7 +195,7 @@ public class TrapezoidalMotionProfile extends MotionProfile {
     public double getAcceleration(double t) {
         double tmp = p[0].duration;
         if (t <= tmp) {
-            return constraints.maxAccel;
+            return targetMaxAcceleration;
         }
         tmp += p[1].duration;
         if (t <= tmp) {
@@ -128,7 +203,7 @@ public class TrapezoidalMotionProfile extends MotionProfile {
         }
         tmp += p[2].duration;
         if (t <= tmp) {
-            return (-1) * constraints.maxAccel;
+            return (-1) * targetMaxAcceleration;
         } else {
             return 0;
         }
