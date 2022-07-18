@@ -116,25 +116,25 @@ public class SinusoidalMotionProfile extends MotionProfile {
         double tmp = p[0].duration;
         if (t <= tmp) {
             cv +=
-                (constraints.maxVel + initial.velocity) /
+                (targetMaxVelocity + initial.velocity) /
                 (-2.0) *
                 Math.cos(
                     2 *
                     (t) *
                     constraints.maxAccel /
-                    (constraints.maxVel - initial.velocity)
+                    (targetMaxVelocity - initial.velocity)
                 ) +
-                (constraints.maxVel + initial.velocity) /
+                (targetMaxVelocity + initial.velocity) /
                 2.0;
             return cv;
         }
         cv +=
-            (constraints.maxVel + initial.velocity) /
+            (targetMaxVelocity + initial.velocity) /
             (-2.0) *
             Math.cos(
-                2 * (tmp) * constraints.maxAccel / (constraints.maxVel - initial.velocity)
+                2 * (tmp) * constraints.maxAccel / (targetMaxVelocity - initial.velocity)
             ) +
-            (constraints.maxVel + initial.velocity) /
+            (targetMaxVelocity + initial.velocity) /
             2.0;
         tmp += p[1].duration;
         if (t <= tmp) {
@@ -143,15 +143,15 @@ public class SinusoidalMotionProfile extends MotionProfile {
         tmp += p[2].duration;
         if (t <= tmp) {
             cv +=
-                (constraints.maxVel + target.velocity) /
+                (targetMaxVelocity + target.velocity) /
                 (2.0) *
                 Math.cos(
                     2 *
                     (tmp - t - p[2].duration) *
                     constraints.maxAccel /
-                    (constraints.maxVel - target.velocity)
+                    (targetMaxVelocity - target.velocity)
                 ) +
-                (constraints.maxVel + target.velocity) /
+                (targetMaxVelocity + target.velocity) /
                 2.0;
             return cv;
         }
@@ -168,7 +168,7 @@ public class SinusoidalMotionProfile extends MotionProfile {
                     2 *
                     (t) *
                     constraints.maxAccel /
-                    (constraints.maxVel - initial.velocity)
+                    (targetMaxVelocity - initial.velocity)
                 );
             return ca;
         }
@@ -184,7 +184,7 @@ public class SinusoidalMotionProfile extends MotionProfile {
                     2 *
                     (tmp - t - p[2].duration) *
                     constraints.maxAccel /
-                    (constraints.maxVel - target.velocity)
+                    (targetMaxVelocity - target.velocity)
                 );
             return ca;
         }
@@ -198,7 +198,7 @@ public class SinusoidalMotionProfile extends MotionProfile {
             return (
                 -getVelocity(t) *
                 Math.pow(
-                    2 * constraints.maxAccel / (constraints.maxVel - initial.velocity),
+                    2 * constraints.maxAccel / (targetMaxVelocity - initial.velocity),
                     2
                 )
             );
@@ -212,7 +212,7 @@ public class SinusoidalMotionProfile extends MotionProfile {
             return (
                 -getVelocity(t) *
                 Math.pow(
-                    2 * constraints.maxAccel / (constraints.maxVel - target.velocity),
+                    2 * constraints.maxAccel / (targetMaxVelocity - target.velocity),
                     2
                 )
             );
