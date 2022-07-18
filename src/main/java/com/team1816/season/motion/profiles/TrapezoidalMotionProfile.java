@@ -117,7 +117,7 @@ public class TrapezoidalMotionProfile extends MotionProfile {
         double cv = initial.velocity;
         double tmp = p[0].duration;
         if (t <= tmp) {
-            cv += getAcceleration(t) * (tmp - t);
+            cv += getAcceleration(t) * (t - (tmp - p[0].duration));
             return cv;
         }
         cv += getAcceleration(tmp) * p[0].duration;
@@ -127,7 +127,7 @@ public class TrapezoidalMotionProfile extends MotionProfile {
         }
         tmp += p[2].duration;
         if (t <= tmp) {
-            cv += getAcceleration(t) * (tmp - t);
+            cv += getAcceleration(t) * (t - (tmp - p[2].duration));
             return cv;
         } else {
             return target.velocity;
