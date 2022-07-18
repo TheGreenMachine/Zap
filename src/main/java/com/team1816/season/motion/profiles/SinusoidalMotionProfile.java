@@ -7,16 +7,14 @@ package com.team1816.season.motion.profiles;
 
 public class SinusoidalMotionProfile extends MotionProfile {
 
-    /**
-     * Profile properties
-     */
-
-    private Phase[] p = new Phase[3]; // sinusodal acceleration, flat, deceleration
+    private Phase[] p = new Phase[3]; // sinusoidal acceleration, flat, deceleration
     private Constraints constraints;
     private State initial;
     private State target;
     private double duration;
-    private boolean positive;
+
+    private double targetMaxVelocity = 0;
+    private double targetMaxAcceleration = 0;
 
     public SinusoidalMotionProfile() {
         for (int i = 0; i < p.length; i++) {
@@ -24,7 +22,6 @@ public class SinusoidalMotionProfile extends MotionProfile {
             p[i].duration = 0;
         }
         duration = 0;
-        positive = true;
         new SinusoidalMotionProfile(new Constraints(), new State(), new State());
     }
 
@@ -34,41 +31,59 @@ public class SinusoidalMotionProfile extends MotionProfile {
         initial = i;
         target = t;
 
-        double dX = t.position - i.position; // need to deal with dX sign
-        double cx = 0;
-        positive = dX > 0;
+        double dX = t.position - i.position;
+        double dV = t.velocity - i.velocity;
 
-        double t1 = Math.abs(
-            Math.PI /
-            2 *
-            Math.abs((positive ? (1) : (-1)) * c.maxVel - i.velocity) /
-            c.maxAccel
-        );
+        double t1 = 0;
         double t2 = 0;
-        double t3 = Math.abs(
-            Math.PI /
-            2 *
-            Math.abs((positive ? (1) : (-1)) * c.maxVel - t.velocity) /
-            c.maxAccel
-        );
+        double t3 = 0;
 
-        // cx calculations
-        cx +=
-            Math.pow((positive ? (1) : (-1)) * (c.maxVel) + i.velocity, 2) /
-            c.maxAccel *
-            ((positive ? (1) : (-1)) * c.maxVel - i.velocity) *
-            Math.PI /
-            4;
-        cx +=
-            Math.pow((positive ? (1) : (-1)) * (c.maxVel) + t.velocity, 2) /
-            c.maxAccel *
-            ((positive ? (1) : (-1)) * c.maxVel - t.velocity) *
-            Math.PI /
-            4;
-        cx += initial.velocity * t1;
-        cx += target.velocity * t3;
+        if (dX >= 0) {
+            targetMaxVelocity = c.getMaxVel();
+            targetMaxAcceleration = c.getMaxAccel();
+        } else {
+            targetMaxVelocity = c.getMaxVel() * (-1);
+            targetMaxAcceleration = c.getMaxAccel() * (-1);
+        }
 
-        t2 += (Math.abs(dX) - cx) / c.maxVel;
+        if (c.getMaxAccel() == 0) {
+            c.maxAccel = 1;
+        }
+
+        do {
+            double cx = 0;
+
+            t1 = Math.abs(
+                Math.PI /
+                    2 *
+                    Math.abs(targetMaxVelocity - i.velocity) /
+                    c.maxAccel
+            );
+            t3 = Math.abs(
+                Math.PI /
+                    2 *
+                    Math.abs(targetMaxVelocity - t.velocity) /
+                    c.maxAccel
+            );
+
+            // cx calculations
+            cx +=
+                Math.pow(targetMaxVelocity + i.velocity, 2) /
+                    c.maxAccel *
+                    (targetMaxVelocity - i.velocity) *
+                    Math.PI /
+                    4;
+            cx +=
+                Math.pow(targetMaxVelocity + t.velocity, 2) /
+                    c.maxAccel *
+                    (targetMaxVelocity - t.velocity) *
+                    Math.PI /
+                    4;
+            cx += initial.velocity * t1;
+            cx += target.velocity * t3;
+
+            t2 += (Math.abs(dX) - cx) / c.maxVel;
+        } while (t2 < 0);
 
         for (int x = 0; x < p.length; x++) {
             p[x] = new Phase();
@@ -77,8 +92,6 @@ public class SinusoidalMotionProfile extends MotionProfile {
         p[0].duration = t1;
         p[1].duration = t2;
         p[2].duration = t3;
-
-        if (!positive) c.maxVel *= -1;
 
         duration = 0;
         for (Phase ph : p) {

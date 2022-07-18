@@ -3,6 +3,7 @@ package com.team1816.season.motion.profiles;
 /**
  * This class will construct a standard trapezoidal motion profile.
  */
+
 public class TrapezoidalMotionProfile extends MotionProfile {
 
     private Phase[] p = new Phase[3];
@@ -39,7 +40,7 @@ public class TrapezoidalMotionProfile extends MotionProfile {
         if (dX >= 0) {
             targetMaxVelocity = c.getMaxVel();
             targetMaxAcceleration = c.getMaxAccel();
-        } else if (dX < 0) {
+        } else {
             targetMaxVelocity = c.getMaxVel() * (-1);
             targetMaxAcceleration = c.getMaxAccel() * (-1); // quick fix to get accurate position and velocity calculations
         }
