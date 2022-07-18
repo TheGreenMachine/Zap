@@ -1,6 +1,6 @@
 package com.team1816.season.motion.profiles;
 
-public class MotionProfile {
+public abstract class MotionProfile {
 
     /**
      * Internal Definitions

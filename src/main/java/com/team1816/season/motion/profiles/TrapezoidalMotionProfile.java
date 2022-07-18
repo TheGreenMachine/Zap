@@ -3,65 +3,7 @@ package com.team1816.season.motion.profiles;
 /**
  * This class will construct a standard trapezoidal motion profile.
  */
-public class TrapezoidalMotionProfile {
-
-    public static class Constraints {
-
-        public double maxVel, maxAccel, maxJerk;
-
-        public Constraints() {
-            maxVel = 0;
-            maxAccel = 0;
-            maxJerk = 0;
-        }
-
-        public Constraints(double mv, double ma, double mj) {
-            maxVel = mv;
-            maxAccel = ma;
-            maxJerk = mj;
-        }
-
-        public double getMaxVel() {
-            return maxVel;
-        }
-
-        public double getMaxAccel() {
-            return maxAccel;
-        }
-
-        public double getMaxJerk() {
-            return maxJerk;
-        }
-    }
-
-    public static class State {
-
-        public double position, velocity;
-
-        public State() {
-            position = 0;
-            velocity = 0;
-        }
-
-        public State(double p) {
-            position = p;
-            velocity = 0;
-        }
-
-        public State(double p, double v) {
-            position = p;
-            velocity = v;
-        }
-    }
-
-    public static class Phase {
-
-        public double duration;
-
-        public Phase() {
-            duration = 0;
-        }
-    }
+public class TrapezoidalMotionProfile extends MotionProfile {
 
     private Phase[] p = new Phase[3];
     private Constraints constraints;
