@@ -53,11 +53,11 @@ public class TrapezoidalMotionProfile extends MotionProfile {
 
             double edX =
                 (targetMaxVelocity - i.velocity) *
-                (t1) /
-                2 +
-                (targetMaxVelocity - t.velocity) *
-                (t3) /
-                2;
+                    (t1) /
+                    2 +
+                    (targetMaxVelocity - t.velocity) *
+                        (t3) /
+                        2;
 
             t2 = (dX - edX) / (targetMaxVelocity);
 
@@ -86,6 +86,28 @@ public class TrapezoidalMotionProfile extends MotionProfile {
         return p;
     }
 
+    public double getAbsition(double t) { // note: in technicality this is what the 'I' in PID refers to, i.e. the antiderivative of position.
+        double cA = 0;
+        double tmp = p[0].duration;
+        if (t <= tmp) {
+            cA += initial.position * (t - (tmp - p[0].duration)) + getAcceleration(t) / 6 * Math.pow((t - (tmp - p[0].duration)), 3);
+            return cA;
+        }
+        cA += initial.position * p[0].duration + getAcceleration(p[0].duration) / 6 * Math.pow(p[0].duration, 3);
+        tmp += p[1].duration;
+        if (t <= tmp) {
+            cA += getPosition(tmp - p[1].duration) * (t - (tmp - p[1].duration)) + getVelocity(t) / 2 * Math.pow((t - (tmp - p[1].duration)), 2);
+            return cA;
+        }
+        cA += getPosition(p[0].duration) * (p[1].duration) + getVelocity(tmp) / 2 * Math.pow(p[1].duration, 2);
+        tmp += p[2].duration;
+        if (t <= tmp) {
+            cA += getPosition(tmp - p[2].duration) * (t - (tmp - p[2].duration)) + getVelocity(tmp - p[2].duration) / 2 * Math.pow((t - (tmp - p[2].duration)), 2) + getAcceleration(t) / 6 * Math.pow((t - (tmp - p[0].duration)), 3);
+            return cA;
+        }
+        return getAbsition(getDuration());
+    }
+
     public double getPosition(double t) {
         double cx = initial.position;
         double tmp = p[0].duration;
@@ -104,10 +126,10 @@ public class TrapezoidalMotionProfile extends MotionProfile {
         if (t <= tmp) {
             cx +=
                 getVelocity(tmp - p[2].duration) *
-                (t - (tmp - p[2].duration)) +
-                getAcceleration(t) /
-                2 *
-                Math.pow((t - (tmp - p[2].duration)), 2);
+                    (t - (tmp - p[2].duration)) +
+                    getAcceleration(t) /
+                        2 *
+                        Math.pow((t - (tmp - p[2].duration)), 2);
             return cx;
         } else {
             return target.position;
