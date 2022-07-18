@@ -16,10 +16,13 @@ public class SCurveMotionProfile extends MotionProfile {
     private Phase[] pa = new Phase[7];
     private Constraints constraints;
     private TrapezoidalMotionProfile p1, p2;
-    private double targetMaxVel;
     private State initial;
     private State target;
     private double duration;
+
+    private double targetMaxVel;
+    private double targetMaxAcceleration = 0;
+    private double targetMaxJerk = 0;
 
     // 7 profile phases
     //    private Phase p1; // positive jerk, increasing acceleration t1
@@ -175,100 +178,18 @@ public class SCurveMotionProfile extends MotionProfile {
     public double getPosition(double t) {
         double cx = initial.position;
         double tmp = 0;
-        tmp += pa[0].duration;
+        tmp += p[0].duration;
         if (t <= tmp) {
-            cx += getJerk(t) / 6 * Math.pow(tmp - t, 3); // phase 1
+            return p1.getAbsition(t);
+        }
+        cx += p1.getAbsition(p1.getDuration());
+        tmp += p[1].duration;
+        if (t <= tmp) {
             return cx;
         }
-        cx += getJerk(tmp) / 6 * Math.pow(pa[0].duration, 3); // phase 1
-        tmp += pa[1].duration;
+        tmp += p[2].duration;
         if (t <= tmp) {
-            cx +=
-                getVelocity(tmp - pa[1].duration) *
-                (tmp - t) +
-                getAcceleration(t) /
-                2 *
-                Math.pow((tmp - t), 2);
-            return cx;
-        }
-        cx +=
-            getVelocity(tmp - pa[1].duration) *
-            pa[1].duration +
-            getAcceleration(tmp) /
-            2 *
-            Math.pow(pa[1].duration, 2);
-        tmp += pa[2].duration;
-        if (t <= tmp) {
-            cx +=
-                getVelocity(tmp - pa[2].duration) *
-                (tmp - t) +
-                getAcceleration(tmp - pa[2].duration) /
-                2 *
-                Math.pow((tmp - t), 2) +
-                getJerk(t) /
-                6 *
-                Math.pow((tmp - t), 3);
-            return cx;
-        }
-        cx +=
-            getVelocity(tmp - pa[2].duration) *
-            pa[2].duration +
-            getAcceleration(tmp - pa[2].duration) /
-            2 *
-            Math.pow(pa[2].duration, 2) +
-            getJerk(tmp) /
-            6 *
-            Math.pow(pa[2].duration, 3);
-        tmp += pa[3].duration;
-        if (t <= tmp) {
-            cx += getVelocity(t) * (tmp - t);
-            return cx;
-        }
-        cx += getVelocity(tmp) * pa[3].duration;
-        tmp += pa[4].duration;
-        if (t <= tmp) {
-            cx +=
-                getVelocity(tmp - pa[4].duration) *
-                (tmp - t) +
-                getJerk(t) /
-                6 *
-                Math.pow((tmp - t), 3);
-            return cx;
-        }
-        cx +=
-            getVelocity(tmp - pa[4].duration) *
-            pa[4].duration +
-            getJerk(tmp) /
-            6 *
-            Math.pow(pa[4].duration, 3);
-        tmp += pa[5].duration;
-        if (t <= tmp) {
-            cx +=
-                getVelocity(tmp - pa[5].duration) *
-                (tmp - t) +
-                getAcceleration(t) /
-                2 *
-                Math.pow((tmp - t), 2);
-            return cx;
-        }
-        cx +=
-            getVelocity(tmp - pa[5].duration) *
-            pa[5].duration +
-            getAcceleration(tmp) /
-            2 *
-            Math.pow(pa[5].duration, 2);
-        tmp += pa[6].duration;
-        if (t <= tmp) {
-            cx +=
-                getVelocity(tmp - pa[6].duration) *
-                (tmp - t) +
-                getAcceleration(tmp - pa[6].duration) /
-                2 *
-                Math.pow((tmp - t), 2) +
-                getJerk(t) /
-                6 *
-                Math.pow((tmp - t), 3);
-            return cx;
+            return p2.getAbsition(t - (tmp - p[2].duration));
         }
         return target.position;
     }
@@ -287,7 +208,7 @@ public class SCurveMotionProfile extends MotionProfile {
         }
         tmp += p[2].duration;
         if (t <= tmp) {
-            return p2.getPosition(t);
+            return p2.getPosition(t - (tmp - p[2].duration));
         }
         return target.velocity;
     }
@@ -297,7 +218,7 @@ public class SCurveMotionProfile extends MotionProfile {
         double tmp = 0;
         tmp += p[0].duration;
         if (t <= tmp) {
-            return getVelocity(t);
+            return p1.getVelocity(t);
         }
         ca += p1.getVelocity(p1.getDuration());
         tmp += p[1].duration;
@@ -306,7 +227,7 @@ public class SCurveMotionProfile extends MotionProfile {
         }
         tmp += p[2].duration;
         if (t <= tmp) {
-            return p2.getVelocity(t);
+            return p2.getVelocity(t - (tmp - p[2].duration));
         }
         return 0;
     }
@@ -316,7 +237,7 @@ public class SCurveMotionProfile extends MotionProfile {
         double tmp = 0;
         tmp += p[0].duration;
         if (t <= tmp) {
-            return getAcceleration(t);
+            return p1.getAcceleration(t);
         }
         cj += p1.getAcceleration(p1.getDuration());
         tmp += p[1].duration;
@@ -325,7 +246,7 @@ public class SCurveMotionProfile extends MotionProfile {
         }
         tmp += p[2].duration;
         if (t <= tmp) {
-            return p2.getAcceleration(t);
+            return p2.getAcceleration(t - (tmp - p[2].duration));
         }
         return 0;
     }
