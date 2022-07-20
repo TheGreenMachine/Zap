@@ -7,7 +7,7 @@ import com.team1816.lib.controlboard.Controller;
 import com.team1816.lib.controlboard.IOperatorControlBoard;
 import com.team1816.season.Constants;
 
-/*
+/**
     operator controller (xbox, logitech, or keyboard) -
     what method names (ie setRumble, getShoot) correspond to what button / trigger / joystick values
  */

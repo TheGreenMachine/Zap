@@ -8,7 +8,7 @@ import com.team1816.lib.controlboard.IDriveControlBoard;
 import com.team1816.lib.controlboard.XboxController;
 import com.team1816.season.Constants;
 
-/*
+/**
     driver controller (xbox, logitech, or keyboard) -
     what method names (ie getStrafe, getBrakeMode) correspond to what button / trigger / joystick values
  */
