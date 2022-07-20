@@ -5,12 +5,11 @@ import edu.wpi.first.wpilibj.DriverStation;
 import java.util.HashMap;
 
 // This is a bridging class that allows for yaml functionality and it's sole purpose is to map controls to their respective methods
-public class ControlBoardBridge {
+public class ControlBoardFactory {
 
     public static RobotFactory factory = RobotFactory.getInstance();
-
     private ControlBoardConfig config;
-    private static ControlBoardBridge bridge;
+    private static ControlBoardFactory bridge;
 
     private HashMap<String, Controller.Button> driverButtonMap = new HashMap<>();
     private HashMap<String, Controller.Axis> driverAxisMap = new HashMap<>();
@@ -22,14 +21,14 @@ public class ControlBoardBridge {
     private HashMap<String, Integer> operatorDpadMap = new HashMap<>();
     private boolean operatorRumble = false;
 
-    public static ControlBoardBridge getInstance() {
+    public static ControlBoardFactory getInstance() {
         if (bridge == null) {
-            bridge = new ControlBoardBridge();
+            bridge = new ControlBoardFactory();
         }
         return bridge;
     }
 
-    public ControlBoardBridge() {
+    public ControlBoardFactory() {
         var controlBoardConfigName = factory.getControlBoard();
         if (controlBoardConfigName != "empty") {
             try {
@@ -272,6 +271,14 @@ public class ControlBoardBridge {
         return driverDpadMap;
     }
 
+    public boolean driverMapContainsKey(String key) {
+        return (
+            driverAxisMap.containsKey(key) ||
+            driverButtonMap.containsKey(key) ||
+            driverDpadMap.containsKey(key)
+        );
+    }
+
     public HashMap<String, Controller.Button> getOperatorButtonMap() {
         return operatorButtonMap;
     }
@@ -282,5 +289,13 @@ public class ControlBoardBridge {
 
     public HashMap<String, Integer> getOperatorDpadMap() {
         return operatorDpadMap;
+    }
+
+    public boolean operatorMapContainsKey(String key) {
+        return (
+            operatorAxisMap.containsKey(key) ||
+            operatorButtonMap.containsKey(key) ||
+            operatorDpadMap.containsKey(key)
+        );
     }
 }
