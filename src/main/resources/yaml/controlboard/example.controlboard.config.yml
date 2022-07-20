@@ -32,8 +32,8 @@ operator:
     buttonpad:
         x: cameraToggle
         y: autoClimb
-        a: getFieldFollowing
-        b: getSuperstructure
+        a: getFieldFollowing # dummy for example purposes
+        b: getSuperstructure # dummy for example purposes
     axes:
         leftTrigger: yeetShot
         rightTrigger: shoot
