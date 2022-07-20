@@ -372,11 +372,15 @@ public class Robot extends TimedRobot {
                         moving -> turret.setTurretSpeed(moving ? -Turret.JOG_SPEED : 0)
                     ),
                     createHoldAction( // climber up
-                        () -> controlBoard.getAsDouble("manualClimberArm") > Constants.kJoystickBooleanThreshold,
+                        () ->
+                            controlBoard.getAsDouble("manualClimberArm") >
+                            Constants.kJoystickBooleanThreshold,
                         moving -> climber.setClimberPower(moving ? -.5 : 0)
                     ),
                     createHoldAction( // climber down
-                        () -> controlBoard.getAsDouble("manualClimberArm") < Constants.kJoystickBooleanThreshold,
+                        () ->
+                            controlBoard.getAsDouble("manualClimberArm") <
+                            Constants.kJoystickBooleanThreshold,
                         moving -> climber.setClimberPower(moving ? .5 : 0)
                     ),
                     createAction(

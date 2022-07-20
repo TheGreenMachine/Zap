@@ -60,8 +60,7 @@ public abstract class Controller {
     public boolean getTrigger(Axis axis) {
         if (!mJoystickAxisMap.containsKey(axis)) return false;
         return (
-            mController.getRawAxis(mJoystickAxisMap.get(axis)) >
-            Constants.kAxisThreshold
+            mController.getRawAxis(mJoystickAxisMap.get(axis)) > Constants.kAxisThreshold
         );
     }
 
