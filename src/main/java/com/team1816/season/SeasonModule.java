@@ -3,7 +3,7 @@ package com.team1816.season;
 import com.google.inject.AbstractModule;
 import com.team1816.lib.SeasonFactory;
 import com.team1816.lib.auto.actions.TrajectoryAction;
-import com.team1816.lib.controlboard.ControlBoardFactory;
+import com.team1816.lib.controlboard.ControlBoardBrige;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.math.SwerveKinematics;
 import com.team1816.lib.subsystems.Drive;
@@ -28,7 +28,7 @@ public class SeasonModule extends AbstractModule {
         requestStaticInjection(Camera.class);
         requestStaticInjection(Turret.class);
         requestStaticInjection(LedManager.class);
-        requestStaticInjection(ControlBoardFactory.class);
+        requestStaticInjection(ControlBoardBrige.class);
         requestStaticInjection(TrajectoryAction.class);
         requestStaticInjection(TurretAction.class);
         requestStaticInjection(AutoAimAction.class);

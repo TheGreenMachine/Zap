@@ -265,50 +265,50 @@ public class Robot extends TimedRobot {
             actionManager =
                 new ActionManager(
                     createHoldAction(
-                        () -> controlBoard.getAsBool("getCollectorToggle"),
+                        () -> controlBoard.getAsBool("toggleCollector"),
                         pressed -> superstructure.setCollecting(pressed, true)
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("getCollectorBackspin"),
+                        () -> controlBoard.getAsBool("toggleCollectorReverse"),
                         pressed -> superstructure.setCollecting(pressed, false)
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("getUnlockClimber"),
+                        () -> controlBoard.getAsBool("unlockClimber"),
                         climber::unlock
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("getUseManualShoot"),
+                        () -> controlBoard.getAsBool("toggleManualShoot"),
                         () -> {
                             useManualShoot = !useManualShoot;
                             System.out.println("manual shooting toggled!");
                         }
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("getZeroPose"),
+                        () -> controlBoard.getAsBool("zeroPose"),
                         () -> {
                             turret.setTurretAngle(Turret.SOUTH);
                             drive.zeroSensors(Constants.ZeroPose);
                         }
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("getBrakeMode"),
+                        () -> controlBoard.getAsBool("brakeMode"),
                         drive::setBraking
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("getSlowMode"),
+                        () -> controlBoard.getAsBool("slowMode"),
                         drive::setSlowMode
                     ),
                     // Operator Gamepad
                     createAction(
-                        () -> controlBoard.getAsBool("getRaiseBucket"),
+                        () -> controlBoard.getAsBool("raiseBucket"),
                         () -> distanceManager.incrementBucket(100)
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("getLowerBucket"),
+                        () -> controlBoard.getAsBool("lowerBucket"),
                         () -> distanceManager.incrementBucket(-100)
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("getAutoAim"),
+                        () -> controlBoard.getAsBool("autoAim"),
                         aim -> {
                             if (aim) {
                                 turret.snapWithCamera();
@@ -325,7 +325,7 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("getCameraToggle"),
+                        () -> controlBoard.getAsBool("toggleCamera"),
                         () -> {
                             robotState.overheating = !robotState.overheating;
                             System.out.println(
@@ -364,31 +364,31 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("getTurretJogLeft"),
+                        () -> controlBoard.getAsBool("turretJogLeft"),
                         moving -> turret.setTurretSpeed(moving ? Turret.JOG_SPEED : 0)
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("getTurretJogRight"),
+                        () -> controlBoard.getAsBool("turretJogRight"),
                         moving -> turret.setTurretSpeed(moving ? -Turret.JOG_SPEED : 0)
                     ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("getClimberUp"),
+                    createHoldAction( // climber up
+                        () -> controlBoard.getAsDouble("manualClimberArm") > Constants.kJoystickBooleanThreshold,
                         moving -> climber.setClimberPower(moving ? -.5 : 0)
                     ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("getClimberDown"),
+                    createHoldAction( // climber down
+                        () -> controlBoard.getAsDouble("manualClimberArm") < Constants.kJoystickBooleanThreshold,
                         moving -> climber.setClimberPower(moving ? .5 : 0)
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("getTopClamp"),
+                        () -> controlBoard.getAsBool("toggleTopClamp"),
                         climber::setTopClamp
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("getBottomClamp"),
+                        () -> controlBoard.getAsBool("toggleBottomClamp"),
                         climber::setBottomClamp
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("getAutoClimb"),
+                        () -> controlBoard.getAsBool("autoClimb"),
                         () -> {
                             if (climber.getCurrentStage() == 0) {
                                 turret.setTurretAngle(Turret.SOUTH);
@@ -598,15 +598,15 @@ public class Robot extends TimedRobot {
 
         // Field-relative controls for turret (ie: left on joystick makes turret point left on the field, instead of left relative to the robot)
         if (
-            Math.abs(controlBoard.getAsDouble("getTurretXVal")) > 0.90 ||
-            Math.abs(controlBoard.getAsDouble("getTurretYVal")) > 0.90
+            Math.abs(controlBoard.getAsDouble("manualTurretXVal")) > 0.90 ||
+            Math.abs(controlBoard.getAsDouble("manualTurretYVal")) > 0.90
         ) {
             turret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
             turret.setFollowingAngle(
                 (
                     new Rotation2d(
-                        (-1) * controlBoard.getAsDouble("getTurretYVal"),
-                        (-1) * controlBoard.getAsDouble("getTurretXVal")
+                        (-1) * controlBoard.getAsDouble("manualTurretYVal"),
+                        (-1) * controlBoard.getAsDouble("manualTurretXVal")
                     )
                 ).getDegrees()
             );
@@ -614,17 +614,17 @@ public class Robot extends TimedRobot {
 
         // Optional functionality making shooter always rev to velocity needed to score based on predicted position on field
         if (
-            !controlBoard.getAsBool("getShoot") &&
-            !controlBoard.getAsBool("getYeetShot") &&
+            !controlBoard.getAsBool("shoot") &&
+            !controlBoard.getAsBool("yeetShot") &&
             Constants.kUsePoseTrack
         ) {
             superstructure.setRevving(true, -1, true);
         }
 
         drive.setTeleopInputs(
-            controlBoard.getAsDouble("getThrottle"),
-            -controlBoard.getAsDouble("getStrafe"),
-            controlBoard.getAsDouble("getTurn")
+            controlBoard.getAsDouble("throttle"),
+            -controlBoard.getAsDouble("strafe"),
+            controlBoard.getAsDouble("rotation")
         );
     }
 

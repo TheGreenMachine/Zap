@@ -5,11 +5,11 @@ import edu.wpi.first.wpilibj.DriverStation;
 import java.util.HashMap;
 
 // This is a bridging class that allows for yaml functionality and it's sole purpose is to map controls to their respective methods
-public class ControlBoardFactory {
+public class ControlBoardBrige {
 
     public static RobotFactory factory = RobotFactory.getInstance();
     private ControlBoardConfig config;
-    private static ControlBoardFactory bridge;
+    private static ControlBoardBrige bridge;
 
     private HashMap<String, Controller.Button> driverButtonMap = new HashMap<>();
     private HashMap<String, Controller.Axis> driverAxisMap = new HashMap<>();
@@ -21,14 +21,14 @@ public class ControlBoardFactory {
     private HashMap<String, Integer> operatorDpadMap = new HashMap<>();
     private boolean operatorRumble = false;
 
-    public static ControlBoardFactory getInstance() {
+    public static ControlBoardBrige getInstance() {
         if (bridge == null) {
-            bridge = new ControlBoardFactory();
+            bridge = new ControlBoardBrige();
         }
         return bridge;
     }
 
-    public ControlBoardFactory() {
+    public ControlBoardBrige() {
         var controlBoardConfigName = factory.getControlBoard();
         if (controlBoardConfigName != "empty") {
             try {

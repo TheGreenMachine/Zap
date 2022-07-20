@@ -6,7 +6,7 @@ import com.team1816.season.Constants;
 
 public class ControlBoard implements IControlBoard {
 
-    private static final ControlBoardFactory controlBoardFactory = ControlBoardFactory.getInstance();
+    private static final ControlBoardBrige controlBoardBridge = ControlBoardBrige.getInstance();
 
     private final Controller driverController;
     private final Controller operatorController;
@@ -37,27 +37,27 @@ public class ControlBoard implements IControlBoard {
     }
 
     public double getDoubleFromControllerYaml(String name, double defaultVal) {
-        if (controlBoardFactory.driverMapContainsKey(name)) {
-            if (controlBoardFactory.getDriverAxisMap().containsKey(name)) {
+        if (controlBoardBridge.driverMapContainsKey(name)) {
+            if (controlBoardBridge.getDriverAxisMap().containsKey(name)) {
                 return driverController.getJoystick(
-                    controlBoardFactory.getDriverAxisMap().get(name)
+                    controlBoardBridge.getDriverAxisMap().get(name)
                 );
             }
-            if (controlBoardFactory.getDriverButtonMap().containsKey(name)) {
+            if (controlBoardBridge.getDriverButtonMap().containsKey(name)) {
                 return driverController.getButton(
-                        controlBoardFactory.getDriverButtonMap().get(name)
+                        controlBoardBridge.getDriverButtonMap().get(name)
                     )
                     ? 1
                     : 0;
             }
-        } else if (controlBoardFactory.operatorMapContainsKey(name)) {
-            if (controlBoardFactory.getOperatorAxisMap().containsKey(name)) {
+        } else if (controlBoardBridge.operatorMapContainsKey(name)) {
+            if (controlBoardBridge.getOperatorAxisMap().containsKey(name)) {
                 return operatorController.getJoystick(
-                    controlBoardFactory.getOperatorAxisMap().get(name)
+                    controlBoardBridge.getOperatorAxisMap().get(name)
                 );
-            } else if (controlBoardFactory.getOperatorButtonMap().containsKey(name)) {
+            } else if (controlBoardBridge.getOperatorButtonMap().containsKey(name)) {
                 return operatorController.getButton(
-                        controlBoardFactory.getOperatorButtonMap().get(name)
+                        controlBoardBridge.getOperatorButtonMap().get(name)
                     )
                     ? 1
                     : 0;
@@ -68,25 +68,25 @@ public class ControlBoard implements IControlBoard {
     }
 
     public boolean getBooleanFromControllerYaml(String name, boolean defaultVal) {
-        if (controlBoardFactory.driverMapContainsKey(name)) {
-            if (controlBoardFactory.getDriverAxisMap().containsKey(name)) {
+        if (controlBoardBridge.driverMapContainsKey(name)) {
+            if (controlBoardBridge.getDriverAxisMap().containsKey(name)) {
                 return driverController.getTrigger(
-                    controlBoardFactory.getDriverAxisMap().get(name)
+                    controlBoardBridge.getDriverAxisMap().get(name)
                 );
             }
-            if (controlBoardFactory.getDriverButtonMap().containsKey(name)) {
+            if (controlBoardBridge.getDriverButtonMap().containsKey(name)) {
                 return driverController.getButton(
-                    controlBoardFactory.getDriverButtonMap().get(name)
+                    controlBoardBridge.getDriverButtonMap().get(name)
                 );
             }
-        } else if (controlBoardFactory.operatorMapContainsKey(name)) {
-            if (controlBoardFactory.getOperatorAxisMap().containsKey(name)) {
+        } else if (controlBoardBridge.operatorMapContainsKey(name)) {
+            if (controlBoardBridge.getOperatorAxisMap().containsKey(name)) {
                 return operatorController.getTrigger(
-                    controlBoardFactory.getOperatorAxisMap().get(name)
+                    controlBoardBridge.getOperatorAxisMap().get(name)
                 );
-            } else if (controlBoardFactory.getOperatorButtonMap().containsKey(name)) {
+            } else if (controlBoardBridge.getOperatorButtonMap().containsKey(name)) {
                 return operatorController.getButton(
-                    controlBoardFactory.getOperatorButtonMap().get(name)
+                    controlBoardBridge.getOperatorButtonMap().get(name)
                 );
             }
         }

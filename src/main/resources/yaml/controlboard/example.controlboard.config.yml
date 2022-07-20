@@ -2,43 +2,43 @@ driver:
     rumble: false
     joysticks:
         left:
-            horizontal: getStrafe
-            vertical: getThrottle
+            horizontal: strafe
+            vertical: throttle
         right:
-            horizontal: getTurn
+            horizontal: rotation
     buttonpad:
-        x: getUseManualShoot
-        y: getUnlockClimber
+        x: toggleManualShoot
+        y: unlockClimber
     axes:
-        leftTrigger: getBrakeMode
-        rightTrigger: getSlowMode
+        leftTrigger: brakeMode
+        rightTrigger: slowMode
     buttons:
-        leftBumper: getCollectorToggle
-        rightBumper: getCollectorBackspin
-        start: getZeroPose
+        leftBumper: toggleCollector
+        rightBumper: toggleCollectorReverse
+        start: zeroPose
 operator:
     rumble: false
     joysticks:
         left:
-            horizontal: getTurretXVal
-            vertical: getTurretYVal
+            horizontal: manualTurretXVal
+            vertical: manualTurretYVal
         right:
-            vertical: getClimberUpDown
+            vertical: manualClimberArm
     dpad:
-        up: getRaiseBucket
-        down: getLowerBucket
-        left: getTurretJogLeft
-        right: getTurretJogRight
+        up: raiseBucket
+        down: lowerBucket
+        left: turretJogLeft
+        right: turretJogRight
     buttonpad:
-        x: getCameraToggle
-        y: getAutoClimb
+        x: cameraToggle
+        y: autoClimb
         a: getFieldFollowing
         b: getSuperstructure
     axes:
-        leftTrigger: getYeetShot
-        rightTrigger: getShoot
+        leftTrigger: yeetShot
+        rightTrigger: shoot
     buttons:
-        leftBumper: getAutoAim
-        rightBumper: getHood
-        start: getTopClamp
-        back: getBottomClamp
+        leftBumper: autoAim
+        rightBumper: toggleHood
+        start: toggleTopClamp
+        back: toggleBottomClamp
