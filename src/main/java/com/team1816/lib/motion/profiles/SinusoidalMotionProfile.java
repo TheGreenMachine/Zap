@@ -53,32 +53,28 @@ public class SinusoidalMotionProfile extends MotionProfile {
         do {
             double cx = 0;
 
-            t1 = Math.abs(
-                Math.PI /
-                    2 *
-                    Math.abs(targetMaxVelocity - i.velocity) /
-                    c.maxAccel
-            );
-            t3 = Math.abs(
-                Math.PI /
-                    2 *
-                    Math.abs(targetMaxVelocity - t.velocity) /
-                    c.maxAccel
-            );
+            t1 =
+                Math.abs(
+                    Math.PI / 2 * Math.abs(targetMaxVelocity - i.velocity) / c.maxAccel
+                );
+            t3 =
+                Math.abs(
+                    Math.PI / 2 * Math.abs(targetMaxVelocity - t.velocity) / c.maxAccel
+                );
 
             // cx calculations
             cx +=
                 Math.pow(targetMaxVelocity + i.velocity, 2) /
-                    c.maxAccel *
-                    (targetMaxVelocity - i.velocity) *
-                    Math.PI /
-                    4;
+                c.maxAccel *
+                (targetMaxVelocity - i.velocity) *
+                Math.PI /
+                4;
             cx +=
                 Math.pow(targetMaxVelocity + t.velocity, 2) /
-                    c.maxAccel *
-                    (targetMaxVelocity - t.velocity) *
-                    Math.PI /
-                    4;
+                c.maxAccel *
+                (targetMaxVelocity - t.velocity) *
+                Math.PI /
+                4;
             cx += initial.velocity * t1;
             cx += target.velocity * t3;
 
