@@ -1,4 +1,4 @@
-package com.team1816.season.motion.profiles;
+package com.team1816.lib.motion.profiles;
 
 /**
  * This class will construct a sinusoidal motion profile.

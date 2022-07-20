@@ -1,10 +1,13 @@
-package com.team1816.season.motion.curves;
+package com.team1816.lib.motion.curves;
 
-import com.team1816.season.motion.splines.NaturalCubicSpline;
+import com.team1816.lib.motion.splines.NaturalCubicSpline;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class QuadraticBezierCurve {
+/**
+ * This class currently lacks derivative and curvature functions
+ */
+public class CubicBezierCurve {
 
     public static class ControlPoint {
 
@@ -45,21 +48,28 @@ public class QuadraticBezierCurve {
     private ArrayList<Double> yCoefficients; // defined such that index refers to exponent
     private NaturalCubicSpline LUT;
 
-    public QuadraticBezierCurve() {
+    public CubicBezierCurve() {
         controlPoints = new ArrayList<>();
         xCoefficients = yCoefficients = new ArrayList<>();
     }
 
-    public QuadraticBezierCurve(ControlPoint p0, ControlPoint p1, ControlPoint p2) {
+    public CubicBezierCurve(
+        ControlPoint p0,
+        ControlPoint p1,
+        ControlPoint p2,
+        ControlPoint p3
+    ) {
         controlPoints = new ArrayList<>();
         controlPoints.add(p0);
         controlPoints.add(p1);
         controlPoints.add(p2);
-        // calculating the Bernstein polynomial form
-        xCoefficients.add(p0.x - 2 * p1.x + p2.x);
-        yCoefficients.add(p0.y - 2 * p1.y + p2.y);
-        xCoefficients.add((-2) * p0.x + 2 * p1.x);
-        yCoefficients.add((-2) * p0.y + 2 * p1.y);
+        controlPoints.add(p3);
+        xCoefficients.add(-1 * p0.x + 3 * p1.x - 3 * p2.x + p3.x);
+        yCoefficients.add(-1 * p0.y + 3 * p1.y - 3 * p2.y + p3.y);
+        xCoefficients.add(3 * p0.x - 6 * p1.x + 3 * p2.x);
+        yCoefficients.add(3 * p0.y - 6 * p1.y + 3 * p2.y);
+        xCoefficients.add((-3) * p0.x + 3 * p1.x);
+        yCoefficients.add((-3) * p0.y + 3 * p1.y);
         xCoefficients.add(p0.x);
         yCoefficients.add(p0.y);
         Collections.reverse(xCoefficients);

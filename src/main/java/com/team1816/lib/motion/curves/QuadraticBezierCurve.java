@@ -1,9 +1,10 @@
-package com.team1816.season.motion.curves;
+package com.team1816.lib.motion.curves;
 
-import com.team1816.season.motion.splines.NaturalCubicSpline;
+import com.team1816.lib.motion.splines.NaturalCubicSpline;
 import java.util.ArrayList;
+import java.util.Collections;
 
-public class BezierCurve {
+public class QuadraticBezierCurve {
 
     public static class ControlPoint {
 
@@ -44,14 +45,25 @@ public class BezierCurve {
     private ArrayList<Double> yCoefficients; // defined such that index refers to exponent
     private NaturalCubicSpline LUT;
 
-    public BezierCurve() {
+    public QuadraticBezierCurve() {
         controlPoints = new ArrayList<>();
         xCoefficients = yCoefficients = new ArrayList<>();
-        LUT = new NaturalCubicSpline(new ArrayList<Double[]>());
     }
 
-    public BezierCurve(ArrayList<ControlPoint> arr) {
-        controlPoints = arr;
+    public QuadraticBezierCurve(ControlPoint p0, ControlPoint p1, ControlPoint p2) {
+        controlPoints = new ArrayList<>();
+        controlPoints.add(p0);
+        controlPoints.add(p1);
+        controlPoints.add(p2);
+        // calculating the Bernstein polynomial form
+        xCoefficients.add(p0.x - 2 * p1.x + p2.x);
+        yCoefficients.add(p0.y - 2 * p1.y + p2.y);
+        xCoefficients.add((-2) * p0.x + 2 * p1.x);
+        yCoefficients.add((-2) * p0.y + 2 * p1.y);
+        xCoefficients.add(p0.x);
+        yCoefficients.add(p0.y);
+        Collections.reverse(xCoefficients);
+        Collections.reverse(yCoefficients);
         generateLookUpTable(100);
     }
 
@@ -73,33 +85,17 @@ public class BezierCurve {
     }
 
     public ControlPoint getValue(double t) {
-        ControlPoint val = new ControlPoint();
-        for (int i = 0; i <= controlPoints.size() - 1; i++) {
-            ControlPoint c = controlPoints.get(i);
-            c.multiply(
-                Math.pow(t, i) *
-                Math.pow((1 - t), controlPoints.size() - i - 1) *
-                combination(controlPoints.size() - 1, i)
-            );
-            val.add(c);
+        double x = 0, y = 0;
+        for (int i = 0; i < xCoefficients.size() && i < yCoefficients.size(); i++) {
+            x += xCoefficients.get(i) * Math.pow(t, i);
+            y += yCoefficients.get(i) * Math.pow(t, i);
         }
-        return val;
+        return new ControlPoint(x, y);
     }
 
     public ControlPoint getValueWithDistance(double d) {
         double t = Math.min(LUT.getValue(d), 1.0);
         return getValue(t);
-    }
-
-    public double combination(int n, int x) {
-        double ans = 1;
-        for (int i = n; i > x; i--) {
-            ans *= i;
-        }
-        for (int i = 1; i <= x; i++) {
-            ans /= i;
-        }
-        return ans;
     }
 
     public double getLength(int resolution) {
