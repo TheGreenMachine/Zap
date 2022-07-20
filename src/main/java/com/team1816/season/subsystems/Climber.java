@@ -23,8 +23,15 @@ public class Climber extends Subsystem {
     private final ISolenoid topClamp;
     private final ISolenoid bottomClamp;
 
+    // Config
+    private double maxVel = 2; // arbitrary constants TODO: tune and move to yaml
+    private double maxAccel = 1; // arbitrary constants TODO: tune and move to yaml
+    private double feedForward = 0;
+
     // State
     private ControlMode controlMode = ControlMode.MANUAL;
+
+    private double profileTime = 0;
     private double error;
     private boolean unlocked;
     private boolean needsOverShoot = false;
@@ -35,7 +42,7 @@ public class Climber extends Subsystem {
     private final Stage[] stages;
     private double climberPosition;
     private double currentDraw;
-    //Manual
+    // Manual
     private double climberPower = 0;
     private boolean topClamped = false;
     private boolean bottomClamped = false;
@@ -102,7 +109,7 @@ public class Climber extends Subsystem {
                 controlMode = ControlMode.POSITION;
             }
             System.out.println(
-                "incrementing climber to stage " + currentStage + " ....."
+                "incrementing climber to stage " + (currentStage + 1) + " ....."
             );
             currentStage++;
             needsOverShoot = true;
@@ -204,7 +211,7 @@ public class Climber extends Subsystem {
             if (controlMode == ControlMode.POSITION) {
                 Stage stage = stages[currentStage];
                 setClamps(stage.topClamped, stage.bottomClamped, stage.topFirst);
-                positionControl(stages[currentStage].position);
+                positionControl(stages[currentStage].position); // gets current position in profile
             } else {
                 setClamps(topClamped, bottomClamped, false);
                 climberMain.set(PercentOutput, climberPower);
