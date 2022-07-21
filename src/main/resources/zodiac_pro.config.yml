@@ -1,6 +1,6 @@
 subsystems:
     drivetrain:
-        implemented: true
+        implemented: false
         falcons:
             leftMain: 17
             leftFollower: 1
@@ -31,7 +31,7 @@ subsystems:
             cameraLed: 1
             maxLevel: 255
     turret:
-        implemented: true
+        implemented: false
         pidConfig:
             slot0:
                 kP: 1.25
@@ -50,7 +50,7 @@ subsystems:
             encPPR: 4096
             turretPPR: 53248 # 4096 * 13
     shooter:
-        implemented: true
+        implemented: false
         falcons:
             shooterMain: 21
             shooterFollower: -1
@@ -75,7 +75,7 @@ subsystems:
             maxVel: 16500
             coast: 8000
     climber:
-        implemented: true
+        implemented: false
         falcons:
             climber: 34 #20
             climberFollower: 35 #-1
@@ -111,7 +111,7 @@ subsystems:
         invertMotor:
             - elevator
         constants:
-            isVelocity: 1
+            isVelocity: 0
             maxVelTicks100ms: 20000
             ballSensor: 0
             firePow: 0.35
@@ -149,7 +149,7 @@ subsystems:
             collecting: -5000 #-3600
             flush: 5000 #.35
     camera:
-        implemented: true
+        implemented: false
         constants:
             debug: 0
             maxDist: 400
@@ -163,9 +163,9 @@ infrastructure:
     # pneumatics control
     compressorEnabled: true
     pcmIsRev: false
-    pcmId: 2
+    pcmId: -1
     # pigeon
-    pigeonId: 13
+    pigeonId: 9
     isPigeon2: false
 constants:
     # drivetrain dimensions and movement
