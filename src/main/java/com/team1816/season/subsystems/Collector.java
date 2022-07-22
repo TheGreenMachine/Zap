@@ -54,7 +54,6 @@ public class Collector extends Subsystem {
             FLUSH = factory.getConstant(NAME, "flush") * MAX_TICKS;
             REVVING = factory.getConstant(NAME, "revving", .5) * MAX_TICKS;
         }
-
     }
 
     public void setDesiredState(STATE state) {
@@ -87,9 +86,9 @@ public class Collector extends Subsystem {
                     break;
             }
             if (isVelocity) {
-               intakeMotor.set(ControlMode.Velocity, intakeVel);
+                intakeMotor.set(ControlMode.Velocity, intakeVel);
             } else {
-               intakeMotor.set(ControlMode.PercentOutput, intakeVel);
+                intakeMotor.set(ControlMode.PercentOutput, intakeVel);
             }
             armPiston.set(armDown);
         }
