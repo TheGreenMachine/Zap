@@ -13,6 +13,9 @@
         },
         "constants": {
             "$ref": "double.map.schema.json"
+        },
+        "controlboard": {
+            "type": "string"
         }
     },
     "additionalProperties": false,

@@ -205,6 +205,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         if (controlState != ControlState.OPEN_LOOP) {
             controlState = ControlState.OPEN_LOOP;
         }
+        if (Math.abs(forward) <= Constants.kAxisThreshold) forward = 0;
+        if (Math.abs(strafe) <= Constants.kAxisThreshold) strafe = 0;
+        if (Math.abs(rotation) <= Constants.kAxisThreshold) rotation = 0;
         SwerveDriveSignal signal = swerveDriveHelper.calculateDriveSignal(
             forward,
             strafe,

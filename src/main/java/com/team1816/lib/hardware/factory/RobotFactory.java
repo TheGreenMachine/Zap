@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotBase;
 import java.util.Map;
+import java.util.Objects;
 import javax.annotation.Nonnull;
 
 public class RobotFactory {
@@ -53,7 +54,7 @@ public class RobotFactory {
                 YamlConfig.loadFrom(
                     this.getClass()
                         .getClassLoader()
-                        .getResourceAsStream(robotName + ".config.yml")
+                        .getResourceAsStream("yaml/" + robotName + ".config.yml")
                 );
         } catch (Exception e) {
             DriverStation.reportError("Yaml Config error!", e.getStackTrace());
@@ -440,6 +441,10 @@ public class RobotFactory {
             return defaultVal;
         }
         return getConstants().get(name);
+    }
+
+    public String getControlBoard() {
+        return Objects.requireNonNullElse(config.controlboard, "empty");
     }
 
     public double getConstant(String subsystemName, String name) {
