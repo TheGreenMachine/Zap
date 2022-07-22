@@ -131,7 +131,7 @@ subsystems:
             firePow: 0.85
     collector:
         implemented: true
-        sparkmaxes:
+        talons:
             intake: 23 # maxVelTicks100ms 10617
         invertMotor:
             - intake
@@ -145,9 +145,11 @@ subsystems:
                 kF: 0.0001
                 allowableError: 10
         constants:
+            isVelocity: 0
+            maxVelTicks100ms: 10000
             revving: 0 #.05
-            collecting: -5000 #-3600
-            flush: 5000 #.35
+            collecting: -0.5 #-3600
+            flush: 0.5 #.35
     camera:
         implemented: false
         constants:
