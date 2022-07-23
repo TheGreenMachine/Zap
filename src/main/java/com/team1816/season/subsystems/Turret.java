@@ -305,6 +305,7 @@ public class Turret extends Subsystem implements PidProvider {
             case CAMERA_SNAP:
                 snapControl();
                 positionControl(followingPos);
+                break;
             case POSITION:
                 positionControl(desiredPos);
                 break;
