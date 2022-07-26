@@ -236,13 +236,9 @@ public class Robot extends TimedRobot {
                 ledManager,
                 cooler
             );
-
-            subsystemManager.zeroSensors();
-            superstructure.setStopped(true); // bool statement is for shooter state (stop or coast)
-            distanceManager.outputBucketOffsets();
-
             subsystemManager.registerEnabledLoops(enabledLoop);
             subsystemManager.registerDisabledLoops(disabledLoop);
+            subsystemManager.zeroSensors();
 
             actionManager =
                 new ActionManager(

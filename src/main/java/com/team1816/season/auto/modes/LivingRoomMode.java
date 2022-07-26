@@ -19,6 +19,6 @@ public class LivingRoomMode extends AutoMode {
     protected void routine() throws AutoModeEndedException {
         System.out.println("Running Living Room Mode");
         runAction(new WaitAction(.5));
-        runAction(new SeriesAction(new CollectAction(true), trajectoryActions.get(0)));
+        runAction(trajectoryActions.get(0));
     }
 }

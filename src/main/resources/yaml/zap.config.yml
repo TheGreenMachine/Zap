@@ -81,7 +81,7 @@ subsystems:
             cameraLed: 1
             maxLevel: 255
     turret:
-        implemented: false
+        implemented: true
         pidConfig:
             slot0:
                 kP: 1.25
@@ -100,7 +100,7 @@ subsystems:
             encPPR: 4096
             turretPPR: 53248 # 4096 * 13
     shooter:
-        implemented: false
+        implemented: true
         falcons:
             shooterMain: 21
         invertMotor:
@@ -147,7 +147,7 @@ subsystems:
             secondToLastRungPos: 342000
             lastPos: 370000
     elevator:
-        implemented: false
+        implemented: true
         talons:
             elevator: 32
         pidConfig:
@@ -167,7 +167,7 @@ subsystems:
             flushPow: -0.3
             intakePow: 0.3
     spindexer:
-        implemented: false
+        implemented: true
         talons:
             spindexer: 31
         constants:
@@ -192,9 +192,11 @@ subsystems:
                 kF: 0.0001
                 allowableError: 10
         constants:
+            maxVelTicks100MS: 10000
+            isVelocity: 1
             revving: 0 #.05
-            collecting: -5000 #-3600
-            flush: 5000 #.35
+            collecting: -.5 #-3600
+            flush: 0.5 #.35
     camera:
         implemented: false
         constants:

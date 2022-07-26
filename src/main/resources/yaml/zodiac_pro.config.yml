@@ -1,6 +1,6 @@
 subsystems:
     drivetrain:
-        implemented: false
+        implemented: true
         falcons:
             leftMain: 17
             leftFollower: 1
@@ -22,7 +22,7 @@ subsystems:
             openLoopRampRate: 0.8
             isSwerve: 0
     ledmanager:
-        implemented: false
+        implemented: true
         canifier: -1
         candle: -1
         constants:
@@ -31,7 +31,7 @@ subsystems:
             cameraLed: 1
             maxLevel: 255
     turret:
-        implemented: false
+        implemented: true
         pidConfig:
             slot0:
                 kP: 1.25
@@ -75,7 +75,7 @@ subsystems:
             maxVel: 16500
             coast: 8000
     climber:
-        implemented: false
+        implemented: true
         falcons:
             climber: 34 #20
             climberFollower: 35 #-1
