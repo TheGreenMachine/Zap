@@ -7,28 +7,23 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.LibModule;
-import com.team1816.lib.auto.AutoModeExecutor;
-import com.team1816.lib.auto.modes.AutoModeBase;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.Drive;
 import com.team1816.lib.subsystems.DrivetrainLogger;
 import com.team1816.lib.subsystems.SubsystemManager;
-import com.team1816.season.auto.AutoModeSelector;
-import com.team1816.season.auto.paths.TrajectorySet;
+import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.controlboard.ActionManager;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.states.Superstructure;
 import com.team1816.season.subsystems.*;
-import com.team254.lib.util.LatchedBoolean;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Optional;
 
 public class Robot extends TimedRobot {
 
@@ -63,14 +58,8 @@ public class Robot extends TimedRobot {
     private final LedManager ledManager;
     private final DistanceManager distanceManager;
 
-    // debugging / testing
-    private final LatchedBoolean wantExecution = new LatchedBoolean();
-    private final LatchedBoolean wantInterrupt = new LatchedBoolean();
-
     // autonomous
-    private final AutoModeSelector autoModeSelector;
-    private final AutoModeExecutor autoModeExecutor;
-    private TrajectorySet trajectorySet;
+    private final AutoModeManager autoModeManager;
 
     // timing
     private double loopStart;
@@ -100,9 +89,7 @@ public class Robot extends TimedRobot {
         distanceManager = injector.getInstance(DistanceManager.class);
         ledManager = injector.getInstance(LedManager.class);
         subsystemManager = injector.getInstance(SubsystemManager.class);
-        autoModeSelector = injector.getInstance(AutoModeSelector.class);
-        autoModeExecutor = injector.getInstance(AutoModeExecutor.class);
-        trajectorySet = injector.getInstance(TrajectorySet.class);
+        autoModeManager = injector.getInstance(AutoModeManager.class);
     }
 
     public static RobotFactory getFactory() {
@@ -257,11 +244,6 @@ public class Robot extends TimedRobot {
             subsystemManager.registerEnabledLoops(enabledLoop);
             subsystemManager.registerDisabledLoops(disabledLoop);
 
-            // Robot starts forwards.
-            robotState.resetPosition();
-
-            autoModeSelector.updateModeCreator();
-
             actionManager =
                 new ActionManager(
                     createHoldAction(
@@ -287,7 +269,7 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("zeroPose"),
                         () -> {
                             turret.setTurretAngle(Turret.SOUTH);
-                            drive.zeroSensors(Constants.ZeroPose);
+                            drive.zeroSensors(Constants.kDefaultZeroingPose);
                         }
                     ),
                     createHoldAction(
@@ -416,6 +398,9 @@ public class Robot extends TimedRobot {
         try {
             enabledLoop.stop();
 
+            // Stop any running autos
+            autoModeManager.stopAuto();
+
             ledManager.setDefaultStatus(LedManager.RobotStatus.DISABLED);
             camera.setCameraEnabled(false);
 
@@ -425,12 +410,6 @@ public class Robot extends TimedRobot {
             robotState.resetAllStates();
             cooler.zeroSensors();
             drive.zeroSensors();
-
-            // Reset all auto mode states.
-            if (autoModeExecutor != null) {
-                autoModeExecutor.stop();
-            }
-            autoModeSelector.updateModeCreator();
 
             disabledLoop.start();
         } catch (Throwable t) {
@@ -445,16 +424,12 @@ public class Robot extends TimedRobot {
             disabledLoop.stop();
             ledManager.setDefaultStatus(LedManager.RobotStatus.AUTONOMOUS);
 
-            // Robot starts at first waypoint (Pose2D) of current auto path chosen
-            robotState.resetPosition();
-
-            drive.zeroSensors();
+            drive.zeroSensors(autoModeManager.getSelectedAuto().getInitialPose());
             turret.zeroSensors();
-
             superstructure.setStopped(false);
 
             drive.setControlState(Drive.ControlState.TRAJECTORY_FOLLOWING);
-            autoModeExecutor.start();
+            autoModeManager.startAuto();
 
             enabledLoop.start();
         } catch (Throwable t) {
@@ -468,20 +443,16 @@ public class Robot extends TimedRobot {
             disabledLoop.stop();
             ledManager.setDefaultStatus(LedManager.RobotStatus.ENABLED);
 
-            if (autoModeExecutor != null) {
-                autoModeExecutor.stop();
-            }
-
             turret.zeroSensors();
             climber.zeroSensors();
-
-            enabledLoop.start();
+            superstructure.setStopped(false);
 
             turret.setTurretAngle(Turret.SOUTH);
             turret.setControlMode(defaultTurretControlMode);
 
-            superstructure.setStopped(false);
             infrastructure.startCompressor();
+
+            enabledLoop.start();
         } catch (Throwable t) {
             faulted = true;
             throw t;
@@ -528,7 +499,8 @@ public class Robot extends TimedRobot {
             subsystemManager.outputToSmartDashboard();
             // update robot state on field for Field2D widget
             robotState.outputToSmartDashboard();
-            autoModeSelector.outputToSmartDashboard();
+            // update shuffleboard selected auto mode
+            autoModeManager.outputToSmartDashboard();
         } catch (Throwable t) {
             faulted = true;
             System.out.println(t.getMessage());
@@ -540,7 +512,7 @@ public class Robot extends TimedRobot {
         loopStart = Timer.getFPGATimestamp();
         try {
             if (RobotController.getUserButton()) {
-                drive.zeroSensors(Constants.ZeroPose);
+                drive.zeroSensors(Constants.kDefaultZeroingPose);
                 ledManager.indicateStatus(LedManager.RobotStatus.SEEN_TARGET);
             } else {
                 // non-camera LEDs will flash red if robot periodic updates fail
@@ -551,18 +523,9 @@ public class Robot extends TimedRobot {
                 }
             }
 
-            // Periodically check if drivers changed desired auto - if yes, then update the actual auto mode
-            autoModeSelector.updateModeCreator();
-
-            Optional<AutoModeBase> autoMode = autoModeSelector.getAutoMode();
-            if (
-                autoMode.isPresent() && autoMode.get() != autoModeExecutor.getAutoMode()
-            ) {
-                var auto = autoMode.get();
-                System.out.println("Set auto mode to: " + auto.getClass().toString());
-                robotState.field.getObject("Trajectory");
-                autoModeExecutor.setAutoMode(auto);
-                Constants.StartingPose = auto.getTrajectory().getInitialPose();
+            // Periodically check if drivers changed desired auto - if yes, then update the robot's position on the field
+            if (autoModeManager.update()) {
+                drive.zeroSensors(autoModeManager.getSelectedAuto().getInitialPose());
             }
         } catch (Throwable t) {
             faulted = true;

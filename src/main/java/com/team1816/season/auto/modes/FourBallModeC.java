@@ -2,32 +2,24 @@ package com.team1816.season.auto.modes;
 
 import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.actions.*;
-import com.team1816.lib.auto.modes.AutoModeBase;
+import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.season.auto.actions.*;
-import com.team1816.season.auto.paths.TrajectorySet;
+import com.team1816.season.auto.paths.FourBallPathC2;
+import com.team1816.season.auto.paths.FourBallPathC3;
+import com.team1816.season.auto.paths.TwoBallPathC;
 import com.team1816.season.subsystems.Turret;
+import java.util.List;
 
-public class FourBallModeC extends AutoModeBase {
-
-    private final TrajectoryAction trajectory1;
-    private final TrajectoryAction trajectory2;
+public class FourBallModeC extends AutoMode {
 
     public FourBallModeC() {
-        trajectory =
-            new TrajectoryAction(
-                TrajectorySet.TWO_BALL_C,
-                TrajectorySet.TWO_BALL_C_HEADINGS
-            );
-        trajectory1 =
-            new TrajectoryAction(
-                TrajectorySet.FOUR_BALL_C2,
-                TrajectorySet.FOUR_BALL_C2_HEADINGS
-            );
-        trajectory2 =
-            new TrajectoryAction(
-                TrajectorySet.FOUR_BALL_C3,
-                TrajectorySet.FOUR_BALL_C3_HEADINGS
-            );
+        super(
+            List.of(
+                new TrajectoryAction(new TwoBallPathC()),
+                new TrajectoryAction(new FourBallPathC2()),
+                new TrajectoryAction(new FourBallPathC3())
+            )
+        );
     }
 
     @Override
@@ -39,15 +31,15 @@ public class FourBallModeC extends AutoModeBase {
                     new TurretAction(Turret.NORTH - 10), // to be changed
                     new CollectAction(true)
                 ),
-                trajectory,
+                trajectoryActions.get(0),
                 new AutoAimAndRev(1.7, 11000),
                 new ShootAction(true, true),
                 new WaitAction(1.75),
                 new ShootAction(false, true),
-                trajectory1,
+                trajectoryActions.get(1),
                 new WaitAction(1),
                 new TurretAction(Turret.SOUTH), // this is in dead zone so tune heading or turret angle
-                trajectory2,
+                trajectoryActions.get(2),
                 new AutoAimAndRev(1, 11000),
                 new ShootAction(true, true),
                 new WaitAction(3)

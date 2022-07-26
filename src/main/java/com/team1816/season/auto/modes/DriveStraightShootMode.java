@@ -2,16 +2,13 @@ package com.team1816.season.auto.modes;
 
 import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.actions.*;
-import com.team1816.lib.auto.modes.AutoModeBase;
+import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.season.auto.actions.*;
-import com.team1816.season.auto.paths.TrajectorySet;
 import com.team1816.season.subsystems.Shooter;
 
-public class DriveStraightShootMode extends AutoModeBase {
+public class DriveStraightShootMode extends AutoMode {
 
-    public DriveStraightShootMode() {
-        trajectory = new TrajectoryAction(TrajectorySet.TUNE_DRIVETRAIN);
-    }
+    public DriveStraightShootMode() {}
 
     @Override
     protected void routine() throws AutoModeEndedException {

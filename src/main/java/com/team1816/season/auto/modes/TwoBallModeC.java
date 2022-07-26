@@ -2,20 +2,17 @@ package com.team1816.season.auto.modes;
 
 import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.actions.*;
-import com.team1816.lib.auto.modes.AutoModeBase;
+import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.season.auto.actions.*;
-import com.team1816.season.auto.paths.TrajectorySet;
+import com.team1816.season.auto.paths.TwoBallPathC;
 import com.team1816.season.subsystems.Shooter;
 import com.team1816.season.subsystems.Turret;
+import java.util.List;
 
-public class TwoBallModeC extends AutoModeBase {
+public class TwoBallModeC extends AutoMode {
 
     public TwoBallModeC() {
-        trajectory =
-            new TrajectoryAction(
-                TrajectorySet.TWO_BALL_C,
-                TrajectorySet.TWO_BALL_C_HEADINGS
-            );
+        super(List.of(new TrajectoryAction(new TwoBallPathC())));
     }
 
     @Override
@@ -29,7 +26,7 @@ public class TwoBallModeC extends AutoModeBase {
                     new CollectAction(true),
                     new RampUpShooterAction(Shooter.MID_VELOCITY) //8650
                 ),
-                trajectory,
+                trajectoryActions.get(0),
                 new ShootAction(true, true),
                 new WaitAction(4)
             )

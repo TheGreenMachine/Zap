@@ -99,7 +99,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     public Rotation2d getTrajectoryHeadings() {
         if (headingsList == null) {
-            System.out.println("headings are empty!");
             return Constants.EmptyRotation;
         } else if (trajectoryIndex > headingsList.size() - 1) {
             //System.out.println("heck the headings aren't long enough");
@@ -259,6 +258,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
 
         resetOdometry(pose);
+        startingPose = pose;
         chassisSpeed = new ChassisSpeeds();
         isBraking = false;
     }
