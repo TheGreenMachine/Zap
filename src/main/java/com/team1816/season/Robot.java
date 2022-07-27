@@ -19,7 +19,6 @@ import com.team1816.season.states.RobotState;
 import com.team1816.season.states.Superstructure;
 import com.team1816.season.subsystems.*;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -529,14 +528,7 @@ public class Robot extends TimedRobot {
                 robotState.field
                     .getObject("Trajectory")
                     .setTrajectory(
-                        autoModeManager.getSelectedAuto().getTrajectoryList() == null
-                            ? (new Trajectory())
-                            : (
-                                autoModeManager
-                                    .getSelectedAuto()
-                                    .getTrajectoryList()
-                                    .get(0)
-                            )
+                        autoModeManager.getSelectedAuto().getCurrentTrajectory()
                     );
             }
         } catch (Throwable t) {
@@ -550,11 +542,7 @@ public class Robot extends TimedRobot {
         loopStart = Timer.getFPGATimestamp();
         robotState.field
             .getObject("Trajectory")
-            .setTrajectory(
-                autoModeManager.getSelectedAuto().getTrajectoryList() == null
-                    ? (new Trajectory())
-                    : (autoModeManager.getSelectedAuto().getCurrentTrajectory())
-            );
+            .setTrajectory(autoModeManager.getSelectedAuto().getCurrentTrajectory());
 
         if (Constants.kIsLoggingAutonomous) {
             logger.updateTopics();
