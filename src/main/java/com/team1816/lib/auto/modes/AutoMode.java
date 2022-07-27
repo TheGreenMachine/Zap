@@ -88,6 +88,15 @@ public abstract class AutoMode {
         return trajectoryList;
     }
 
+    public Trajectory getCurrentTrajectory() {
+        for (int i = 0; i < trajectoryActions.size(); i++) {
+            if (!trajectoryActions.get(i).isFinished()) {
+                return trajectoryActions.get(i).getTrajectory();
+            }
+        }
+        return new Trajectory();
+    }
+
     public Pose2d getInitialPose() {
         if (initialPose == null) {
             return Constants.kDefaultZeroingPose;

@@ -548,6 +548,13 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         loopStart = Timer.getFPGATimestamp();
+        robotState.field
+            .getObject("Trajectory")
+            .setTrajectory(
+                autoModeManager.getSelectedAuto().getTrajectoryList() == null
+                    ? (new Trajectory())
+                    : (autoModeManager.getSelectedAuto().getCurrentTrajectory())
+            );
 
         if (Constants.kIsLoggingAutonomous) {
             logger.updateTopics();
