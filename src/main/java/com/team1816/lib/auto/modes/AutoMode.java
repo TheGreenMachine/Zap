@@ -79,9 +79,11 @@ public abstract class AutoMode {
     }
 
     public Trajectory getCurrentTrajectory() {
-        for (int i = 0; i < trajectoryActions.size(); i++) {
-            if (!trajectoryActions.get(i).isFinished()) {
-                return trajectoryActions.get(i).getTrajectory();
+        if(trajectoryActions != null && trajectoryActions.size() > 0) {
+            for (int i = 0; i < trajectoryActions.size(); i++) {
+                if (!trajectoryActions.get(i).isFinished()) {
+                    return trajectoryActions.get(i).getTrajectory();
+                }
             }
         }
         return new Trajectory();
