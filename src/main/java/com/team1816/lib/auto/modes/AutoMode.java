@@ -5,7 +5,9 @@ import com.team1816.lib.auto.actions.Action;
 import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.season.Constants;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,12 +21,17 @@ public abstract class AutoMode {
     private boolean needsStop;
 
     protected List<TrajectoryAction> trajectoryActions;
+    protected List<Trajectory> trajectoryList;
     protected Pose2d initialPose;
 
     protected AutoMode() {}
 
     protected AutoMode(List<TrajectoryAction> trajectoryActions) {
         this.trajectoryActions = trajectoryActions;
+        trajectoryList = new ArrayList<>();
+        for (TrajectoryAction t : trajectoryActions) {
+            trajectoryList.add(t.getTrajectory());
+        }
         initialPose = trajectoryActions.get(0).getTrajectory().getInitialPose();
     }
 
@@ -75,6 +82,10 @@ public abstract class AutoMode {
         }
 
         action.done();
+    }
+
+    public List<Trajectory> getTrajectoryList() {
+        return trajectoryList;
     }
 
     public Pose2d getInitialPose() {

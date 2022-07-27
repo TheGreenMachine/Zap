@@ -217,6 +217,10 @@ public abstract class Drive
         );
     }
 
+    public Trajectory getTrajectory() {
+        return trajectory;
+    }
+
     public synchronized double getTrajectoryTimestamp() {
         return timestamp - trajectoryStartTime;
     }
