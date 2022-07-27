@@ -42,3 +42,4 @@ operator:
         rightBumper: toggleHood
         start: toggleTopClamp
         back: toggleBottomClamp
+demoMode: false

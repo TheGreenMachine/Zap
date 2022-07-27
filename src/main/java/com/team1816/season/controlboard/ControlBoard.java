@@ -3,6 +3,9 @@ package com.team1816.season.controlboard;
 import com.google.inject.Inject;
 import com.team1816.lib.controlboard.*;
 import com.team1816.season.Constants;
+import com.team1816.season.auto.AutoModeManager;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ControlBoard implements IControlBoard {
 
@@ -11,11 +14,28 @@ public class ControlBoard implements IControlBoard {
     private final Controller driverController;
     private final Controller operatorController;
 
+    private double demoModeMultiplier;
+    private SendableChooser<DemoMode> demoModeChooser;
+
     @Inject
     private ControlBoard(Controller.Factory controller) {
         driverController = controller.getControllerInstance(Constants.kDriveGamepadPort);
         operatorController =
             controller.getControllerInstance(Constants.kOperatorGamepadPort);
+
+        // only for demo mode functionality
+        if(controlBoardBridge.isDemoMode()){
+            demoModeChooser = new SendableChooser<>();
+            SmartDashboard.putData("Demo mode", demoModeChooser);
+            for (DemoMode demoMode : DemoMode.values()) {
+                demoModeChooser.addOption(demoMode.name(), demoMode);
+            }
+            demoModeChooser.setDefaultOption(
+                DemoMode.PLAIN.name(),
+                DemoMode.PLAIN
+            );
+            demoModeMultiplier = 0.5;
+        }
     }
 
     @Override
@@ -25,7 +45,11 @@ public class ControlBoard implements IControlBoard {
 
     @Override
     public double getAsDouble(String getName) {
-        return getDoubleFromControllerYaml(getName);
+        if(controlBoardBridge.isDemoMode()){
+            return getDoubleFromControllerYaml(getName);
+        } else {
+            return getDoubleFromControllerYaml(getName) * demoModeMultiplier;
+        }
     }
 
     public double getDoubleFromControllerYaml(String name) {
@@ -92,5 +116,11 @@ public class ControlBoard implements IControlBoard {
         }
 
         return defaultVal;
+    }
+
+    private enum DemoMode {
+        PLAIN,
+        SPORT,
+        PLAD
     }
 }

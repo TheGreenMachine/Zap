@@ -298,4 +298,8 @@ public class ControlBoardBrige {
             operatorDpadMap.containsKey(key)
         );
     }
+
+    public boolean isDemoMode() {
+        return config.demoMode;
+    }
 }
