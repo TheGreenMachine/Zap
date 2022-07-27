@@ -73,7 +73,7 @@ subsystems:
             tarmacTapeVel: 8125
             launchpadVel: 10150
             maxVel: 16500
-            coast: 8000
+            coast: 6000
     elevator:
         implemented: true
         talons:
@@ -93,7 +93,7 @@ subsystems:
             ballSensor: 0
             firePow: 0.35
             flushPow: -0.3
-            intakePow: 0.3
+            intakePow: 0
     spindexer:
         implemented: true
         talons:
@@ -106,7 +106,7 @@ subsystems:
             collectPow: 0.5
             indexPow: -0.5
             flushPow: -1
-            coastPow: 0.25
+            coastPow: 0
             firePow: 0.85
     collector:
         implemented: true
@@ -142,7 +142,7 @@ infrastructure:
     pdId: 0
     pdIsRev: false
     # pneumatics control
-    compressorEnabled: false
+    compressorEnabled: true
     pcmIsRev: false
     pcmId: -1
     # pigeon
