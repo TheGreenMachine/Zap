@@ -57,7 +57,7 @@ subsystems:
         invertMotor:
             - shooterMain
         solenoids:
-            hood: 0
+            hood: -1
         pidConfig:
             slot0:
                 kP: 0.38 #.45
@@ -73,7 +73,7 @@ subsystems:
             tarmacTapeVel: 8125
             launchpadVel: 10150
             maxVel: 16500
-            coast: 6000
+            coast: 0
     elevator:
         implemented: true
         talons:
@@ -115,7 +115,7 @@ subsystems:
         invertMotor:
             - intake
         solenoids:
-            arm: 2
+            arm: 0
         pidConfig:
             slot0:
                 kP: 0.0001 #tunned at 4000
@@ -144,7 +144,7 @@ infrastructure:
     # pneumatics control
     compressorEnabled: true
     pcmIsRev: false
-    pcmId: -1
+    pcmId: 8
     # pigeon
     pigeonId: 9
     isPigeon2: false
