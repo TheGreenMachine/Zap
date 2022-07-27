@@ -3,6 +3,7 @@ package com.team1816.lib.controlboard;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import edu.wpi.first.wpilibj.DriverStation;
 import java.util.HashMap;
+import java.util.Objects;
 
 // This is a bridging class that allows for yaml functionality and it's sole purpose is to map controls to their respective methods
 public class ControlBoardBrige {
@@ -300,6 +301,6 @@ public class ControlBoardBrige {
     }
 
     public boolean isDemoMode() {
-        return config.demoMode;
+        return Objects.requireNonNullElse(config.demoMode, false);
     }
 }
