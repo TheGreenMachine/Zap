@@ -32,8 +32,6 @@ operator:
         right: turretJogRight
     buttonpad:
         y: autoClimb
-        a: getFieldFollowing # dummy for example purposes
-        b: getSuperstructure # dummy for example purposes
     axes:
         leftTrigger: yeetShot
     buttons:
