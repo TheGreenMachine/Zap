@@ -3,13 +3,13 @@ subsystems:
         implemented: true
         falcons:
             leftMain: 17
-            leftFollower: 1
+            leftFollower: -1
             leftFollowerTwo: -1
             rightMain: 14
-            rightFollower: 15
+            rightFollower: -1
             rightFollowerTwo: -1
         invertMotor:
-            - leftMain
+            - rightMain
         pidConfig:
             slot0:
                 kP: 0.1 # 0.18
@@ -31,7 +31,7 @@ subsystems:
             cameraLed: 1
             maxLevel: 255
     turret:
-        implemented: true
+        implemented: false
         pidConfig:
             slot0:
                 kP: 1.25
@@ -43,12 +43,12 @@ subsystems:
             turret: 13
         constants:
             deltaXScalar: 150 #value worked best at 150 in sim
-            revLimit: 8800 # adjusted for zero-offset
-            fwdLimit: 41500 # adjusted for zero-offset
-            absPosTicksSouth: 0 # absolute
-            zeroOffset: 12639 # (turretPPR - non-adjusted fwdLimit - non-adjusted revlimit) / 2
+            revLimit: -944 # adjusted for zero-offset
+            fwdLimit: 4755 # adjusted for zero-offset
+            absPosTicksSouth: 1045 # absolute
+            zeroOffset: 2048 #
             encPPR: 4096
-            turretPPR: 53248 # 4096 * 13
+            turretPPR: 4096 # 4096 * 13
     shooter:
         implemented: true
         falcons:
@@ -57,7 +57,7 @@ subsystems:
         invertMotor:
             - shooterMain
         solenoids:
-            hood: 0
+            hood: -1
         pidConfig:
             slot0:
                 kP: 0.38 #.45
@@ -73,30 +73,7 @@ subsystems:
             tarmacTapeVel: 8125
             launchpadVel: 10150
             maxVel: 16500
-            coast: 8000
-    climber:
-        implemented: true
-        falcons:
-            climber: 34 #20
-            climberFollower: 35 #-1
-        solenoids:
-            topClamp: 7
-            bottomClamp: 6
-        pidConfig:
-            slot0:
-                kP: 0.050 #0.075 #tunned at 4000
-                kI: 0.000
-                kD: .6
-                kF: 0.0
-                allowableError: 5000
-        constants:
-            maxVelTicks100ms: 1
-            unlockPos: -14400
-            startPos: 0
-            returnPos: 0
-            firstToSecondRungPos: 150000
-            secondToLastRungPos: 342000
-            lastPos: 370000
+            coast: 0
     elevator:
         implemented: true
         talons:
@@ -116,18 +93,20 @@ subsystems:
             ballSensor: 0
             firePow: 0.35
             flushPow: -0.3
-            intakePow: 0.3
+            intakePow: 0
     spindexer:
         implemented: true
         talons:
             spindexer: 4
         solenoids:
             feederFlap: -1
+        invertMotor:
+            - spindexer
         constants:
             collectPow: 0.5
             indexPow: -0.5
             flushPow: -1
-            coastPow: 0.25
+            coastPow: 0
             firePow: 0.85
     collector:
         implemented: true
@@ -136,7 +115,7 @@ subsystems:
         invertMotor:
             - intake
         solenoids:
-            arm: 2
+            arm: 0
         pidConfig:
             slot0:
                 kP: 0.0001 #tunned at 4000
@@ -165,11 +144,11 @@ infrastructure:
     # pneumatics control
     compressorEnabled: true
     pcmIsRev: false
-    pcmId: -1
+    pcmId: 8
     # pigeon
     pigeonId: 9
     isPigeon2: false
-controlboard: example
+controlboard: tank_demo
 constants:
     # drivetrain dimensions and movement
     maxRotVel: 7.2
@@ -191,4 +170,4 @@ constants:
     EnableBucketTuning: 1
     teleopFieldCentric: 1 # 0 or 1
     kLooperDt: .035 # seconds
-    resetFactoryDefaults: 0 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret
+    resetFactoryDefaults: 1 # whether motors get reset to factory default

@@ -96,7 +96,7 @@ public class Turret extends Subsystem implements PidProvider {
         turret.setNeutralMode(NeutralMode.Brake);
 
         // Position Control
-        double peakOutput = 0.75;
+        double peakOutput = 0.5;
         pidConfig = factory.getPidSlotConfig(NAME);
         turret.configPeakOutputForward(peakOutput, Constants.kCANTimeoutMs);
         turret.configNominalOutputForward(0, Constants.kCANTimeoutMs);
@@ -137,12 +137,12 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     @Override
-    public synchronized void zeroSensors() {
+    public synchronized void zeroSensors() { // TODO here
         if (turret instanceof IMotorSensor) {
             var sensors = (IMotorSensor) turret;
             int halfAbsPPR = ABS_PPR / 2;
             int absSensorVal = sensors.getPulseWidthPosition(); // absolute
-            int offset = ZERO_OFFSET - absSensorVal + halfAbsPPR;
+            int offset = ZERO_OFFSET - absSensorVal;
 
             // It is safe to reset quadrature if turret enc reads ~0 (on startup)
             if (

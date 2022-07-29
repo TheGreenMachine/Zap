@@ -3,6 +3,10 @@ package com.team1816.season.controlboard;
 import com.google.inject.Inject;
 import com.team1816.lib.controlboard.*;
 import com.team1816.season.Constants;
+import edu.wpi.first.networktables.EntryListenerFlags;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ControlBoard implements IControlBoard {
 
@@ -11,11 +15,49 @@ public class ControlBoard implements IControlBoard {
     private final Controller driverController;
     private final Controller operatorController;
 
+    private double demoModeMultiplier;
+    private SendableChooser<DemoMode> demoModeChooser;
+
     @Inject
     private ControlBoard(Controller.Factory controller) {
         driverController = controller.getControllerInstance(Constants.kDriveGamepadPort);
         operatorController =
             controller.getControllerInstance(Constants.kOperatorGamepadPort);
+
+        // demo mode functionality configuration
+        if (controlBoardBridge.isDemoMode()) {
+            demoModeChooser = new SendableChooser<>();
+            SmartDashboard.putData("Demo mode", demoModeChooser);
+            for (DemoMode demoMode : DemoMode.values()) {
+                demoModeChooser.addOption(demoMode.name(), demoMode);
+            }
+            demoModeChooser.setDefaultOption(DemoMode.SLOW.name(), DemoMode.SLOW);
+            NetworkTableInstance
+                .getDefault()
+                .getTable("SmartDashboard")
+                .getSubTable("DemoMode")
+                .addEntryListener(
+                    "selected",
+                    (table, key, entry, value, flags) -> {
+                        switch ((DemoMode) value.getValue()) {
+                            case SLOW:
+                                demoModeMultiplier = 0.25;
+                            case COMFORT:
+                                demoModeMultiplier = 0.5;
+                                break;
+                            case SPORT:
+                                demoModeMultiplier = 0.75;
+                                break;
+                            case PLAID:
+                                demoModeMultiplier = 1.0;
+                                break;
+                            default:
+                                demoModeMultiplier = 0.5;
+                        }
+                    },
+                    EntryListenerFlags.kNew | EntryListenerFlags.kUpdate
+                );
+        }
     }
 
     @Override
@@ -25,7 +67,11 @@ public class ControlBoard implements IControlBoard {
 
     @Override
     public double getAsDouble(String getName) {
-        return getDoubleFromControllerYaml(getName);
+        if (controlBoardBridge.isDemoMode()) {
+            return getDoubleFromControllerYaml(getName) * demoModeMultiplier;
+        } else {
+            return getDoubleFromControllerYaml(getName);
+        }
     }
 
     public double getDoubleFromControllerYaml(String name) {
@@ -92,5 +138,12 @@ public class ControlBoard implements IControlBoard {
         }
 
         return defaultVal;
+    }
+
+    private enum DemoMode {
+        SLOW,
+        COMFORT,
+        SPORT,
+        PLAID,
     }
 }

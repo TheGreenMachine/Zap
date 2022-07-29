@@ -1,3 +1,4 @@
+isDemoControlBoard: true
 driver:
     rumble: false
     joysticks:
@@ -8,10 +9,10 @@ driver:
             horizontal: rotation
     buttonpad:
         x: toggleManualShoot
-        y: unlockClimber
+        y: cameraToggle
     axes:
         leftTrigger: brakeMode
-        rightTrigger: slowMode
+        rightTrigger: shoot
     buttons:
         leftBumper: toggleCollector
         rightBumper: toggleCollectorReverse
@@ -30,16 +31,13 @@ operator:
         left: turretJogLeft
         right: turretJogRight
     buttonpad:
-        x: cameraToggle
         y: autoClimb
         a: getFieldFollowing # dummy for example purposes
         b: getSuperstructure # dummy for example purposes
     axes:
         leftTrigger: yeetShot
-        rightTrigger: shoot
     buttons:
         leftBumper: autoAim
         rightBumper: toggleHood
         start: toggleTopClamp
         back: toggleBottomClamp
-demoMode: false
