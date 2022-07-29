@@ -148,7 +148,7 @@ infrastructure:
     # pigeon
     pigeonId: 9
     isPigeon2: false
-controlboard: example
+controlboard: tank_demo
 constants:
     # drivetrain dimensions and movement
     maxRotVel: 7.2
