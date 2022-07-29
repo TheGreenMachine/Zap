@@ -26,6 +26,7 @@ public class ControlBoard implements IControlBoard {
 
         // demo mode functionality configuration
         if (controlBoardBridge.isDemoMode()) {
+            System.out.println("Using Demo Control Board");
             demoModeChooser = new SendableChooser<>();
             SmartDashboard.putData("Demo mode", demoModeChooser);
             for (DemoMode demoMode : DemoMode.values()) {
