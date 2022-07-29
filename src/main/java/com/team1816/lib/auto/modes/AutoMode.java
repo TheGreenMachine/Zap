@@ -5,6 +5,7 @@ import com.team1816.lib.auto.actions.Action;
 import com.team1816.lib.auto.actions.TrajectoryAction;
 import com.team1816.season.Constants;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;
 import java.util.List;
 
@@ -75,6 +76,17 @@ public abstract class AutoMode {
         }
 
         action.done();
+    }
+
+    public Trajectory getCurrentTrajectory() {
+        if(trajectoryActions != null && trajectoryActions.size() > 0) {
+            for (int i = 0; i < trajectoryActions.size(); i++) {
+                if (!trajectoryActions.get(i).isFinished()) {
+                    return trajectoryActions.get(i).getTrajectory();
+                }
+            }
+        }
+        return new Trajectory();
     }
 
     public Pose2d getInitialPose() {

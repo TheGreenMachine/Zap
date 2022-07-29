@@ -396,9 +396,12 @@ public class Robot extends TimedRobot {
 
             // Stop any running autos
             autoModeManager.stopAuto();
-
             ledManager.setDefaultStatus(LedManager.RobotStatus.DISABLED);
             camera.setCameraEnabled(false);
+
+            if (autoModeManager.getSelectedAuto() == null) {
+                autoModeManager.reset();
+            }
 
             superstructure.setStopped(true);
             subsystemManager.stop();
@@ -522,6 +525,11 @@ public class Robot extends TimedRobot {
             // Periodically check if drivers changed desired auto - if yes, then update the robot's position on the field
             if (autoModeManager.update()) {
                 drive.zeroSensors(autoModeManager.getSelectedAuto().getInitialPose());
+                robotState.field
+                    .getObject("Trajectory")
+                    .setTrajectory(
+                        autoModeManager.getSelectedAuto().getCurrentTrajectory()
+                    );
             }
         } catch (Throwable t) {
             faulted = true;
@@ -532,6 +540,9 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         loopStart = Timer.getFPGATimestamp();
+        robotState.field
+            .getObject("Trajectory")
+            .setTrajectory(autoModeManager.getSelectedAuto().getCurrentTrajectory());
 
         if (Constants.kIsLoggingAutonomous) {
             logger.updateTopics();
