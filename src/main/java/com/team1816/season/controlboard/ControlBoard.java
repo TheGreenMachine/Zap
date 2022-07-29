@@ -52,7 +52,7 @@ public class ControlBoard implements IControlBoard {
                                 demoModeMultiplier = 1.0;
                                 break;
                             default:
-                                demoModeMultiplier = 0;
+                                demoModeMultiplier = 0.5;
                         }
                     },
                     EntryListenerFlags.kNew | EntryListenerFlags.kUpdate
