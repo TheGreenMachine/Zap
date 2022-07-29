@@ -30,13 +30,11 @@ operator:
         left: turretJogLeft
         right: turretJogRight
     buttonpad:
-        x: cameraToggle
         y: autoClimb
         a: getFieldFollowing # dummy for example purposes
         b: getSuperstructure # dummy for example purposes
     axes:
         leftTrigger: yeetShot
-        rightTrigger: shoot
     buttons:
         leftBumper: autoAim
         rightBumper: toggleHood
