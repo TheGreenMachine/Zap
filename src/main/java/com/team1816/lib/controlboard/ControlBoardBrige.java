@@ -30,31 +30,35 @@ public class ControlBoardBrige {
 
     public ControlBoardBrige() {
         var controlBoardConfigName = factory.getControlBoard();
-        if (controlBoardConfigName != "empty") {
-            try {
-                config =
-                    ControlBoardYamlConfig.loadFrom(
-                        this.getClass()
-                            .getClassLoader()
-                            .getResourceAsStream(
-                                "yaml/controlboard/" +
-                                controlBoardConfigName +
-                                ".controlboard.config.yml"
-                            )
-                    );
-                System.out.println(
-                    "Loading " + controlBoardConfigName + " control board config"
+        if (controlBoardConfigName.equals("empty")) {
+            DriverStation.reportError(
+                "Control Board is not defined in Robot Config yaml",
+                new NullPointerException().getStackTrace()
+            );
+            controlBoardConfigName = "example";
+        }
+        try {
+            config =
+                ControlBoardYamlConfig.loadFrom(
+                    this.getClass()
+                        .getClassLoader()
+                        .getResourceAsStream(
+                            "yaml/controlboard/" +
+                            controlBoardConfigName +
+                            ".controlboard.config.yml"
+                        )
                 );
-            } catch (Exception e) {
-                System.out.println(e);
-                DriverStation.reportError(
-                    "Control Board Yaml Config error!",
-                    e.getStackTrace()
-                );
-            }
+            System.out.println(
+                "Loading " + controlBoardConfigName + " control board config"
+            );
+        } catch (Exception e) {
+            System.out.println(e);
+            DriverStation.reportError(
+                "Control Board Yaml Config error!",
+                e.getStackTrace()
+            );
         }
 
-        //TODO: make sure that config is not null and actually does read from yaml
         if (config != null) {
             if (config.driver != null) {
                 if (config.driver.rumble != null) {
