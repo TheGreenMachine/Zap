@@ -7,6 +7,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.LibModule;
+import com.team1816.lib.controlboard.ControlBoardBrige;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.Looper;
@@ -531,6 +532,11 @@ public class Robot extends TimedRobot {
                         autoModeManager.getSelectedAuto().getCurrentTrajectory()
                     );
             }
+
+            // check if demo mode speed multiplier changed
+            if (ControlBoardBrige.getInstance().isDemoMode()) {
+                controlBoard.update();
+            }
         } catch (Throwable t) {
             faulted = true;
             throw t;
@@ -596,7 +602,7 @@ public class Robot extends TimedRobot {
         }
 
         drive.setTeleopInputs(
-            controlBoard.getAsDouble("throttle"),
+            -controlBoard.getAsDouble("throttle"),
             -controlBoard.getAsDouble("strafe"),
             controlBoard.getAsDouble("rotation")
         );

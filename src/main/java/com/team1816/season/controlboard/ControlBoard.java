@@ -3,8 +3,6 @@ package com.team1816.season.controlboard;
 import com.google.inject.Inject;
 import com.team1816.lib.controlboard.*;
 import com.team1816.season.Constants;
-import edu.wpi.first.networktables.EntryListenerFlags;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -15,8 +13,10 @@ public class ControlBoard implements IControlBoard {
     private final Controller driverController;
     private final Controller operatorController;
 
+    // For demo only
     private double demoModeMultiplier;
     private SendableChooser<DemoMode> demoModeChooser;
+    private DemoMode desiredMode;
 
     @Inject
     private ControlBoard(Controller.Factory controller) {
@@ -32,31 +32,8 @@ public class ControlBoard implements IControlBoard {
                 demoModeChooser.addOption(demoMode.name(), demoMode);
             }
             demoModeChooser.setDefaultOption(DemoMode.SLOW.name(), DemoMode.SLOW);
-            NetworkTableInstance
-                .getDefault()
-                .getTable("SmartDashboard")
-                .getSubTable("DemoMode")
-                .addEntryListener(
-                    "selected",
-                    (table, key, entry, value, flags) -> {
-                        switch ((DemoMode) value.getValue()) {
-                            case SLOW:
-                                demoModeMultiplier = 0.25;
-                            case COMFORT:
-                                demoModeMultiplier = 0.5;
-                                break;
-                            case SPORT:
-                                demoModeMultiplier = 0.75;
-                                break;
-                            case PLAID:
-                                demoModeMultiplier = 1.0;
-                                break;
-                            default:
-                                demoModeMultiplier = 0.5;
-                        }
-                    },
-                    EntryListenerFlags.kNew | EntryListenerFlags.kUpdate
-                );
+            desiredMode = DemoMode.SLOW;
+            demoModeMultiplier = 0.25;
         }
     }
 
@@ -72,6 +49,37 @@ public class ControlBoard implements IControlBoard {
         } else {
             return getDoubleFromControllerYaml(getName);
         }
+    }
+
+    @Override
+    public boolean update() {
+        DemoMode selectedMode = demoModeChooser.getSelected();
+        boolean modeChanged = desiredMode != selectedMode;
+
+        // if auto has been changed, update selected auto mode + thread
+        if (modeChanged) {
+            System.out.println(
+                "Demo mode changed from: " + desiredMode + ", to: " + selectedMode.name()
+            );
+
+            switch (selectedMode) {
+                case SLOW:
+                    demoModeMultiplier = 0.25;
+                    break;
+                case COMFORT:
+                    demoModeMultiplier = 0.5;
+                    break;
+                case SPORT:
+                    demoModeMultiplier = 0.75;
+                    break;
+                case PLAID:
+                    demoModeMultiplier = 1;
+                    break;
+            }
+        }
+        desiredMode = selectedMode;
+
+        return modeChanged;
     }
 
     public double getDoubleFromControllerYaml(String name) {
