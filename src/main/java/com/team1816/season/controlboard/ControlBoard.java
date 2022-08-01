@@ -24,8 +24,9 @@ public class ControlBoard implements IControlBoard {
         operatorController =
             controller.getControllerInstance(Constants.kOperatorGamepadPort);
 
-        // only for demo mode functionality
+        // demo mode functionality configuration
         if (controlBoardBridge.isDemoMode()) {
+            System.out.println("Using Demo Control Board");
             demoModeChooser = new SendableChooser<>();
             SmartDashboard.putData("Demo mode", demoModeChooser);
             for (DemoMode demoMode : DemoMode.values()) {

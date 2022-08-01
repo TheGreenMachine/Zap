@@ -1,3 +1,4 @@
+isDemoControlBoard: true
 driver:
     rumble: false
     joysticks:
@@ -31,8 +32,6 @@ operator:
         right: turretJogRight
     buttonpad:
         y: autoClimb
-        a: getFieldFollowing # dummy for example purposes
-        b: getSuperstructure # dummy for example purposes
     axes:
         leftTrigger: yeetShot
     buttons:
@@ -40,4 +39,3 @@ operator:
         rightBumper: toggleHood
         start: toggleTopClamp
         back: toggleBottomClamp
-demoMode: true

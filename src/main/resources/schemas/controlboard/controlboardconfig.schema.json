@@ -9,7 +9,7 @@
         "operator": {
             "$ref": "controllerconfig.schema.json"
         },
-        "demoMode": {
+        "isDemoControlBoard": {
             "type": "boolean"
         }
     }
