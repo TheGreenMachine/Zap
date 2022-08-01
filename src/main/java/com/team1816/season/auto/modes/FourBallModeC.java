@@ -28,7 +28,7 @@ public class FourBallModeC extends AutoMode {
         runAction(
             new SeriesAction(
                 new ParallelAction(
-                    new TurretAction(Turret.NORTH - 10), // to be changed
+                    new TurretAction(Turret.kNorth - 10), // to be changed
                     new CollectAction(true)
                 ),
                 trajectoryActions.get(0),
@@ -38,7 +38,7 @@ public class FourBallModeC extends AutoMode {
                 new ShootAction(false, true),
                 trajectoryActions.get(1),
                 new WaitAction(1),
-                new TurretAction(Turret.SOUTH), // this is in dead zone so tune heading or turret angle
+                new TurretAction(Turret.kSouth), // this is in dead zone so tune heading or turret angle
                 trajectoryActions.get(2),
                 new AutoAimAndRev(1, 11000),
                 new ShootAction(true, true),

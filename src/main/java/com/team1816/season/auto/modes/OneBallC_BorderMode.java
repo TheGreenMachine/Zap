@@ -22,7 +22,7 @@ public class OneBallC_BorderMode extends AutoMode {
         runAction(
             new SeriesAction(
                 new ParallelAction(
-                    new TurretAction(Turret.NORTH - 4), // to be changed
+                    new TurretAction(Turret.kNorth - 4), // to be changed
                     new RampUpShooterAction(Shooter.MID_VELOCITY)
                 ),
                 new WaitAction(6),

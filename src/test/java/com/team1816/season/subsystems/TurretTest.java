@@ -67,7 +67,7 @@ public class TurretTest {
         mTurret.readFromHardware();
         assertEquals(0, state.getLatestFieldToTurret().getDegrees(), 0.1);
         assertEquals(0, state.vehicleToTurret.getDegrees(), .01);
-        assertEquals(encTickSouth, mTurret.getActualTurretPositionTicks(), .01);
+        assertEquals(encTickSouth, mTurret.getActualPosTicks(), .01);
     }
 
     @Test
@@ -80,7 +80,7 @@ public class TurretTest {
         assertEquals(45, state.vehicleToTurret.getDegrees(), .01);
         assertEquals(0, state.getLatestFieldToTurret().getDegrees(), 0.1);
         // Turret should move CW
-        assertEquals(encTick45, mTurret.getActualTurretPositionTicks(), .01);
+        assertEquals(encTick45, mTurret.getActualPosTicks(), .01);
     }
 
     @Test
@@ -93,7 +93,7 @@ public class TurretTest {
         assertEquals(315, state.vehicleToTurret.getDegrees(), .01);
         assertEquals(0, state.getLatestFieldToTurret().getDegrees(), 0.1);
         // Turret should move CCW
-        assertEquals(encTick315, mTurret.getActualTurretPositionTicks(), .01);
+        assertEquals(encTick315, mTurret.getActualPosTicks(), .01);
     }
 
     @Test
@@ -181,10 +181,10 @@ public class TurretTest {
         mTurret = new Turret();
         mTurret.zeroSensors();
         Assert.assertEquals(
-            mTurret.TURRET_PPR / 2.0 - mTurret.TURRET_PPR == mTurret.ABS_PPR
+            mTurret.kTurretPPR / 2.0 - mTurret.kTurretPPR == mTurret.kAbsPPR
                 ? 0
                 : absInit,
-            mTurret.getActualTurretPositionTicks(),
+            mTurret.getActualPosTicks(),
             1
         );
     }

@@ -31,7 +31,7 @@ public class FiveBallMode extends AutoMode {
                 new ParallelAction(
                     new CollectAction(true),
                     new RampUpShooterAction(13000), // make actual shooting vel
-                    new TurretAction(Turret.WEST + 15), // setting this doesn't seem to work right in simulator - magically relative to field and not the robot
+                    new TurretAction(Turret.kWest + 15), // setting this doesn't seem to work right in simulator - magically relative to field and not the robot
                     trajectoryActions.get(0)
                 ),
                 new ParallelAction(
@@ -55,7 +55,7 @@ public class FiveBallMode extends AutoMode {
                             new Translation2d(306, 47),
                             "4th, ally ball"
                         ),
-                        new TurretAction(Turret.WEST - 10)
+                        new TurretAction(Turret.kWest - 10)
                     )
                 ),
                 new WaitAction(1),
@@ -64,7 +64,7 @@ public class FiveBallMode extends AutoMode {
                 new WaitAction(1),
                 new ParallelAction(
                     new RampUpShooterAction(14000),
-                    new TurretAction(Turret.SOUTH),
+                    new TurretAction(Turret.kSouth),
                     trajectoryActions.get(3)
                 ),
                 new ShootAction(true, true),

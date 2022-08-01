@@ -39,6 +39,9 @@ public class Superstructure {
     @Inject
     private static Shooter shooter;
 
+    @Inject
+    private static LedManager ledManager;
+
     // for automatic value setting
     @Inject
     private static DistanceManager distanceManager;
@@ -117,6 +120,16 @@ public class Superstructure {
         updateDesiredSpindexer(false);
         updateDesiredElevator();
         updateDesiredCollector(false);
+    }
+
+    public void autoAim() {
+        if (Constants.kUseVision) {
+            ledManager.setCameraLed(true);
+            turret.setControlMode(Turret.ControlMode.CAMERA_SNAP);
+            ledManager.setDefaultStatus(LedManager.RobotStatus.SEEN_TARGET);
+        } else {
+            System.out.println("can't auto aim b/c camera not on");
+        }
     }
 
     public void updateDesiredCollector(boolean backspin) {

@@ -28,7 +28,7 @@ public class FourBallModeB extends AutoMode {
         runAction(
             new SeriesAction(
                 new ParallelAction(
-                    new TurretAction(Turret.NORTH + 5), // to be changed
+                    new TurretAction(Turret.kNorth + 5), // to be changed
                     new CollectAction(true)
                 ),
                 new WaitAction(0.5),
@@ -40,7 +40,7 @@ public class FourBallModeB extends AutoMode {
                 new ShootAction(false, true),
                 trajectoryActions.get(1),
                 new WaitAction(1.25),
-                new TurretAction(Turret.SOUTH + 45), // 32
+                new TurretAction(Turret.kSouth + 45), // 32
                 trajectoryActions.get(2),
                 new ShootAction(true, true),
                 new WaitAction(3)

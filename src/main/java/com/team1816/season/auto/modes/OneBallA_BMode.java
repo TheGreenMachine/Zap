@@ -22,7 +22,7 @@ public class OneBallA_BMode extends AutoMode {
         runAction(
             new SeriesAction(
                 new ParallelAction(
-                    new TurretAction(Turret.NORTH + 2), // to be changed
+                    new TurretAction(Turret.kNorth + 2), // to be changed
                     new RampUpShooterAction(Shooter.MID_VELOCITY),
                     new WaitAction(10)
                 ),

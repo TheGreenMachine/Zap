@@ -205,21 +205,21 @@ public class Robot extends TimedRobot {
                 turret.CreateBadLogTopic(
                     "Turret/ActPos",
                     "NativeUnits",
-                    turret::getActualTurretPositionTicks,
+                    turret::getActualPosTicks,
                     "hide",
                     "join:Turret/Positions"
                 );
                 turret.CreateBadLogTopic(
                     "Turret/TargetPos",
                     "NativeUnits",
-                    turret::getTargetPosition,
+                    turret::getDesiredPosTicks,
                     "hide",
                     "join:Turret/Positions"
                 );
                 turret.CreateBadLogTopic(
                     "Turret/ErrorPos",
                     "NativeUnits",
-                    turret::getPositionError
+                    turret::getPosError
                 );
             }
 
@@ -265,7 +265,7 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("zeroPose"),
                         () -> {
-                            turret.setTurretAngle(Turret.SOUTH);
+                            turret.setTurretAngle(Turret.kSouth);
                             drive.zeroSensors(Constants.kDefaultZeroingPose);
                         }
                     ),
@@ -290,6 +290,7 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("autoAim"),
                         aim -> {
                             if (aim) {
+                                superstructure.autoAim();
                                 turret.snapWithCamera();
                             } else {
                                 superstructure.updatePoseWithCamera();
@@ -297,7 +298,7 @@ public class Robot extends TimedRobot {
                                     defaultTurretControlMode ==
                                     Turret.ControlMode.CENTER_FOLLOWING
                                 ) {
-                                    turret.setFollowingAngle(Turret.SOUTH);
+                                    turret.setFollowingAngle(Turret.kSouth);
                                 }
                                 turret.setControlMode(defaultTurretControlMode);
                             }
@@ -344,11 +345,21 @@ public class Robot extends TimedRobot {
                     ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("turretJogLeft"),
-                        moving -> turret.setTurretSpeed(moving ? Turret.JOG_SPEED : 0)
+                        moving -> {
+                            turret.setTurretSpeed(moving ? Turret.kJogSpeed : 0);
+                            ledManager.indicateStatus(
+                                LedManager.RobotStatus.MANUAL_TURRET
+                            );
+                        }
                     ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("turretJogRight"),
-                        moving -> turret.setTurretSpeed(moving ? -Turret.JOG_SPEED : 0)
+                        moving -> {
+                            turret.setTurretSpeed(moving ? -Turret.kJogSpeed : 0);
+                            ledManager.indicateStatus(
+                                LedManager.RobotStatus.MANUAL_TURRET
+                            );
+                        }
                     ),
                     createHoldAction( // climber up
                         () ->
@@ -374,10 +385,10 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("autoClimb"),
                         () -> {
                             if (climber.getCurrentStage() == 0) {
-                                turret.setTurretAngle(Turret.SOUTH);
+                                turret.setTurretAngle(Turret.kSouth);
                                 superstructure.setStopped(true);
                             } else {
-                                turret.setTurretAngle(Turret.SOUTH - 30);
+                                turret.setTurretAngle(Turret.kSouth - 30);
                             }
 
                             climber.incrementClimberStage();
@@ -447,7 +458,7 @@ public class Robot extends TimedRobot {
             climber.zeroSensors();
             superstructure.setStopped(false);
 
-            turret.setTurretAngle(Turret.SOUTH);
+            turret.setTurretAngle(Turret.kSouth);
             turret.setControlMode(defaultTurretControlMode);
 
             infrastructure.startCompressor();
