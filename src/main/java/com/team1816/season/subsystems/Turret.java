@@ -29,7 +29,6 @@ public class Turret extends Subsystem implements PidProvider {
     public final int kFwdLimit;
     public static int kRevWrapAroundPos; // lowest allowed tick value before turret masks (+turretPPR)
     public static int kFwdWrapAroundPos; // highest allowed tick value before turret masks (-turretPPR)
-    public static int kZeroOffset; // used to make sure turret tick range is non-negative
     public final int kAbsTicksSouthOffset; // abs encoder count at cardinal SOUTH
     public static int kAbsPPR;
     public static int kTurretPPR;
@@ -68,10 +67,19 @@ public class Turret extends Subsystem implements PidProvider {
 
     public Turret() {
         super(NAME);
-        turretMotor = factory.getMotor(NAME, "turret");
+        turretMotor = factory.getMotor(NAME, "turretMotor");
         kDeltaXScalar = factory.getConstant(NAME, "deltaXScalar", 1);
 
-        kAbsTicksSouthOffset = ((int) factory.getConstant(NAME, "absPosTicksSouth"));
+        // Define PPR values and determine whether to offset set positions by absEnc south pos
+        kAbsPPR = (int) factory.getConstant(NAME, "absPPR");
+        kTurretPPR = (int) factory.getConstant(NAME, "turretPPR");
+        kRatioTurretAbs = (double) kTurretPPR / kAbsPPR;
+        kAbsTicksSouthOffset =
+            kRatioTurretAbs == 1
+                ? ((int) factory.getConstant(NAME, "absPosTicksSouth"))
+                : 0;
+
+        // define limits + when turret should wrap around
         kRevLimit =
             Math.min(
                 (int) factory.getConstant(NAME, "fwdLimit"),
@@ -82,19 +90,12 @@ public class Turret extends Subsystem implements PidProvider {
                 (int) factory.getConstant(NAME, "fwdLimit"),
                 ((int) factory.getConstant(NAME, "revLimit"))
             );
-
-        kAbsPPR = (int) factory.getConstant(NAME, "absPPR");
-        kTurretPPR = (int) factory.getConstant(NAME, "turretPPR");
-        kRatioTurretAbs = (double) kTurretPPR / kAbsPPR;
-
         int MASK = 0;
         if (Math.abs(kRevLimit - kFwdLimit) > kTurretPPR) {
             MASK = Math.abs((kRevLimit + kTurretPPR) - (kFwdLimit)) / 2; // this value is truncated
         }
         kFwdWrapAroundPos = kFwdLimit + MASK;
         kRevWrapAroundPos = kRevLimit - MASK;
-
-        turretMotor.setNeutralMode(NeutralMode.Brake);
 
         // Position Control
         double peakOutput = 0.5;
@@ -105,6 +106,7 @@ public class Turret extends Subsystem implements PidProvider {
         turretMotor.configPeakOutputReverse(-peakOutput, Constants.kCANTimeoutMs);
 
         // Soft Limits
+        turretMotor.setNeutralMode(NeutralMode.Brake);
         turretMotor.configForwardSoftLimitEnable(true, Constants.kCANTimeoutMs);
         turretMotor.configReverseSoftLimitEnable(true, Constants.kCANTimeoutMs);
         turretMotor.configForwardSoftLimitThreshold(kFwdLimit, Constants.kCANTimeoutMs); // Forward = MAX
@@ -114,14 +116,14 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     /**
-     * converts 0-360 to 0-TURRET_ENCODER_PPR with zero offset
+     * converts 0-360 to 0-TURRET_ENCODER_PPR
      */
     public static int convertTurretDegreesToTicks(double degrees) {
         return (int) (degrees / 360.0 * kTurretPPR);
     }
 
     /**
-     * converts 0-TURRET_ENCODER_PPR with zero offset
+     * converts 0-TURRET_ENCODER_PPR
      */
     public static double convertTurretTicksToDegrees(double ticks) {
         return ticks / kTurretPPR * 360;
@@ -129,9 +131,21 @@ public class Turret extends Subsystem implements PidProvider {
 
     @Override
     public synchronized void zeroSensors() {
+        zeroSensors(false);
+    }
+
+    public synchronized void zeroSensors(boolean resetEncPos) {
         desiredPos = 0;
         followingPos = 0;
         lostEncPos = false;
+
+        if (resetEncPos) {
+            turretMotor.setSelectedSensorPosition(
+                0,
+                kPrimaryCloseLoop,
+                Constants.kCANTimeoutMs
+            );
+        }
     }
 
     public ControlMode getControlMode() {
@@ -155,7 +169,6 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     private synchronized void setDesiredPos(double position) {
-        //Since we are using position we need ensure value stays in one rotation
         if (desiredPos != (int) position) {
             desiredPos = (int) position;
             outputsChanged = true;
@@ -170,16 +183,13 @@ public class Turret extends Subsystem implements PidProvider {
         followingPos = desiredPos;
     }
 
+    public synchronized void setFollowingAngle(double angle) {
+        setDesiredPos(convertTurretDegreesToTicks(angle));
+    }
+
     public synchronized void snapWithCamera() {
         snapTimer.reset();
         setControlMode(ControlMode.CAMERA_SNAP);
-    }
-
-    public synchronized void setFollowingAngle(double angle) {
-        if (angle < 0) {
-            angle += 360; // if angle is negative, wrap around - we only deal with values from 0 to 360
-        }
-        setDesiredPos(convertTurretDegreesToTicks(angle));
     }
 
     public synchronized void lockTurret() {
@@ -195,8 +205,7 @@ public class Turret extends Subsystem implements PidProvider {
         return (
             (
                 turretMotor.getSelectedSensorPosition(kPrimaryCloseLoop) +
-                kAbsTicksSouthOffset +
-                kZeroOffset
+                kAbsTicksSouthOffset
             )
         );
     }
@@ -361,6 +370,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     private void positionControl(int pos) {
         if (outputsChanged) {
+            outputsChanged = false;
             if (lostEncPos) {
                 manualControl();
                 return;
@@ -371,10 +381,9 @@ public class Turret extends Subsystem implements PidProvider {
             } else if (pos < kRevWrapAroundPos) {
                 pos += kTurretPPR;
             }
-            int rawPos = (pos - kAbsTicksSouthOffset - kZeroOffset);
+            int rawPos = (pos - kAbsTicksSouthOffset);
 
             turretMotor.set(com.ctre.phoenix.motorcontrol.ControlMode.Position, rawPos);
-            outputsChanged = false;
         }
     }
 

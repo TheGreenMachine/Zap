@@ -23,9 +23,9 @@ subsystems:
     turret:
         implemented: true
         talons:
-            turret: 3
+            turretMotor: 3
         invertMotor:
-            - turret
+            - turretMotor
         pidConfig:
             slot0:
                 kP: 2
@@ -35,7 +35,7 @@ subsystems:
                 allowableError: 40
         constants:
             turretPPR: 4096
-            encPPR: 4096
+            absPPR: 4096
             revLimit: 260
             fwdLimit: 3990
             currentFloorCheck: 0

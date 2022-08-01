@@ -111,7 +111,7 @@ public class Robot extends TimedRobot {
                 var robotName = System.getenv("ROBOT_NAME");
                 if (robotName == null) robotName = "default";
                 var logFileDir = "/home/lvuser/";
-                // if there is a usb drive use it
+                // if there is a USB drive use it
                 if (Files.exists(Path.of("/media/sda1"))) {
                     logFileDir = "/media/sda1/";
                 }
