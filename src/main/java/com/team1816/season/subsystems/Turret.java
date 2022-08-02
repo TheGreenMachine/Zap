@@ -1,6 +1,7 @@
 package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
@@ -141,7 +142,10 @@ public class Turret extends Subsystem implements PidProvider {
 
         if (resetEncPos) {
             if((int) kRatioTurretAbs == 1){
-
+                var sensors = ((TalonSRX) turretMotor).getSensorCollection();
+                var sensorVal = sensors.getPulseWidthPosition() % kAbsPPR + kAbsTicksSouthOffset;
+                sensors.setQuadraturePosition(sensorVal, Constants.kLongCANTimeoutMs);
+                System.out.println("zeroing turret at " + sensorVal);
             } else {
                 turretMotor.setSelectedSensorPosition(
                     0,
@@ -208,7 +212,7 @@ public class Turret extends Subsystem implements PidProvider {
     public double getActualPosTicks() {
         return (
             (
-                turretMotor.getSelectedSensorPosition(kPrimaryCloseLoop) +
+                turretMotor.getSelectedSensorPosition(kPrimaryCloseLoop) -
                 kAbsTicksSouthOffset
             )
         );
@@ -385,7 +389,7 @@ public class Turret extends Subsystem implements PidProvider {
             } else if (pos < kRevWrapAroundPos) {
                 pos += kTurretPPR;
             }
-            int rawPos = (pos - kAbsTicksSouthOffset);
+            int rawPos = (pos + kAbsTicksSouthOffset);
 
             turretMotor.set(com.ctre.phoenix.motorcontrol.ControlMode.Position, rawPos);
         }
