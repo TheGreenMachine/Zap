@@ -43,12 +43,11 @@ subsystems:
             turretMotor: 13
         constants:
             deltaXScalar: 150 #value worked best at 150 in sim
-            revLimit: -944 # adjusted for zero-offset
-            fwdLimit: 4755 # adjusted for zero-offset
-            absPosTicksSouth: 1045 # absolute
-            zeroOffset: 2048 #
+            revLimit: -700
+            fwdLimit: 3653
+            absPosTicksSouth: 1000 # absolute
             absPPR: 4096
-            turretPPR: 4096 # 4096 * 13
+            turretPPR: 4096
     shooter:
         implemented: true
         falcons:
