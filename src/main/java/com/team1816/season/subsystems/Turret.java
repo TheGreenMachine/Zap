@@ -140,11 +140,15 @@ public class Turret extends Subsystem implements PidProvider {
         lostEncPos = false;
 
         if (resetEncPos) {
-            turretMotor.setSelectedSensorPosition(
-                0,
-                kPrimaryCloseLoop,
-                Constants.kCANTimeoutMs
-            );
+            if((int) kRatioTurretAbs == 1){
+
+            } else {
+                turretMotor.setSelectedSensorPosition(
+                    0,
+                    kPrimaryCloseLoop,
+                    Constants.kCANTimeoutMs
+                );
+            }
         }
     }
 

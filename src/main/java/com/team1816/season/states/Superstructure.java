@@ -125,6 +125,7 @@ public class Superstructure {
     public void autoAim() {
         if (Constants.kUseVision) {
             ledManager.setCameraLed(true);
+            camera.setCameraEnabled(true);
             turret.setControlMode(Turret.ControlMode.CAMERA_SNAP);
             ledManager.setDefaultStatus(LedManager.RobotStatus.SEEN_TARGET);
         } else {
