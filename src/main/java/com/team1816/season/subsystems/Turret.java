@@ -21,7 +21,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     // Constants
     public static final String NAME = "turret";
-    public static final double kJogSpeed = 0.15;
+    public static final double kJogSpeed = 0.5;
     public static final double kSouth = 0; // deg - relative to vehicle NOT FIELD
     public static final double kEast = 270; // deg - relative to vehicle NOT FIELD
     public static final double kNorth = 180; // deg - relative to vehicle NOT FIELD
@@ -82,15 +82,15 @@ public class Turret extends Subsystem implements PidProvider {
 
         // define limits + when turret should wrap around
         kRevLimit =
-            Math.min(
-                (int) factory.getConstant(NAME, "fwdLimit"),
-                ((int) factory.getConstant(NAME, "revLimit"))
-            );
+            //            Math.min(
+            //                (int) factory.getConstant(NAME, "fwdLimit"),
+            ((int) factory.getConstant(NAME, "revLimit"));
+        //            );
         kFwdLimit =
-            Math.max(
-                (int) factory.getConstant(NAME, "fwdLimit"),
-                ((int) factory.getConstant(NAME, "revLimit"))
-            );
+            //            Math.max(
+            (int) factory.getConstant(NAME, "fwdLimit");
+        //                ((int) factory.getConstant(NAME, "revLimit"))
+        //            );
         int MASK = 0;
         if (Math.abs(kRevLimit - kFwdLimit) > kTurretPPR) {
             MASK = Math.abs((kRevLimit + kTurretPPR) - (kFwdLimit)) / 2; // this value is truncated

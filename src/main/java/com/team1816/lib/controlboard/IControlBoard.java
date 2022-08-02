@@ -5,4 +5,6 @@ public interface IControlBoard {
     double getAsDouble(String getName);
 
     boolean update();
+
+    void outputToSmartDashboard();
 }

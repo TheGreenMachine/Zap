@@ -280,11 +280,15 @@ public class Robot extends TimedRobot {
                     // Operator Gamepad
                     createAction(
                         () -> controlBoard.getAsBool("raiseBucket"),
-                        () -> distanceManager.incrementBucket(100)
+                        () -> {
+                            distanceManager.incrementBucket(100);
+                        }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("lowerBucket"),
-                        () -> distanceManager.incrementBucket(-100)
+                        () -> {
+                            distanceManager.incrementBucket(-100);
+                        }
                     ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("autoAim"),
@@ -314,7 +318,7 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("getYeetShot"),
+                        () -> controlBoard.getAsBool("yeetShot"),
                         yeet -> {
                             if (useManualShoot) {
                                 superstructure.setRevving(
@@ -333,7 +337,7 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("getShoot"),
+                        () -> controlBoard.getAsBool("shoot"),
                         shooting -> {
                             superstructure.setRevving(
                                 shooting,
@@ -512,6 +516,10 @@ public class Robot extends TimedRobot {
             robotState.outputToSmartDashboard();
             // update shuffleboard selected auto mode
             autoModeManager.outputToSmartDashboard();
+
+            if (ControlBoardBrige.getInstance().isDemoMode()) {
+                controlBoard.outputToSmartDashboard();
+            }
         } catch (Throwable t) {
             faulted = true;
             System.out.println(t.getMessage());

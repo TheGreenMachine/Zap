@@ -1,11 +1,13 @@
 package com.team1816.season.controlboard;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.team1816.lib.controlboard.*;
 import com.team1816.season.Constants;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+@Singleton
 public class ControlBoard implements IControlBoard {
 
     private static final ControlBoardBrige controlBoardBridge = ControlBoardBrige.getInstance();
@@ -27,13 +29,13 @@ public class ControlBoard implements IControlBoard {
         // demo mode functionality configuration
         if (controlBoardBridge.isDemoMode()) {
             System.out.println("Using Demo Control Board");
+
             demoModeChooser = new SendableChooser<>();
-            SmartDashboard.putData("Demo mode", demoModeChooser);
+            SmartDashboard.putData("Demo Mode", demoModeChooser);
             for (DemoMode demoMode : DemoMode.values()) {
                 demoModeChooser.addOption(demoMode.name(), demoMode);
             }
             demoModeChooser.setDefaultOption(DemoMode.SLOW.name(), DemoMode.SLOW);
-            desiredMode = DemoMode.SLOW;
             demoModeMultiplier = 0.25;
         }
     }
@@ -83,6 +85,12 @@ public class ControlBoard implements IControlBoard {
         return modeChanged;
     }
 
+    public void outputToSmartDashboard() {
+        if (desiredMode != null) {
+            SmartDashboard.putString("Selected Demo Mode", desiredMode.name());
+        }
+    }
+
     public double getDoubleFromControllerYaml(String name) {
         return getDoubleFromControllerYaml(name, 0);
     }
@@ -128,10 +136,14 @@ public class ControlBoard implements IControlBoard {
                 return driverController.getTrigger(
                     controlBoardBridge.getDriverAxisMap().get(name)
                 );
-            }
-            if (controlBoardBridge.getDriverButtonMap().containsKey(name)) {
+            } else if (controlBoardBridge.getDriverButtonMap().containsKey(name)) {
                 return driverController.getButton(
                     controlBoardBridge.getDriverButtonMap().get(name)
+                );
+            } else if (controlBoardBridge.getDriverDpadMap().containsKey(name)) {
+                return (
+                    driverController.getDPad() ==
+                    controlBoardBridge.getDriverDpadMap().get(name)
                 );
             }
         } else if (controlBoardBridge.operatorMapContainsKey(name)) {
@@ -142,6 +154,11 @@ public class ControlBoard implements IControlBoard {
             } else if (controlBoardBridge.getOperatorButtonMap().containsKey(name)) {
                 return operatorController.getButton(
                     controlBoardBridge.getOperatorButtonMap().get(name)
+                );
+            } else if (controlBoardBridge.getOperatorDpadMap().containsKey(name)) {
+                return (
+                    operatorController.getDPad() ==
+                    controlBoardBridge.getOperatorDpadMap().get(name)
                 );
             }
         }

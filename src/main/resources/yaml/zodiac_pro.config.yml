@@ -31,7 +31,7 @@ subsystems:
             cameraLed: 1
             maxLevel: 255
     turret:
-        implemented: false
+        implemented: true
         pidConfig:
             slot0:
                 kP: 1.25
@@ -41,6 +41,10 @@ subsystems:
                 allowableError: 40
         talons:
             turretMotor: 13
+        invertMotor:
+            - turretMotor
+        invertSensorPhase:
+            - turretMotor
         constants:
             deltaXScalar: 150 #value worked best at 150 in sim
             revLimit: -700
@@ -67,7 +71,7 @@ subsystems:
         constants:
             usingPoseForSpeed: 0
             maxVelTicks100ms: 20700
-            nearVel: 4500
+            nearVel: 500
             midVel: 8450
             tarmacTapeVel: 8125
             launchpadVel: 10150
@@ -141,7 +145,7 @@ infrastructure:
     pdId: 0
     pdIsRev: false
     # pneumatics control
-    compressorEnabled: true
+    compressorEnabled: false
     pcmIsRev: false
     pcmId: 8
     # pigeon
@@ -169,4 +173,4 @@ constants:
     EnableBucketTuning: 1
     teleopFieldCentric: 1 # 0 or 1
     kLooperDt: .035 # seconds
-    resetFactoryDefaults: 1 # whether motors get reset to factory default
+    resetFactoryDefaults: 0 # whether motors get reset to factory default

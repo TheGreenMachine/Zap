@@ -256,7 +256,7 @@ public class ControlBoardBrige {
                         180
                     );
                     if (config.operator.dpad.left != null) operatorDpadMap.put(
-                        config.operator.dpad.up,
+                        config.operator.dpad.left,
                         270
                     );
                 }
