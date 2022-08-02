@@ -10,6 +10,7 @@ public class PubSubRunnable extends EventBase {
     }
 
     public void Publish() {
+        // test
         InternalPublish(null);
     }
 }
