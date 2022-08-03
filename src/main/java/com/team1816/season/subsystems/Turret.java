@@ -140,14 +140,13 @@ public class Turret extends Subsystem implements PidProvider {
         followingPos = 0;
         lostEncPos = false;
 
-        if (resetEncPos) {
-            if ((int) kRatioTurretAbs == 1) {
-                var sensors = ((TalonSRX) turretMotor).getSensorCollection();
-                var sensorVal =
-                    sensors.getPulseWidthPosition() % kAbsPPR + kAbsTicksSouthOffset;
-                sensors.setQuadraturePosition(sensorVal, Constants.kLongCANTimeoutMs);
-                System.out.println("zeroing turret at " + sensorVal);
-            } else {
+        if ((int) kRatioTurretAbs == 1) {
+            var sensors = ((TalonSRX) turretMotor).getSensorCollection();
+            var sensorVal = sensors.getPulseWidthPosition() % kAbsPPR;
+            sensors.setQuadraturePosition(sensorVal, Constants.kLongCANTimeoutMs);
+            System.out.println("zeroing turret at " + sensorVal);
+        } else {
+            if (resetEncPos) {
                 turretMotor.setSelectedSensorPosition(
                     0,
                     kPrimaryCloseLoop,

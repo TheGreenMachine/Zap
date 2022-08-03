@@ -57,8 +57,6 @@ subsystems:
         falcons:
             shooterMain: 2
             shooterFollower: -1
-        invertMotor:
-            - shooterMain
         solenoids:
             hood: -1
         pidConfig:
@@ -71,7 +69,7 @@ subsystems:
         constants:
             usingPoseForSpeed: 0
             maxVelTicks100ms: 20700
-            nearVel: 500
+            nearVel: 6000
             midVel: 8450
             tarmacTapeVel: 8125
             launchpadVel: 10150
