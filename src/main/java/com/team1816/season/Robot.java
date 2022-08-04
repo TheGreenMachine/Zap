@@ -9,6 +9,7 @@ import com.team1816.lib.Infrastructure;
 import com.team1816.lib.LibModule;
 import com.team1816.lib.controlboard.ControlBoardBrige;
 import com.team1816.lib.controlboard.IControlBoard;
+import com.team1816.lib.events.EventAggregator;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.Drive;
@@ -16,6 +17,7 @@ import com.team1816.lib.subsystems.DrivetrainLogger;
 import com.team1816.lib.subsystems.SubsystemManager;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.controlboard.ActionManager;
+import com.team1816.season.events.EventRegister;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.states.Superstructure;
 import com.team1816.season.subsystems.*;
@@ -38,6 +40,7 @@ public class Robot extends TimedRobot {
     // controls
     private IControlBoard controlBoard;
     private ActionManager actionManager;
+    private EventAggregator eventManager;
 
     private final Infrastructure infrastructure;
     private final SubsystemManager subsystemManager;
@@ -241,168 +244,173 @@ public class Robot extends TimedRobot {
             subsystemManager.registerDisabledLoops(disabledLoop);
             subsystemManager.zeroSensors();
 
-            actionManager =
-                new ActionManager(
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("toggleCollector"),
-                        pressed -> superstructure.setCollecting(pressed, true)
-                    ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("toggleCollectorReverse"),
-                        pressed -> superstructure.setCollecting(pressed, false)
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("unlockClimber"),
-                        climber::unlock
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("toggleManualShoot"),
-                        () -> {
-                            useManualShoot = !useManualShoot;
-                            System.out.println("manual shooting toggled!");
-                        }
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("zeroPose"),
-                        () -> {
-                            turret.setTurretAngle(Turret.kSouth);
-                            drive.zeroSensors(Constants.kDefaultZeroingPose);
-                        }
-                    ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("brakeMode"),
-                        drive::setBraking
-                    ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("slowMode"),
-                        drive::setSlowMode
-                    ),
-                    // Operator Gamepad
-                    createAction(
-                        () -> controlBoard.getAsBool("raiseBucket"),
-                        () -> {
-                            distanceManager.incrementBucket(100);
-                        }
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("lowerBucket"),
-                        () -> {
-                            distanceManager.incrementBucket(-100);
-                        }
-                    ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("autoAim"),
-                        aim -> {
-                            if (aim) {
-                                superstructure.autoAim();
-                                turret.snapWithCamera();
-                            } else {
-                                superstructure.updatePoseWithCamera();
-                                if (
-                                    defaultTurretControlMode ==
-                                    Turret.ControlMode.CENTER_FOLLOWING
-                                ) {
-                                    turret.setFollowingAngle(Turret.kSouth);
-                                }
-                                turret.setControlMode(defaultTurretControlMode);
-                            }
-                        }
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("toggleCamera"),
-                        () -> {
-                            robotState.overheating = !robotState.overheating;
-                            System.out.println(
-                                "overheating changed to = " + robotState.overheating
-                            );
-                        }
-                    ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("yeetShot"),
-                        yeet -> {
-                            if (useManualShoot) {
-                                superstructure.setRevving(
-                                    yeet,
-                                    Shooter.TARMAC_TAPE_VEL,
-                                    true
-                                ); // Tarmac
-                            } else {
-                                superstructure.setRevving(
-                                    yeet,
-                                    Shooter.NEAR_VELOCITY,
-                                    true
-                                ); // Barf shot
-                            }
-                            superstructure.setFiring(yeet);
-                        }
-                    ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("shoot"),
-                        shooting -> {
-                            superstructure.setRevving(
-                                shooting,
-                                Shooter.LAUNCHPAD_VEL,
-                                useManualShoot
-                            ); // Launchpad
-                            superstructure.setFiring(shooting);
-                        }
-                    ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("turretJogLeft"),
-                        moving -> {
-                            turret.setTurretSpeed(moving ? Turret.kJogSpeed : 0);
-                            ledManager.indicateStatus(
-                                LedManager.RobotStatus.MANUAL_TURRET
-                            );
-                        }
-                    ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("turretJogRight"),
-                        moving -> {
-                            turret.setTurretSpeed(moving ? -Turret.kJogSpeed : 0);
-                            ledManager.indicateStatus(
-                                LedManager.RobotStatus.MANUAL_TURRET
-                            );
-                        }
-                    ),
-                    createHoldAction( // climber up
-                        () ->
-                            controlBoard.getAsDouble("manualClimberArm") >
-                            Constants.kJoystickBooleanThreshold,
-                        moving -> climber.setClimberPower(moving ? -.5 : 0)
-                    ),
-                    createHoldAction( // climber down
-                        () ->
-                            controlBoard.getAsDouble("manualClimberArm") <
-                            Constants.kJoystickBooleanThreshold,
-                        moving -> climber.setClimberPower(moving ? .5 : 0)
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("toggleTopClamp"),
-                        climber::setTopClamp
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("toggleBottomClamp"),
-                        climber::setBottomClamp
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("autoClimb"),
-                        () -> {
-                            if (climber.getCurrentStage() == 0) {
-                                turret.setTurretAngle(Turret.kSouth);
-                                superstructure.setStopped(true);
-                            } else {
-                                turret.setTurretAngle(Turret.kSouth - 30);
-                            }
 
-                            climber.incrementClimberStage();
-                        }
-                    )
-                );
+            initializeActionManager();
         } catch (Throwable t) {
             faulted = true;
             throw t;
         }
+    }
+
+    public void initializeActionManager() {
+        actionManager =
+            new ActionManager(
+                createHoldAction(
+                    () -> controlBoard.getAsBool("toggleCollector"),
+                    pressed -> superstructure.setCollecting(pressed, true)
+                ),
+                createHoldAction(
+                    () -> controlBoard.getAsBool("toggleCollectorReverse"),
+                    pressed -> superstructure.setCollecting(pressed, false)
+                ),
+                createAction(
+                    () -> controlBoard.getAsBool("unlockClimber"),
+                    climber::unlock
+                ),
+                createAction(
+                    () -> controlBoard.getAsBool("toggleManualShoot"),
+                    () -> {
+                        useManualShoot = !useManualShoot;
+                        System.out.println("manual shooting toggled!");
+                    }
+                ),
+                createAction(
+                    () -> controlBoard.getAsBool("zeroPose"),
+                    () -> {
+                        turret.setTurretAngle(Turret.kSouth);
+                        drive.zeroSensors(Constants.kDefaultZeroingPose);
+                    }
+                ),
+                createHoldAction(
+                    () -> controlBoard.getAsBool("brakeMode"),
+                    drive::setBraking
+                ),
+                createHoldAction(
+                    () -> controlBoard.getAsBool("slowMode"),
+                    drive::setSlowMode
+                ),
+                // Operator Gamepad
+                createAction(
+                    () -> controlBoard.getAsBool("raiseBucket"),
+                    () -> {
+                        distanceManager.incrementBucket(100);
+                    }
+                ),
+                createAction(
+                    () -> controlBoard.getAsBool("lowerBucket"),
+                    () -> {
+                        distanceManager.incrementBucket(-100);
+                    }
+                ),
+                createHoldAction(
+                    () -> controlBoard.getAsBool("autoAim"),
+                    aim -> {
+                        if (aim) {
+                            superstructure.autoAim();
+                            turret.snapWithCamera();
+                        } else {
+                            superstructure.updatePoseWithCamera();
+                            if (
+                                defaultTurretControlMode ==
+                                    Turret.ControlMode.CENTER_FOLLOWING
+                            ) {
+                                turret.setFollowingAngle(Turret.kSouth);
+                            }
+                            turret.setControlMode(defaultTurretControlMode);
+                        }
+                    }
+                ),
+                createAction(
+                    () -> controlBoard.getAsBool("toggleCamera"),
+                    () -> {
+                        robotState.overheating = !robotState.overheating;
+                        System.out.println(
+                            "overheating changed to = " + robotState.overheating
+                        );
+                    }
+                ),
+                createHoldAction(
+                    () -> controlBoard.getAsBool("yeetShot"),
+                    yeet -> {
+                        if (useManualShoot) {
+                            superstructure.setRevving(
+                                yeet,
+                                Shooter.TARMAC_TAPE_VEL,
+                                true
+                            ); // Tarmac
+                        } else {
+                            superstructure.setRevving(
+                                yeet,
+                                Shooter.NEAR_VELOCITY,
+                                true
+                            ); // Barf shot
+                        }
+                        superstructure.setFiring(yeet);
+                    }
+                ),
+                createHoldAction(
+                    () -> controlBoard.getAsBool("shoot"),
+                    shooting -> {
+                        superstructure.setRevving(
+                            shooting,
+                            Shooter.LAUNCHPAD_VEL,
+                            useManualShoot
+                        ); // Launchpad
+                        superstructure.setFiring(shooting);
+                    }
+                ),
+                createHoldAction(
+                    () -> controlBoard.getAsBool("turretJogLeft"),
+                    moving -> {
+                        turret.setTurretSpeed(moving ? Turret.kJogSpeed : 0);
+                        ledManager.indicateStatus(
+                            LedManager.RobotStatus.MANUAL_TURRET
+                        );
+                    }
+                ),
+                createHoldAction(
+                    () -> controlBoard.getAsBool("turretJogRight"),
+                    moving -> {
+                        turret.setTurretSpeed(moving ? -Turret.kJogSpeed : 0);
+                        ledManager.indicateStatus(
+                            LedManager.RobotStatus.MANUAL_TURRET
+                        );
+                    }
+                ),
+                createHoldAction( // climber up
+                    () ->
+                        controlBoard.getAsDouble("manualClimberArm") >
+                            Constants.kJoystickBooleanThreshold,
+                    moving -> climber.setClimberPower(moving ? -.5 : 0)
+                ),
+                createHoldAction( // climber down
+                    () ->
+                        controlBoard.getAsDouble("manualClimberArm") <
+                            Constants.kJoystickBooleanThreshold,
+                    moving -> climber.setClimberPower(moving ? .5 : 0)
+                ),
+                createAction(
+                    () -> controlBoard.getAsBool("toggleTopClamp"),
+                    climber::setTopClamp
+                ),
+                createAction(
+                    () -> controlBoard.getAsBool("toggleBottomClamp"),
+                    climber::setBottomClamp
+                ),
+                createAction(
+                    () -> controlBoard.getAsBool("autoClimb"),
+                    () -> {
+                        if (climber.getCurrentStage() == 0) {
+                            turret.setTurretAngle(Turret.kSouth);
+                            superstructure.setStopped(true);
+                        } else {
+                            turret.setTurretAngle(Turret.kSouth - 30);
+                        }
+
+                        climber.incrementClimberStage();
+                    }
+                )
+            );
     }
 
     @Override

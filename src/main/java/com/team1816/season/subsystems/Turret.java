@@ -14,6 +14,7 @@ import com.team1816.season.Constants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 
 @Singleton
@@ -139,19 +140,20 @@ public class Turret extends Subsystem implements PidProvider {
         desiredPos = 0;
         followingPos = 0;
         lostEncPos = false;
-
-        if ((int) kRatioTurretAbs == 1) {
-            var sensors = ((TalonSRX) turretMotor).getSensorCollection();
-            var sensorVal = sensors.getPulseWidthPosition() % kAbsPPR;
-            sensors.setQuadraturePosition(sensorVal, Constants.kLongCANTimeoutMs);
-            System.out.println("zeroing turret at " + sensorVal);
-        } else {
-            if (resetEncPos) {
-                turretMotor.setSelectedSensorPosition(
-                    0,
-                    kPrimaryCloseLoop,
-                    Constants.kCANTimeoutMs
-                );
+        if (RobotBase.isReal()) {
+            if ((int) kRatioTurretAbs == 1) {
+                var sensors = ((TalonSRX) turretMotor).getSensorCollection();
+                var sensorVal = sensors.getPulseWidthPosition() % kAbsPPR;
+                sensors.setQuadraturePosition(sensorVal, Constants.kLongCANTimeoutMs);
+                System.out.println("zeroing turret at " + sensorVal);
+            } else {
+                if (resetEncPos) {
+                    turretMotor.setSelectedSensorPosition(
+                        0,
+                        kPrimaryCloseLoop,
+                        Constants.kCANTimeoutMs
+                    );
+                }
             }
         }
     }
