@@ -8,7 +8,6 @@ import com.team1816.lib.events.PubSubRunnable;
 import com.team1816.lib.subsystems.Drive;
 import com.team1816.season.states.Superstructure;
 import com.team1816.season.subsystems.*;
-
 import java.util.function.Consumer;
 
 /**
@@ -18,7 +17,7 @@ import java.util.function.Consumer;
 @Singleton
 public class EventRegister {
 
-    private EventAggregator eventManager;
+    public static EventAggregator eventManager;
 
     @Inject
     private static Superstructure superstructure;
