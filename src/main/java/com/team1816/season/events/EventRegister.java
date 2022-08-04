@@ -14,6 +14,7 @@ import com.team1816.season.subsystems.*;
 
 @Singleton
 public class EventRegister {
+
     private EventAggregator eventManager;
 
     @Inject
@@ -48,18 +49,26 @@ public class EventRegister {
     @Inject
     private static Camera camera;
 
-
     public EventRegister() {
         eventManager = new EventAggregator();
         drive = driveFactory.getInstance();
-        eventManager.GetEvent(EventRegister.IncrementBucketEvent.class).Subscribe(
-            () -> {
-                distanceManager.incrementBucket(-100);
-            }
-        );
-
+        eventManager
+            .GetEvent(ToggleCollectorEvent.class)
+            .Subscribe(
+                pressed -> {
+                    superstructure.setCollecting(pressed, true);
+                }
+            ); // this needs to accept boolean consumers
+        eventManager
+            .GetEvent(IncrementBucketEvent.class)
+            .Subscribe(
+                () -> {
+                    distanceManager.incrementBucket(100);
+                }
+            );
     }
 
-    public static class IncrementBucketEvent extends PubSubRunnable {}
+    public static class ToggleCollectorEvent extends PubSubRunnable {}
 
+    public static class IncrementBucketEvent extends PubSubRunnable {}
 }

@@ -17,7 +17,6 @@ import com.team1816.lib.subsystems.DrivetrainLogger;
 import com.team1816.lib.subsystems.SubsystemManager;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.controlboard.ActionManager;
-import com.team1816.season.events.EventRegister;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.states.Superstructure;
 import com.team1816.season.subsystems.*;
@@ -244,7 +243,6 @@ public class Robot extends TimedRobot {
             subsystemManager.registerDisabledLoops(disabledLoop);
             subsystemManager.zeroSensors();
 
-
             initializeActionManager();
         } catch (Throwable t) {
             faulted = true;
@@ -312,7 +310,7 @@ public class Robot extends TimedRobot {
                             superstructure.updatePoseWithCamera();
                             if (
                                 defaultTurretControlMode ==
-                                    Turret.ControlMode.CENTER_FOLLOWING
+                                Turret.ControlMode.CENTER_FOLLOWING
                             ) {
                                 turret.setFollowingAngle(Turret.kSouth);
                             }
@@ -339,11 +337,7 @@ public class Robot extends TimedRobot {
                                 true
                             ); // Tarmac
                         } else {
-                            superstructure.setRevving(
-                                yeet,
-                                Shooter.NEAR_VELOCITY,
-                                true
-                            ); // Barf shot
+                            superstructure.setRevving(yeet, Shooter.NEAR_VELOCITY, true); // Barf shot
                         }
                         superstructure.setFiring(yeet);
                     }
@@ -363,30 +357,26 @@ public class Robot extends TimedRobot {
                     () -> controlBoard.getAsBool("turretJogLeft"),
                     moving -> {
                         turret.setTurretSpeed(moving ? Turret.kJogSpeed : 0);
-                        ledManager.indicateStatus(
-                            LedManager.RobotStatus.MANUAL_TURRET
-                        );
+                        ledManager.indicateStatus(LedManager.RobotStatus.MANUAL_TURRET);
                     }
                 ),
                 createHoldAction(
                     () -> controlBoard.getAsBool("turretJogRight"),
                     moving -> {
                         turret.setTurretSpeed(moving ? -Turret.kJogSpeed : 0);
-                        ledManager.indicateStatus(
-                            LedManager.RobotStatus.MANUAL_TURRET
-                        );
+                        ledManager.indicateStatus(LedManager.RobotStatus.MANUAL_TURRET);
                     }
                 ),
                 createHoldAction( // climber up
                     () ->
                         controlBoard.getAsDouble("manualClimberArm") >
-                            Constants.kJoystickBooleanThreshold,
+                        Constants.kJoystickBooleanThreshold,
                     moving -> climber.setClimberPower(moving ? -.5 : 0)
                 ),
                 createHoldAction( // climber down
                     () ->
                         controlBoard.getAsDouble("manualClimberArm") <
-                            Constants.kJoystickBooleanThreshold,
+                        Constants.kJoystickBooleanThreshold,
                     moving -> climber.setClimberPower(moving ? .5 : 0)
                 ),
                 createAction(
