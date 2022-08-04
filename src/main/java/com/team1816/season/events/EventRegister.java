@@ -3,10 +3,13 @@ package com.team1816.season.events;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.events.EventAggregator;
+import com.team1816.lib.events.PubSubConsumer;
 import com.team1816.lib.events.PubSubRunnable;
 import com.team1816.lib.subsystems.Drive;
 import com.team1816.season.states.Superstructure;
 import com.team1816.season.subsystems.*;
+
+import java.util.function.Consumer;
 
 /**
  * List of all used events
@@ -55,7 +58,7 @@ public class EventRegister {
         eventManager
             .GetEvent(ToggleCollectorEvent.class)
             .Subscribe(
-                pressed -> {
+                (Consumer<Boolean>) pressed -> {
                     superstructure.setCollecting(pressed, true);
                 }
             ); // this needs to accept boolean consumers
@@ -68,7 +71,7 @@ public class EventRegister {
             );
     }
 
-    public static class ToggleCollectorEvent extends PubSubRunnable {}
+    public static class ToggleCollectorEvent extends PubSubConsumer {}
 
     public static class IncrementBucketEvent extends PubSubRunnable {}
 }
