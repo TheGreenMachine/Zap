@@ -21,6 +21,13 @@ public class EventRegister {
     public static EventAggregator eventManager;
 
     @Inject
+    private static ControlBoardEventCollection controlBoardEventCollection;
+
+    @Inject
+    private static RobotEventCollection robotEventCollection;
+
+
+    @Inject
     private static RobotState robotState;
 
     @Inject

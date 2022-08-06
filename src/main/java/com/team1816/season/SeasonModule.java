@@ -11,7 +11,9 @@ import com.team1816.lib.subsystems.SwerveDrive;
 import com.team1816.lib.subsystems.TankDrive;
 import com.team1816.season.auto.actions.*;
 import com.team1816.season.controlboard.ControlBoard;
+import com.team1816.season.events.ControlBoardEventCollection;
 import com.team1816.season.events.EventRegister;
+import com.team1816.season.events.RobotEventCollection;
 import com.team1816.season.states.Superstructure;
 import com.team1816.season.subsystems.*;
 
@@ -31,6 +33,8 @@ public class SeasonModule extends AbstractModule {
         requestStaticInjection(LedManager.class);
         requestStaticInjection(ControlBoardBrige.class);
         requestStaticInjection(EventRegister.class);
+        requestStaticInjection(ControlBoardEventCollection.class);
+        requestStaticInjection(RobotEventCollection.class);
         requestStaticInjection(TrajectoryAction.class);
         requestStaticInjection(TurretAction.class);
         requestStaticInjection(AutoAimAction.class);

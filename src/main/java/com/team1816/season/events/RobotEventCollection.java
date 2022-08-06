@@ -1,9 +1,21 @@
 package com.team1816.season.events;
 
+import com.google.inject.Singleton;
+import com.team1816.lib.events.EventBase;
 import com.team1816.lib.events.PubSubConsumer;
 import com.team1816.lib.events.PubSubRunnable;
 
+import java.util.HashMap;
+
+@Singleton
 public class RobotEventCollection {
+    public static HashMap<String, EventBase> map = new HashMap<>();
+
+    public RobotEventCollection () {
+        for(Class c: ControlBoardEventCollection.class.getClasses()) {
+            map.put(c.getName(), EventBase.class.cast(c));
+        }
+    }
 
     public static class ToggleCollectorEvent extends PubSubConsumer<Boolean> {}
 

@@ -1,8 +1,20 @@
 package com.team1816.season.events;
 
+import com.google.inject.Singleton;
+import com.team1816.lib.events.EventBase;
 import com.team1816.lib.events.PubSubRunnable;
 
+import java.util.HashMap;
+
+@Singleton
 public class ControlBoardEventCollection {
+    public static HashMap<String, EventBase> map = new HashMap<>();
+
+    public ControlBoardEventCollection () {
+        for(Class c: ControlBoardEventCollection.class.getClasses()) {
+            map.put(c.getName(), EventBase.class.cast(c));
+        }
+    }
 
     public static class ToggleCollectorEvent extends PubSubRunnable {}
 
