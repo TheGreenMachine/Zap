@@ -62,6 +62,7 @@ public class EventRegister {
     private static Camera camera;
 
     public EventRegister() {
+        controlsManager = new EventAggregator();
         eventManager = new EventAggregator();
         drive = driveFactory.getInstance();
     }

@@ -39,7 +39,7 @@ public class Robot extends TimedRobot {
     // controls
     private IControlBoard controlBoard;
     private ActionManager actionManager;
-    private EventRegister eventManager;
+    private final EventRegister eventManager;
 
     private final Infrastructure infrastructure;
     private final SubsystemManager subsystemManager;
@@ -90,6 +90,7 @@ public class Robot extends TimedRobot {
         ledManager = injector.getInstance(LedManager.class);
         subsystemManager = injector.getInstance(SubsystemManager.class);
         autoModeManager = injector.getInstance(AutoModeManager.class);
+        eventManager = injector.getInstance(EventRegister.class);
     }
 
     public static RobotFactory getFactory() {
