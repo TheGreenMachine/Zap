@@ -265,10 +265,6 @@ public class Turret extends Subsystem implements PidProvider {
                 trackAbsolute();
                 positionControl(followingPos);
                 break;
-            case ABSOLUTE_MADNESS:
-                autoHomeWithOffset(motionOffset());
-                positionControl(followingPos);
-                break;
             case CAMERA_SNAP:
                 snapControl();
                 positionControl(followingPos);
@@ -301,27 +297,6 @@ public class Turret extends Subsystem implements PidProvider {
         double turretAngle = Math.atan(opposite / adjacent);
         if (adjacent < 0) turretAngle += Math.PI;
         return convertTurretDegreesToTicks(Units.radiansToDegrees(turretAngle));
-    }
-
-    private int motionOffset() {
-        Translation2d shooterAxis = new Translation2d(
-            robotState.shooterMPS,
-            robotState.getLatestFieldToTurret()
-        );
-        Translation2d driveAxis = new Translation2d(
-            robotState.deltaVehicle.vxMetersPerSecond,
-            robotState.deltaVehicle.vyMetersPerSecond
-        );
-        Translation2d predictedTrajectory = driveAxis.unaryMinus().plus(shooterAxis);
-        double motionOffsetAngle = PoseUtil.getAngleBetween(
-            predictedTrajectory,
-            shooterAxis
-        );
-
-        if (motionOffsetAngle > Math.PI) {
-            motionOffsetAngle -= Math.PI * 2;
-        }
-        return convertTurretDegreesToTicks(Units.radiansToDegrees(motionOffsetAngle));
     }
 
     private void autoHome() {
@@ -369,9 +344,8 @@ public class Turret extends Subsystem implements PidProvider {
     private void trackAbsolute() {
         int fieldTickOffset = fieldFollowingOffset();
         int centerOffset = centerFollowingOffset();
-        int motionOffset = motionOffset();
 
-        int adj = (desiredPos + fieldTickOffset + centerOffset + motionOffset);
+        int adj = (desiredPos + fieldTickOffset + centerOffset);
         if (adj != followingPos) {
             followingPos = adj;
             outputsChanged = true;
@@ -439,7 +413,6 @@ public class Turret extends Subsystem implements PidProvider {
         FIELD_FOLLOWING,
         CENTER_FOLLOWING,
         ABSOLUTE_FOLLOWING,
-        ABSOLUTE_MADNESS,
         CAMERA_SNAP,
         POSITION,
         MANUAL,

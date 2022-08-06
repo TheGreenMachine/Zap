@@ -17,6 +17,7 @@ import com.team1816.lib.subsystems.DrivetrainLogger;
 import com.team1816.lib.subsystems.SubsystemManager;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.controlboard.ActionManager;
+import com.team1816.season.events.EventRegister;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.states.Superstructure;
 import com.team1816.season.subsystems.*;
@@ -39,7 +40,7 @@ public class Robot extends TimedRobot {
     // controls
     private IControlBoard controlBoard;
     private ActionManager actionManager;
-    private EventAggregator eventManager;
+    private EventRegister eventManager;
 
     private final Infrastructure infrastructure;
     private final SubsystemManager subsystemManager;
@@ -68,10 +69,7 @@ public class Robot extends TimedRobot {
     private double loopStart;
 
     // hack variables
-    private final Turret.ControlMode defaultTurretControlMode =
-        Turret.ControlMode.FIELD_FOLLOWING;
     private boolean faulted;
-    private boolean useManualShoot = false;
 
     Robot() {
         super();
@@ -107,6 +105,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         try {
             controlBoard = injector.getInstance(IControlBoard.class);
+            eventManager.subscribeToControlBoard();
             DriverStation.silenceJoystickConnectionWarning(true);
             if (Constants.kIsBadlogEnabled) {
                 var logFile = new SimpleDateFormat("MMdd_HH-mm").format(new Date());
@@ -244,6 +243,7 @@ public class Robot extends TimedRobot {
             subsystemManager.zeroSensors();
 
             initializeActionManager();
+            eventManager.subscribeToEvents();
         } catch (Throwable t) {
             faulted = true;
             throw t;
@@ -268,7 +268,7 @@ public class Robot extends TimedRobot {
                 createAction(
                     () -> controlBoard.getAsBool("toggleManualShoot"),
                     () -> {
-                        useManualShoot = !useManualShoot;
+                        robotState.useManualShoot = !robotState.useManualShoot;
                         System.out.println("manual shooting toggled!");
                     }
                 ),
@@ -309,12 +309,12 @@ public class Robot extends TimedRobot {
                         } else {
                             superstructure.updatePoseWithCamera();
                             if (
-                                defaultTurretControlMode ==
+                                robotState.defaultTurretControlMode ==
                                 Turret.ControlMode.CENTER_FOLLOWING
                             ) {
                                 turret.setFollowingAngle(Turret.kSouth);
                             }
-                            turret.setControlMode(defaultTurretControlMode);
+                            turret.setControlMode(robotState.defaultTurretControlMode);
                         }
                     }
                 ),
@@ -330,7 +330,7 @@ public class Robot extends TimedRobot {
                 createHoldAction(
                     () -> controlBoard.getAsBool("yeetShot"),
                     yeet -> {
-                        if (useManualShoot) {
+                        if (robotState.useManualShoot) {
                             superstructure.setRevving(
                                 yeet,
                                 Shooter.TARMAC_TAPE_VEL,
@@ -348,7 +348,7 @@ public class Robot extends TimedRobot {
                         superstructure.setRevving(
                             shooting,
                             Shooter.LAUNCHPAD_VEL,
-                            useManualShoot
+                            robotState.useManualShoot
                         ); // Launchpad
                         superstructure.setFiring(shooting);
                     }
@@ -461,7 +461,7 @@ public class Robot extends TimedRobot {
             superstructure.setStopped(false);
 
             turret.setTurretAngle(Turret.kSouth);
-            turret.setControlMode(defaultTurretControlMode);
+            turret.setControlMode(robotState.defaultTurretControlMode);
 
             infrastructure.startCompressor();
 

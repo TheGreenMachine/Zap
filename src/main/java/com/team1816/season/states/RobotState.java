@@ -19,7 +19,6 @@ public class RobotState {
     public Pose2d estimatedFieldToVehicle = Constants.EmptyPose;
     public Rotation2d vehicleToTurret = Constants.EmptyRotation;
     public ChassisSpeeds deltaVehicle = new ChassisSpeeds();
-    public double shooterMPS = 0; // needs to be remapped - default value
 
     // Superstructure ACTUAL states
     public Point visionPoint = new Point();
@@ -30,6 +29,8 @@ public class RobotState {
     public Cooler.STATE coolState = Cooler.STATE.WAIT;
 
     public boolean overheating = false;
+    public boolean useManualShoot = false;
+    public Turret.ControlMode defaultTurretControlMode = Turret.ControlMode.FIELD_FOLLOWING;
 
     public RobotState() {
         SmartDashboard.putData("Field", field);
@@ -63,7 +64,6 @@ public class RobotState {
         coolState = Cooler.STATE.WAIT;
         deltaVehicle = new ChassisSpeeds();
         visionPoint = new Point();
-        shooterMPS = 0;
         overheating = false;
     }
 
