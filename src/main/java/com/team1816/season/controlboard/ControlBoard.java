@@ -54,6 +54,14 @@ public class ControlBoard implements IControlBoard {
         }
     }
 
+    public boolean getAsBoolJoystickPositive(String getName) {
+        return getAsDouble(getName) > Constants.kJoystickBooleanThreshold;
+    }
+
+    public boolean getAsBoolJoystickNegative(String getName) {
+        return getAsDouble(getName) < Constants.kJoystickBooleanThreshold;
+    }
+
     @Override
     public boolean update() {
         DemoMode selectedMode = demoModeChooser.getSelected();

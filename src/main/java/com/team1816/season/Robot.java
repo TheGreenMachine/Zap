@@ -9,7 +9,6 @@ import com.team1816.lib.Infrastructure;
 import com.team1816.lib.LibModule;
 import com.team1816.lib.controlboard.ControlBoardBrige;
 import com.team1816.lib.controlboard.IControlBoard;
-import com.team1816.lib.events.EventAggregator;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.Drive;

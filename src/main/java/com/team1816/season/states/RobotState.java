@@ -30,7 +30,8 @@ public class RobotState {
 
     public boolean overheating = false;
     public boolean useManualShoot = false;
-    public Turret.ControlMode defaultTurretControlMode = Turret.ControlMode.FIELD_FOLLOWING;
+    public Turret.ControlMode defaultTurretControlMode =
+        Turret.ControlMode.FIELD_FOLLOWING;
 
     public RobotState() {
         SmartDashboard.putData("Field", field);

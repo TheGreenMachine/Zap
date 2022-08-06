@@ -42,4 +42,6 @@ public class RobotEventCollection {
     public static class ToggleTopClampEvent extends PubSubRunnable {}
 
     public static class ToggleBottomClampEvent extends PubSubRunnable {}
+
+    public static class AutoClimbEvent extends PubSubRunnable {}
 }

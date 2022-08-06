@@ -17,6 +17,7 @@ import com.team1816.season.subsystems.*;
 @Singleton
 public class EventRegister {
 
+    public static EventAggregator controlsManager;
     public static EventAggregator eventManager;
 
     @Inject
@@ -66,7 +67,66 @@ public class EventRegister {
     }
 
     public void subscribeToControlBoard() {
-
+        controlsManager
+            .GetEvent(ControlBoardEventCollection.ToggleCollectorEvent.class)
+            .Subscribe(() -> controlBoard.getAsBool("toggleCollector"));
+        controlsManager
+            .GetEvent(ControlBoardEventCollection.ToggleCollectorReverseEvent.class)
+            .Subscribe(() -> controlBoard.getAsBool("toggleCollectorReverse"));
+        controlsManager
+            .GetEvent(ControlBoardEventCollection.UnlockClimberEvent.class)
+            .Subscribe(() -> controlBoard.getAsBool("unlockClimber"));
+        controlsManager
+            .GetEvent(ControlBoardEventCollection.ToggleManualShootEvent.class)
+            .Subscribe(() -> controlBoard.getAsBool("toggleManualShoot"));
+        controlsManager
+            .GetEvent(ControlBoardEventCollection.ZeroPoseEvent.class)
+            .Subscribe(() -> controlBoard.getAsBool("zeroPose"));
+        controlsManager
+            .GetEvent(ControlBoardEventCollection.BrakeModeEvent.class)
+            .Subscribe(() -> controlBoard.getAsBool("brakeMode"));
+        controlsManager
+            .GetEvent(ControlBoardEventCollection.SlowModeEvent.class)
+            .Subscribe(() -> controlBoard.getAsBool("slowMode"));
+        controlsManager
+            .GetEvent(ControlBoardEventCollection.IncrementBucketEvent.class)
+            .Subscribe(() -> controlBoard.getAsBool("raiseBucket"));
+        controlsManager
+            .GetEvent(ControlBoardEventCollection.DecrementBucketEvent.class)
+            .Subscribe(() -> controlBoard.getAsBool("lowerBucket"));
+        controlsManager
+            .GetEvent(ControlBoardEventCollection.AutoAimEvent.class)
+            .Subscribe(() -> controlBoard.getAsBool("autoAim"));
+        controlsManager
+            .GetEvent(ControlBoardEventCollection.ToggleCameraEvent.class)
+            .Subscribe(() -> controlBoard.getAsBool("toggleCamera"));
+        controlsManager
+            .GetEvent(ControlBoardEventCollection.YeetShotEvent.class)
+            .Subscribe(() -> controlBoard.getAsBool("yeetShot"));
+        controlsManager
+            .GetEvent(ControlBoardEventCollection.ShootEvent.class)
+            .Subscribe(() -> controlBoard.getAsBool("shoot"));
+        controlsManager
+            .GetEvent(ControlBoardEventCollection.TurretJogLeftEvent.class)
+            .Subscribe(() -> controlBoard.getAsBool("turretJogLeft"));
+        controlsManager
+            .GetEvent(ControlBoardEventCollection.TurretJogRightEvent.class)
+            .Subscribe(() -> controlBoard.getAsBool("turretJogRight"));
+        controlsManager
+            .GetEvent(ControlBoardEventCollection.ManualClimberArmUpEvent.class)
+            .Subscribe(() -> controlBoard.getAsBoolJoystickPositive("manualClimberArm"));
+        controlsManager
+            .GetEvent(ControlBoardEventCollection.ManualClimberArmDownEvent.class)
+            .Subscribe(() -> controlBoard.getAsBoolJoystickNegative("manualClimberArm"));
+        controlsManager
+            .GetEvent(ControlBoardEventCollection.ToggleTopClampEvent.class)
+            .Subscribe(() -> controlBoard.getAsBool("toggleTopClamp"));
+        controlsManager
+            .GetEvent(ControlBoardEventCollection.ToggleBottomClampEvent.class)
+            .Subscribe(() -> controlBoard.getAsBool("toggleBottomClamp"));
+        controlsManager
+            .GetEvent(ControlBoardEventCollection.AutoClimbEvent.class)
+            .Subscribe(() -> controlBoard.getAsBool("autoClimb"));
     }
 
     public void subscribeToEvents() {
@@ -86,9 +146,7 @@ public class EventRegister {
             );
         eventManager
             .GetEvent(RobotEventCollection.UnlockClimberEvent.class)
-            .Subscribe(
-                climber::unlock
-            );
+            .Subscribe(climber::unlock);
         eventManager
             .GetEvent(RobotEventCollection.ToggleManualShootEvent.class)
             .Subscribe(
@@ -107,14 +165,10 @@ public class EventRegister {
             );
         eventManager
             .GetEvent(RobotEventCollection.BrakeModeEvent.class)
-            .Subscribe(
-                drive::setBraking
-            );
+            .Subscribe(drive::setBraking);
         eventManager
             .GetEvent(RobotEventCollection.SlowModeEvent.class)
-            .Subscribe(
-                drive::setSlowMode
-            );
+            .Subscribe(drive::setSlowMode);
         eventManager
             .GetEvent(RobotEventCollection.IncrementBucketEvent.class)
             .Subscribe(
@@ -140,7 +194,7 @@ public class EventRegister {
                         superstructure.updatePoseWithCamera();
                         if (
                             robotState.defaultTurretControlMode ==
-                                Turret.ControlMode.CENTER_FOLLOWING
+                            Turret.ControlMode.CENTER_FOLLOWING
                         ) {
                             turret.setFollowingAngle(Turret.kSouth);
                         }
@@ -163,11 +217,7 @@ public class EventRegister {
             .Subscribe(
                 yeet -> {
                     if (robotState.useManualShoot) {
-                        superstructure.setRevving(
-                            yeet,
-                            Shooter.TARMAC_TAPE_VEL,
-                            true
-                        ); // Tarmac
+                        superstructure.setRevving(yeet, Shooter.TARMAC_TAPE_VEL, true); // Tarmac
                     } else {
                         superstructure.setRevving(yeet, Shooter.NEAR_VELOCITY, true); // Barf shot
                     }
@@ -204,26 +254,18 @@ public class EventRegister {
             );
         eventManager
             .GetEvent(RobotEventCollection.ManualClimberArmUpEvent.class)
-            .Subscribe(
-                moving -> climber.setClimberPower(moving ? -.5 : 0)
-            );
+            .Subscribe(moving -> climber.setClimberPower(moving ? -.5 : 0));
         eventManager
             .GetEvent(RobotEventCollection.ManualClimberArmDownEvent.class)
-            .Subscribe(
-                moving -> climber.setClimberPower(moving ? .5 : 0)
-            );
+            .Subscribe(moving -> climber.setClimberPower(moving ? .5 : 0));
         eventManager
             .GetEvent(RobotEventCollection.ToggleTopClampEvent.class)
-            .Subscribe(
-                climber::setTopClamp
-            );
+            .Subscribe(climber::setTopClamp);
         eventManager
-            .GetEvent(RobotEventCollection.ToggleTopClampEvent.class)
-            .Subscribe(
-                climber::setBottomClamp
-            );
+            .GetEvent(RobotEventCollection.ToggleBottomClampEvent.class)
+            .Subscribe(climber::setBottomClamp);
         eventManager
-            .GetEvent(RobotEventCollection.ToggleTopClampEvent.class)
+            .GetEvent(RobotEventCollection.AutoClimbEvent.class)
             .Subscribe(
                 () -> {
                     if (climber.getCurrentStage() == 0) {
