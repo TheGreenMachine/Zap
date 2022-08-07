@@ -1,12 +1,9 @@
 package com.team1816.lib.auto.actions;
 
-import com.team1816.lib.auto.modes.AutoMode;
-
 /**
  * Action Interface, an interface that describes an iterative action. It is run by an autonomous action, called by the
  * method runAction in AutoModeBase (or more commonly in autonomous modes that extend AutoModeBase)
  *
- * @see AutoMode#runAction
  */
 public interface Action {
     /**

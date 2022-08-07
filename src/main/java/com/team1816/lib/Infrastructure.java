@@ -1,10 +1,10 @@
 package com.team1816.lib;
 
-import static com.team1816.lib.subsystems.Subsystem.factory;
-
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.components.IPigeonIMU;
 import com.team1816.lib.hardware.components.pcm.ICompressor;
+import com.team1816.lib.hardware.factory.RobotFactory;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.PowerDistribution;
 
@@ -20,13 +20,15 @@ public class Infrastructure {
     private static IPigeonIMU pigeon;
     private static PowerDistribution pd;
 
-    private static final boolean compressorEnabled = factory.isCompressorEnabled();
+    private static boolean compressorEnabled;
     private static boolean compressorIsOn = false;
 
-    public Infrastructure() {
+    @Inject
+    public Infrastructure(RobotFactory factory) {
         compressor = factory.getCompressor();
         pigeon = factory.getPigeon();
         pd = factory.getPd();
+        compressorEnabled = factory.isCompressorEnabled();
     }
 
     public void startCompressor() { // not used because compressor currently turns on by default once robot is enabled

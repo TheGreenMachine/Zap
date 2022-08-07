@@ -3,12 +3,15 @@ package com.team1816.season.subsystems;
 import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
 import static com.ctre.phoenix.motorcontrol.ControlMode.Position;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
+import com.team1816.season.states.RobotState;
 import edu.wpi.first.wpilibj.Timer;
 
 @Singleton
@@ -50,8 +53,9 @@ public class Climber extends Subsystem {
 
     private final double ALLOWABLE_ERROR;
 
-    public Climber() {
-        super(NAME);
+    @Inject
+    public Climber(Infrastructure inf, RobotState rs) {
+        super(NAME, inf, rs);
         climberMain = factory.getMotor(NAME, "climberMain");
         climberFollower =
             (IGreenMotor) factory.getMotor(NAME, "climberFollower", climberMain);

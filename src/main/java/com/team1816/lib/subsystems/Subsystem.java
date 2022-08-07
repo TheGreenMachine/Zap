@@ -27,14 +27,15 @@ public abstract class Subsystem implements Sendable {
     private final String name;
     public static RobotFactory factory = Robot.getFactory();
 
-    @Inject
     public static RobotState robotState;
 
-    @Inject
     public static Infrastructure infrastructure;
 
-    protected Subsystem(String name) {
+    @Inject
+    public Subsystem(String name, Infrastructure inf, RobotState rs) {
         this.name = name;
+        robotState = rs;
+        infrastructure = inf;
         SendableRegistry.addLW(this, name, name);
     }
 

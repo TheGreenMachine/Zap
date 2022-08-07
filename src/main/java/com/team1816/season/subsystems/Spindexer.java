@@ -1,9 +1,12 @@
 package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.subsystems.Subsystem;
+import com.team1816.season.states.RobotState;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -27,8 +30,9 @@ public class Spindexer extends Subsystem {
     private final double FIRE;
     private final double COAST;
 
-    public Spindexer() {
-        super(NAME);
+    @Inject
+    public Spindexer(Infrastructure inf, RobotState rs) {
+        super(NAME, inf, rs);
         // Components
         spindexer = factory.getMotor(NAME, "spindexer");
 

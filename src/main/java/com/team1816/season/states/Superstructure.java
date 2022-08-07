@@ -19,36 +19,16 @@ import edu.wpi.first.math.util.Units;
 @Singleton
 public class Superstructure {
 
-    @Inject
-    private static Drive.Factory driveFactory;
-
     private static Drive drive;
-
-    @Inject
     private static Turret turret;
-
-    @Inject
     private static Collector collector;
-
-    @Inject
     private static Spindexer spindexer;
-
-    @Inject
     private static Elevator elevator;
-
-    @Inject
     private static Shooter shooter;
-
-    @Inject
     private static LedManager ledManager;
-
     // for automatic value setting
-    @Inject
     private static DistanceManager distanceManager;
-
-    @Inject
     private static Camera camera;
-
     private boolean collecting;
     private boolean revving;
     private boolean firing;
@@ -58,8 +38,27 @@ public class Superstructure {
         0.2
     );
 
-    public Superstructure() {
-        drive = driveFactory.getInstance();
+    @Inject
+    public Superstructure(
+        DistanceManager dm,
+        Camera cam,
+        Drive.Factory df,
+        Turret tur,
+        Collector col,
+        Spindexer spin,
+        Elevator elev,
+        Shooter shoot,
+        LedManager led
+    ) {
+        drive = df.getInstance();
+        distanceManager = dm;
+        camera = cam;
+        turret = tur;
+        collector = col;
+        spindexer = spin;
+        elevator = elev;
+        shooter = shoot;
+        ledManager = led;
         collecting = false;
         revving = false;
         firing = false;
