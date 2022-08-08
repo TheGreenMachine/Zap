@@ -1,3 +1,10 @@
 package com.team1816.lib.controlboard;
 
-public interface IControlBoard extends IDriveControlBoard, IOperatorControlBoard {}
+public interface IControlBoard {
+    boolean getAsBool(String getName);
+    double getAsDouble(String getName);
+
+    boolean update();
+
+    void outputToSmartDashboard();
+}

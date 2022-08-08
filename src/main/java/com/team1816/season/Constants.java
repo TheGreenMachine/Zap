@@ -71,9 +71,11 @@ public class Constants {
         kDriveWheelRadiusInches
     );
     public static double kTrackScrubFactor = factory.getConstant("kTrackScrubFactor");
-
-    public static final Pose2d ZeroPose = new Pose2d(0.5, fieldCenterY, EmptyRotation);
-    public static Pose2d StartingPose = new Pose2d(0.5, fieldCenterY, EmptyRotation);
+    public static final Pose2d kDefaultZeroingPose = new Pose2d(
+        0.5,
+        fieldCenterY,
+        EmptyRotation
+    );
 
     public static class Tank {
 
@@ -86,7 +88,7 @@ public class Constants {
 
     public static class Swerve {
 
-        public String kName = "Name";
+        public String kModuleName = "Name";
         public String kDriveMotorName = "";
         public String kAzimuthMotorName = "";
 
@@ -150,7 +152,8 @@ public class Constants {
     // Control Board
     public static final int kDriveGamepadPort = 0;
     public static final int kOperatorGamepadPort = 1;
-    public static final double kJoystickThreshold = 0.04; // deadband
+    public static final double kAxisThreshold = 0.04; // deadband //TODO: might want to increase this
+    public static final double kJoystickBooleanThreshold = 0.80;
 
     // Drive speed
     public static final double kPathFollowingMaxAccelMeters = factory.getConstant(

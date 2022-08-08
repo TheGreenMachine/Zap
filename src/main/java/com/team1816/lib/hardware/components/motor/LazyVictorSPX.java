@@ -71,7 +71,10 @@ public class LazyVictorSPX extends VictorSPX implements IGreenMotor {
 
     @Override
     public double getLastSet() {
-        DriverStation.reportWarning("getLastSet not implemented in LazyVictorSPX - returning 0", false);
+        DriverStation.reportWarning(
+            "getLastSet not implemented in LazyVictorSPX - returning 0",
+            false
+        );
         return 0;
     }
 

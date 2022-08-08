@@ -143,6 +143,7 @@ public class Shooter extends Subsystem implements PidProvider {
 
     public double convertShooterTicksToMetersPerSecond(double ticks) {
         return 0.00019527 * ticks; //TODO: verify conversion (roughly accurate based on recorded data)
+        // this can be corroborated by looking at the troughs in logs and computing the expected output
     }
 
     public double convertShooterMetersToTicksPerSecond(double metersPerSecond) {

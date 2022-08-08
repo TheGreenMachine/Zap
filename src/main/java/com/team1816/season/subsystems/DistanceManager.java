@@ -21,7 +21,7 @@ public class DistanceManager {
         } else {
             buckets = equation_buckets;
         }
-        buckets[lastBucketIndex].calculateAndUpdate(0);
+        outputBucketOffsets();
     }
 
     static class Entry {

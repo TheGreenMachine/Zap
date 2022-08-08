@@ -12,20 +12,20 @@ public class DrivetrainLogger {
                 i++
             ) {
                 var module = ((SwerveDrivetrain) drivetrain).getSwerveModules()[i];
-                var name = module.getSubsystemName();
+                var name = module.getModuleName();
                 var prefix = "Drivetrain/" + name;
                 // Azimuth
                 subsystem.CreateBadLogTopic(
                     prefix + "AzimuthPosition",
                     "ticks",
-                    module::getAzimuthActual,
+                    module::getActualAzimuth,
                     "hide",
                     "join:Drivetrain/AzimuthPosition"
                 );
                 subsystem.CreateBadLogTopic(
                     prefix + "AzimuthDemand",
                     "ticks",
-                    module::getAzimuthDemand,
+                    module::getDesiredAzimuth,
                     "hide",
                     "join:Drivetrain/AzimuthPosition"
                 );
@@ -41,14 +41,14 @@ public class DrivetrainLogger {
                 subsystem.CreateBadLogTopic(
                     prefix + "DriveVelocity",
                     "ticks",
-                    module::getDriveActual,
+                    module::getActualDrive,
                     "hide",
                     "join:Drivetrain/DriveVelocity"
                 );
                 subsystem.CreateBadLogTopic(
                     prefix + "DriveVelocityDemand",
                     "ticks",
-                    module::getDriveDemand,
+                    module::getDesiredDrive,
                     "hide",
                     "join:Drivetrain/DriveVelocity"
                 );
@@ -59,47 +59,54 @@ public class DrivetrainLogger {
                     "hide",
                     "join:Drivetrain/DriveError"
                 );
+                subsystem.CreateBadLogTopic(
+                    prefix + "DriveTemperature",
+                    "degrees C",
+                    module::getMotorTemp,
+                    "hide",
+                    "join:Drivetrain/Temperature"
+                );
             }
         } else {
             subsystem.CreateBadLogTopic(
                 "Drivetrain/LeftActVel",
                 "NativeUnits",
-                ((TankDrive) drivetrain)::getLeftVelocityNativeUnits,
+                ((TankDrive) drivetrain)::getLeftVelocityTicksActual,
                 "hide",
                 "join:Drivetrain/Velocities"
             );
             subsystem.CreateBadLogTopic(
                 "Drivetrain/RightActVel",
                 "NativeUnits",
-                ((TankDrive) drivetrain)::getRightVelocityNativeUnits,
+                ((TankDrive) drivetrain)::getRightVelocityTicksActual,
                 "hide",
                 "join:Drivetrain/Velocities"
             );
             subsystem.CreateBadLogTopic(
                 "Drivetrain/LeftVel",
                 "NativeUnits",
-                ((TankDrive) drivetrain)::getLeftVelocityDemand,
+                ((TankDrive) drivetrain)::getLeftVelocityTicksDemand,
                 "hide",
                 "join:Drivetrain/Velocities"
             );
             subsystem.CreateBadLogTopic(
                 "Drivetrain/RightVel",
                 "NativeUnits",
-                ((TankDrive) drivetrain)::getRightVelocityDemand,
+                ((TankDrive) drivetrain)::getRightVelocityTicksDemand,
                 "hide",
                 "join:Drivetrain/Velocities"
             );
             subsystem.CreateBadLogTopic(
                 "Drivetrain/LeftError",
                 "NativeUnits",
-                ((TankDrive) drivetrain)::getLeftVelocityError,
+                ((TankDrive) drivetrain)::getLeftError,
                 "hide",
                 "join:Drivetrain/VelocityError"
             );
             subsystem.CreateBadLogTopic(
                 "Drivetrain/RightError",
                 "NativeUnits",
-                ((TankDrive) drivetrain)::getRightVelocityError,
+                ((TankDrive) drivetrain)::getRightError,
                 "hide",
                 "join:Drivetrain/VelocityError"
             );
@@ -135,14 +142,14 @@ public class DrivetrainLogger {
         subsystem.CreateBadLogTopic(
             "Drivetrain/ActualHeading",
             "Angle",
-            drivetrain::getHeadingDegrees,
+            drivetrain::getActualHeadingDegrees,
             "hide",
             "join:Drivetrain/Heading"
         );
         subsystem.CreateBadLogTopic(
             "Drivetrain/DesiredHeading",
             "Angle",
-            drivetrain::getDesiredHeading,
+            drivetrain::getDesiredHeadingDegrees,
             "hide",
             "join:Drivetrain/Heading"
         );

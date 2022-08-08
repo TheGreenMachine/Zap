@@ -103,7 +103,7 @@ jar {
 }
 
 jsonSchema2Pojo {
-    targetPackage = 'com.team1816.lib.hardware'
+    targetPackage = 'com.team1816.lib'
     useTitleAsClassname = true
     includeGetters = false
     includeSetters = false
@@ -112,13 +112,9 @@ jsonSchema2Pojo {
     includeToString = true
     includeHashcodeAndEquals = false
     source.setFrom files(
-        "${project.rootDir}/src/main/resources/subsystemconfig.schema.json",
-        "${project.rootDir}/src/main/resources/pidconfig.schema.json",
-        "${project.rootDir}/src/main/resources/swervemoduleconfig.schema.json",
-        "${project.rootDir}/src/main/resources/moduleconfig.schema.json",
-        "${project.rootDir}/src/main/resources/double.solenoid.schema.json",
-        "${project.rootDir}/src/main/resources/robotconfig.schema.json"
-    )}
+        "${project.rootDir}/src/main/resources/schemas"
+    )
+}
 
 spotless {
     java {

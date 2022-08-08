@@ -1,24 +1,18 @@
 package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.CANifier;
-import com.ctre.phoenix.led.CANdle;
-import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.ICANdle;
 import com.team1816.lib.hardware.components.ICanifier;
 import com.team1816.lib.subsystems.Subsystem;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import java.awt.*;
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
 public class LedManager extends Subsystem {
 
     public static final String NAME = "ledmanager";
-
-    @Inject
-    private static Infrastructure mInfraStructure;
 
     // Components
     private final ICanifier canifier;
@@ -52,21 +46,12 @@ public class LedManager extends Subsystem {
         super(NAME);
         canifier = factory.getCanifier(NAME);
         candle = factory.getCandle(NAME);
-        configureCandle();
 
         ledR = 0;
         ledG = 0;
         ledB = 0;
 
         cameraLedOn = false;
-    }
-
-    private void configureCandle() {
-        if (candle == null) return;
-        candle.configStatusLedState(true);
-        candle.configLOSBehavior(true);
-        candle.configLEDType(CANdle.LEDStripType.BRG);
-        candle.configBrightnessScalar(1);
     }
 
     public void setCameraLed(boolean cameraOn) {
@@ -126,9 +111,7 @@ public class LedManager extends Subsystem {
     }
 
     private void writeToCameraLed(int r, int g, int b) {
-        if (factory.getConstant("pdIsRev") > 0) { // TODO this is a hack because currently not using candle
-            mInfraStructure.getPdh().setSwitchableChannel(cameraLedOn); // cameraLedOn
-        } else if (candle != null) {
+        if (candle != null) {
             if (cameraLedOn) {
                 candle.setLEDs(0, 255, 0, 0, 0, 8);
             } else {

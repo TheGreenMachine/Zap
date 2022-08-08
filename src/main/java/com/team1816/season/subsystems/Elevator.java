@@ -40,7 +40,7 @@ public class Elevator extends Subsystem {
         isVelocity = factory.getConstant(NAME, "isVelocity", 0) > 0;
 
         // Constants
-        double MAX_TICKS = factory.getConstant(NAME, "maxTicks", 0);
+        double MAX_TICKS = factory.getConstant(NAME, "maxVelTicks100ms", 0);
         if (!isVelocity) {
             FLUSH = factory.getConstant(NAME, "flushPow", -0.5);
             FIRE = factory.getConstant(NAME, "firePow", 0.5);

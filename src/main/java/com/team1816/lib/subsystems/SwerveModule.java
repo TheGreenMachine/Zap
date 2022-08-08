@@ -21,11 +21,13 @@ public class SwerveModule implements ISwerveModule {
     private final IGreenMotor driveMotor;
     private final IGreenMotor azimuthMotor; // angle motor (the pivot part of a shopping cart except motorized)
     public final CANCoder canCoder;
-    public double driveDemand;
-    public double azimuthDemand;
 
     // State
-    private boolean isBrakeMode = false;
+    public double driveDemand;
+    public double driveActual;
+    public double azimuthDemand;
+    public double azimuthActual;
+    public double motorTemp; // drive motor temperature
 
     // Constants
     private final Constants.Swerve mConstants;
@@ -40,7 +42,7 @@ public class SwerveModule implements ISwerveModule {
 
         System.out.println(
             "Configuring Swerve Module " +
-            constants.kName +
+            constants.kModuleName +
             " on subsystem " +
             subsystemName
         );
@@ -92,7 +94,7 @@ public class SwerveModule implements ISwerveModule {
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
         SwerveModuleState desired_state = SwerveKinematics.optimize(
             desiredState,
-            getState().angle
+            getActualState().angle
         );
         driveDemand =
             DriveConversions.metersPerSecondToTicksPer100ms(
@@ -109,29 +111,37 @@ public class SwerveModule implements ISwerveModule {
         azimuthMotor.set(ControlMode.Position, azimuthDemand);
     }
 
-    public SwerveModuleState getState() {
-        double velocity =
-            DriveConversions.convertTicksToMeters(
-                driveMotor.getSelectedSensorVelocity(0)
-            ) *
-            10;
-        Rotation2d angle = Rotation2d.fromDegrees(
+    public SwerveModuleState getActualState() {
+        driveActual =
+            DriveConversions.ticksToMeters(driveMotor.getSelectedSensorVelocity(0)) * 10;
+        azimuthActual =
             DriveConversions.convertTicksToDegrees(
                 azimuthMotor.getSelectedSensorPosition(0) -
                 mConstants.kAzimuthEncoderHomeOffset
-            )
-        );
-        return new SwerveModuleState(velocity, angle);
+            );
+        Rotation2d angleActual = Rotation2d.fromDegrees(azimuthActual);
+        motorTemp = driveMotor.getTemperature(); // Celsius
+        return new SwerveModuleState(driveActual, angleActual);
     }
 
     @Override
-    public String getSubsystemName() {
-        return mConstants.kName;
+    public double getMotorTemp() {
+        return motorTemp;
     }
 
     @Override
-    public double getAzimuthActual() {
-        return azimuthMotor.getSelectedSensorPosition(0);
+    public String getModuleName() {
+        return mConstants.kModuleName;
+    }
+
+    @Override
+    public double getDesiredAzimuth() {
+        return azimuthDemand;
+    }
+
+    @Override
+    public double getActualAzimuth() {
+        return azimuthActual;
     }
 
     @Override
@@ -140,18 +150,13 @@ public class SwerveModule implements ISwerveModule {
     }
 
     @Override
-    public double getAzimuthDemand() {
-        return azimuthDemand;
-    }
-
-    @Override
-    public double getDriveActual() {
-        return driveMotor.getSelectedSensorVelocity(0);
-    }
-
-    @Override
-    public double getDriveDemand() {
+    public double getDesiredDrive() {
         return driveDemand;
+    }
+
+    @Override
+    public double getActualDrive() {
+        return driveActual;
     }
 
     @Override
@@ -159,21 +164,16 @@ public class SwerveModule implements ISwerveModule {
         return driveMotor.getClosedLoopError(0);
     }
 
-    public synchronized void setDriveBrakeMode(boolean brake_mode) {
-        if (brake_mode) {
-            driveMotor.set(ControlMode.Velocity, 0);
-        }
-        isBrakeMode = brake_mode;
-    }
-
     public boolean checkSystem() {
         boolean checkDrive = true;
-        double actualMaxTicks = factory.getConstant(NAME, "maxTicks"); // if this isn't calculated right this test will fail
+        double actualmaxVelTicks100ms = factory.getConstant(NAME, "maxVelTicks100ms"); // if this isn't calculated right this test will fail
         driveMotor.set(ControlMode.PercentOutput, 0.2);
         Timer.delay(1);
         if (
-            Math.abs(driveMotor.getSelectedSensorVelocity(0) - 0.2 * actualMaxTicks) >
-            actualMaxTicks /
+            Math.abs(
+                driveMotor.getSelectedSensorVelocity(0) - 0.2 * actualmaxVelTicks100ms
+            ) >
+            actualmaxVelTicks100ms /
             50
         ) {
             checkDrive = false;
@@ -181,8 +181,10 @@ public class SwerveModule implements ISwerveModule {
         driveMotor.set(ControlMode.PercentOutput, -0.2);
         Timer.delay(1);
         if (
-            Math.abs(driveMotor.getSelectedSensorVelocity(0) + 0.2 * actualMaxTicks) >
-            actualMaxTicks /
+            Math.abs(
+                driveMotor.getSelectedSensorVelocity(0) + 0.2 * actualmaxVelTicks100ms
+            ) >
+            actualmaxVelTicks100ms /
             50
         ) {
             checkDrive = false;

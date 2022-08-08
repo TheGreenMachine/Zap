@@ -1,6 +1,7 @@
 package com.team1816.lib.auto.actions;
 
 import com.google.inject.Inject;
+import com.team1816.lib.auto.paths.AutoPath;
 import com.team1816.lib.subsystems.Drive;
 import com.team1816.lib.subsystems.SwerveDrive;
 import com.team1816.lib.subsystems.TankDrive;
@@ -20,33 +21,35 @@ import java.util.List;
 public class TrajectoryAction implements Action {
 
     @Inject
-    private static Drive.Factory mDriveFactory;
+    private static Drive.Factory driveFactory;
 
-    private final Command mCommand;
-    private final Trajectory mTrajectory;
-    private final List<Rotation2d> mHeadings;
-    private final Drive mDrive;
+    private final Command command;
+    private final Trajectory trajectory;
+    private final List<Rotation2d> headings;
+    private final Drive drive;
 
-    public TrajectoryAction(Trajectory trajectory) {
-        this(trajectory, null);
+    public TrajectoryAction(AutoPath autoPath) {
+        this(autoPath.getAsTrajectory(), autoPath.getAsTrajectoryHeadings());
     }
 
     public TrajectoryAction(Trajectory trajectory, List<Rotation2d> headings) {
-        mDrive = mDriveFactory.getInstance();
-        mTrajectory = trajectory;
-        mHeadings = headings;
-        if (mDrive instanceof TankDrive) {
-            mCommand =
+        drive = driveFactory.getInstance();
+        this.trajectory = trajectory;
+        this.headings = headings;
+
+        // create command (wpi version of an action)
+        if (drive instanceof TankDrive) {
+            command =
                 new RamseteCommand(
                     trajectory,
-                    mDrive::getPose,
+                    drive::getPose,
                     new RamseteController(), //defaults of
                     new DifferentialDriveKinematics(
                         Units.inchesToMeters(Constants.kDriveWheelTrackWidthInches)
                     ),
-                    ((TankDrive) mDrive)::updateTrajectoryVelocities
+                    ((TankDrive) drive)::updateTrajectoryVelocities
                 );
-        } else if (mDrive instanceof SwerveDrive) {
+        } else if (drive instanceof SwerveDrive) {
             var thetaController = new ProfiledPIDController(
                 Constants.kPThetaController,
                 0,
@@ -55,51 +58,51 @@ public class TrajectoryAction implements Action {
             );
             thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-            mCommand =
+            command =
                 new SwerveControllerCommand(
                     trajectory,
-                    mDrive::getPose,
+                    drive::getPose,
                     Constants.Swerve.swerveKinematics,
                     new PIDController(Constants.kPXController, 0, 0),
                     new PIDController(Constants.kPYController, 0, 0),
                     thetaController,
-                    ((SwerveDrive) mDrive)::getTrajectoryHeadings,
-                    ((SwerveDrive) mDrive)::setModuleStates
+                    ((SwerveDrive) drive)::getTrajectoryHeadings,
+                    ((SwerveDrive) drive)::setModuleStates
                 );
         } else {
             System.out.println(
-                " oh man oh god I'm neither swerve nor tank! " + mDrive.toString()
+                " oh man oh god I'm neither swerve nor tank! " + drive.toString()
             );
-            mCommand = null;
+            command = null;
         }
     }
 
     @Override
     public boolean isFinished() {
-        return mCommand.isFinished();
+        return command.isFinished();
     }
 
     @Override
     public void update() {
-        mCommand.execute();
+        command.execute();
     }
 
     @Override
     public void done() {
-        mCommand.end(false);
-        mDrive.stop();
+        command.end(false);
+        drive.stop();
     }
 
     @Override
     public void start() {
         System.out.println(
-            "Starting trajectory! (seconds=" + mTrajectory.getTotalTimeSeconds() + ")"
+            "Starting trajectory! (seconds = " + trajectory.getTotalTimeSeconds() + ")"
         );
-        mDrive.startTrajectory(mTrajectory, mHeadings);
-        mCommand.initialize();
+        drive.startTrajectory(trajectory, headings);
+        command.initialize();
     }
 
     public Trajectory getTrajectory() {
-        return mTrajectory;
+        return trajectory;
     }
 }

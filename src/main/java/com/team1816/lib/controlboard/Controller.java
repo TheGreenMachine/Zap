@@ -60,13 +60,18 @@ public abstract class Controller {
     public boolean getTrigger(Axis axis) {
         if (!mJoystickAxisMap.containsKey(axis)) return false;
         return (
-            mController.getRawAxis(mJoystickAxisMap.get(axis)) >
-            Constants.kJoystickThreshold
+            mController.getRawAxis(mJoystickAxisMap.get(axis)) > Constants.kAxisThreshold
         );
     }
 
     public double getJoystick(Axis axis) {
         if (!mJoystickAxisMap.containsKey(axis)) return 0;
         return mController.getRawAxis(mJoystickAxisMap.get(axis));
+    }
+
+    public double getJoystick(Axis axis, boolean inverted) {
+        return (
+            (inverted ? (-1) : (1)) * mController.getRawAxis(mJoystickAxisMap.get(axis))
+        );
     }
 }

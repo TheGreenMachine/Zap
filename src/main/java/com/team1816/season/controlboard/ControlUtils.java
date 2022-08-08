@@ -51,10 +51,10 @@ public class ControlUtils implements Controller.Factory {
 
     public static class PressAction implements ButtonAction {
 
-        private LatchedBoolean pressedState = new LatchedBoolean();
-        private LatchedBoolean releasedState = new LatchedBoolean();
-        private BooleanSupplier input;
-        private Runnable action;
+        private final LatchedBoolean pressedState = new LatchedBoolean();
+        private final LatchedBoolean releasedState = new LatchedBoolean();
+        private final BooleanSupplier input;
+        private final Runnable action;
 
         private PressAction(BooleanSupplier input, Runnable action) {
             this.input = input;

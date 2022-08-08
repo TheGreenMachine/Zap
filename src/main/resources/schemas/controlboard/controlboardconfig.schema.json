@@ -1,0 +1,16 @@
+{
+    "type": "object",
+    "title": "controlBoardConfig",
+    "additionalProperties": false,
+    "properties": {
+        "driver": {
+            "$ref": "controllerconfig.schema.json"
+        },
+        "operator": {
+            "$ref": "controllerconfig.schema.json"
+        },
+        "isDemoControlBoard": {
+            "type": "boolean"
+        }
+    }
+}

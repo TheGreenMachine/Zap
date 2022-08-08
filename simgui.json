@@ -9,6 +9,11 @@
       "window": {
         "visible": false
       }
+    },
+    "Timing": {
+      "window": {
+        "visible": false
+      }
     }
   },
   "NTProvider": {
@@ -78,6 +83,7 @@
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/LiveWindow/drivetrain": "Gyro",
       "/SmartDashboard/Auto mode": "String Chooser",
+      "/SmartDashboard/Demo mode": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/SendableChooser[0]": "String Chooser",
       "/SmartDashboard/SendableChooser[2]": "String Chooser",
@@ -86,6 +92,11 @@
     },
     "windows": {
       "/SmartDashboard/Auto mode": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Demo mode": {
         "window": {
           "visible": true
         }
@@ -130,6 +141,9 @@
       }
     },
     "SmartDashboard": {
+      "Demo mode": {
+        "open": true
+      },
       "Drive": {
         "open": true
       },
