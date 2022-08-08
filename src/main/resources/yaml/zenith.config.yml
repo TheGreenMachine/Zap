@@ -1,4 +1,4 @@
-alpha:
+zenith:
     config:
         yml:
 subsystems:
@@ -24,7 +24,7 @@ subsystems:
             encPPR: 22220.8
             currentLimit: 40
     turret:
-        implemented: true
+        implemented: false
         talons:
             turretMotor: 3
         invertSensorPhase:
@@ -87,7 +87,7 @@ infrastructure:
     # pigeon
     pigeonId: 9
     isPigeon2: false
-controlboard: example
+controlboard: zenith
 constants:
     ## Drivetrain Dimensions and Parameters ##
     maxAllowablePoseError: 0.1
@@ -95,9 +95,9 @@ constants:
     maxVelOpenLoop: 3 # meters/s
     maxRotVel: 7.2
     maxAccel: 0.5 # meters/s^2
-    trackWidth: 25 #inches
-    wheelbaseLength: 25 #inches
-    wheelDiameter: 6.32 #inches
+    trackWidth: 21 #inches
+    wheelbaseLength: 21 #inches
+    wheelDiameter: 7.35 #inches
     kTrackScrubFactor: 1.0
     ## Logging Config ##
     logTeleOp: 1
@@ -107,6 +107,6 @@ constants:
     verbose: 0 # 0 or 1
     ## General ##
     kLooperDt: .020
-    resetFactoryDefaults: 0 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret
+    resetFactoryDefaults: 1 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret
 
 
