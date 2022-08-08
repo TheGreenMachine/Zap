@@ -18,6 +18,7 @@ public class LedManager extends Subsystem {
     private final ICanifier canifier;
     private final ICANdle candle;
 
+
     // State
     private boolean blinkLedOn = false;
     private boolean outputsChanged = false;

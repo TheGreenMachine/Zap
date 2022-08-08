@@ -59,6 +59,8 @@ public class Robot extends TimedRobot {
     private final LedManager ledManager;
     private final DistanceManager distanceManager;
 
+    private final DrivetrainShifter drivetrainShifter;
+
     // autonomous
     private final AutoModeManager autoModeManager;
 
@@ -91,6 +93,7 @@ public class Robot extends TimedRobot {
         ledManager = injector.getInstance(LedManager.class);
         subsystemManager = injector.getInstance(SubsystemManager.class);
         autoModeManager = injector.getInstance(AutoModeManager.class);
+        drivetrainShifter = injector.getInstance(DrivetrainShifter.class);
     }
 
     public static RobotFactory getFactory() {
@@ -235,7 +238,8 @@ public class Robot extends TimedRobot {
                 climber,
                 camera,
                 ledManager,
-                cooler
+                drivetrainShifter
+
             );
             subsystemManager.registerEnabledLoops(enabledLoop);
             subsystemManager.registerDisabledLoops(disabledLoop);
@@ -276,6 +280,10 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("slowMode"),
                         drive::setSlowMode
+                    ),
+                    createHoldAction(
+                        ()-> controlBoard.getAsBool("sprint"),
+                        drivetrainShifter::sprinting
                     ),
                     // Operator Gamepad
                     createAction(
