@@ -1,18 +1,18 @@
 package com.team1816.season.auto.actions;
 
-import com.google.inject.Inject;
+import com.team1816.lib.Injector;
 import com.team1816.lib.auto.actions.Action;
 import com.team1816.season.states.Superstructure;
 
 public class ShootAction implements Action {
 
-    @Inject
     private static Superstructure superstructure;
 
     private final boolean isShooting;
 
     public ShootAction(boolean isShooting, boolean hoodOut) {
         this.isShooting = isShooting;
+        superstructure = Injector.get(Superstructure.class);
     }
 
     @Override

@@ -1,17 +1,15 @@
 package com.team1816.season.subsystems;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import com.team1816.TestUtil;
 import com.team1816.lib.Infrastructure;
+import com.team1816.lib.Injector;
 import com.team1816.lib.hardware.components.IPigeonIMU;
 import com.team1816.lib.hardware.factory.RobotFactory;
-import com.team1816.lib.math.SwerveKinematics;
 import com.team1816.lib.subsystems.Drive;
-import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.subsystems.SwerveDrive;
 import com.team1816.season.Constants;
 import com.team1816.season.states.RobotState;
@@ -21,7 +19,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.mockito.stubbing.OngoingStubbing;
 
 // @RunWith(JUnit4.class)
@@ -36,35 +33,18 @@ public class SwerveDriveTest {
     private static OngoingStubbing<Object> mockRobot;
 
     public SwerveDriveTest() {
-        mDriveFactory = Mockito.mock(Drive.Factory.class);
-        mInfra = Mockito.mock(Infrastructure.class);
-        when(mInfra.getPigeon()).thenReturn(Mockito.mock(IPigeonIMU.class));
-        RobotFactory mockFactory = Mockito.spy(RobotFactory.class);
-        if (mockRobot == null) {
-            mockRobot =
-                Mockito
-                    .mockStatic(RobotFactory.class)
-                    .when(RobotFactory::getInstance)
-                    .thenReturn(mockFactory);
-        }
-        Subsystem.factory = mockFactory;
+        mInfra = mock(Infrastructure.class);
+        when(mInfra.getPigeon()).thenReturn(mock(IPigeonIMU.class));
+        Injector.register(mInfra);
+        RobotFactory mockFactory = mock(RobotFactory.class);
         when(mockFactory.getConstant("maxVelOpenLoop")).thenReturn(maxVel);
         when(mockFactory.getConstant("maxRotVel")).thenReturn(maxRotVel);
-
-        Injector injector = Guice.createInjector(
-            new AbstractModule() {
-                @Override
-                protected void configure() {
-                    bind(Drive.Factory.class).toInstance(mDriveFactory);
-                    bind(Infrastructure.class).toInstance(mInfra);
-                    requestStaticInjection(Drive.class);
-                    requestStaticInjection(SwerveDrive.class);
-                    requestStaticInjection(SwerveKinematics.class);
-                }
-            }
-        );
-        state = injector.getInstance(RobotState.class);
-        mDrive = injector.getInstance(SwerveDrive.class);
+        TestUtil.SetupMockRobotFactory(mockFactory);
+        mDriveFactory = mock(Drive.Factory.class);
+        Injector.register(mDriveFactory);
+        var test = mDriveFactory.getClass();
+        state = Injector.get(RobotState.class);
+        mDrive = Injector.get(SwerveDrive.class);
     }
 
     @Before

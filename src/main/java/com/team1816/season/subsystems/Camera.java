@@ -2,9 +2,11 @@ package com.team1816.season.subsystems;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.team1816.lib.Infrastructure;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.vision.VisionSocket;
 import com.team1816.season.Constants;
+import com.team1816.season.states.RobotState;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -13,7 +15,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Camera extends Subsystem {
 
     // Components
-    @Inject
     static LedManager led;
 
     public final VisionSocket socket = new VisionSocket();
@@ -30,8 +31,10 @@ public class Camera extends Subsystem {
     // state
     private boolean cameraEnabled;
 
-    public Camera() {
-        super(NAME);
+    @Inject
+    public Camera(LedManager ledManager, Infrastructure inf, RobotState rs) {
+        super(NAME, inf, rs);
+        led = ledManager;
         SmartDashboard.putNumber("Camera/cy", 0);
         socket.setDebug(factory.getConstant(NAME, "debug") > 0);
     }

@@ -1,9 +1,12 @@
 package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.CANifier;
+import com.google.inject.Inject;
+import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.ICANdle;
 import com.team1816.lib.hardware.components.ICanifier;
 import com.team1816.lib.subsystems.Subsystem;
+import com.team1816.season.states.RobotState;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import java.awt.*;
@@ -42,8 +45,9 @@ public class LedManager extends Subsystem {
         STANDARD,
     }
 
-    public LedManager() {
-        super(NAME);
+    @Inject
+    public LedManager(Infrastructure inf, RobotState rs) {
+        super(NAME, inf, rs);
         canifier = factory.getCanifier(NAME);
         candle = factory.getCandle(NAME);
 

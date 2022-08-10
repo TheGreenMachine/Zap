@@ -1,14 +1,13 @@
 package com.team1816.season.subsystems;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import com.team1816.TestUtil;
+import com.team1816.lib.Injector;
 import com.team1816.lib.hardware.components.motor.GhostMotor;
 import com.team1816.lib.hardware.factory.RobotFactory;
-import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -16,7 +15,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.mockito.Spy;
 
 // @RunWith(JUnit4.class)
@@ -34,27 +32,18 @@ public class TurretTest {
     private Constants constants;
 
     public TurretTest() {
-        mockFactory = Mockito.spy(RobotFactory.class);
+        mockFactory = mock(RobotFactory.class);
         when(mockFactory.getConstant(Turret.NAME, "absPosTicksSouth"))
             .thenReturn(encTickSouth);
         when(mockFactory.getConstant(Turret.NAME, "turretPPR")).thenReturn(encPPR);
         when(mockFactory.getConstant(Turret.NAME, "encPPR")).thenReturn(encPPR);
-        Subsystem.factory = mockFactory;
-        Injector injector = Guice.createInjector(
-            new AbstractModule() {
-                @Override
-                protected void configure() {
-                    requestStaticInjection(Camera.class);
-                    requestStaticInjection(Turret.class);
-                }
-            }
-        );
-        state = injector.getInstance(RobotState.class);
+        TestUtil.SetupMockRobotFactory(mockFactory);
+        state = Injector.get(RobotState.class);
     }
 
     @Before
     public void setUp() {
-        mTurret = new Turret();
+        mTurret = Injector.get(Turret.class);
         mTurret.zeroSensors();
         state.resetPosition();
     }
@@ -149,7 +138,7 @@ public class TurretTest {
         when(mockFactory.getConstant(Turret.NAME, "absPosTicksSouth"))
             .thenReturn(encTickSouth);
         when(mockFactory.getConstant(Turret.NAME, "turretPPR")).thenReturn(encPPR * 2);
-        mTurret = new Turret();
+        mTurret = Injector.get(Turret.class);
         mTurret.zeroSensors();
         state.resetPosition();
     }
@@ -178,7 +167,7 @@ public class TurretTest {
         when(mockFactory.getConstant(Turret.NAME, "turretPPR")).thenReturn(turretPPR);
         when(mockFactory.getMotor(Turret.NAME, "turret"))
             .thenReturn(new GhostMotor(0, absInit, "turret"));
-        mTurret = new Turret();
+        mTurret = Injector.get(Turret.class);
         mTurret.zeroSensors();
         Assert.assertEquals(
             mTurret.kTurretPPR / 2.0 - mTurret.kTurretPPR == mTurret.kAbsPPR

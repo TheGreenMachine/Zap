@@ -1,6 +1,6 @@
 package com.team1816.lib.auto.actions;
 
-import com.google.inject.Inject;
+import com.team1816.lib.Injector;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -8,17 +8,11 @@ import edu.wpi.first.math.util.Units;
 
 public class WaitUntilInsideRegion implements Action {
 
-    @Inject
     private static RobotState mRobotState;
 
     private final Translation2d mBottomLeft;
     private final Translation2d mTopRight;
     private String name = "";
-
-    public WaitUntilInsideRegion(Translation2d bottomLeft, Translation2d topRight) {
-        mBottomLeft = bottomLeft;
-        mTopRight = topRight;
-    }
 
     public WaitUntilInsideRegion(
         Translation2d bottomLeft,
@@ -28,6 +22,7 @@ public class WaitUntilInsideRegion implements Action {
         this.name = name;
         mBottomLeft = bottomLeft;
         mTopRight = topRight;
+        mRobotState = Injector.get(RobotState.class);
     }
 
     @Override

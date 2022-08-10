@@ -1,5 +1,7 @@
 package com.team1816.lib.controlboard;
 
+import com.google.inject.Inject;
+import com.team1816.lib.Injector;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import edu.wpi.first.wpilibj.DriverStation;
 import java.util.HashMap;
@@ -8,7 +10,7 @@ import java.util.Objects;
 // This is a bridging class that allows for yaml functionality and it's sole purpose is to map controls to their respective methods
 public class ControlBoardBrige {
 
-    public static RobotFactory factory = RobotFactory.getInstance();
+    public static RobotFactory factory;
     private ControlBoardConfig config;
     private static ControlBoardBrige bridge;
 
@@ -29,7 +31,9 @@ public class ControlBoardBrige {
         return bridge;
     }
 
+    @Inject
     public ControlBoardBrige() {
+        factory = Injector.get(RobotFactory.class);
         var controlBoardConfigName = factory.getControlBoard();
         if (controlBoardConfigName.equals("empty")) {
             DriverStation.reportError(

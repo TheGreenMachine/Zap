@@ -1,6 +1,6 @@
 package com.team1816.season.auto.actions;
 
-import com.google.inject.Inject;
+import com.team1816.lib.Injector;
 import com.team1816.lib.auto.actions.Action;
 import com.team1816.season.states.Superstructure;
 
@@ -8,11 +8,11 @@ public class CollectAction implements Action {
 
     private final boolean isCollecting;
 
-    @Inject
     private static Superstructure superstructure;
 
     public CollectAction(boolean isCollecting) {
         this.isCollecting = isCollecting;
+        superstructure = Injector.get(Superstructure.class);
     }
 
     @Override

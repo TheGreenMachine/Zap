@@ -1,6 +1,6 @@
 package com.team1816.season.auto.actions;
 
-import com.google.inject.Inject;
+import com.team1816.lib.Injector;
 import com.team1816.lib.auto.actions.Action;
 import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.season.Constants;
@@ -8,7 +8,6 @@ import com.team1816.season.subsystems.Turret;
 
 public class AutoAimAction implements Action {
 
-    @Inject
     private static Turret turret;
 
     private Turret.ControlMode prevControlMode;
@@ -18,6 +17,7 @@ public class AutoAimAction implements Action {
     private double duration;
 
     public AutoAimAction(double duration) {
+        turret = Injector.get(Turret.class);
         this.duration = duration;
     }
 

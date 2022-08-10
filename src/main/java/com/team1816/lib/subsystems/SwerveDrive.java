@@ -1,8 +1,12 @@
 package com.team1816.lib.subsystems;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.season.Constants;
+import com.team1816.season.states.RobotState;
+import com.team1816.season.subsystems.LedManager;
 import com.team254.lib.util.DriveSignal;
 import com.team254.lib.util.SwerveDriveHelper;
 import com.team254.lib.util.SwerveDriveSignal;
@@ -38,8 +42,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     SwerveModuleState[] actualModuleStates = new SwerveModuleState[4];
     public double[] motorTemperatures = new double[4];
 
-    public SwerveDrive() {
-        super();
+    @Inject
+    public SwerveDrive(LedManager lm, Infrastructure inf, RobotState rs) {
+        super(lm, inf, rs);
         swerveModules = new SwerveModule[4];
 
         // enableDigital all Talons in open loop mode
