@@ -6,6 +6,7 @@ import static com.team1816.lib.subsystems.Drive.factory;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.math.DriveConversions;
@@ -32,6 +33,60 @@ public class SwerveModule implements ISwerveModule {
     // Constants
     private final Constants.Swerve mConstants;
     private final double allowableError;
+
+    public SwerveModule(String subsystemName, Constants.Swerve constants) {
+        mConstants = constants;
+
+        System.out.println(
+            "Configuring Swerve Module " +
+            constants.kModuleName +
+            " on subsystem " +
+            subsystemName
+        );
+
+        /* Drive Motor Config */
+        driveMotor =
+            factory.getMotor(
+                subsystemName,
+                constants.kDriveMotorName,
+                factory.getSubsystem(subsystemName).swerveModules.drivePID,
+                -1
+            );
+
+        /* Azimuth (Angle) Motor Config */
+        azimuthMotor =
+            factory.getMotor(
+                subsystemName,
+                constants.kAzimuthMotorName,
+                factory.getSubsystem(subsystemName).swerveModules.azimuthPID,
+                -1
+            ); // The main difference is that there is no remote sensor being passed in.
+
+        driveMotor.configOpenloopRamp(0.25, Constants.kCANTimeoutMs);
+        azimuthMotor.configSupplyCurrentLimit(
+            new SupplyCurrentLimitConfiguration(true, 18, 28, 1),
+            Constants.kLongCANTimeoutMs
+        );
+
+        azimuthMotor.configPeakOutputForward(.4, Constants.kLongCANTimeoutMs);
+        azimuthMotor.configPeakOutputReverse(-.4, Constants.kLongCANTimeoutMs);
+
+        azimuthMotor.setSensorPhase(constants.kInvertAzimuthSensorPhase);
+        azimuthMotor.setNeutralMode(NeutralMode.Brake);
+
+        azimuthMotor.configAllowableClosedloopError(
+            0,
+            constants.kAzimuthPid.allowableError,
+            Constants.kLongCANTimeoutMs
+        );
+
+        allowableError = 5; // TODO this is a dummy value for checkSystem
+
+        /* Angle Encoder Config */
+        this.canCoder = null;
+
+        System.out.println("  " + this);
+    }
 
     public SwerveModule(
         String subsystemName,
@@ -114,11 +169,21 @@ public class SwerveModule implements ISwerveModule {
     public SwerveModuleState getActualState() {
         driveActual =
             DriveConversions.ticksToMeters(driveMotor.getSelectedSensorVelocity(0)) * 10;
-        azimuthActual =
-            DriveConversions.convertTicksToDegrees(
-                azimuthMotor.getSelectedSensorPosition(0) -
-                mConstants.kAzimuthEncoderHomeOffset
-            );
+        if (canCoder == null) {
+            if (azimuthMotor instanceof TalonSRX) {
+                int rawValue =
+                    ((TalonSRX) azimuthMotor).getSensorCollection()
+                        .getPulseWidthPosition() &
+                    0xFFF; // masked by 4096
+                azimuthActual = rawValue;
+            }
+        } else {
+            azimuthActual =
+                DriveConversions.convertTicksToDegrees(
+                    azimuthMotor.getSelectedSensorPosition(0) -
+                    mConstants.kAzimuthEncoderHomeOffset
+                );
+        }
         Rotation2d angleActual = Rotation2d.fromDegrees(azimuthActual);
         motorTemp = driveMotor.getTemperature(); // Celsius
         return new SwerveModuleState(driveActual, angleActual);

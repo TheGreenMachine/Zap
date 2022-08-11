@@ -272,7 +272,10 @@ public class RobotFactory {
 
         var canCoder = getCanCoder(subsystemName, name);
 
-        var swerveModule = new SwerveModule(subsystemName, swerveConstants, canCoder);
+        var swerveModule = canCoder == null
+            ? new SwerveModule(subsystemName, swerveConstants)
+            : new SwerveModule(subsystemName, swerveConstants, canCoder);
+
         return swerveModule;
     }
 
