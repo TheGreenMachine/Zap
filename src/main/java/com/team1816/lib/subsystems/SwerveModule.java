@@ -92,6 +92,7 @@ public class SwerveModule implements ISwerveModule {
 
         /* Angle Encoder Config */
         this.canCoder = null;
+        zeroAzimuthSensors();
 
         System.out.println("  " + this);
     }
@@ -237,6 +238,16 @@ public class SwerveModule implements ISwerveModule {
     @Override
     public double getDriveError() {
         return driveMotor.getClosedLoopError(0);
+    }
+
+    public void zeroAzimuthSensors() {
+        if (azimuthMotor instanceof TalonSRX) {
+            var sensors = ((TalonSRX) azimuthMotor).getSensorCollection();
+            sensors.setQuadraturePosition(
+                sensors.getPulseWidthPosition() & AZIMUTH_TICK_MASK,
+                Constants.kLongCANTimeoutMs
+            );
+        }
     }
 
     public boolean checkSystem() {
