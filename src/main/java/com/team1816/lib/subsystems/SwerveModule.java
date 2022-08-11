@@ -32,6 +32,7 @@ public class SwerveModule implements ISwerveModule {
 
     // Constants
     private final Constants.Swerve mConstants;
+    private final int AZIMUTH_TICK_MASK;
     private final double allowableError;
 
     public SwerveModule(String subsystemName, Constants.Swerve constants) {
@@ -43,6 +44,13 @@ public class SwerveModule implements ISwerveModule {
             " on subsystem " +
             subsystemName
         );
+
+        var azimuthMask = (int) factory.getConstant(NAME, "azimuthEncPPR") - 1;
+        if (azimuthMask < 0) {
+            azimuthMask = 0xFFF;
+        }
+        AZIMUTH_TICK_MASK = azimuthMask;
+
 
         /* Drive Motor Config */
         driveMotor =
@@ -101,6 +109,8 @@ public class SwerveModule implements ISwerveModule {
             " on subsystem " +
             subsystemName
         );
+
+        AZIMUTH_TICK_MASK = 0xFFF;
 
         /* Drive Motor Config */
         driveMotor =
@@ -174,7 +184,7 @@ public class SwerveModule implements ISwerveModule {
                 int rawValue =
                     ((TalonSRX) azimuthMotor).getSensorCollection()
                         .getPulseWidthPosition() &
-                    0xFFF; // masked by 4096
+                    AZIMUTH_TICK_MASK; // masked by 4096
                 azimuthActual = rawValue;
             }
         } else {
