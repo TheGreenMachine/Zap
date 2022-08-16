@@ -1,12 +1,11 @@
 package com.team1816.season;
 
-import static com.team1816.season.controlboard.ControlUtils.*;
+import static com.team1816.season.controlboard.ControlUtils.createAction;
+import static com.team1816.season.controlboard.ControlUtils.createHoldAction;
 
 import badlog.lib.BadLog;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import com.team1816.lib.Infrastructure;
-import com.team1816.lib.LibModule;
+import com.team1816.lib.Injector;
 import com.team1816.lib.controlboard.ControlBoardBrige;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
@@ -30,10 +29,8 @@ public class Robot extends TimedRobot {
 
     private BadLog logger;
 
-    private final Injector injector;
-
-    private final Looper enabledLoop = new Looper(this);
-    private final Looper disabledLoop = new Looper(this);
+    private final Looper enabledLoop;
+    private final Looper disabledLoop;
 
     // controls
     private IControlBoard controlBoard;
@@ -59,6 +56,8 @@ public class Robot extends TimedRobot {
     private final LedManager ledManager;
     private final DistanceManager distanceManager;
 
+    private static RobotFactory factory;
+
     // autonomous
     private final AutoModeManager autoModeManager;
 
@@ -74,27 +73,30 @@ public class Robot extends TimedRobot {
     Robot() {
         super();
         // initialize injector
-        injector = Guice.createInjector(new LibModule(), new SeasonModule());
-        drive = (injector.getInstance(Drive.Factory.class)).getInstance();
-        turret = injector.getInstance(Turret.class);
-        climber = injector.getInstance(Climber.class);
-        collector = injector.getInstance(Collector.class);
-        elevator = injector.getInstance(Elevator.class);
-        camera = injector.getInstance(Camera.class);
-        spindexer = injector.getInstance(Spindexer.class);
-        superstructure = injector.getInstance(Superstructure.class);
-        infrastructure = injector.getInstance(Infrastructure.class);
-        shooter = injector.getInstance(Shooter.class);
-        cooler = injector.getInstance(Cooler.class);
-        robotState = injector.getInstance(RobotState.class);
-        distanceManager = injector.getInstance(DistanceManager.class);
-        ledManager = injector.getInstance(LedManager.class);
-        subsystemManager = injector.getInstance(SubsystemManager.class);
-        autoModeManager = injector.getInstance(AutoModeManager.class);
+        Injector.registerModule(new SeasonModule());
+        enabledLoop = new Looper(this);
+        disabledLoop = new Looper(this);
+        drive = (Injector.get(Drive.Factory.class)).getInstance(); //TODO: need to fix this get drive instance should just return the proper one
+        turret = Injector.get(Turret.class);
+        climber = Injector.get(Climber.class);
+        collector = Injector.get(Collector.class);
+        elevator = Injector.get(Elevator.class);
+        camera = Injector.get(Camera.class);
+        spindexer = Injector.get(Spindexer.class);
+        superstructure = Injector.get(Superstructure.class);
+        infrastructure = Injector.get(Infrastructure.class);
+        shooter = Injector.get(Shooter.class);
+        cooler = Injector.get(Cooler.class);
+        robotState = Injector.get(RobotState.class);
+        distanceManager = Injector.get(DistanceManager.class);
+        ledManager = Injector.get(LedManager.class);
+        subsystemManager = Injector.get(SubsystemManager.class);
+        autoModeManager = Injector.get(AutoModeManager.class);
     }
 
     public static RobotFactory getFactory() {
-        return RobotFactory.getInstance();
+        if (factory == null) factory = Injector.get(RobotFactory.class);
+        return factory;
     }
 
     private Double getLastLoop() {
@@ -104,7 +106,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         try {
-            controlBoard = injector.getInstance(IControlBoard.class);
+            controlBoard = Injector.get(IControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
             if (Constants.kIsBadlogEnabled) {
                 var logFile = new SimpleDateFormat("MMdd_HH-mm").format(new Date());
@@ -280,15 +282,11 @@ public class Robot extends TimedRobot {
                     // Operator Gamepad
                     createAction(
                         () -> controlBoard.getAsBool("raiseBucket"),
-                        () -> {
-                            distanceManager.incrementBucket(100);
-                        }
+                        () -> distanceManager.incrementBucket(100)
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("lowerBucket"),
-                        () -> {
-                            distanceManager.incrementBucket(-100);
-                        }
+                        () -> distanceManager.incrementBucket(-100)
                     ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("autoAim"),
@@ -435,21 +433,17 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        try {
-            disabledLoop.stop();
-            ledManager.setDefaultStatus(LedManager.RobotStatus.AUTONOMOUS);
+        disabledLoop.stop();
+        ledManager.setDefaultStatus(LedManager.RobotStatus.AUTONOMOUS);
 
-            drive.zeroSensors(autoModeManager.getSelectedAuto().getInitialPose());
-            turret.zeroSensors();
-            superstructure.setStopped(false);
+        drive.zeroSensors(autoModeManager.getSelectedAuto().getInitialPose());
+        turret.zeroSensors();
+        superstructure.setStopped(false);
 
-            drive.setControlState(Drive.ControlState.TRAJECTORY_FOLLOWING);
-            autoModeManager.startAuto();
+        drive.setControlState(Drive.ControlState.TRAJECTORY_FOLLOWING);
+        autoModeManager.startAuto();
 
-            enabledLoop.start();
-        } catch (Throwable t) {
-            throw t;
-        }
+        enabledLoop.start();
     }
 
     @Override
@@ -517,7 +511,7 @@ public class Robot extends TimedRobot {
             // update shuffleboard selected auto mode
             autoModeManager.outputToSmartDashboard();
 
-            if (ControlBoardBrige.getInstance().isDemoMode()) {
+            if (ControlBoardBrige.getInstance().isDemoMode()) { //todo: should be using injector
                 controlBoard.outputToSmartDashboard();
             }
         } catch (Throwable t) {
@@ -553,7 +547,7 @@ public class Robot extends TimedRobot {
             }
 
             // check if demo mode speed multiplier changed
-            if (ControlBoardBrige.getInstance().isDemoMode()) {
+            if (ControlBoardBrige.getInstance().isDemoMode()) { //todo: should be using injector
                 controlBoard.update();
             }
         } catch (Throwable t) {

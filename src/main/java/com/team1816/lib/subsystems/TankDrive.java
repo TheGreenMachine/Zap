@@ -3,11 +3,14 @@ package com.team1816.lib.subsystems;
 import static com.team1816.lib.math.DriveConversions.*;
 
 import com.ctre.phoenix.motorcontrol.*;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.util.EnhancedMotorChecker;
 import com.team1816.season.Constants;
+import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.LedManager;
 import com.team254.lib.util.CheesyDriveHelper;
 import com.team254.lib.util.DriveSignal;
@@ -43,11 +46,9 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     double leftErrorClosedLoop;
     double rightErrorClosedLoop;
 
-    /**
-     * Constructor
-     */
-    public TankDrive() {
-        super();
+    @Inject
+    public TankDrive(LedManager lm, Infrastructure inf, RobotState rs) {
+        super(lm, inf, rs);
         // configure motors
         leftMain = factory.getMotor(NAME, "leftMain");
         leftFollowerA = factory.getMotor(NAME, "leftFollower", leftMain);

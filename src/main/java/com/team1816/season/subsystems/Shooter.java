@@ -3,13 +3,16 @@ package com.team1816.season.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.util.EnhancedMotorChecker;
 import com.team1816.season.Constants;
+import com.team1816.season.states.RobotState;
 import edu.wpi.first.util.sendable.SendableBuilder;
 
 @Singleton
@@ -46,8 +49,9 @@ public class Shooter extends Subsystem implements PidProvider {
     // tune this and make changeable with a button in shooter itself
     public final int VELOCITY_THRESHOLD;
 
-    public Shooter() {
-        super(NAME);
+    @Inject
+    public Shooter(Infrastructure inf, RobotState rs) {
+        super(NAME, inf, rs);
         shooterMain = factory.getMotor(NAME, "shooterMain");
         shooterMain.setNeutralMode(NeutralMode.Coast);
         shooterMain.configClosedloopRamp(0.5, Constants.kCANTimeoutMs);

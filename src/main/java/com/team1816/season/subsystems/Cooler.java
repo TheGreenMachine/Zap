@@ -1,10 +1,13 @@
 package com.team1816.season.subsystems;
 
+import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.lib.subsystems.Subsystem;
+import com.team1816.season.states.RobotState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /*
@@ -28,8 +31,9 @@ public class Cooler extends Subsystem {
     private final boolean blockAirFlow = false;
     private AsyncTimer coolTimer;
 
-    public Cooler() {
-        super(NAME);
+    @Inject
+    public Cooler(Infrastructure inf, RobotState rs) {
+        super(NAME, inf, rs);
         lock = factory.getSolenoid(NAME, "lock");
         dump = factory.getSolenoid(NAME, "dump");
 

@@ -1,11 +1,14 @@
 package com.team1816.season.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
+import com.team1816.season.states.RobotState;
 import edu.wpi.first.wpilibj.Timer;
 
 @Singleton
@@ -29,8 +32,9 @@ public class Collector extends Subsystem {
 
     private boolean isVelocity;
 
-    public Collector() {
-        super(NAME);
+    @Inject
+    public Collector(Infrastructure inf, RobotState rs) {
+        super(NAME, inf, rs);
         armPiston = factory.getSolenoid(NAME, "arm");
         intakeMotor = factory.getMotor(NAME, "intake");
 

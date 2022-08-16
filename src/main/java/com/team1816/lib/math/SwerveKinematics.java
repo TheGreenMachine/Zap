@@ -1,6 +1,6 @@
 package com.team1816.lib.math;
 
-import com.google.inject.Inject;
+import com.team1816.lib.Injector;
 import com.team1816.lib.subsystems.Drive;
 import com.team1816.season.Constants;
 import com.team254.lib.util.SwerveDriveSignal;
@@ -18,9 +18,6 @@ import java.util.List;
  */
 
 public class SwerveKinematics {
-
-    @Inject
-    private static Drive.Factory mDriveFactory;
 
     private static Translation2d[] moduleRelativePositions =
         Constants.Swerve.kModulePositions;
@@ -156,7 +153,7 @@ public class SwerveKinematics {
         boolean field_relative,
         boolean normalize_outputs
     ) {
-        Drive mDrive = mDriveFactory.getInstance();
+        Drive mDrive = Injector.get(Drive.Factory.class).getInstance();
 
         if (field_relative) {
             Rotation2d gyroHeading = mDrive.getPose().getRotation();
@@ -214,9 +211,6 @@ public class SwerveKinematics {
         double maxRotationSpeed
     ) {
         List<Translation2d> driveVectors = new ArrayList<>(4);
-        var mDrive = mDriveFactory.getInstance();
-        var curRot = mDrive.getActualHeading();
-
         return driveVectors;
     }
 

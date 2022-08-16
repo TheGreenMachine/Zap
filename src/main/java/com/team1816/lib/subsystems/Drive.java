@@ -1,10 +1,12 @@
 package com.team1816.lib.subsystems;
 
 import com.google.inject.Inject;
+import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.loops.ILooper;
 import com.team1816.lib.loops.Loop;
 import com.team1816.season.Constants;
+import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.LedManager;
 import com.team254.lib.util.DriveSignal;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -25,7 +27,6 @@ public abstract class Drive
     public static final String NAME = "drivetrain";
 
     // Components
-    @Inject
     protected static LedManager ledManager;
 
     // states
@@ -61,8 +62,10 @@ public abstract class Drive
     );
     public static final double driveEncPPR = factory.getConstant(NAME, "encPPR");
 
-    protected Drive() {
-        super(NAME);
+    @Inject
+    public Drive(LedManager lm, Infrastructure inf, RobotState rs) {
+        super(NAME, inf, rs);
+        ledManager = lm;
     }
 
     // calls periodic methods in swerve/tank based on current control state

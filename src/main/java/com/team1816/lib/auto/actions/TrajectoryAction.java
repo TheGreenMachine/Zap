@@ -1,6 +1,6 @@
 package com.team1816.lib.auto.actions;
 
-import com.google.inject.Inject;
+import com.team1816.lib.Injector;
 import com.team1816.lib.auto.paths.AutoPath;
 import com.team1816.lib.subsystems.Drive;
 import com.team1816.lib.subsystems.SwerveDrive;
@@ -20,9 +20,6 @@ import java.util.List;
 
 public class TrajectoryAction implements Action {
 
-    @Inject
-    private static Drive.Factory driveFactory;
-
     private final Command command;
     private final Trajectory trajectory;
     private final List<Rotation2d> headings;
@@ -33,7 +30,7 @@ public class TrajectoryAction implements Action {
     }
 
     public TrajectoryAction(Trajectory trajectory, List<Rotation2d> headings) {
-        drive = driveFactory.getInstance();
+        drive = Injector.get(Drive.Factory.class).getInstance();
         this.trajectory = trajectory;
         this.headings = headings;
 

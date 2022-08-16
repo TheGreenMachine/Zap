@@ -1,22 +1,18 @@
 package com.team1816.season.auto.actions;
 
-import com.google.inject.Inject;
+import com.team1816.lib.Injector;
 import com.team1816.lib.auto.actions.Action;
 import com.team1816.season.subsystems.Turret;
 
 public class TurretAction implements Action {
 
-    @Inject
     private static Turret turret;
 
     private double turretAngle;
 
     public TurretAction(double turretAngle) {
         this.turretAngle = turretAngle;
-    }
-
-    public TurretAction(Turret.ControlMode mode) {
-        turret.setControlMode(mode);
+        turret = Injector.get(Turret.class);
     }
 
     @Override

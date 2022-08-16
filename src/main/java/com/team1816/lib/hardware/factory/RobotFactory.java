@@ -6,6 +6,7 @@ import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdleStatusFrame;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.sensors.*;
+import com.google.inject.Singleton;
 import com.team1816.lib.hardware.*;
 import com.team1816.lib.hardware.components.*;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
@@ -21,22 +22,15 @@ import java.util.Map;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 
+@Singleton
 public class RobotFactory {
 
     private RobotConfiguration config;
-    private static RobotFactory factory;
 
     private enum PIDConfig {
         Azimuth,
         Drive,
         Generic,
-    }
-
-    public static RobotFactory getInstance() {
-        if (factory == null) {
-            factory = new RobotFactory();
-        }
-        return factory;
     }
 
     public RobotFactory() {
@@ -115,7 +109,7 @@ public class RobotFactory {
             reportGhostWarning("Motor", subsystemName, name);
             motor =
                 CtreMotorFactory.createGhostMotor(
-                    (int) (factory.getConstant(subsystemName, "maxVelTicks100ms", 1)),
+                    (int) (getConstant(subsystemName, "maxVelTicks100ms", 1)),
                     0,
                     name
                 );
@@ -144,7 +138,7 @@ public class RobotFactory {
                 motor.setSensorPhase(true);
             }
         }
-        if (factory.getConstant("configStatusFrames", 0) > 0) {
+        if (getConstant("configStatusFrames", 0) > 0) {
             setStatusFrame(motor); // make motor send one signal per second - FOR DEBUGGING!
         }
         return motor;
@@ -206,7 +200,7 @@ public class RobotFactory {
             if (subsystem.implemented) reportGhostWarning("Motor", subsystemName, name);
             followerMotor =
                 CtreMotorFactory.createGhostMotor(
-                    (int) factory.getConstant(subsystemName, "maxVelTicks100ms"),
+                    (int) getConstant(subsystemName, "maxVelTicks100ms"),
                     0,
                     name
                 );
@@ -237,7 +231,7 @@ public class RobotFactory {
             if (subsystem.implemented) reportGhostWarning("Motor", subsystemName, name);
             followerMotor =
                 CtreMotorFactory.createGhostMotor(
-                    (int) factory.getConstant(subsystemName, "maxVelTicks100ms"),
+                    (int) getConstant(subsystemName, "maxVelTicks100ms"),
                     0,
                     name
                 );
@@ -307,7 +301,7 @@ public class RobotFactory {
                     subsystem.canCoders.get(subsystem.invertCanCoder) != null &&
                     subsystem.invertCanCoder.contains(module.canCoder)
                 ); //TODO: For now placeholder true is placed
-            if (factory.getConstant("configStatusFrames") == 1) {
+            if (getConstant("configStatusFrames") == 1) {
                 setStatusFrame(canCoder); // make canCoder send one signal per second - FOR DEBUGGING!
             }
         } else {
@@ -370,7 +364,7 @@ public class RobotFactory {
         ICanifier canifier;
         if (subsystem.implemented && isHardwareValid(subsystem.canifier)) {
             canifier = new CanifierImpl(subsystem.canifier);
-            if (factory.getConstant("configStatusFrames") == 1) {
+            if (getConstant("configStatusFrames") == 1) {
                 setStatusFrame((CANifier) canifier); // make signal time of 1 sec
             }
             return canifier;
@@ -391,7 +385,7 @@ public class RobotFactory {
             candle.configLOSBehavior(true);
             candle.configLEDType(CANdle.LEDStripType.BRG);
             candle.configBrightnessScalar(1);
-            if (factory.getConstant("configStatusFrames") == 1) {
+            if (getConstant("configStatusFrames") == 1) {
                 setStatusFrame(candle);
             }
             return candle;
