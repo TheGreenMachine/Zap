@@ -51,7 +51,6 @@ public class SwerveModule implements ISwerveModule {
         }
         AZIMUTH_TICK_MASK = azimuthMask;
 
-
         /* Drive Motor Config */
         driveMotor =
             factory.getMotor(
