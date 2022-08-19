@@ -293,7 +293,7 @@ public class Robot extends TimedRobot {
                         aim -> {
                             if (aim) {
                                 superstructure.autoAim();
-                                turret.snapWithCamera();
+                                turret.snap();
                             } else {
                                 superstructure.updatePoseWithCamera();
                                 if (

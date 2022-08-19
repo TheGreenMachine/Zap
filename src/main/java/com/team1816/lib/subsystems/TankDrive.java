@@ -16,6 +16,8 @@ import com.team254.lib.util.CheesyDriveHelper;
 import com.team254.lib.util.DriveSignal;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
@@ -190,6 +192,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     @Override
     public void updateRobotState() {
         robotState.fieldToVehicle = tankOdometry.getPoseMeters();
+        robotState.estimatedFieldToVehicle = robotState.fieldToVehicle.plus(new Transform2d(new Translation2d(chassisSpeed.vxMetersPerSecond, chassisSpeed.vyMetersPerSecond).times(Constants.kBallEjectionDuration), new Rotation2d(chassisSpeed.omegaRadiansPerSecond).times(Constants.kBallEjectionDuration)));
         robotState.deltaVehicle =
             new ChassisSpeeds(
                 chassisSpeed.vxMetersPerSecond,

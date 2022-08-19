@@ -87,6 +87,17 @@ public class RobotState {
         );
     }
 
+    public synchronized Pose2d getEstimatedFieldToTurretPos() {
+        return new Pose2d(
+            estimatedFieldToVehicle
+                .transformBy(
+                    new Transform2d(new Translation2d(-.1, .1), Constants.EmptyRotation)
+                )
+                .getTranslation(),
+            getLatestFieldToTurret()
+        );
+    }
+
     public double getEstimatedDistanceToGoal() {
         double estimatedDistanceToGoalMeters = fieldToVehicle
             .getTranslation()

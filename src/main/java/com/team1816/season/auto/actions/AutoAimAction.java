@@ -28,11 +28,11 @@ public class AutoAimAction implements Action {
             aimTimer =
                 new AsyncTimer(
                     duration,
-                    () -> turret.setControlMode(Turret.ControlMode.CAMERA_FOLLOWING),
+                    () -> turret.setControlMode(Turret.ControlMode.CENTER_FOLLOWING),
                     () -> turret.lockTurret()
                 );
             aimTimer.update();
-            turret.setControlMode(Turret.ControlMode.CAMERA_FOLLOWING);
+            turret.setControlMode(Turret.ControlMode.CENTER_FOLLOWING);
         }
     }
 

@@ -8,13 +8,11 @@ import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.loops.AsyncTimer;
-import com.team1816.lib.math.PoseUtil;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -37,15 +35,6 @@ public class Turret extends Subsystem implements PidProvider {
     public static int kTurretPPR;
     private final double kRatioTurretAbs;
     public final double kDeltaXScalar;
-
-    private final AsyncTimer snapTimer = new AsyncTimer(
-        .25,
-        () -> {
-            followingPos = (int) (getActualPosTicks() + cameraFollowingOffset());
-            System.out.println("done aiming!");
-            outputsChanged = true;
-        }
-    );
 
     private static final int kPrimaryCloseLoop = 0;
     private final PIDSlotConfiguration pidConfig;
@@ -203,9 +192,8 @@ public class Turret extends Subsystem implements PidProvider {
         setDesiredPos(convertTurretDegreesToTicks(angle));
     }
 
-    public synchronized void snapWithCamera() {
-        snapTimer.reset();
-        setControlMode(ControlMode.CAMERA_SNAP);
+    public synchronized void snap() {
+        setControlMode(ControlMode.CENTER_FOLLOWING);
     }
 
     public synchronized void lockTurret() {
@@ -255,10 +243,6 @@ public class Turret extends Subsystem implements PidProvider {
     @Override
     public void writeToHardware() {
         switch (controlMode) {
-            case CAMERA_FOLLOWING:
-                autoHome();
-                positionControl(followingPos);
-                break;
             case FIELD_FOLLOWING:
                 trackGyro();
                 positionControl(followingPos);
@@ -271,12 +255,8 @@ public class Turret extends Subsystem implements PidProvider {
                 trackAbsolute();
                 positionControl(followingPos);
                 break;
-            case ABSOLUTE_MADNESS:
-                autoHomeWithOffset(motionOffset());
-                positionControl(followingPos);
-                break;
-            case CAMERA_SNAP:
-                snapControl();
+            case EJECT:
+                eject();
                 positionControl(followingPos);
                 break;
             case POSITION:
@@ -288,18 +268,14 @@ public class Turret extends Subsystem implements PidProvider {
         }
     }
 
-    private int cameraFollowingOffset() {
-        var delta = -camera.getDeltaX();
-        return ((int) (delta * kDeltaXScalar));
-    }
-
+    /** offsets */
     private int fieldFollowingOffset() {
         return -convertTurretDegreesToTicks( // currently negated because motor is running counterclockwise
             robotState.fieldToVehicle.getRotation().getDegrees()
         );
     }
 
-    private int centerFollowingOffset() {
+    private int targetFollowingOffset() {
         double opposite =
             Constants.fieldCenterY - robotState.getFieldToTurretPos().getY();
         double adjacent =
@@ -309,49 +285,17 @@ public class Turret extends Subsystem implements PidProvider {
         return convertTurretDegreesToTicks(Units.radiansToDegrees(turretAngle));
     }
 
-    private int motionOffset() {
-        Translation2d shooterAxis = new Translation2d(
-            robotState.shooterMPS,
-            robotState.getLatestFieldToTurret()
-        );
-        Translation2d driveAxis = new Translation2d(
-            robotState.deltaVehicle.vxMetersPerSecond,
-            robotState.deltaVehicle.vyMetersPerSecond
-        );
-        Translation2d predictedTrajectory = driveAxis.unaryMinus().plus(shooterAxis);
-        double motionOffsetAngle = PoseUtil.getAngleBetween(
-            predictedTrajectory,
-            shooterAxis
-        );
-
-        if (motionOffsetAngle > Math.PI) {
-            motionOffsetAngle -= Math.PI * 2;
-        }
-        return convertTurretDegreesToTicks(Units.radiansToDegrees(motionOffsetAngle));
+    private int estimatedTargetFollowingOffset() {
+        double opposite =
+            Constants.fieldCenterY - robotState.getEstimatedFieldToTurretPos().getY();
+        double adjacent =
+            Constants.fieldCenterX - robotState.getEstimatedFieldToTurretPos().getX();
+        double turretAngle = Math.atan(opposite / adjacent);
+        if (adjacent < 0) turretAngle += Math.PI;
+        return convertTurretDegreesToTicks(Units.radiansToDegrees(turretAngle));
     }
 
-    private void autoHome() {
-        var cameraOffset = cameraFollowingOffset();
-        int adj = followingPos + cameraOffset;
-        if (adj != followingPos) {
-            followingPos = adj;
-            outputsChanged = true;
-        }
-    }
-
-    private void autoHomeWithOffset(int offset) {
-        var cameraOffset = cameraFollowingOffset();
-        int adj = followingPos + cameraOffset + offset;
-        if (adj != followingPos) {
-            followingPos = adj;
-            outputsChanged = true;
-        }
-    }
-
-    public void snapControl() {
-        snapTimer.update();
-    }
-
+    /** actions */
     private void trackGyro() {
         int fieldTickOffset = fieldFollowingOffset();
         int adj = (desiredPos + fieldTickOffset);
@@ -363,9 +307,9 @@ public class Turret extends Subsystem implements PidProvider {
 
     private void trackCenter() {
         int fieldTickOffset = fieldFollowingOffset();
-        int centerOffset = centerFollowingOffset();
+        int targetOffset = targetFollowingOffset();
 
-        int adj = (desiredPos + fieldTickOffset + centerOffset + visionCorroboration);
+        int adj = (desiredPos + fieldTickOffset + targetOffset + visionCorroboration);
         if (adj != followingPos) {
             followingPos = adj;
             outputsChanged = true;
@@ -374,10 +318,21 @@ public class Turret extends Subsystem implements PidProvider {
 
     private void trackAbsolute() {
         int fieldTickOffset = fieldFollowingOffset();
-        int centerOffset = centerFollowingOffset();
-        int motionOffset = motionOffset();
+        int targetOffset = estimatedTargetFollowingOffset();
 
-        int adj = (desiredPos + fieldTickOffset + centerOffset + motionOffset);
+        int adj = (desiredPos + fieldTickOffset + targetOffset);
+        if (adj != followingPos) {
+            followingPos = adj;
+            outputsChanged = true;
+        }
+    }
+
+    private void eject() {
+        int fieldTickOffset = fieldFollowingOffset();
+        int targetOffset = estimatedTargetFollowingOffset();
+        int throwOffset = convertTurretDegreesToTicks(30);
+
+        int adj = (desiredPos + fieldTickOffset + targetOffset + throwOffset);
         if (adj != followingPos) {
             followingPos = adj;
             outputsChanged = true;
@@ -413,6 +368,7 @@ public class Turret extends Subsystem implements PidProvider {
         }
     }
 
+    /** config and misc */
     @Override
     public void stop() {}
 
@@ -440,13 +396,12 @@ public class Turret extends Subsystem implements PidProvider {
         return passed;
     }
 
+    /** controlModes */
     public enum ControlMode {
-        CAMERA_FOLLOWING,
         FIELD_FOLLOWING,
         CENTER_FOLLOWING,
         ABSOLUTE_FOLLOWING,
-        ABSOLUTE_MADNESS,
-        CAMERA_SNAP,
+        EJECT,
         POSITION,
         MANUAL,
     }

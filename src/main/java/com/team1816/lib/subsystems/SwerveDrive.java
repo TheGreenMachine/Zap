@@ -18,6 +18,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import java.util.List;
 
 @Singleton
@@ -111,8 +112,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
         if (
             getTrajectoryTimestamp() >
-            trajectory.getStates().get(trajectoryIndex).timeSeconds ||
-            trajectoryIndex == 0
+                trajectory.getStates().get(trajectoryIndex).timeSeconds ||
+                trajectoryIndex == 0
         ) trajectoryIndex++;
         if (trajectoryIndex >= headingsList.size()) {
             System.out.println(headingsList.get(headingsList.size() - 1) + " = max");
@@ -121,7 +122,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         double timeBetweenPoints =
             (
                 trajectory.getStates().get(trajectoryIndex).timeSeconds -
-                trajectory.getStates().get(trajectoryIndex - 1).timeSeconds
+                    trajectory.getStates().get(trajectoryIndex - 1).timeSeconds
             );
         Rotation2d heading;
         heading =
@@ -160,6 +161,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     @Override
     public void updateRobotState() {
         robotState.fieldToVehicle = swerveOdometry.getPoseMeters();
+        robotState.estimatedFieldToVehicle = robotState.fieldToVehicle.plus(new Transform2d(new Translation2d(chassisSpeed.vxMetersPerSecond, chassisSpeed.vyMetersPerSecond).times(Constants.kBallEjectionDuration), new Rotation2d(chassisSpeed.omegaRadiansPerSecond).times(Constants.kBallEjectionDuration)));
         robotState.deltaVehicle =
             new ChassisSpeeds(
                 chassisSpeed.vxMetersPerSecond,
@@ -276,9 +278,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                 swerveModules[i].getActualState().angle
             );
             swerveModules[i].setDesiredState(
-                    stoppedState,
-                    controlState == ControlState.OPEN_LOOP
-                );
+                stoppedState,
+                controlState == ControlState.OPEN_LOOP
+            );
             desiredModuleStates[i] = stoppedState;
         }
     }
@@ -307,8 +309,8 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         defaultPIDConfig.kF = 0.0;
         return (factory.getSubsystem(NAME).implemented)
             ? factory
-                .getSubsystem(NAME)
-                .swerveModules.drivePID.getOrDefault("slot0", defaultPIDConfig)
+            .getSubsystem(NAME)
+            .swerveModules.drivePID.getOrDefault("slot0", defaultPIDConfig)
             : defaultPIDConfig;
     }
 }
