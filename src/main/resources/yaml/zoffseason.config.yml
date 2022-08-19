@@ -209,7 +209,8 @@ controlboard: example
 constants:
     # drivetrain dimensions and movement
     maxRotVel: 14
-    trackWidth: 21 #inches
+    trackWidth:
+    21 #inches
     wheelbaseLength: 21.5 #inches
     wheelDiameter: 4
     kTrackScrubFactor: 1.0
