@@ -40,6 +40,8 @@ public class Constants {
     );
 
     // Drivetrain characterization
+    public static double kMaxAccelDiffThreshold = 1d;
+
     public static final double kDriveWheelTrackWidthInches = factory.getConstant(
         "trackWidth",
         22

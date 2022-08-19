@@ -588,9 +588,9 @@ public class Robot extends TimedRobot {
 
         try {
             manualControl(); // controls drivetrain and turret joystick control mode
-            if (superstructure.needsVisionUpdate()) {
-                superstructure.updatePoseWithCamera();
-            }
+            //            if (superstructure.needsVisionUpdate()) {
+            //                superstructure.updatePoseWithCamera();
+            //            }
         } catch (Throwable t) {
             faulted = true;
             throw t;

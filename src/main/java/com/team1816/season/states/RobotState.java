@@ -8,6 +8,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import java.util.ArrayList;
+import java.util.List;
 
 /* class responsible with logging the robot's ACTUAL states - robot position (predicted) and superstructure subsystem actual states */
 
@@ -20,7 +22,7 @@ public class RobotState {
     public Rotation2d vehicleToTurret = Constants.EmptyRotation;
     public ChassisSpeeds deltaVehicle = new ChassisSpeeds();
     public ChassisSpeeds normalizedDeltaChassisSpeeds = new ChassisSpeeds(); // accel
-    public double[] ZedAccel = new double[3];
+    public List<double[]> ZedAccel = new ArrayList<>(); // array size of three {x_accel, y_accel, z_accel}
     public boolean isPoseUpdated = true;
 
     // Superstructure ACTUAL states
@@ -36,6 +38,9 @@ public class RobotState {
 
     public RobotState() {
         SmartDashboard.putData("Field", field);
+        for (int i = 0; i < 5; i++) {
+            ZedAccel.add(new double[] { 0d, 0d, 0d }); // initializes the rolling list of size 5
+        }
         resetPosition();
     }
 
