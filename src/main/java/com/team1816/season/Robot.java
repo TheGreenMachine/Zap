@@ -136,6 +136,19 @@ public class Robot extends TimedRobot {
                     String.valueOf(Constants.kPathFollowingMaxAccelMeters)
                 );
 
+                BadLog.createValue(
+                    "Drivetrain/Calculated X Accel",
+                    String.valueOf(robotState.getCalculatedAccel().vxMetersPerSecond)
+                );
+                BadLog.createValue(
+                    "Drivetrain/Calculated Y Accel",
+                    String.valueOf(robotState.getCalculatedAccel().vyMetersPerSecond)
+                );
+                BadLog.createValue(
+                    "Drivetrain/Calculated Z Accel",
+                    String.valueOf(robotState.getCalculatedAccel().omegaRadiansPerSecond)
+                );
+
                 BadLog.createTopic(
                     "Timings/Looper",
                     "ms",

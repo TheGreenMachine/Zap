@@ -115,8 +115,6 @@ public class Shooter extends Subsystem implements PidProvider {
     public void readFromHardware() {
         actualVelocity = shooterMain.getSelectedSensorVelocity(0);
 
-        robotState.shooterMPS = convertShooterTicksToMetersPerSecond(actualVelocity);
-
         if (desiredState != robotState.shooterState) {
             if (actualVelocity < VELOCITY_THRESHOLD) {
                 robotState.shooterState = STATE.STOP;

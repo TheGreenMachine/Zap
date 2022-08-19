@@ -19,7 +19,8 @@ public class RobotState {
     public Pose2d estimatedFieldToVehicle = Constants.EmptyPose;
     public Rotation2d vehicleToTurret = Constants.EmptyRotation;
     public ChassisSpeeds deltaVehicle = new ChassisSpeeds();
-    public double shooterMPS = 0; // needs to be remapped - default value
+    public ChassisSpeeds normalizedDeltaChassisSpeeds = new ChassisSpeeds(); // accel
+    public double[] ZedAccel = new double[3];
 
     // Superstructure ACTUAL states
     public Point visionPoint = new Point();
@@ -62,8 +63,8 @@ public class RobotState {
         shooterState = Shooter.STATE.STOP;
         coolState = Cooler.STATE.WAIT;
         deltaVehicle = new ChassisSpeeds();
+        normalizedDeltaChassisSpeeds = new ChassisSpeeds();
         visionPoint = new Point();
-        shooterMPS = 0;
         overheating = false;
     }
 
@@ -96,6 +97,10 @@ public class RobotState {
                 .getTranslation(),
             getLatestFieldToTurret()
         );
+    }
+
+    public synchronized ChassisSpeeds getCalculatedAccel() {
+        return normalizedDeltaChassisSpeeds;
     }
 
     public double getEstimatedDistanceToGoal() {

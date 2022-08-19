@@ -172,12 +172,20 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
                     .times(Constants.kBallEjectionDuration)
                 )
             );
-        robotState.deltaVehicle =
+        var cs = new ChassisSpeeds(
+            chassisSpeed.vxMetersPerSecond,
+            chassisSpeed.vyMetersPerSecond,
+            chassisSpeed.omegaRadiansPerSecond
+        );
+        robotState.normalizedDeltaChassisSpeeds =
             new ChassisSpeeds(
-                chassisSpeed.vxMetersPerSecond,
-                chassisSpeed.vyMetersPerSecond,
-                chassisSpeed.omegaRadiansPerSecond
+                (cs.vxMetersPerSecond - robotState.deltaVehicle.vxMetersPerSecond) /
+                Constants.kLooperDt,
+                (cs.vyMetersPerSecond - robotState.deltaVehicle.vyMetersPerSecond) /
+                Constants.kLooperDt,
+                -9.80
             );
+        robotState.deltaVehicle = cs;
         // check if motors are overheating - update robotState
         SmartDashboard.putNumber("Drive/Temperature", motorTemperatures[0]);
         if (!robotState.overheating) {
