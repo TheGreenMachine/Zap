@@ -6,6 +6,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
+import com.team1816.lib.hardware.components.motor.GhostMotor;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
@@ -136,7 +137,7 @@ public class Turret extends Subsystem implements PidProvider {
         followingPos = 0;
         lostEncPos = false;
 
-        if ((int) kRatioTurretAbs == 1) {
+        if ((int) kRatioTurretAbs == 1 && !(turretMotor instanceof GhostMotor)) {
             var sensors = ((TalonSRX) turretMotor).getSensorCollection();
             var sensorVal = sensors.getPulseWidthPosition() % kAbsPPR;
             sensors.setQuadraturePosition(sensorVal, Constants.kLongCANTimeoutMs);

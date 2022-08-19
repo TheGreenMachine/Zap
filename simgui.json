@@ -83,6 +83,7 @@
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/LiveWindow/drivetrain": "Gyro",
       "/SmartDashboard/Auto mode": "String Chooser",
+      "/SmartDashboard/Demo Mode": "String Chooser",
       "/SmartDashboard/Demo mode": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/SendableChooser[0]": "String Chooser",
