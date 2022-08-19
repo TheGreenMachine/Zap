@@ -24,7 +24,7 @@ subsystems:
         implemented: true
         talons:
             turretMotor: 3
-        invertSensorPhase:
+        invertMotor:
             - turretMotor
         pidConfig:
             slot0:
@@ -36,12 +36,12 @@ subsystems:
         constants:
             turretPPR: 4096
             absPPR: 4096
-            revLimit: -750
-            fwdLimit: 2086
+            revLimit: -2250
+            fwdLimit: 2603
             currentFloorCheck: 0
             currentEpsilonCheck: .2
             rpmFloorCheck: 0
-            absPosTicksSouth: 713
+            absPosTicksSouth: -704
             rpmEpsilonCheck: 60
             deltaXScalar: 150
     shooter:
@@ -84,7 +84,7 @@ infrastructure:
     # pigeon
     pigeonId: 9
     isPigeon2: false
-controlboard: example
+controlboard: demo
 constants:
     ## Drivetrain Dimensions and Parameters ##
     maxAllowablePoseError: 0.1
