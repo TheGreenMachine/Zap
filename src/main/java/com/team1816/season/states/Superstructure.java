@@ -5,7 +5,6 @@ import static com.team1816.lib.subsystems.Subsystem.robotState;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.team1816.lib.math.PoseUtil;
 import com.team1816.lib.subsystems.Drive;
 import com.team1816.season.Constants;
 import com.team1816.season.subsystems.*;
@@ -19,6 +18,7 @@ import edu.wpi.first.math.util.Units;
 @Singleton
 public class Superstructure {
 
+    /** subsystems */
     private static Drive drive;
     private static Turret turret;
     private static Collector collector;
@@ -26,9 +26,12 @@ public class Superstructure {
     private static Elevator elevator;
     private static Shooter shooter;
     private static LedManager ledManager;
-    // for automatic value setting
+
     private static DistanceManager distanceManager;
     private static Camera camera;
+
+    /** state */
+    private STATE superstructureState;
     private boolean collecting;
     private boolean revving;
     private boolean firing;
@@ -59,12 +62,14 @@ public class Superstructure {
         elevator = elev;
         shooter = shoot;
         ledManager = led;
+        superstructureState = STATE.FAT_BOY;
         collecting = false;
         revving = false;
         firing = false;
         useVision = Constants.kUseVision;
     }
 
+    /** actions */
     public void setStopped(boolean notCoasting) {
         collector.setDesiredState(Collector.STATE.STOP);
         elevator.setDesiredState(Elevator.STATE.STOP);
@@ -101,10 +106,15 @@ public class Superstructure {
         System.out.println("struct - rev " + revving);
         if (revving) {
             shooter.setDesiredState(Shooter.STATE.REVVING);
-            if (camera.isEnabled() && !manual) {
-                shooter.setVelocity(getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
+            if (superstructureState == STATE.FAT_BOY) {
+                fatBoy();
             } else {
-                shooter.setVelocity(shooterVel);
+                if (camera.isEnabled() && !manual) {
+                    superstructureState = STATE.LITTLE_MAN;
+                    littleMan();
+                } else {
+                    shooter.setVelocity(shooterVel);
+                }
             }
         } else {
             shooter.setDesiredState(Shooter.STATE.COASTING);
@@ -132,6 +142,30 @@ public class Superstructure {
         }
     }
 
+    /** superstructure state */
+    public void setSuperstructureState(STATE state) {
+        superstructureState = state;
+        robotState.superstructureState = superstructureState;
+    }
+
+    public void fatBoy() {
+        if (
+            turret.getControlMode() != Turret.ControlMode.EJECT &&
+            turret.getControlMode() != Turret.ControlMode.ABSOLUTE_FOLLOWING
+        ) {
+            turret.setControlMode(Turret.ControlMode.ABSOLUTE_FOLLOWING);
+        }
+        double distance = robotState.getEstimatedDistanceToGoal();
+        shooter.setVelocity(
+            distanceManager.getOutput(distance, DistanceManager.SUBSYSTEM.SHOOTER)
+        );
+    }
+
+    public void littleMan() {
+        shooter.setVelocity(getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
+    }
+
+    /** update subsystem state */
     public void updateDesiredCollector(boolean backspin) {
         if (collecting) {
             if (backspin) {
@@ -172,48 +206,30 @@ public class Superstructure {
 
     public double getDistance(DistanceManager.SUBSYSTEM subsystem) {
         if (useVision) {
-            double camDis = camera.getDistance();
-            System.out.println("tracked camera distance is . . . " + camDis);
-            return distanceManager.getOutput(camDis, subsystem);
+            double dis = robotState.getEstimatedDistanceToGoal();
+            System.out.println("tracked camera distance is . . . " + dis);
+            return distanceManager.getOutput(dis, subsystem);
         } else {
             System.out.println("using neither poseTracking nor vision ! - not intended");
             return -1;
         }
     }
 
-    public void shootWhileMoving(double currentCamDist) {
-        Translation2d chassisVelocity = new Translation2d(
-            robotState.deltaVehicle.vxMetersPerSecond,
-            robotState.deltaVehicle.vyMetersPerSecond
-        );
-        Translation2d shooterDirection = new Translation2d( //important to make sure that this is a unit vector
-            1,
-            robotState.getLatestFieldToTurret()
-        );
-
-        double extrapolatedShooterOutput = distanceManager.getOutput(
-            shooter.convertShooterMetersToTicksPerSecond(
-                getBallVel(currentCamDist) - //get velocity of ball
-                chassisVelocity.getNorm() *
-                Math.cos(PoseUtil.getAngleBetween(chassisVelocity, shooterDirection))
-            ),
-            DistanceManager.SUBSYSTEM.SHOOTER
-        );
-
-        // setting velocity
-        shooter.setVelocity(extrapolatedShooterOutput);
-    }
-
-    public double getBallVel(double distance) {
-        return 0.0248 * distance - 0.53;
+    public boolean needsVisionUpdate() {
+        if (!robotState.isPoseUpdated) {
+            return true;
+        }
+        boolean needsVisionUpdate = false; //TODO: needs to be changed bassed on acceleration difference
+        if (needsVisionUpdate) {
+            robotState.isPoseUpdated = false;
+        }
+        return needsVisionUpdate; // placeHolder
     }
 
     public void updatePoseWithCamera() {
-        double cameraDist = camera.getDistance();
+        double cameraDist = camera.getDistance(); // flat distance in meters
         // 26.56 = radius of center hub - - 5629 = square of height of hub
-        double distanceToCenterMeters = Units.inchesToMeters(
-            26.56 + (Math.sqrt((cameraDist * cameraDist) - 5629.5))
-        );
+        double distanceToCenterMeters = Units.inchesToMeters(26.56) + cameraDist;
 
         Translation2d deltaToHub = new Translation2d(
             distanceToCenterMeters,
@@ -237,6 +253,12 @@ public class Superstructure {
             System.out.println(newRobotPose + " = new robot pose");
             drive.resetOdometry(newRobotPose);
             robotState.fieldToVehicle = newRobotPose;
+            robotState.isPoseUpdated = true;
         }
+    }
+
+    public enum STATE {
+        FAT_BOY,
+        LITTLE_MAN,
     }
 }

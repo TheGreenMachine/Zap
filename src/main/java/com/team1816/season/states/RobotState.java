@@ -21,8 +21,10 @@ public class RobotState {
     public ChassisSpeeds deltaVehicle = new ChassisSpeeds();
     public ChassisSpeeds normalizedDeltaChassisSpeeds = new ChassisSpeeds(); // accel
     public double[] ZedAccel = new double[3];
+    public boolean isPoseUpdated = true;
 
     // Superstructure ACTUAL states
+    public Superstructure.STATE superstructureState = Superstructure.STATE.LITTLE_MAN;
     public Point visionPoint = new Point();
     public Collector.STATE collectorState = Collector.STATE.STOP;
     public Shooter.STATE shooterState = Shooter.STATE.STOP;
@@ -57,6 +59,7 @@ public class RobotState {
     }
 
     public synchronized void resetAllStates() {
+        superstructureState = Superstructure.STATE.LITTLE_MAN;
         collectorState = Collector.STATE.STOP;
         spinState = Spindexer.STATE.STOP;
         elevatorState = Elevator.STATE.STOP;
@@ -64,6 +67,7 @@ public class RobotState {
         coolState = Cooler.STATE.WAIT;
         deltaVehicle = new ChassisSpeeds();
         normalizedDeltaChassisSpeeds = new ChassisSpeeds();
+        isPoseUpdated = true;
         visionPoint = new Point();
         overheating = false;
     }
@@ -103,7 +107,7 @@ public class RobotState {
         return normalizedDeltaChassisSpeeds;
     }
 
-    public double getEstimatedDistanceToGoal() {
+    public double getEstimatedDistanceToGoal() { // TODO: make metric along with distnace manager and all other camera functionality
         double estimatedDistanceToGoalMeters = fieldToVehicle
             .getTranslation()
             .getDistance(Constants.targetPos.getTranslation());
