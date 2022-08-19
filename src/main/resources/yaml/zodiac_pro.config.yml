@@ -9,7 +9,7 @@ subsystems:
             rightFollower: -1
             rightFollowerTwo: -1
         invertMotor:
-            - rightMain
+            - leftMain
         pidConfig:
             slot0:
                 kP: 0.1 # 0.18
