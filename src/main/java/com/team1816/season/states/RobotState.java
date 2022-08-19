@@ -107,7 +107,7 @@ public class RobotState {
         return normalizedDeltaChassisSpeeds;
     }
 
-    public double getEstimatedDistanceToGoal() { // TODO: make metric along with distnace manager and all other camera functionality
+    public double getEstimatedDistanceToGoal() { // TODO: make metric along with distance manager and all other camera functionality
         double estimatedDistanceToGoalMeters = fieldToVehicle
             .getTranslation()
             .getDistance(Constants.targetPos.getTranslation());
