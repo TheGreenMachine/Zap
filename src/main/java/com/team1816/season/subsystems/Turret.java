@@ -7,7 +7,6 @@ import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
-import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
@@ -79,15 +78,15 @@ public class Turret extends Subsystem implements PidProvider {
 
         // define limits + when turret should wrap around
         kRevLimit =
-            //            Math.min(
-            //                (int) factory.getConstant(NAME, "fwdLimit"),
-            ((int) factory.getConstant(NAME, "revLimit"));
-        //            );
+            Math.min(
+                (int) factory.getConstant(NAME, "fwdLimit"),
+                (int) factory.getConstant(NAME, "revLimit")
+            );
         kFwdLimit =
-            //            Math.max(
-            (int) factory.getConstant(NAME, "fwdLimit");
-        //                ((int) factory.getConstant(NAME, "revLimit"))
-        //            );
+            Math.max(
+                (int) factory.getConstant(NAME, "fwdLimit"),
+                (int) factory.getConstant(NAME, "revLimit")
+            );
         int MASK = 0;
         if (Math.abs(kRevLimit - kFwdLimit) > kTurretPPR) {
             MASK = Math.abs((kRevLimit + kTurretPPR) - (kFwdLimit)) / 2; // this value is truncated
@@ -225,6 +224,7 @@ public class Turret extends Subsystem implements PidProvider {
         return getDesiredPosTicks() - getActualPosTicks();
     }
 
+    /** periodic */
     @Override
     public void readFromHardware() {
         if (followingPos > 2 * kTurretPPR) {

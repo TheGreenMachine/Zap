@@ -188,8 +188,11 @@ public class Constants {
 
     public static final boolean kUsePoseTrack =
         factory.getConstant("shooter", "usingPoseForSpeed", 0) > 0;
-    public static final double kBallEjectionDuration =
-        factory.getConstant("shooter", "ballEjectionDuration", 1);
+    public static final double kBallEjectionDuration = factory.getConstant(
+        "shooter",
+        "ballEjectionDuration",
+        1
+    );
     public static final boolean kUseVision = factory.getSubsystem("camera").implemented;
     //    public static final boolean kEnableBucketTuning =
     //        factory.getConstant("enableBucketTuning", 0) > 0;
