@@ -33,6 +33,7 @@ public class Robot extends TimedRobot {
     private final Looper disabledLoop;
 
     // controls
+    private final ControlBoardBrige controlBoardBridge;
     private IControlBoard controlBoard;
     private ActionManager actionManager;
 
@@ -76,6 +77,7 @@ public class Robot extends TimedRobot {
         Injector.registerModule(new SeasonModule());
         enabledLoop = new Looper(this);
         disabledLoop = new Looper(this);
+        controlBoardBridge = Injector.get(ControlBoardBrige.class);
         drive = (Injector.get(Drive.Factory.class)).getInstance(); //TODO: need to fix this get drive instance should just return the proper one
         turret = Injector.get(Turret.class);
         climber = Injector.get(Climber.class);
@@ -524,7 +526,7 @@ public class Robot extends TimedRobot {
             // update shuffleboard selected auto mode
             autoModeManager.outputToSmartDashboard();
 
-            if (ControlBoardBrige.getInstance().isDemoMode()) { //todo: should be using injector
+            if (controlBoardBridge.isDemoMode()) { //todo: should be using injector
                 controlBoard.outputToSmartDashboard();
             }
         } catch (Throwable t) {
@@ -560,7 +562,7 @@ public class Robot extends TimedRobot {
             }
 
             // check if demo mode speed multiplier changed
-            if (ControlBoardBrige.getInstance().isDemoMode()) { //todo: should be using injector
+            if (controlBoardBridge.isDemoMode()) { //todo: should be using injector
                 controlBoard.update();
             }
         } catch (Throwable t) {

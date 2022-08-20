@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 @Singleton
 public class ControlBoard implements IControlBoard {
 
-    private static final ControlBoardBrige controlBoardBridge = ControlBoardBrige.getInstance();
+    private final ControlBoardBrige controlBoardBridge;
 
     private final Controller driverController;
     private final Controller operatorController;
@@ -21,10 +21,12 @@ public class ControlBoard implements IControlBoard {
     private DemoMode desiredMode;
 
     @Inject
-    private ControlBoard(Controller.Factory controller) {
+    private ControlBoard(ControlBoardBrige bridge, Controller.Factory controller) {
         driverController = controller.getControllerInstance(Constants.kDriveGamepadPort);
         operatorController =
             controller.getControllerInstance(Constants.kOperatorGamepadPort);
+
+        controlBoardBridge = bridge;
 
         // demo mode functionality configuration
         if (controlBoardBridge.isDemoMode()) {

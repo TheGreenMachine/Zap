@@ -36,7 +36,7 @@ public class Superstructure {
     private boolean revving;
     private boolean firing;
     private final boolean useVision;
-    private double maxAllowablePoseError = factory.getConstant(
+    private final double maxAllowablePoseError = factory.getConstant(
         "maxAllowablePoseError",
         0.2
     );
@@ -162,7 +162,7 @@ public class Superstructure {
     }
 
     public void littleMan() {
-        shooter.setVelocity(getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
+        shooter.setVelocity(getOutput(DistanceManager.SUBSYSTEM.SHOOTER));
     }
 
     /** update subsystem state */
@@ -204,7 +204,7 @@ public class Superstructure {
         }
     }
 
-    public double getDistance(DistanceManager.SUBSYSTEM subsystem) {
+    public double getOutput(DistanceManager.SUBSYSTEM subsystem) {
         if (useVision) {
             double dis = robotState.getEstimatedDistanceToGoal();
             System.out.println("tracked camera distance is . . . " + dis);
