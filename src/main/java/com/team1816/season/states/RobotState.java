@@ -131,6 +131,7 @@ public class RobotState {
     public synchronized void outputToSmartDashboard() {
         //shuffleboard periodic updates should be here
         field.setRobotPose(fieldToVehicle);
+        field.getObject("EstimatedRobot").setPose(estimatedFieldToVehicle);
         field.getObject(Turret.NAME).setPose(getFieldToTurretPos());
     }
 
