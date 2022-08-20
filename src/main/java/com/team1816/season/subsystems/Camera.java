@@ -61,25 +61,32 @@ public class Camera extends Subsystem {
         if (RobotBase.isSimulation()) {
             return robotState.getEstimatedDistanceToGoal();
         }
-        double directInches = (
-            (Constants.kHeightFromCamToHub) /
+        double directInches =
             (
-                Math.tan(
-                    Math.toRadians(
-                        Constants.kCameraMountingAngleY +
-                        (
+                (Constants.kHeightFromCamToHub) /
+                (
+                    Math.tan(
+                        Math.toRadians(
+                            Constants.kCameraMountingAngleY +
                             (
-                                (VIDEO_HEIGHT - robotState.visionPoint.cY) -
-                                (VIDEO_HEIGHT / 2)
-                            ) *
-                            CAMERA_VFOV /
-                            VIDEO_HEIGHT
+                                (
+                                    (VIDEO_HEIGHT - robotState.visionPoint.cY) -
+                                    (VIDEO_HEIGHT / 2)
+                                ) *
+                                CAMERA_VFOV /
+                                VIDEO_HEIGHT
+                            )
                         )
                     )
                 )
-            )
+            );
+        return (
+            Math.sqrt(
+                Math.pow(Units.inchesToMeters(directInches), 2) -
+                Math.pow(Units.inchesToMeters(Constants.kHeightFromCamToHub), 2)
+            ) +
+            Units.inchesToMeters(Constants.kTargetRadius)
         );
-        return Math.sqrt(Math.pow(Units.inchesToMeters(directInches), 2) - Math.pow(Units.inchesToMeters(Constants.kHeightFromCamToHub), 2)) + Units.inchesToMeters(Constants.kTargetRadius);
     }
 
     public double getRawCenterX() {

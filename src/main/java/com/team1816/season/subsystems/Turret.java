@@ -51,7 +51,10 @@ public class Turret extends Subsystem implements PidProvider {
     private int followingPos = 0;
     private boolean lostEncPos = false;
     private int visionCorroboration = 0;
-    private double turretSpeed;
+    private double turretSpeed; // this is used as a percent output demand, NOT THE SAME AS turretVelocity
+    private double turretVelocity = 0d; // used to calculate acceleration and other gyroscopic effects
+    private double turretRotationalAcceleration = 0d;
+    private double turretCentripetalAcceleration = 0d;
     private boolean outputsChanged = true;
     private ControlMode controlMode;
 
@@ -96,7 +99,7 @@ public class Turret extends Subsystem implements PidProvider {
         kRevWrapAroundPos = kRevLimit - MASK;
 
         // Position Control
-        double peakOutput = 0.5;
+        double peakOutput = 0.8;
         pidConfig = factory.getPidSlotConfig(NAME);
         turretMotor.configPeakOutputForward(peakOutput, Constants.kCANTimeoutMs);
         turretMotor.configNominalOutputForward(0, Constants.kCANTimeoutMs);
@@ -228,6 +231,10 @@ public class Turret extends Subsystem implements PidProvider {
     /** periodic */
     @Override
     public void readFromHardware() {
+        double sensorVel = turretMotor.getSelectedSensorVelocity(0) / 10d;
+        turretRotationalAcceleration = Units.degreesToRadians(convertTurretTicksToDegrees(sensorVel - turretVelocity) / Constants.kLooperDt);
+        turretCentripetalAcceleration = Math.pow(Units.degreesToRadians(convertTurretTicksToDegrees(sensorVel)), 2) * Constants.kTurretZedRadius;
+        turretVelocity = sensorVel;
         if (followingPos > 2 * kTurretPPR) {
             followingPos %= kTurretPPR;
         }
