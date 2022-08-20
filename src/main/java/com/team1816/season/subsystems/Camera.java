@@ -7,6 +7,7 @@ import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.vision.VisionSocket;
 import com.team1816.season.Constants;
 import com.team1816.season.states.RobotState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -60,7 +61,7 @@ public class Camera extends Subsystem {
         if (RobotBase.isSimulation()) {
             return robotState.getEstimatedDistanceToGoal();
         }
-        return (
+        double directInches = (
             (Constants.kHeightFromCamToHub) /
             (
                 Math.tan(
@@ -78,6 +79,7 @@ public class Camera extends Subsystem {
                 )
             )
         );
+        return Math.sqrt(Math.pow(Units.inchesToMeters(directInches), 2) - Math.pow(Units.inchesToMeters(Constants.kHeightFromCamToHub), 2)) + Units.inchesToMeters(Constants.kTargetRadius);
     }
 
     public double getRawCenterX() {
