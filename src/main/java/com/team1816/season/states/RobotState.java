@@ -140,10 +140,14 @@ public class RobotState {
 
         public double cX;
         public double cY;
+        public double thetaX;
+        public double thetaY;
 
         public Point() {
             cX = 0;
             cY = 0;
+            thetaX = 0;
+            thetaY = 0;
         }
     }
 }
