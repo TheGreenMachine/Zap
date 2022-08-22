@@ -15,6 +15,7 @@ import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 @Singleton
 public class Turret extends Subsystem implements PidProvider {
@@ -50,6 +51,7 @@ public class Turret extends Subsystem implements PidProvider {
     private int desiredPos = 0;
     private int followingPos = 0;
     private boolean lostEncPos = false;
+    private boolean deadzone = false;
     private int visionCorroboration = 0;
     private double turretSpeed; // this is used as a percent output demand, NOT THE SAME AS turretVelocity
     private double turretVelocity = 0d; // used to calculate acceleration and other gyroscopic effects
@@ -231,13 +233,17 @@ public class Turret extends Subsystem implements PidProvider {
     /** periodic */
     @Override
     public void readFromHardware() {
+        if (followingPos > 2 * kTurretPPR) {
+            followingPos %= kTurretPPR;
+        }
+
+        deadzone = (followingPos > kFwdWrapAroundPos || followingPos < kRevWrapAroundPos);
+        outputToSmartDashboard();
+
         double sensorVel = turretMotor.getSelectedSensorVelocity(0) / 10d;
         turretRotationalAcceleration = Units.degreesToRadians(convertTurretTicksToDegrees(sensorVel - turretVelocity) / Constants.kLooperDt);
         turretCentripetalAcceleration = Math.pow(Units.degreesToRadians(convertTurretTicksToDegrees(sensorVel)), 2) * Constants.kTurretZedRadius;
         turretVelocity = sensorVel;
-        if (followingPos > 2 * kTurretPPR) {
-            followingPos %= kTurretPPR;
-        }
 
         if (turretMotor.hasResetOccurred()) {
             System.out.println("turretMotor lost its position!");
@@ -402,6 +408,10 @@ public class Turret extends Subsystem implements PidProvider {
         passed = passed & diff <= 50;
         turretMotor.set(com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput, 0);
         return passed;
+    }
+
+    public void outputToSmartDashboard() {
+        SmartDashboard.putString("Turret/Deadzone", deadzone?"Deadzone":"Free");
     }
 
     /** controlModes */

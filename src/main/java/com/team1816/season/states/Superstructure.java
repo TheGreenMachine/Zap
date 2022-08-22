@@ -9,6 +9,7 @@ import com.team1816.lib.subsystems.Drive;
 import com.team1816.season.Constants;
 import com.team1816.season.subsystems.*;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
@@ -251,7 +252,7 @@ public class Superstructure {
         Translation2d deltaToHub = new Translation2d(
             distanceToCenterMeters,
             robotState.getLatestFieldToTurret()
-        );
+        ).rotateBy(Rotation2d.fromDegrees(robotState.visionPoint.cX)); // TODO need to see weather or not to invert
         Pose2d newRobotPose = Constants.targetPos.transformBy(
             new Transform2d(
                 deltaToHub.unaryMinus(),
