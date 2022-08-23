@@ -17,6 +17,7 @@ public class RobotState {
 
     public final Field2d field = new Field2d();
     public Pose2d fieldToVehicle = Constants.EmptyPose;
+    public Pose2d filteredFieldToVehicle = Constants.EmptyPose;
     public Pose2d estimatedFieldToVehicle = Constants.EmptyPose;
     public Rotation2d vehicleToTurret = Constants.EmptyRotation;
     public ChassisSpeeds deltaVehicle = new ChassisSpeeds();
@@ -56,6 +57,7 @@ public class RobotState {
 
     public synchronized void resetPosition(Pose2d initial_field_to_vehicle) {
         fieldToVehicle = initial_field_to_vehicle;
+        filteredFieldToVehicle = fieldToVehicle;
     }
 
     public synchronized void resetPosition() {
