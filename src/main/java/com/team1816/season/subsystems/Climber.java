@@ -202,7 +202,6 @@ public class Climber extends Subsystem {
         }
     }
 
-
     public double getClimberPosition() {
         return climberPosition;
     }

@@ -240,12 +240,19 @@ public class Turret extends Subsystem implements PidProvider {
             followingPos %= kTurretPPR;
         }
 
-        deadzone = (followingPos >= kFwdWrapAroundPos || followingPos <= kRevWrapAroundPos);
+        deadzone =
+            (followingPos >= kFwdWrapAroundPos || followingPos <= kRevWrapAroundPos);
         outputToSmartDashboard();
 
         double sensorVel = turretMotor.getSelectedSensorVelocity(0) / 10d;
-        turretRotationalAcceleration = Units.degreesToRadians(convertTurretTicksToDegrees(sensorVel - turretVelocity) / Constants.kLooperDt);
-        turretCentripetalAcceleration = Math.pow(Units.degreesToRadians(convertTurretTicksToDegrees(sensorVel)), 2) * Constants.kTurretZedRadius;
+        turretRotationalAcceleration =
+            Units.degreesToRadians(
+                convertTurretTicksToDegrees(sensorVel - turretVelocity) /
+                Constants.kLooperDt
+            );
+        turretCentripetalAcceleration =
+            Math.pow(Units.degreesToRadians(convertTurretTicksToDegrees(sensorVel)), 2) *
+            Constants.kTurretZedRadius;
         turretVelocity = sensorVel;
 
         if (turretMotor.hasResetOccurred()) {
@@ -414,7 +421,7 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     public void outputToSmartDashboard() {
-        SmartDashboard.putString("Turret/Deadzone", deadzone?"Deadzone":"Free");
+        SmartDashboard.putString("Turret/Deadzone", deadzone ? "Deadzone" : "Free");
     }
 
     /** modes */

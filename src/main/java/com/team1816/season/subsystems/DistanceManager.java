@@ -102,9 +102,9 @@ public class DistanceManager {
             buckets = new FloorFunctionSpline(points);
             System.out.println(
                 "incrementing bucket " +
-                    lastBucketIndex +
-                    " offset by " +
-                    points.get(lastBucketIndex)[2]
+                lastBucketIndex +
+                " offset by " +
+                points.get(lastBucketIndex)[2]
             );
             outputCurrentBucketOffset();
         } else {

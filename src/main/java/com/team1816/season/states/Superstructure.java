@@ -252,7 +252,8 @@ public class Superstructure {
         Translation2d deltaToHub = new Translation2d(
             distanceToCenterMeters,
             robotState.getLatestFieldToTurret()
-        ).rotateBy(Rotation2d.fromDegrees(robotState.visionPoint.cX)); // TODO need to see weather or not to invert
+        )
+        .rotateBy(Rotation2d.fromDegrees(robotState.visionPoint.cX)); // TODO need to see weather or not to invert
         Pose2d newRobotPose = Constants.targetPos.transformBy(
             new Transform2d(
                 deltaToHub.unaryMinus(),
