@@ -66,7 +66,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             );
     }
 
-    // autonomous (Trajectory_Following) loop is in setModuleStates
+    /** Read/Write Periodic */
     @Override
     public synchronized void writeToHardware() {
         if (controlState == ControlState.OPEN_LOOP) {
@@ -102,6 +102,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         updateRobotState();
     }
 
+    /** General getters and setters */
     public Rotation2d getTrajectoryHeadings() {
         if (headingsList == null) {
             return Constants.EmptyRotation;
@@ -205,7 +206,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
     }
 
-    // general setters
+    /** Open Loop control */
     @Override
     public void setOpenLoop(DriveSignal signal) {
         if (controlState != ControlState.OPEN_LOOP) {
@@ -303,7 +304,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
     }
 
-    // other
+    /** config and tests */
     @Override
     public boolean checkSystem() {
         boolean modulesPassed = true;

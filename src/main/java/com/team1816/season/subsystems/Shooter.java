@@ -62,6 +62,7 @@ public class Shooter extends Subsystem implements PidProvider {
         VELOCITY_THRESHOLD = pidConfig.allowableError.intValue();
     }
 
+    /** actions */
     private void configCurrentLimits(int currentLimitAmps) {
         shooterMain.configSupplyCurrentLimit(
             new SupplyCurrentLimitConfiguration(true, currentLimitAmps, 0, 0),
@@ -111,6 +112,7 @@ public class Shooter extends Subsystem implements PidProvider {
         );
     }
 
+    /** periodic */
     @Override
     public void readFromHardware() {
         actualVelocity = shooterMain.getSelectedSensorVelocity(0);
@@ -152,6 +154,7 @@ public class Shooter extends Subsystem implements PidProvider {
         return (metersPerSecond + 0.53) / 0.0248;
     }
 
+    /** config and tests */
     @Override
     public void initSendable(SendableBuilder builder) {}
 
@@ -165,6 +168,7 @@ public class Shooter extends Subsystem implements PidProvider {
         return checkShooter;
     }
 
+    /** states */
     public enum STATE {
         STOP,
         COASTING,

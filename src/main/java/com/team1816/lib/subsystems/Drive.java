@@ -104,6 +104,7 @@ public abstract class Drive
         );
     }
 
+    /** base methods */
     // autonomous (trajectory following)
     public void startTrajectory(Trajectory trajectory, List<Rotation2d> headings) {
         controlState = ControlState.TRAJECTORY_FOLLOWING;
@@ -136,7 +137,6 @@ public abstract class Drive
      */
     public abstract void setOpenLoop(DriveSignal signal);
 
-    // general setters
     public abstract void setTeleopInputs(double forward, double strafe, double rotation);
 
     public void setControlState(ControlState controlState) {

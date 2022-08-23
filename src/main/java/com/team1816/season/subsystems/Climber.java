@@ -99,6 +99,7 @@ public class Climber extends Subsystem {
             };
     }
 
+    /** actions */
     public void unlock() {
         unlocked = true;
     }
@@ -201,6 +202,20 @@ public class Climber extends Subsystem {
         }
     }
 
+
+    public double getClimberPosition() {
+        return climberPosition;
+    }
+
+    public double getCurrentDraw() {
+        return currentDraw;
+    }
+
+    public int getCurrentStage() {
+        return currentStage;
+    }
+
+    /** periodic */
     @Override
     public void readFromHardware() {
         error = climberMain.getSelectedSensorPosition(0) - stages[currentStage].position;
@@ -223,18 +238,7 @@ public class Climber extends Subsystem {
         }
     }
 
-    public double getClimberPosition() {
-        return climberPosition;
-    }
-
-    public double getCurrentDraw() {
-        return currentDraw;
-    }
-
-    public int getCurrentStage() {
-        return currentStage;
-    }
-
+    /** config and tests */
     @Override
     public void zeroSensors() {
         currentStage = 0;
@@ -267,6 +271,7 @@ public class Climber extends Subsystem {
         return true;
     }
 
+    /** modes and stages */
     public enum ControlMode {
         MANUAL,
         POSITION,

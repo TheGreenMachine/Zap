@@ -97,7 +97,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     }
 
     /**
-     * Read/Write Periodics
+     * Read/Write Periodic
      */
 
     @Override
@@ -149,7 +149,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     }
 
     /**
-     * Config
+     * config
      */
 
     @Override
@@ -356,6 +356,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         return rightErrorClosedLoop;
     }
 
+    /** config and tests */
     @Override
     public boolean checkSystem() {
         boolean leftSide = EnhancedMotorChecker.checkMotor(this, leftMain);

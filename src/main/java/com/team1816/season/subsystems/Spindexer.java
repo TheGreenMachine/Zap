@@ -44,6 +44,7 @@ public class Spindexer extends Subsystem {
         COAST = factory.getConstant(NAME, "coastPow", -.1);
     }
 
+    /** actions */
     private void setSpindexer(double spindexerPower) {
         this.desiredPower = spindexerPower;
         spindexer.set(ControlMode.PercentOutput, spindexerPower);
@@ -65,6 +66,7 @@ public class Spindexer extends Subsystem {
         }
     }
 
+    /** periodic */
     @Override
     public void readFromHardware() {
         // since no other subsystems rely on spindexer being up to speed to perform an action,
@@ -102,6 +104,7 @@ public class Spindexer extends Subsystem {
         }
     }
 
+    /** config and tests */
     @Override
     public void initSendable(SendableBuilder builder) {}
 
@@ -118,6 +121,7 @@ public class Spindexer extends Subsystem {
         return true;
     }
 
+    /** states */
     public enum STATE {
         STOP,
         COLLECT,

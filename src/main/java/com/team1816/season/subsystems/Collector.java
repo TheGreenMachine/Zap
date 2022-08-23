@@ -60,6 +60,7 @@ public class Collector extends Subsystem {
         }
     }
 
+    /** actions */
     public void setDesiredState(STATE state) {
         if (desiredState != state) {
             desiredState = state;
@@ -67,6 +68,7 @@ public class Collector extends Subsystem {
         }
     }
 
+    /** periodic */
     @Override
     public void writeToHardware() {
         if (outputsChanged) {
@@ -98,6 +100,7 @@ public class Collector extends Subsystem {
         }
     }
 
+    /** config and tests */
     @Override
     public void stop() {}
 
@@ -116,6 +119,7 @@ public class Collector extends Subsystem {
         return true;
     }
 
+    /** states */
     public enum STATE {
         STOP,
         COLLECTING,

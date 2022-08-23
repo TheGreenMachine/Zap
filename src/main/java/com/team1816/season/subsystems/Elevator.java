@@ -57,6 +57,7 @@ public class Elevator extends Subsystem {
         ALLOWABLE_ERROR = config.allowableError;
     }
 
+    /** actions */
     private void setElevator(double elevatorOutput) {
         if (desiredOutput != elevatorOutput) {
             desiredOutput = elevatorOutput;
@@ -105,6 +106,7 @@ public class Elevator extends Subsystem {
         return !ballSensor.get();
     }
 
+    /** periodic */
     @Override
     public void readFromHardware() {
         if (desiredState != robotState.elevatorState) {
@@ -147,6 +149,7 @@ public class Elevator extends Subsystem {
         }
     }
 
+    /** config and tests */
     @Override
     public void stop() {}
 
@@ -161,6 +164,7 @@ public class Elevator extends Subsystem {
         return true;
     }
 
+    /** states */
     public enum STATE {
         STOP,
         INTAKE,

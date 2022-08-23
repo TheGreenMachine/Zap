@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 import javax.inject.Singleton;
 
+/** A helper class that maps distance outputs to subsystem outputs through the definition of control points */
 @Singleton
 public class DistanceManager {
 
@@ -21,7 +22,7 @@ public class DistanceManager {
     private static boolean allowBucketOffset = false;
     private static Spline buckets;
 
-    // Constants
+    /** Control Points */
     private static final ArrayList<Double[]> points = new ArrayList<>() { // format: {distance, output, offset}
         {
             add(new Double[] { 1.40325, (double) Shooter.NEAR_VELOCITY, 0d });
@@ -59,7 +60,7 @@ public class DistanceManager {
         outputBucketOffsets();
     }
 
-    // these are either not being called or aren't currently useful - tune later if needed
+    /** subsystem outputs */
     private double getSpindexerOutput(double distance) {
         return .38;
     }
@@ -80,23 +81,6 @@ public class DistanceManager {
         return buckets.getValue(distance);
     }
 
-    public void incrementBucket(double incrementVal) {
-        if (allowBucketOffset) {
-            allowBucketOffset = false;
-            points.get(lastBucketIndex)[2] += incrementVal;
-            buckets = new FloorFunctionSpline(points);
-            System.out.println(
-                "incrementing bucket " +
-                lastBucketIndex +
-                " offset by " +
-                points.get(lastBucketIndex)[2]
-            );
-            outputCurrentBucketOffset();
-        } else {
-            System.out.println("not incrementing bucket...");
-        }
-    }
-
     public double getOutput(double distance, SUBSYSTEM subsystem) {
         switch (subsystem) {
             case SPINDEXER:
@@ -110,13 +94,25 @@ public class DistanceManager {
         return 0;
     }
 
-    public enum SUBSYSTEM {
-        SPINDEXER,
-        ELEVATOR,
-        SHOOTER,
-        HOOD,
+    /** actions */
+    public void incrementBucket(double incrementVal) {
+        if (allowBucketOffset) {
+            allowBucketOffset = false;
+            points.get(lastBucketIndex)[2] += incrementVal;
+            buckets = new FloorFunctionSpline(points);
+            System.out.println(
+                "incrementing bucket " +
+                    lastBucketIndex +
+                    " offset by " +
+                    points.get(lastBucketIndex)[2]
+            );
+            outputCurrentBucketOffset();
+        } else {
+            System.out.println("not incrementing bucket...");
+        }
     }
 
+    /** Smart Dashboard */
     public void outputBucketOffsets() {
         for (int i = 0; i < points.size(); i++) {
             SmartDashboard.putNumber(
@@ -131,5 +127,13 @@ public class DistanceManager {
             "Buckets/Bucket #" + points.get(lastBucketIndex)[0],
             points.get(lastBucketIndex)[2]
         );
+    }
+
+    /** subsystems */
+    public enum SUBSYSTEM {
+        SPINDEXER,
+        ELEVATOR,
+        SHOOTER,
+        HOOD,
     }
 }

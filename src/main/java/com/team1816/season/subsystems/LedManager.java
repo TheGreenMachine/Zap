@@ -39,6 +39,7 @@ public class LedManager extends Subsystem {
     private float raveHue;
     private Color lastRaveColor;
 
+    /** states */
     public enum LedControlState {
         RAVE,
         BLINK,
@@ -58,6 +59,7 @@ public class LedManager extends Subsystem {
         cameraLedOn = false;
     }
 
+    /** actions */
     public void setCameraLed(boolean cameraOn) {
         if (cameraLedOn != cameraOn) {
             cameraLedChanged = true;
@@ -134,6 +136,7 @@ public class LedManager extends Subsystem {
         }
     }
 
+    /** periodic */
     @Override
     public void writeToHardware() {
         if (outputsChanged) {
@@ -174,6 +177,7 @@ public class LedManager extends Subsystem {
         }
     }
 
+    /** config and tests */
     @Override
     public void stop() {}
 

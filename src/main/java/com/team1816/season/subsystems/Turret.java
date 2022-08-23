@@ -17,6 +17,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+/** This class models a multi-functional turret with target and field tracking abilities */
 @Singleton
 public class Turret extends Subsystem implements PidProvider {
 
@@ -132,6 +133,7 @@ public class Turret extends Subsystem implements PidProvider {
         return ticks / kTurretPPR * 360;
     }
 
+    /** zeroing */
     @Override
     public synchronized void zeroSensors() {
         zeroSensors(false);
@@ -158,6 +160,7 @@ public class Turret extends Subsystem implements PidProvider {
         }
     }
 
+    /** actions */
     public ControlMode getControlMode() {
         return controlMode;
     }
@@ -237,7 +240,7 @@ public class Turret extends Subsystem implements PidProvider {
             followingPos %= kTurretPPR;
         }
 
-        deadzone = (followingPos > kFwdWrapAroundPos || followingPos < kRevWrapAroundPos);
+        deadzone = (followingPos >= kFwdWrapAroundPos || followingPos <= kRevWrapAroundPos);
         outputToSmartDashboard();
 
         double sensorVel = turretMotor.getSelectedSensorVelocity(0) / 10d;
@@ -284,7 +287,7 @@ public class Turret extends Subsystem implements PidProvider {
 
     /** offsets */
     private int fieldFollowingOffset() {
-        return -convertTurretDegreesToTicks( // currently negated because motor is running counterclockwise
+        return -convertTurretDegreesToTicks( // this is currently negated because motor is running counterclockwise
             robotState.fieldToVehicle.getRotation().getDegrees()
         );
     }
@@ -309,7 +312,7 @@ public class Turret extends Subsystem implements PidProvider {
         return convertTurretDegreesToTicks(Units.radiansToDegrees(turretAngle));
     }
 
-    /** actions */
+    /** actions for modes */
     private void trackGyro() {
         int fieldTickOffset = fieldFollowingOffset();
         int adj = (desiredPos + fieldTickOffset);
@@ -414,7 +417,7 @@ public class Turret extends Subsystem implements PidProvider {
         SmartDashboard.putString("Turret/Deadzone", deadzone?"Deadzone":"Free");
     }
 
-    /** controlModes */
+    /** modes */
     public enum ControlMode {
         FIELD_FOLLOWING,
         CENTER_FOLLOWING,
