@@ -279,5 +279,6 @@ public class Superstructure {
     public enum STATE {
         FAT_BOY,
         LITTLE_MAN,
+        TSAR_BOMBA
     }
 }
