@@ -3,14 +3,10 @@ package com.team1816.season.states;
 import com.google.inject.Singleton;
 import com.team1816.season.Constants;
 import com.team1816.season.subsystems.*;
-import edu.wpi.first.math.estimator.KalmanFilter;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import org.apache.commons.math3.filter.DefaultMeasurementModel;
-import org.apache.commons.math3.filter.DefaultProcessModel;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +17,6 @@ public class RobotState {
 
     public final Field2d field = new Field2d();
     public Pose2d fieldToVehicle = Constants.EmptyPose;
-    public Pose2d filteredFieldToVehicle = Constants.EmptyPose;
     public Pose2d estimatedFieldToVehicle = Constants.EmptyPose;
     public Rotation2d vehicleToTurret = Constants.EmptyRotation;
     public ChassisSpeeds deltaVehicle = new ChassisSpeeds();
@@ -61,7 +56,6 @@ public class RobotState {
 
     public synchronized void resetPosition(Pose2d initial_field_to_vehicle) {
         fieldToVehicle = initial_field_to_vehicle;
-        filteredFieldToVehicle = fieldToVehicle;
     }
 
     public synchronized void resetPosition() {
