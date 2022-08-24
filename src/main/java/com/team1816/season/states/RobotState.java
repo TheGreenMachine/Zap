@@ -3,10 +3,14 @@ package com.team1816.season.states;
 import com.google.inject.Singleton;
 import com.team1816.season.Constants;
 import com.team1816.season.subsystems.*;
+import edu.wpi.first.math.estimator.KalmanFilter;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.apache.commons.math3.filter.DefaultMeasurementModel;
+import org.apache.commons.math3.filter.DefaultProcessModel;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +28,14 @@ public class RobotState {
     public ChassisSpeeds normalizedDeltaChassisSpeeds = new ChassisSpeeds(); // accel
     public List<double[]> ZedAccel = new ArrayList<>(); // array size of three {x_accel, y_accel, z_accel}
     public boolean isPoseUpdated = true;
+    public KalmanFilter kf = new KalmanFilter(
+        new DefaultProcessModel(
+            new double[][]{{1d, 0},{0, 1d}}, new double[][]{{1d, 0},{0, 1d}}, new double[][]{{1d, 0},{0, 1d}}, new double[] {1d, 0}, new double[][]{{1d, 0},{0, 1d}}
+        ),
+        new DefaultMeasurementModel(
+            new double[][]{{1d, 0},{0, 1d}}, new double[][]{{1d, 0},{0, 1d}}
+        )
+    );
 
     // Superstructure ACTUAL states
     public Superstructure.STATE superstructureState = Superstructure.STATE.LITTLE_MAN;
