@@ -28,14 +28,6 @@ public class RobotState {
     public ChassisSpeeds normalizedDeltaChassisSpeeds = new ChassisSpeeds(); // accel
     public List<double[]> ZedAccel = new ArrayList<>(); // array size of three {x_accel, y_accel, z_accel}
     public boolean isPoseUpdated = true;
-    public KalmanFilter kf = new KalmanFilter(
-        new DefaultProcessModel(
-            new double[][]{{1d, 0},{0, 1d}}, new double[][]{{1d, 0},{0, 1d}}, new double[][]{{1d, 0},{0, 1d}}, new double[] {1d, 0}, new double[][]{{1d, 0},{0, 1d}}
-        ),
-        new DefaultMeasurementModel(
-            new double[][]{{1d, 0},{0, 1d}}, new double[][]{{1d, 0},{0, 1d}}
-        )
-    );
 
     // Superstructure ACTUAL states
     public Superstructure.STATE superstructureState = Superstructure.STATE.LITTLE_MAN;
