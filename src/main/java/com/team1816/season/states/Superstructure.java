@@ -19,7 +19,6 @@ import edu.wpi.first.math.util.Units;
  * manages the robot's DESIRED states
  */
 
-
 @Singleton
 public class Superstructure {
 

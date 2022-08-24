@@ -194,7 +194,7 @@ public class Constants {
     public static final double kBallEjectionDuration = factory.getConstant(
         "shooter",
         "ballEjectionDuration",
-        1
+        0.5
     );
     public static final boolean kUseVision = factory.getSubsystem("camera").implemented;
     //    public static final boolean kEnableBucketTuning =
