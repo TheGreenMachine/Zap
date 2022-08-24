@@ -77,14 +77,15 @@ dependencies {
     simulationRelease wpi.sim.enableRelease()
 
     implementation "com.github.dominikwin:badlog:v0.1.1"
-    implementation 'org.yaml:snakeyaml:1.29'
+    implementation 'org.yaml:snakeyaml:1.30'
     implementation 'gov.nist.math:jama:1.0.3'
-    implementation 'com.google.inject:guice:5.0.1'
-    implementation 'com.google.inject.extensions:guice-assistedinject:5.0.1'
+    implementation 'com.google.inject:guice:5.1.0'
+    implementation 'com.google.inject.extensions:guice-assistedinject:5.1.0'
+    implementation 'org.apache.commons:commons-math-parent:3.6.1'
 
-    testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-inline:3.6.0'
-    testImplementation 'org.hamcrest:hamcrest:2.1'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.mockito:mockito-inline:4.7.0'
+    testImplementation 'org.hamcrest:hamcrest:2.2'
 }
 
 // Simulation configuration (e.g. environment variables).
@@ -139,6 +140,7 @@ task runAlpha(type: JavaExec) {
     if (!DefaultNativePlatform.currentOperatingSystem.isWindows()) {
         environment "LD_LIBRARY_PATH", jniDir
         environment "DYLD_FALLBACK_LIBRARY_PATH", jniDir
+        environment "DYLD_LIBRARY_PATH", jniDir
         environment "DYLD_LIBRARY_PATH", jniDir
     }
     environment "HALSIM_EXTENSIONS", hal

@@ -281,7 +281,7 @@ public class RobotFactory {
 
     public boolean hasCanCoder(String subsystemName, String name) {
         if (
-            getSubsystem(subsystemName).swerveModules.modules.get(name).canCoder !=
+            getSubsystem(subsystemName).swerveModules.modules.get(name) !=
             null &&
             getSubsystem(subsystemName).swerveModules.modules.get(name).canCoder != null
         ) {
