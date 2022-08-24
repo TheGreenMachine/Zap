@@ -14,7 +14,11 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
-/* class responsible for organizing the collector, spindexer, elevator, and shooter into runnable actions - manages the robot's DESIRED states */
+/**
+ * The class responsible for organizing the collector, spindexer, elevator, and shooter into runnable actions -
+ * manages the robot's DESIRED states
+ */
+
 
 @Singleton
 public class Superstructure {
