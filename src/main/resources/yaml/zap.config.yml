@@ -123,7 +123,7 @@ subsystems:
             maxVel: 16500
             coast: 8000
     climber:
-        implemented: true
+        implemented: false
         falcons:
             climberMain: 34 #20
             climberFollower: 35 #-1
@@ -146,7 +146,7 @@ subsystems:
             secondToLastRungPos: 342000
             lastPos: 370000
     elevator:
-        implemented: false
+        implemented: true
         talons:
             elevator: 32
         pidConfig:
