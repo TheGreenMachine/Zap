@@ -72,7 +72,7 @@ subsystems:
             azimuthEncPPR: 4096
             heatThreshold: 65 # degrees C
     ledmanager:
-        implemented: true
+        implemented: false
         canifier: -1
         candle: -1
         constants:
@@ -99,7 +99,7 @@ subsystems:
             absPPR: 4096
             turretPPR: 53248 # 4096 * 13
     shooter:
-        implemented: false
+        implemented: true
         falcons:
             shooterMain: 21
         invertMotor:
@@ -166,7 +166,7 @@ subsystems:
             flushPow: -0.3
             intakePow: 0.3
     spindexer:
-        implemented: false
+        implemented: true
         talons:
             spindexer: 31
         constants:
