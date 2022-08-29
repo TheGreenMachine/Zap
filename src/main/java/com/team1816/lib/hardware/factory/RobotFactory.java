@@ -12,7 +12,7 @@ import com.team1816.lib.hardware.components.*;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.hardware.components.motor.LazySparkMax;
 import com.team1816.lib.hardware.components.pcm.*;
-import com.team1816.lib.subsystems.SwerveModule;
+import com.team1816.lib.subsystems.drive.SwerveModule;
 import com.team1816.season.Constants;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;

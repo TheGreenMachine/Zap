@@ -1,9 +1,9 @@
 package com.team1816.lib.math;
 
 import com.team1816.lib.Injector;
-import com.team1816.lib.subsystems.Drive;
+import com.team1816.lib.subsystems.drive.Drive;
+import com.team1816.lib.util.team254.SwerveDriveSignal;
 import com.team1816.season.Constants;
-import com.team254.lib.util.SwerveDriveSignal;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import java.util.ArrayList;
