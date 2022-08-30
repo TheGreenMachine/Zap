@@ -223,9 +223,9 @@ public class Robot extends TimedRobot {
                     "NativeUnits",
                     turret::getPosError
                 );
-            }
 
-            logger.finishInitialization();
+                logger.finishInitialization();
+            }
 
             subsystemManager.setSubsystems(
                 drive,
