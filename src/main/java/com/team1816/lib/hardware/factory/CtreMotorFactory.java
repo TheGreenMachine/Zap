@@ -37,9 +37,6 @@ public class CtreMotorFactory {
         public boolean SENSOR_PHASE = false;
 
         public int CONTROL_FRAME_PERIOD_MS = 5;
-
-        public VelocityMeasPeriod VELOCITY_MEASUREMENT_PERIOD =
-            VelocityMeasPeriod.Period_50Ms;
         public int VELOCITY_MEASUREMENT_ROLLING_AVERAGE_WINDOW = 1;
 
         public double OPEN_LOOP_RAMP_RATE = 0.0;
@@ -273,11 +270,6 @@ public class CtreMotorFactory {
             ((TalonSRXConfiguration) talonConfiguration).continuousCurrentLimit = 40;
             // TODO ADD YAML CONFIGS FOR CURRENT LIMITS
         }
-
-        ErrorCode code = motor.configVelocityMeasurementPeriod(
-            config.VELOCITY_MEASUREMENT_PERIOD,
-            kTimeoutMs
-        );
 
         talonConfiguration.clearPositionOnLimitF = false;
         talonConfiguration.clearPositionOnLimitR = false;
