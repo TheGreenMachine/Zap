@@ -1,5 +1,8 @@
 package com.team1816.lib.auto.paths;
 
+import static com.team1816.lib.subsystems.drive.Drive.kPathFollowingMaxAccelMeters;
+import static com.team1816.lib.subsystems.drive.Drive.kPathFollowingMaxVelMeters;
+
 import com.team1816.season.Constants;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -12,8 +15,8 @@ import java.util.List;
 
 public class PathUtil {
 
-    private static final double kMaxVelocity = Constants.kPathFollowingMaxVelMeters;
-    private static final double kMaxAccel = Constants.kPathFollowingMaxAccelMeters;
+    private static final double kMaxVelocity = kPathFollowingMaxVelMeters;
+    private static final double kMaxAccel = kPathFollowingMaxAccelMeters;
 
     public static Trajectory generateTrajectory(
         boolean usingApp,

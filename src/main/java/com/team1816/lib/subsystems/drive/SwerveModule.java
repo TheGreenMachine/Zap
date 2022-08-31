@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.CANCoder;
+import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.math.DriveConversions;
 import com.team1816.lib.math.SwerveKinematics;
@@ -31,87 +32,32 @@ public class SwerveModule implements ISwerveModule {
     public double motorTemp; // drive motor temperature
 
     // Constants
-    private final Constants.Swerve mConstants;
+    private final ModuleConfig mModuleConfig;
     private final int AZIMUTH_TICK_MASK;
     private final double allowableError;
 
-    public SwerveModule(String subsystemName, Constants.Swerve constants) {
-        mConstants = constants;
-
-        System.out.println(
-            "Configuring Swerve Module " +
-            constants.kModuleName +
-            " on subsystem " +
-            subsystemName
-        );
-
-        AZIMUTH_TICK_MASK = (int) factory.getConstant(NAME, "azimuthEncPPR", 4096) - 1;
-
-        /* Drive Motor Config */
-        driveMotor =
-            factory.getMotor(
-                subsystemName,
-                constants.kDriveMotorName,
-                factory.getSubsystem(subsystemName).swerveModules.drivePID,
-                -1
-            );
-
-        /* Azimuth (Angle) Motor Config */
-        azimuthMotor =
-            factory.getMotor(
-                subsystemName,
-                constants.kAzimuthMotorName,
-                factory.getSubsystem(subsystemName).swerveModules.azimuthPID,
-                -1
-            ); // The main difference is that there is no remote sensor being passed in.
-
-        driveMotor.configOpenloopRamp(0.25, Constants.kCANTimeoutMs);
-        azimuthMotor.configSupplyCurrentLimit(
-            new SupplyCurrentLimitConfiguration(true, 18, 28, 1),
-            Constants.kLongCANTimeoutMs
-        );
-
-        azimuthMotor.configPeakOutputForward(.4, Constants.kLongCANTimeoutMs);
-        azimuthMotor.configPeakOutputReverse(-.4, Constants.kLongCANTimeoutMs);
-
-        azimuthMotor.setNeutralMode(NeutralMode.Brake);
-
-        azimuthMotor.configAllowableClosedloopError(
-            0,
-            constants.kAzimuthPid.allowableError,
-            Constants.kLongCANTimeoutMs
-        );
-
-        allowableError = 5; // TODO this is a dummy value for checkSystem
-
-        /* Angle Encoder Config */
-        this.canCoder = null;
-        zeroAzimuthSensors();
-
-        System.out.println("  " + this);
-    }
-
     public SwerveModule(
         String subsystemName,
-        Constants.Swerve constants,
+        ModuleConfig moduleConfig,
         CANCoder canCoder
     ) {
-        mConstants = constants;
+        mModuleConfig = moduleConfig;
 
         System.out.println(
             "Configuring Swerve Module " +
-            constants.kModuleName +
+            mModuleConfig.moduleName +
             " on subsystem " +
             subsystemName
         );
 
-        AZIMUTH_TICK_MASK = 0xFFF;
+        AZIMUTH_TICK_MASK = (int) factory.getConstant(NAME, "azimuthEncPPR", 4096) - 1; // was 0xFFF
+
 
         /* Drive Motor Config */
         driveMotor =
             factory.getMotor(
                 subsystemName,
-                constants.kDriveMotorName,
+                mModuleConfig.driveMotorName,
                 factory.getSubsystem(subsystemName).swerveModules.drivePID,
                 -1
             );
@@ -120,9 +66,9 @@ public class SwerveModule implements ISwerveModule {
         azimuthMotor =
             factory.getMotor(
                 subsystemName,
-                constants.kAzimuthMotorName,
+                mModuleConfig.azimuthMotorName,
                 factory.getSubsystem(subsystemName).swerveModules.azimuthPID,
-                canCoder.getDeviceID()
+                canCoder == null ? -1: canCoder.getDeviceID()
             );
 
         driveMotor.configOpenloopRamp(0.25, Constants.kCANTimeoutMs);
@@ -138,7 +84,7 @@ public class SwerveModule implements ISwerveModule {
 
         azimuthMotor.configAllowableClosedloopError(
             0,
-            constants.kAzimuthPid.allowableError,
+            mModuleConfig.azimuthPid.allowableError,
             Constants.kLongCANTimeoutMs
         );
 
@@ -166,28 +112,20 @@ public class SwerveModule implements ISwerveModule {
         }
         azimuthDemand =
             DriveConversions.convertDegreesToTicks(desired_state.angle.getDegrees()) +
-            mConstants.kAzimuthEncoderHomeOffset;
+            mModuleConfig.azimuthEncoderHomeOffset;
         azimuthMotor.set(ControlMode.Position, azimuthDemand);
     }
 
     public SwerveModuleState getActualState() {
         driveActual =
             DriveConversions.ticksToMeters(driveMotor.getSelectedSensorVelocity(0)) * 10;
-        if (canCoder == null) {
-            if (azimuthMotor instanceof TalonSRX) {
-                int rawValue =
-                    ((TalonSRX) azimuthMotor).getSensorCollection()
-                        .getPulseWidthPosition() &
-                    AZIMUTH_TICK_MASK; // masked by 4096
-                azimuthActual = rawValue;
-            }
-        } else {
-            azimuthActual =
-                DriveConversions.convertTicksToDegrees(
-                    azimuthMotor.getSelectedSensorPosition(0) -
-                    mConstants.kAzimuthEncoderHomeOffset
-                );
-        }
+
+        azimuthActual =
+            DriveConversions.convertTicksToDegrees(
+                azimuthMotor.getSelectedSensorPosition(0) -
+                mModuleConfig.azimuthEncoderHomeOffset
+            );
+
         Rotation2d angleActual = Rotation2d.fromDegrees(azimuthActual);
         motorTemp = driveMotor.getTemperature(); // Celsius
         return new SwerveModuleState(driveActual, angleActual);
@@ -200,7 +138,7 @@ public class SwerveModule implements ISwerveModule {
 
     @Override
     public String getModuleName() {
-        return mConstants.kModuleName;
+        return mModuleConfig.moduleName;
     }
 
     @Override
@@ -233,11 +171,11 @@ public class SwerveModule implements ISwerveModule {
         return driveMotor.getClosedLoopError(0);
     }
 
-    public void zeroAzimuthSensors() {
-        if (azimuthMotor instanceof TalonSRX) {
+    public void zeroAzimuthSensor() {
+        if (azimuthMotor instanceof TalonSRX && canCoder == null) {
             var sensors = ((TalonSRX) azimuthMotor).getSensorCollection();
             sensors.setQuadraturePosition(
-                sensors.getPulseWidthPosition() & AZIMUTH_TICK_MASK,
+                sensors.getPulseWidthPosition() % AZIMUTH_TICK_MASK,
                 Constants.kLongCANTimeoutMs
             );
         }
@@ -270,7 +208,7 @@ public class SwerveModule implements ISwerveModule {
         }
 
         boolean checkAzimuth = true;
-        double setPoint = mConstants.kAzimuthEncoderHomeOffset;
+        double setPoint = mModuleConfig.azimuthEncoderHomeOffset;
         Timer.delay(1);
         for (int i = 0; i < 4; i++) {
             azimuthMotor.set(ControlMode.Position, setPoint);
@@ -292,15 +230,35 @@ public class SwerveModule implements ISwerveModule {
     public String toString() {
         return (
             "SwerveModule{ " +
-            mConstants.kDriveMotorName +
+            mModuleConfig.driveMotorName +
             " id: " +
             driveMotor.getDeviceID() +
             "  " +
-            mConstants.kAzimuthMotorName +
+            mModuleConfig.azimuthMotorName +
             " id: " +
             azimuthMotor.getDeviceID() +
             " offset: " +
-            mConstants.kAzimuthEncoderHomeOffset
+            mModuleConfig.azimuthEncoderHomeOffset
+        );
+    }
+
+    public static class ModuleConfig {
+
+        public ModuleConfig() {}
+
+        public String moduleName = "Name";
+        public String driveMotorName = "";
+        public String azimuthMotorName = "";
+
+        public PIDSlotConfiguration azimuthPid;
+        public PIDSlotConfiguration drivePid;
+
+        // constants defined for each swerve module
+        public double azimuthEncoderHomeOffset;
+        public static final int kAzimuthPPR = (int) factory.getConstant(
+            "drive",
+            "azimuthEncPPR",
+            4096
         );
     }
 }

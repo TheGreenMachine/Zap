@@ -13,7 +13,6 @@ import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.hardware.components.motor.LazySparkMax;
 import com.team1816.lib.hardware.components.pcm.*;
 import com.team1816.lib.subsystems.drive.SwerveModule;
-import com.team1816.season.Constants;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -255,23 +254,18 @@ public class RobotFactory {
             return null;
         }
 
-        var swerveConstants = new Constants.Swerve();
-        swerveConstants.kModuleName = name;
-        swerveConstants.kAzimuthMotorName = module.azimuth; //getAzimuth and drive give ID i think - not the module name (ex: leftRear)
-        swerveConstants.kAzimuthPid =
+        var moduleConfig = new SwerveModule.ModuleConfig();
+        moduleConfig.moduleName = name;
+        moduleConfig.azimuthMotorName = module.azimuth; //getAzimuth and drive give ID i think - not the module name (ex: leftRear)
+        moduleConfig.azimuthPid =
             getPidSlotConfig(subsystemName, "slot0", PIDConfig.Azimuth);
-        swerveConstants.kDriveMotorName = module.drive;
-        swerveConstants.kDrivePid =
-            getPidSlotConfig(subsystemName, "slot0", PIDConfig.Drive);
-        swerveConstants.kAzimuthEncoderHomeOffset = module.constants.get("encoderOffset");
+        moduleConfig.driveMotorName = module.drive;
+        moduleConfig.drivePid = getPidSlotConfig(subsystemName, "slot0", PIDConfig.Drive);
+        moduleConfig.azimuthEncoderHomeOffset = module.constants.get("encoderOffset");
 
         var canCoder = getCanCoder(subsystemName, name);
 
-        var swerveModule = canCoder == null
-            ? new SwerveModule(subsystemName, swerveConstants)
-            : new SwerveModule(subsystemName, swerveConstants, canCoder);
-
-        return swerveModule;
+        return new SwerveModule(subsystemName, moduleConfig, canCoder);
     }
 
     public boolean hasCanCoder(String subsystemName, String name) {
