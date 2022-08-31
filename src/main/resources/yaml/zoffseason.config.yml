@@ -3,13 +3,17 @@ subsystems:
         implemented: true
         talons:
             FLDr: 3
-            FRDr: 13 #1
+            FRDr: 13
             RLDr: 1 #13
             RRDr: 14
-            FLAz: 2
+            FLAz: -1 #2
             FRAz: 12
-            RLAz: 0
-            RRAz: 15
+            RLAz: -1 #10
+            RRAz: -1 #15
+        invertMotor:
+            - FRAz
+        invertSensorPhase:
+            - FRAz
         swerveModules:
             modules:
                 frontLeft:
@@ -17,25 +21,21 @@ subsystems:
                     azimuth: FLAz
                     constants:
                         encoderOffset: 1591
-                        invertSensorPhase: 1
                 frontRight:
                     drive: FRDr
                     azimuth: FRAz
                     constants:
                         encoderOffset: 1626
-                        invertSensorPhase: 1
                 backLeft:
                     drive: RLDr
                     azimuth: RLAz
                     constants:
                         encoderOffset: 3120 #1539
-                        invertSensorPhase: 1
                 backRight:
                     drive: RRDr
                     azimuth: RRAz
                     constants:
                         encoderOffset: 2843
-                        invertSensorPhase: 1
             drivePID:
                 slot0:
                     kP: .3
@@ -44,9 +44,9 @@ subsystems:
                     kF: 0.0499
             azimuthPID:
                 slot0:
-                    kP: 3.8 # 6.0
-                    kI: 0.00075
-                    kD: 77
+                    kP: 0.5 # 6.0
+                    kI: 0.0000
+                    kD: 0
                     kF: 0
                     allowableError: 5
         constants:
@@ -218,9 +218,9 @@ constants:
     maxAccel: 2.54 # meters/s^ 2
     maxAllowablePoseError: 0.1
     ## Logging ##
-    logTeleOp: 0 # 0 or 1
+    logTeleOp: 1 # 0 or 1
     logAuto: 0 # 0 or 1
-    badLogEnabled: 0 # 0 or 1
+    badLogEnabled: 1 # 0 or 1
     configStatusFrames: 0 # 0 or 1
     verbose: 0 # 0 or 1
     ## General ##

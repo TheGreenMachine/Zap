@@ -2,7 +2,6 @@ package com.team1816.lib.hardware.factory;
 
 import static com.team1816.lib.subsystems.Subsystem.factory;
 
-import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
 import com.ctre.phoenix.sensors.*;

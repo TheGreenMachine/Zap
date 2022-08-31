@@ -78,7 +78,6 @@ public class SwerveModule implements ISwerveModule {
         azimuthMotor.configPeakOutputForward(.4, Constants.kLongCANTimeoutMs);
         azimuthMotor.configPeakOutputReverse(-.4, Constants.kLongCANTimeoutMs);
 
-        azimuthMotor.setSensorPhase(constants.kInvertAzimuthSensorPhase);
         azimuthMotor.setNeutralMode(NeutralMode.Brake);
 
         azimuthMotor.configAllowableClosedloopError(
@@ -139,7 +138,6 @@ public class SwerveModule implements ISwerveModule {
         azimuthMotor.configPeakOutputForward(.4, Constants.kLongCANTimeoutMs);
         azimuthMotor.configPeakOutputReverse(-.4, Constants.kLongCANTimeoutMs);
 
-        azimuthMotor.setSensorPhase(constants.kInvertAzimuthSensorPhase);
         azimuthMotor.setNeutralMode(NeutralMode.Brake);
 
         azimuthMotor.configAllowableClosedloopError(
@@ -306,11 +304,7 @@ public class SwerveModule implements ISwerveModule {
             " id: " +
             azimuthMotor.getDeviceID() +
             " offset: " +
-            mConstants.kAzimuthEncoderHomeOffset +
-            " invertSensor: " +
-            mConstants.kInvertAzimuthSensorPhase +
-            " invertAzimuth: " +
-            mConstants.kInvertAzimuth
+            mConstants.kAzimuthEncoderHomeOffset
         );
     }
 }

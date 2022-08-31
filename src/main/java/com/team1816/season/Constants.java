@@ -96,8 +96,6 @@ public class Constants {
         public PIDSlotConfiguration kDrivePid;
 
         // constants defined for each swerve module
-        public boolean kInvertAzimuth = false;
-        public boolean kInvertAzimuthSensorPhase = false;
         public double kAzimuthEncoderHomeOffset;
 
         public static final int kAzimuthPPR = (int) factory.getConstant(

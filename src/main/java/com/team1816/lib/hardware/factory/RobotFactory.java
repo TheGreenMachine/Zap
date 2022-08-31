@@ -125,18 +125,16 @@ public class RobotFactory {
         var motorId = motor.getDeviceID();
 
         //no need to invert of print if ghosted - this is done in both here and CTREMotorFactory - why?
-        if (true) {
-            // Motor configuration
-            if (subsystem.implemented && subsystem.invertMotor.contains(name)) {
-                System.out.println("Inverting " + name + " with ID " + motorId);
-                motor.setInverted(true);
-            }
-            if (subsystem.implemented && subsystem.invertSensorPhase.contains(name)) {
-                System.out.println(
-                    "Inverting sensor phase of " + name + " with ID " + motorId
-                );
-                motor.setSensorPhase(true);
-            }
+        // Motor configuration
+        if (subsystem.implemented && subsystem.invertMotor.contains(name)) {
+            System.out.println("Inverting " + name + " with ID " + motorId);
+            motor.setInverted(true);
+        }
+        if (subsystem.implemented && subsystem.invertSensorPhase.contains(name)) {
+            System.out.println(
+                "Inverting sensor phase of " + name + " with ID " + motorId
+            );
+            motor.setSensorPhase(true);
         }
         if (getConstant("configStatusFrames", 0) > 0) {
             setStatusFrame(motor); // make motor send one signal per second - FOR DEBUGGING!
@@ -266,9 +264,6 @@ public class RobotFactory {
         swerveConstants.kDrivePid =
             getPidSlotConfig(subsystemName, "slot0", PIDConfig.Drive);
         swerveConstants.kAzimuthEncoderHomeOffset = module.constants.get("encoderOffset");
-        swerveConstants.kInvertAzimuthSensorPhase =
-            (module.constants.get("invertedSensorPhase") != null) &&
-            (module.constants.get("invertedSensorPhase") == 1); //boolean
 
         var canCoder = getCanCoder(subsystemName, name);
 
