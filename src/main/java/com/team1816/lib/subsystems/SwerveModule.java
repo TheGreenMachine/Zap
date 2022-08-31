@@ -45,11 +45,7 @@ public class SwerveModule implements ISwerveModule {
             subsystemName
         );
 
-        var azimuthMask = (int) factory.getConstant(NAME, "azimuthEncPPR") - 1;
-        if (azimuthMask < 0) {
-            azimuthMask = 0xFFF;
-        }
-        AZIMUTH_TICK_MASK = azimuthMask;
+        AZIMUTH_TICK_MASK = (int) factory.getConstant(NAME, "azimuthEncPPR", 4096) - 1;
 
         /* Drive Motor Config */
         driveMotor =
