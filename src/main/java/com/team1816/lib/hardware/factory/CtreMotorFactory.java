@@ -235,7 +235,6 @@ public class CtreMotorFactory {
         talonConfiguration.peakOutputForward = 1.0;
         talonConfiguration.peakOutputReverse = -1.0;
 
-        //talonConfiguration.velocityMeasurementPeriod = config.VELOCITY_MEASUREMENT_PERIOD;
         talonConfiguration.velocityMeasurementWindow =
             config.VELOCITY_MEASUREMENT_ROLLING_AVERAGE_WINDOW;
 

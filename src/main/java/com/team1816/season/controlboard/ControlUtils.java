@@ -4,7 +4,7 @@ import com.team1816.lib.controlboard.Controller;
 import com.team1816.lib.controlboard.LogitechController;
 import com.team1816.lib.controlboard.WasdController;
 import com.team1816.lib.controlboard.XboxController;
-import com.team254.lib.util.LatchedBoolean;
+import com.team1816.lib.util.team254.LatchedBoolean;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotBase;
 import java.util.function.BooleanSupplier;
