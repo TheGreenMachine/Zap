@@ -52,7 +52,6 @@ public class SwerveModule implements ISwerveModule {
 
         AZIMUTH_TICK_MASK = (int) factory.getConstant(NAME, "azimuthEncPPR", 4096) - 1; // was 0xFFF
 
-
         /* Drive Motor Config */
         driveMotor =
             factory.getMotor(
@@ -68,7 +67,7 @@ public class SwerveModule implements ISwerveModule {
                 subsystemName,
                 mModuleConfig.azimuthMotorName,
                 factory.getSubsystem(subsystemName).swerveModules.azimuthPID,
-                canCoder == null ? -1: canCoder.getDeviceID()
+                canCoder == null ? -1 : canCoder.getDeviceID()
             );
 
         driveMotor.configOpenloopRamp(0.25, Constants.kCANTimeoutMs);
