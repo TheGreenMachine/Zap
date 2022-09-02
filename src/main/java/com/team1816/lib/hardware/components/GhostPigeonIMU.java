@@ -7,6 +7,7 @@ import com.team1816.lib.hardware.components.motor.IGreenMotor;
 public class GhostPigeonIMU implements IPigeonIMU {
 
     double dummyYaw;
+    double dummyAccel;
 
     public GhostPigeonIMU(int id) {
         dummyYaw = 0;
@@ -17,6 +18,10 @@ public class GhostPigeonIMU implements IPigeonIMU {
     @Override
     public double getYaw() {
         return dummyYaw;
+    }
+
+    public double[] getAcceleration() {
+        return new double[] {0, 0, dummyAccel};
     }
 
     @Override
@@ -32,6 +37,12 @@ public class GhostPigeonIMU implements IPigeonIMU {
 
     @Override
     public ErrorCode setAccumZAngle(double angleDeg) {
+        return ErrorCode.OK;
+    }
+
+    @Override
+    public ErrorCode getBiasedAccelerometer(short[] accel) {
+        dummyAccel = 0;
         return ErrorCode.OK;
     }
 
