@@ -2,9 +2,9 @@ package com.team1816.lib;
 
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.factory.RobotFactory;
-import com.team1816.lib.subsystems.Drive;
-import com.team1816.lib.subsystems.SwerveDrive;
-import com.team1816.lib.subsystems.TankDrive;
+import com.team1816.lib.subsystems.drive.Drive;
+import com.team1816.lib.subsystems.drive.SwerveDrive;
+import com.team1816.lib.subsystems.drive.TankDrive;
 
 @Singleton
 public class DriveFactory implements Drive.Factory {

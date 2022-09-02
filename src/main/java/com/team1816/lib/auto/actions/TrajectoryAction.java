@@ -2,9 +2,9 @@ package com.team1816.lib.auto.actions;
 
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.paths.AutoPath;
-import com.team1816.lib.subsystems.Drive;
-import com.team1816.lib.subsystems.SwerveDrive;
-import com.team1816.lib.subsystems.TankDrive;
+import com.team1816.lib.subsystems.drive.Drive;
+import com.team1816.lib.subsystems.drive.SwerveDrive;
+import com.team1816.lib.subsystems.drive.TankDrive;
 import com.team1816.season.Constants;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;

@@ -2,7 +2,6 @@ package com.team1816.lib.hardware.factory;
 
 import static com.team1816.lib.subsystems.Subsystem.factory;
 
-import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
 import com.ctre.phoenix.sensors.*;
@@ -37,9 +36,6 @@ public class CtreMotorFactory {
         public boolean SENSOR_PHASE = false;
 
         public int CONTROL_FRAME_PERIOD_MS = 5;
-
-        public VelocityMeasPeriod VELOCITY_MEASUREMENT_PERIOD =
-            VelocityMeasPeriod.Period_50Ms;
         public int VELOCITY_MEASUREMENT_ROLLING_AVERAGE_WINDOW = 1;
 
         public double OPEN_LOOP_RAMP_RATE = 0.0;
@@ -239,7 +235,6 @@ public class CtreMotorFactory {
         talonConfiguration.peakOutputForward = 1.0;
         talonConfiguration.peakOutputReverse = -1.0;
 
-        //talonConfiguration.velocityMeasurementPeriod = config.VELOCITY_MEASUREMENT_PERIOD;
         talonConfiguration.velocityMeasurementWindow =
             config.VELOCITY_MEASUREMENT_ROLLING_AVERAGE_WINDOW;
 
@@ -273,11 +268,6 @@ public class CtreMotorFactory {
             ((TalonSRXConfiguration) talonConfiguration).continuousCurrentLimit = 40;
             // TODO ADD YAML CONFIGS FOR CURRENT LIMITS
         }
-
-        ErrorCode code = motor.configVelocityMeasurementPeriod(
-            config.VELOCITY_MEASUREMENT_PERIOD,
-            kTimeoutMs
-        );
 
         talonConfiguration.clearPositionOnLimitF = false;
         talonConfiguration.clearPositionOnLimitR = false;
