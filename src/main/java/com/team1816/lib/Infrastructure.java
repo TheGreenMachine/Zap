@@ -58,6 +58,22 @@ public class Infrastructure {
         return pigeon.getYaw();
     }
 
+    public double[] getAcceleration() {
+        return pigeon.getAcceleration();
+    }
+
+    public double getXAcceleration() {
+        return getAcceleration()[0];
+    }
+
+    public double getYAcceleration() {
+        return getAcceleration()[1];
+    }
+
+    public double getZAcceleration() {
+        return getAcceleration()[2];
+    }
+
     public PowerDistribution getPd() {
         return pd;
     }
