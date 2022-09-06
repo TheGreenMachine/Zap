@@ -4,8 +4,8 @@ subsystems:
         talons:
             leftMain: 15
             leftFollower: -1
-            rightMain: -1
-            rightFollower: 13
+            rightMain: 13
+            rightFollower: -1
         pidConfig:
             slot0:
                 kP: 1.6 #/ 0.18
@@ -53,12 +53,12 @@ infrastructure:
     # pigeon
     pigeonId: 9
     isPigeon2: false
-controlboard: demo
+controlboard: example
 constants:
     ## Drivetrain Dimensions and Parameters ##
     maxAllowablePoseError: 0.1
     maxVelPathFollowing: 3 # meters/s
-    maxVelOpenLoop: 3 # meters/s
+    maxVelOpenLoop: 10 # meters/s
     maxRotVel: 7.2
     maxAccel: 0.5 # meters/s^2
     trackWidth: 25 #inches
