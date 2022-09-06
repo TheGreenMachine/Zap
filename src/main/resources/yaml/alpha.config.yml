@@ -18,6 +18,15 @@ subsystems:
             isSwerve: 0
             encPPR: 22220.8
             currentLimit: 40
+            maxAllowablePoseError: 0.1
+            maxVelPathFollowing: 3 # meters/s
+            maxVelOpenLoop: 10 # meters/s
+            maxRotVel: 7.2
+            maxAccel: 0.5 # meters/s^2
+            trackWidth: 25 #inches
+            wheelbaseLength: 25 #inches
+            wheelDiameter: 6.32 #inches
+            kTrackScrubFactor: 1.0
     turret:
         implemented: true
         talons:
@@ -90,15 +99,6 @@ infrastructure:
 controlboard: example
 constants:
     ## Drivetrain Dimensions and Parameters ##
-    maxAllowablePoseError: 0.1
-    maxVelPathFollowing: 3 # meters/s
-    maxVelOpenLoop: 10 # meters/s
-    maxRotVel: 7.2
-    maxAccel: 0.5 # meters/s^2
-    trackWidth: 25 #inches
-    wheelbaseLength: 25 #inches
-    wheelDiameter: 6.32 #inches
-    kTrackScrubFactor: 1.0
     ## Logging Config ##
     logTeleOp: 1
     logAuto: 1

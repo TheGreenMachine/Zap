@@ -68,14 +68,17 @@ public abstract class Drive
 
     // Drivetrain characterization
     public static final double kDriveWheelTrackWidthInches = factory.getConstant(
+        NAME,
         "trackWidth",
         22
     );
     public static final double kDriveWheelbaseLengthInches = factory.getConstant(
+        NAME,
         "wheelbaseLength",
         22
     );
     public static final double kDriveWheelDiameterInches = factory.getConstant(
+        NAME,
         "wheelDiameter"
     );
     public static final double kWheelCircumferenceInches =
@@ -100,13 +103,16 @@ public abstract class Drive
     public static double kTrackScrubFactor = factory.getConstant("kTrackScrubFactor");
     // Drive speed
     public static final double kPathFollowingMaxAccelMeters = factory.getConstant(
+        NAME,
         "maxAccel",
         4
     );
     public static final double kPathFollowingMaxVelMeters = factory.getConstant(
+        NAME,
         "maxVelPathFollowing"
     );
     public static final double kOpenLoopMaxVelMeters = factory.getConstant(
+        NAME,
         "maxVelOpenLoop"
     );
 
