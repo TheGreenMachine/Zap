@@ -71,7 +71,7 @@ public class Turret extends Subsystem implements PidProvider {
     public Turret(
         Camera camera,
         LedManager ledManager,
-        Infrastructure inf,`
+        Infrastructure inf,
         RobotState rs
     ) {
         super(NAME, inf, rs);
