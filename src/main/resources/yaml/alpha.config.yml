@@ -41,6 +41,32 @@ subsystems:
             absPosTicksSouth: -704
             rpmEpsilonCheck: 60
             deltaXScalar: 150
+    spindexer:
+        implemented: false
+        talons:
+            spindexer: 31
+        constants:
+            collectPow: 0.5
+            indexPow: -0.5
+            flushPow: -1
+            coastPow: 0.25
+            firePow: 0.85
+    collector:
+        implemented: true
+        sparkmaxes:
+            intake: 23 # maxVelTicks100ms 10617
+        invertMotor:
+            - intake
+        solenoids:
+            arm: 2
+        pidConfig:
+            slot0:
+                kP: 0.0001 #tunned at 4000
+                kI: 0.0
+                kD: 0.006
+                kF: 0.0001
+                allowableError: 10
+
 infrastructure:
     canivoreBusName: rio
     # power distribution
