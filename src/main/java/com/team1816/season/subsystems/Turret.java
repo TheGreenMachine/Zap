@@ -77,7 +77,7 @@ public class Turret extends Subsystem implements PidProvider {
         super(NAME, inf, rs);
         this.camera = camera;
         led = ledManager;
-        turretMotor = factory.getMotor();
+        turretMotor = factory.getMotor(NAME, "turretMotor");
         kDeltaXScalar = factory.getConstant(NAME, "deltaXScalar", 1);
 
         // Define PPR values and determine whether to offset set positions by absEnc south pos
@@ -392,7 +392,10 @@ public class Turret extends Subsystem implements PidProvider {
             }
             int rawPos = (pos + kAbsTicksSouthOffset);
 
-            turretMotor.set(com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput, rawPos);
+            turretMotor.set(
+                com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput,
+                rawPos
+            );
         }
     }
 
