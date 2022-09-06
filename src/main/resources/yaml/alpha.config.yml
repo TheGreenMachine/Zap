@@ -46,6 +46,7 @@ subsystems:
         talons:
             spindexer: 31
         constants:
+            maxVelTicks100ms: 1
             collectPow: 0.5
             indexPow: -0.5
             flushPow: -1
@@ -67,7 +68,7 @@ subsystems:
                 kF: 0.0001
                 allowableError: 10
         constants:
-            maxVelTicks100MS: 10000
+            maxVelTicks100ms: 10000
             isVelocity: 1
             revving: 0 #.05
             collecting: -.5 #-3600
