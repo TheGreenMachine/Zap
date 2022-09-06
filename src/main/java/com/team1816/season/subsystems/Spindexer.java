@@ -15,6 +15,7 @@ public class Spindexer extends Subsystem {
     private static final String NAME = "spindexer";
 
     // Components
+    private IGreenMotor spindexer;
 
     // State
     private STATE desiredState = STATE.STOP;
