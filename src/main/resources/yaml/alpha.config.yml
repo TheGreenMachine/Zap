@@ -4,16 +4,14 @@ subsystems:
         talons:
             leftMain: 15
             leftFollower: -1
-            rightMain: 13
-            rightFollower: -1
+            rightMain: -1
+            rightFollower: 13
         pidConfig:
             slot0:
                 kP: 1.6 #/ 0.18
                 kI: 0.001 # 0.018
                 kD: 15 # 3.6
                 kF: 0.538
-        invertMotor:
-            - rightMain
         constants:
             maxVelTicks100ms: 12275.7
             openLoopRampRate: 0.8
@@ -34,7 +32,6 @@ subsystems:
                 kF: 0 # Should be 0 for position control
                 allowableError: 40
         constants:
-            turretPPR: 4096
             absPPR: 4096
             revLimit: -2250
             fwdLimit: 2603
@@ -44,34 +41,6 @@ subsystems:
             absPosTicksSouth: -704
             rpmEpsilonCheck: 60
             deltaXScalar: 150
-    shooter:
-        implemented: false
-        falcons:
-            shooterMain: 21
-            shooterFollower: -1
-        invertMotor:
-            - shooterMain
-        solenoids:
-            hood: 0
-        pidConfig:
-            slot0:
-                kP: 0.38 #.45
-                kI: 0.0002
-                kD: 13.5 # 11 - 4.5
-                kF: 0.0487
-                allowableError: 50
-        constants:
-            usingPoseForSpeed: 0
-            maxVelTicks100ms: 20700 #
-            currentFloorCheck: .12
-            currentEpsilonCheck: .2
-            rpmFloorCheck: 2000
-            rpmEpsilonCheck: 60
-            nearVel: 4500
-            midVel: 8600
-            farVel: 10150
-            maxVel: 16500
-            coast: 6000
 infrastructure:
     canivoreBusName: rio
     # power distribution

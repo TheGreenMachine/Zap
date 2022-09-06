@@ -1,12 +1,13 @@
 package com.team1816.season.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
+import com.team1816.lib.hardware.components.motor.IMotorSensor;
 import com.team1816.lib.loops.AsyncTimer;
 import com.team1816.lib.math.PoseUtil;
 import com.team1816.lib.subsystems.PidProvider;
@@ -76,7 +77,7 @@ public class Turret extends Subsystem implements PidProvider {
         super(NAME, inf, rs);
         this.camera = camera;
         led = ledManager;
-        turretMotor = factory.getMotor(NAME, "turretMotor");
+        turretMotor = factory.getMotor();
         kDeltaXScalar = factory.getConstant(NAME, "deltaXScalar", 1);
 
         // Define PPR values and determine whether to offset set positions by absEnc south pos
@@ -89,16 +90,8 @@ public class Turret extends Subsystem implements PidProvider {
                 : 0;
 
         // define limits + when turret should wrap around
-        kRevLimit =
-            //            Math.min(
-            //                (int) factory.getConstant(NAME, "fwdLimit"),
-            ((int) factory.getConstant(NAME, "revLimit"));
-        //            );
-        kFwdLimit =
-            //            Math.max(
-            (int) factory.getConstant(NAME, "fwdLimit");
-        //                ((int) factory.getConstant(NAME, "revLimit"))
-        //            );
+        kRevLimit = ((int) factory.getConstant(NAME, "revLimit"));
+        kFwdLimit = (int) factory.getConstant(NAME, "fwdLimit");
         int MASK = 0;
         if (Math.abs(kRevLimit - kFwdLimit) > kTurretPPR) {
             MASK = Math.abs((kRevLimit + kTurretPPR) - (kFwdLimit)) / 2; // this value is truncated
@@ -149,9 +142,9 @@ public class Turret extends Subsystem implements PidProvider {
         lostEncPos = false;
 
         if ((int) kRatioTurretAbs == 1) {
-            var sensors = ((TalonSRX) turretMotor).getSensorCollection();
-            var sensorVal = sensors.getPulseWidthPosition() % kAbsPPR;
-            sensors.setQuadraturePosition(sensorVal, Constants.kLongCANTimeoutMs);
+            var sensorVal =
+                ((IMotorSensor) turretMotor).getPulseWidthPosition() % kAbsPPR;
+            ((IMotorSensor) turretMotor).setQuadraturePosition(sensorVal);
             System.out.println("zeroing turret at " + sensorVal);
         } else {
             if (resetEncPos) {
@@ -399,7 +392,7 @@ public class Turret extends Subsystem implements PidProvider {
             }
             int rawPos = (pos + kAbsTicksSouthOffset);
 
-            turretMotor.set(com.ctre.phoenix.motorcontrol.ControlMode.Position, rawPos);
+            turretMotor.set(com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput, rawPos);
         }
     }
 

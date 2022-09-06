@@ -21,7 +21,7 @@ public class GhostPigeonIMU implements IPigeonIMU {
     }
 
     public double[] getAcceleration() {
-        return new double[] {0, 0, dummyAccel};
+        return new double[] { 0, 0, dummyAccel };
     }
 
     @Override
