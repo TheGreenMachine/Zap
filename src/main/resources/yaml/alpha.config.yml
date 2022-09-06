@@ -42,7 +42,7 @@ subsystems:
             rpmEpsilonCheck: 60
             deltaXScalar: 150
     spindexer:
-        implemented: false
+        implemented: true
         talons:
             spindexer: 31
         constants:
