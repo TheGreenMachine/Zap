@@ -36,7 +36,9 @@ public class Camera extends Subsystem {
         super(NAME, inf, rs);
         led = ledManager;
         SmartDashboard.putNumber("Camera/cy", 0);
-        socket.setDebug(factory.getConstant(NAME, "debug") > 0);
+        boolean debugEnabled = factory.getConstant(NAME, "debug") > 0;
+        if (RobotBase.isSimulation()) debugEnabled = false;
+        socket.setDebug(debugEnabled);
     }
 
     private double parseDeltaX(double x) {
