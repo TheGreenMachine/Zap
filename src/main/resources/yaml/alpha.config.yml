@@ -12,6 +12,8 @@ subsystems:
                 kI: 0.001 # 0.018
                 kD: 15 # 3.6
                 kF: 0.538
+        invertMotor:
+            - rightMain
         constants:
             maxVelTicks100ms: 12275.7
             openLoopRampRate: 0.8
@@ -69,7 +71,7 @@ subsystems:
         invertMotor:
             - intake
         solenoids:
-            arm: 2
+            arm: -1 #2
         pidConfig:
             slot0:
                 kP: 0.0001 #tunned at 4000
@@ -83,8 +85,6 @@ subsystems:
             revving: 0 #.05
             collecting: -.5 #-3600
             flush: 0.5 #.35
-
-
 infrastructure:
     canivoreBusName: rio
     # power distribution
