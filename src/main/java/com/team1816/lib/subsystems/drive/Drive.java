@@ -100,7 +100,10 @@ public abstract class Drive
     public static final double kDriveWheelRadiusMeters = Units.inchesToMeters(
         kDriveWheelRadiusInches
     );
-    public static double kTrackScrubFactor = factory.getConstant("kTrackScrubFactor");
+    public static double kTrackScrubFactor = factory.getConstant(
+        NAME,
+        "kTrackScrubFactor"
+    );
     // Drive speed
     public static final double kPathFollowingMaxAccelMeters = factory.getConstant(
         NAME,
@@ -119,7 +122,7 @@ public abstract class Drive
     public static final double kPXController = 1;
     public static final double kPYController = 1;
     public static final double kPThetaController = 4;
-    public static final double kMaxAngularSpeed = factory.getConstant("maxRotVel"); // rad/sec
+    public static final double kMaxAngularSpeed = factory.getConstant(NAME, "maxRotVel"); // rad/sec
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared =
         2 * Math.PI;
 

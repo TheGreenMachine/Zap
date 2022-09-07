@@ -18,7 +18,6 @@ subsystems:
             isSwerve: 0
             encPPR: 22220.8
             currentLimit: 40
-            maxAllowablePoseError: 0.1
             maxVelPathFollowing: 3 # meters/s
             maxVelOpenLoop: 10 # meters/s
             maxRotVel: 7.2
@@ -42,6 +41,7 @@ subsystems:
                 allowableError: 40
         constants:
             absPPR: 4096
+            turretPPR: 4096
             revLimit: -2250
             fwdLimit: 2603
             currentFloorCheck: 0
@@ -50,6 +50,7 @@ subsystems:
             absPosTicksSouth: -704
             rpmEpsilonCheck: 60
             deltaXScalar: 150
+            maxVelTicks100ms: 1
     spindexer:
         implemented: true
         talons:
@@ -99,6 +100,7 @@ infrastructure:
 controlboard: example
 constants:
     ## Drivetrain Dimensions and Parameters ##
+    maxAllowablePoseError: 0.1
     ## Logging Config ##
     logTeleOp: 1
     logAuto: 1
@@ -108,5 +110,6 @@ constants:
     ## General ##
     kLooperDt: .020
     resetFactoryDefaults: 0 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret
+
 
 
