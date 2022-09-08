@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
+import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.util.sendable.SendableBuilder;

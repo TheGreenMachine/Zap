@@ -169,6 +169,22 @@ public class Robot extends TimedRobot {
                         infrastructure.getPd()::getTotalCurrent
                     );
 
+                    BadLog.createTopic(
+                        "Pigeon/AccelerationX",
+                        "G",
+                        infrastructure::getXAcceleration
+                    );
+                    BadLog.createTopic(
+                        "Pigeon/AccelerationY",
+                        "G",
+                        infrastructure::getYAcceleration
+                    );
+                    BadLog.createTopic(
+                        "Pigeon/AccelerationX",
+                        "G",
+                        infrastructure::getZAcceleration
+                    );
+
                     drive.CreateBadLogValue("Drivetrain PID", drive.pidToString());
                     turret.CreateBadLogValue("Turret PID", turret.pidToString());
                     shooter.CreateBadLogValue("Shooter PID", shooter.pidToString());
