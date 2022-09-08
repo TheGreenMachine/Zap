@@ -54,7 +54,7 @@ public class ControlBoardBrige {
                         )
                 );
             System.out.println(
-                "Loading " + controlBoardConfigName + " control board config"
+                "Loading \"" + controlBoardConfigName + "\" control board config"
             );
         } catch (Exception e) {
             System.out.println(e);

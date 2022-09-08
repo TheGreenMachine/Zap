@@ -19,13 +19,13 @@ public class ControlUtils implements Controller.Factory {
         var hid = new Joystick(port);
         var axisCount = hid.getAxisCount();
         if (axisCount <= 3 && RobotBase.isSimulation()) {
-            System.out.println("Using Wasd Controller for port: " + port);
+            System.out.println("    Using Wasd Controller for port: " + port);
             return new WasdController(port);
         } else if (axisCount == 4) {
-            System.out.println("Using Logitech Controller for port: " + port);
+            System.out.println("    Using Logitech Controller for port: " + port);
             return new LogitechController(port);
         } else {
-            System.out.println("Using XboxController Controller for port: " + port);
+            System.out.println("    Using XboxController Controller for port: " + port);
             return new XboxController(port);
         }
     }

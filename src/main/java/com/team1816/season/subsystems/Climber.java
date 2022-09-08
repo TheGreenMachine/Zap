@@ -26,11 +26,6 @@ public class Climber extends Subsystem {
     private final ISolenoid topClamp;
     private final ISolenoid bottomClamp;
 
-    // Config
-    private double maxVel = 2; // arbitrary constants TODO: tune and move to yaml
-    private double maxAccel = 1; // arbitrary constants TODO: tune and move to yaml
-    private double feedForward = 0;
-
     // State
     private ControlMode controlMode = ControlMode.MANUAL;
 

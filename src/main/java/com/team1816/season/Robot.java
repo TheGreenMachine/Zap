@@ -325,15 +325,6 @@ public class Robot extends TimedRobot {
                             }
                         }
                     ),
-                    createAction(
-                        () -> controlBoard.getAsBool("toggleCamera"),
-                        () -> {
-                            robotState.overheating = !robotState.overheating;
-                            System.out.println(
-                                "overheating changed to = " + robotState.overheating
-                            );
-                        }
-                    ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("yeetShot"),
                         yeet -> {

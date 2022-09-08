@@ -392,10 +392,7 @@ public class Turret extends Subsystem implements PidProvider {
             }
             int rawPos = (pos + kAbsTicksSouthOffset);
 
-            turretMotor.set(
-                com.ctre.phoenix.motorcontrol.ControlMode.Position,
-                rawPos
-            );
+            turretMotor.set(com.ctre.phoenix.motorcontrol.ControlMode.Position, rawPos);
         }
     }
 

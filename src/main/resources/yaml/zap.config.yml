@@ -70,7 +70,14 @@ subsystems:
             isSwerve: 1
             encPPR: 14255
             azimuthEncPPR: 4096
-            heatThreshold: 65 # degrees C
+            maxRotVel: 14
+            trackWidth: 21 #inches
+            wheelbaseLength: 21.5 #inches
+            wheelDiameter: 4
+            kTrackScrubFactor: 1.0
+            maxVelOpenLoop: 3 # meters/s
+            maxVelPathFollowing: 3 # meters/s (2.2)
+            maxAccel: 2.54 # meters/s^ 2
     ledmanager:
         implemented: true
         canifier: -1
@@ -209,6 +216,8 @@ subsystems:
         solenoids:
             lock: 1
             dump: 3
+        constants:
+            heatThreshold: 65 # degrees C
 infrastructure:
     canivoreBusName: highSpeed
     # power distribution
@@ -223,15 +232,7 @@ infrastructure:
     isPigeon2: true
 controlboard: example
 constants:
-    # drivetrain dimensions and movement
-    maxRotVel: 14
-    trackWidth: 21 #inches
-    wheelbaseLength: 21.5 #inches
-    wheelDiameter: 4
-    kTrackScrubFactor: 1.0
-    maxVelOpenLoop: 3 # meters/s
-    maxVelPathFollowing: 3 # meters/s (2.2)
-    maxAccel: 2.54 # meters/s^ 2
+    # drivetrain misc
     maxAllowablePoseError: 0.1
     ## Logging ##
     logTeleOp: 1 # 0 or 1

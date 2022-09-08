@@ -102,9 +102,9 @@ public class Superstructure {
         if (revving) {
             shooter.setDesiredState(Shooter.STATE.REVVING);
             if (camera.isEnabled() && !manual) {
-                shooter.setVelocity(getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
+                shooter.velocityControl(getDistance(DistanceManager.SUBSYSTEM.SHOOTER));
             } else {
-                shooter.setVelocity(shooterVel);
+                shooter.velocityControl(shooterVel);
             }
         } else {
             shooter.setDesiredState(Shooter.STATE.COASTING);
@@ -201,7 +201,7 @@ public class Superstructure {
         );
 
         // setting velocity
-        shooter.setVelocity(extrapolatedShooterOutput);
+        shooter.velocityControl(extrapolatedShooterOutput);
     }
 
     public double getBallVel(double distance) {

@@ -200,21 +200,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             );
         // check if motors are overheating - update robotState
         SmartDashboard.putNumber("Drive/Temperature", motorTemperatures[0]);
-        if (!robotState.overheating) {
-            for (int i = 0; i < 4; i++) {
-                if (motorTemperatures[i] > heatThreshold) {
-                    robotState.overheating = true;
-                    break;
-                }
-            }
-        } else {
-            for (int i = 0; i < 4; i++) {
-                if (motorTemperatures[i] < heatThreshold - 10) { // TODO make yml or other const for point where overheating is no longer true
-                    robotState.overheating = false;
-                    break;
-                }
-            }
-        }
+        robotState.drivetrainTemp = motorTemperatures[0];
     }
 
     // general setters

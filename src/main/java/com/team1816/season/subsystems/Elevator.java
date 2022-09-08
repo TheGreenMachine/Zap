@@ -57,7 +57,7 @@ public class Elevator extends Subsystem {
         ALLOWABLE_ERROR = config.allowableError;
     }
 
-    private void setElevator(double elevatorOutput) {
+    private void elevatorControl(double elevatorOutput) {
         if (desiredOutput != elevatorOutput) {
             desiredOutput = elevatorOutput;
 
@@ -71,7 +71,7 @@ public class Elevator extends Subsystem {
 
     private void lockToShooter() {
         if (robotState.shooterState == Shooter.STATE.REVVING) {
-            setElevator(FIRE);
+            elevatorControl(FIRE);
         } else {
             outputsChanged = true; // keep looping through writeToHardware if shooter not up to speed
         }
@@ -81,7 +81,7 @@ public class Elevator extends Subsystem {
         if (hasBallInElevator()) {
             setDesiredState(STATE.STOP);
         } else {
-            setElevator(INTAKE);
+            elevatorControl(INTAKE);
             outputsChanged = true; // keep looping through writeToHardware if no ball seen
         }
     }
@@ -132,7 +132,7 @@ public class Elevator extends Subsystem {
             outputsChanged = false;
             switch (desiredState) {
                 case STOP:
-                    setElevator(0);
+                    elevatorControl(0);
                     break;
                 case INTAKE:
                     lockToSensor();
@@ -141,7 +141,7 @@ public class Elevator extends Subsystem {
                     lockToShooter();
                     break;
                 case FLUSH:
-                    setElevator(FLUSH);
+                    elevatorControl(FLUSH);
                     break;
             }
         }

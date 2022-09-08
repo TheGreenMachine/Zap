@@ -1,6 +1,7 @@
 package com.team1816.lib.subsystems.vision;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import java.io.*;
 import java.net.*;
@@ -65,7 +66,9 @@ public class VisionSocket {
             socketOut = null;
             socketIn = null;
         } catch (Throwable t) {
-            DriverStation.reportError("Cleanup failed: " + t.getMessage(), false);
+            if (RobotBase.isReal()) {
+                DriverStation.reportError("Cleanup failed: " + t.getMessage(), false);
+            }
         }
     }
 

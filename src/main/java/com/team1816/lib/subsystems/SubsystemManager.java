@@ -47,10 +47,11 @@ public class SubsystemManager implements ILooper {
         for (Subsystem subsystem : mAllSubsystems) {
             if (!subsystem.isImplemented()) {
                 System.out.println(
-                    "  Warning: " + subsystem.getSubsystemName() + " is not implemented"
+                    "Warning: " + subsystem.getSubsystemName() + " is not implemented"
                 );
             }
         }
+        System.out.println("********** Subsystems set **********");
     }
 
     private class EnabledLoop implements Loop {

@@ -55,11 +55,6 @@ public abstract class Drive
     protected final double tickRatioPerLoop = Constants.kLooperDt / .01d;
 
     // Constants
-    protected final double heatThreshold = factory.getConstant(
-        NAME,
-        "heatThreshold",
-        100
-    );
     public static final double maxVelTicks100ms = factory.getConstant(
         NAME,
         "maxVelTicks100ms"
