@@ -152,46 +152,6 @@ public class Robot extends TimedRobot {
                     "hide"
                 );
 
-                if (RobotBase.isReal()) {
-
-                    turret.createBadLogValue("Turret PID", turret.pidToString());
-                    shooter.createBadLogValue("Shooter PID", shooter.pidToString());
-
-                }
-                shooter.createBadLogTopic(
-                    "Shooter/TargetVel",
-                    "NativeUnits",
-                    shooter::getTargetVelocity,
-                    "hide",
-                    "join:Shooter/Velocities"
-                );
-                shooter.createBadLogTopic(
-                    "Shooter/Error",
-                    "NativeUnits",
-                    shooter::getError,
-                    "hide",
-                    "join:Shooter/Velocities"
-                );
-                turret.createBadLogTopic(
-                    "Turret/ActPos",
-                    "NativeUnits",
-                    turret::getActualPosTicks,
-                    "hide",
-                    "join:Turret/Positions"
-                );
-                turret.createBadLogTopic(
-                    "Turret/TargetPos",
-                    "NativeUnits",
-                    turret::getDesiredPosTicks,
-                    "hide",
-                    "join:Turret/Positions"
-                );
-                turret.createBadLogTopic(
-                    "Turret/ErrorPos",
-                    "NativeUnits",
-                    turret::getPosError
-                );
-
                 logger.finishInitialization();
             }
 
