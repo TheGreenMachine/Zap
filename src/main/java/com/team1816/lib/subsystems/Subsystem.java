@@ -40,8 +40,6 @@ public abstract class Subsystem implements Sendable {
         robotState = rs;
         infrastructure = inf;
         SendableRegistry.addLW(this, name, name);
-        createLogs();
-        createCommands();
     }
 
     // Optional design pattern for caching periodic reads to avoid hammering the HAL/CAN.
