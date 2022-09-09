@@ -1,11 +1,9 @@
 package com.team1816.season;
 
-import static com.team1816.lib.subsystems.drive.Drive.kPathFollowingMaxAccelMeters;
-import static com.team1816.lib.subsystems.drive.Drive.kPathFollowingMaxVelMeters;
 import static com.team1816.season.controlboard.ControlUtils.createAction;
 import static com.team1816.season.controlboard.ControlUtils.createHoldAction;
 
-import badlog.lib.BadLog;
+import com.team1816.lib.BadLogger;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
 import com.team1816.lib.controlboard.ControlBoardBrige;
@@ -15,7 +13,6 @@ import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.SubsystemManager;
 import com.team1816.lib.subsystems.drive.Drive;
-import com.team1816.lib.subsystems.drive.DrivetrainLogger;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.controlboard.ActionManager;
 import com.team1816.season.states.RobotState;
@@ -23,15 +20,8 @@ import com.team1816.season.states.Superstructure;
 import com.team1816.season.subsystems.*;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class Robot extends TimedRobot {
-
-    private BadLog logger;
-
     private final Looper enabledLoop;
     private final Looper disabledLoop;
 
@@ -102,59 +92,23 @@ public class Robot extends TimedRobot {
         return factory;
     }
 
-    private Double getLastLoop() {
+    public Double getLastRobotLoop() {
         return (Timer.getFPGATimestamp() - loopStart) * 1000;
+    }
+
+    public Double getLastLooperLoop() {
+        return enabledLoop.getLastLoop();
     }
 
     @Override
     public void robotInit() {
         try {
+            // register controllers
             controlBoard = Injector.get(IControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
-            if (Constants.kIsBadlogEnabled) {
-                var logFile = new SimpleDateFormat("MMdd_HH-mm").format(new Date());
-                var robotName = System.getenv("ROBOT_NAME");
-                if (robotName == null) robotName = "default";
-                var logFileDir = "/home/lvuser/";
-                // if there is a USB drive use it
-                if (Files.exists(Path.of("/media/sda1"))) {
-                    logFileDir = "/media/sda1/";
-                }
-                if (RobotBase.isSimulation()) {
-                    if (System.getProperty("os.name").toLowerCase().contains("win")) {
-                        logFileDir = System.getenv("temp") + "\\";
-                    } else {
-                        logFileDir = System.getProperty("user.dir") + "/";
-                    }
-                }
-                var filePath = logFileDir + robotName + "_" + logFile + ".bag";
-                logger = BadLog.init(filePath);
+            ControllerSetup.subscribeEventToImputs();
 
-                BadLog.createTopic(
-                    "Timings/Looper",
-                    "ms",
-                    enabledLoop::getLastLoop,
-                    "hide",
-                    "join:Timings"
-                );
-                BadLog.createTopic(
-                    "Timings/RobotLoop",
-                    "ms",
-                    this::getLastLoop,
-                    "hide",
-                    "join:Timings"
-                );
-                BadLog.createTopic(
-                    "Timings/Timestamp",
-                    "s",
-                    Timer::getFPGATimestamp,
-                    "xaxis",
-                    "hide"
-                );
-
-                logger.finishInitialization();
-            }
-
+            // register all subsystems
             subsystemManager.setSubsystems(
                 drive,
                 elevator,
@@ -170,6 +124,12 @@ public class Robot extends TimedRobot {
             subsystemManager.registerEnabledLoops(enabledLoop);
             subsystemManager.registerDisabledLoops(disabledLoop);
             subsystemManager.zeroSensors();
+
+            // register badlogs
+            if (Constants.kIsBadlogEnabled) {
+                BadLogger.setupLogs(this);
+                subsystemManager.createLogs();
+            }
 
             actionManager =
                 new ActionManager(
@@ -483,8 +443,7 @@ public class Robot extends TimedRobot {
             .setTrajectory(autoModeManager.getSelectedAuto().getCurrentTrajectory());
 
         if (Constants.kIsLoggingAutonomous) {
-            logger.updateTopics();
-            logger.log();
+            BadLogger.update();
         }
     }
 
@@ -499,8 +458,7 @@ public class Robot extends TimedRobot {
             throw t;
         }
         if (Constants.kIsLoggingTeleOp) {
-            logger.updateTopics();
-            logger.log();
+            BadLogger.update();
         }
     }
 
