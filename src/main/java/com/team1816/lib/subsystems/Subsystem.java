@@ -60,9 +60,9 @@ public abstract class Subsystem implements Sendable {
 
     public void createCommands() {}
 
-    public abstract void createLogs() {}
+    public abstract void createLogs();
 
-    protected void createBadLogTopic(
+    public void createBadLogTopic(
         String topicName,
         String unit,
         Supplier<Double> supplier,
@@ -73,7 +73,7 @@ public abstract class Subsystem implements Sendable {
         }
     }
 
-    protected void createBadLogValue(String badLogName, String value) {
+    public void createBadLogValue(String badLogName, String value) {
         if (factory.getSubsystem(name).implemented && Constants.kIsBadlogEnabled) {
             BadLog.createValue(badLogName, value);
         }

@@ -272,6 +272,12 @@ public abstract class Drive
     @Override
     public abstract void stop();
 
+    @Override
+    public void createLogs() {
+        createBadLogValue("Drivetrain PID", this.pidToString());
+        DrivetrainLogger.init(this);
+    }
+
     // other
     @Override
     public abstract boolean checkSystem();

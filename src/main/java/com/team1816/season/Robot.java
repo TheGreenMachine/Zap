@@ -130,15 +130,6 @@ public class Robot extends TimedRobot {
                 var filePath = logFileDir + robotName + "_" + logFile + ".bag";
                 logger = BadLog.init(filePath);
 
-                BadLog.createValue(
-                    "Max Velocity",
-                    String.valueOf(kPathFollowingMaxVelMeters)
-                );
-                BadLog.createValue(
-                    "Max Acceleration",
-                    String.valueOf(kPathFollowingMaxAccelMeters)
-                );
-
                 BadLog.createTopic(
                     "Timings/Looper",
                     "ms",
@@ -161,54 +152,12 @@ public class Robot extends TimedRobot {
                     "hide"
                 );
 
-                DrivetrainLogger.init(drive);
                 if (RobotBase.isReal()) {
-                    BadLog.createTopic(
-                        "PDP/Current",
-                        "Amps",
-                        infrastructure.getPd()::getTotalCurrent
-                    );
 
-                    BadLog.createTopic(
-                        "Pigeon/AccelerationX",
-                        "G",
-                        infrastructure::getXAcceleration
-                    );
-                    BadLog.createTopic(
-                        "Pigeon/AccelerationY",
-                        "G",
-                        infrastructure::getYAcceleration
-                    );
-                    BadLog.createTopic(
-                        "Pigeon/AccelerationX",
-                        "G",
-                        infrastructure::getZAcceleration
-                    );
-
-                    drive.createBadLogValue("Drivetrain PID", drive.pidToString());
                     turret.createBadLogValue("Turret PID", turret.pidToString());
                     shooter.createBadLogValue("Shooter PID", shooter.pidToString());
 
-                    if (camera.isImplemented()) {
-                        BadLog.createTopic(
-                            "Vision/DeltaXAngle",
-                            "Degrees",
-                            camera::getDeltaX
-                        );
-                        BadLog.createTopic(
-                            "Vision/Distance",
-                            "inches",
-                            camera::getDistance
-                        );
-                    }
                 }
-                shooter.createBadLogTopic(
-                    "Shooter/ActVel",
-                    "NativeUnits",
-                    shooter::getActualVelocity,
-                    "hide",
-                    "join:Shooter/Velocities"
-                );
                 shooter.createBadLogTopic(
                     "Shooter/TargetVel",
                     "NativeUnits",
