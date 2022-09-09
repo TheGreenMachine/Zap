@@ -167,6 +167,31 @@ public class Shooter extends Subsystem implements PidProvider {
         return checkShooter;
     }
 
+    @Override
+    public void createLogs() {
+        createBadLogTopic(
+            "Shooter/ActVel",
+            "NativeUnits",
+            this::getActualVelocity,
+            "hide",
+            "join:Shooter/Velocities"
+        );
+        createBadLogTopic(
+            "Shooter/TargetVel",
+            "NativeUnits",
+            this::getTargetVelocity,
+            "hide",
+            "join:Shooter/Velocities"
+        );
+        createBadLogTopic(
+            "Shooter/Error",
+            "NativeUnits",
+            this::getError,
+            "hide",
+            "join:Shooter/Velocities"
+        );
+    }
+
     public enum STATE {
         STOP,
         COASTING,
