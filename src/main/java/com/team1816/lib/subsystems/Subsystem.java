@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.ILooper;
+import com.team1816.season.Constants;
 import com.team1816.season.Robot;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.util.sendable.Sendable;
@@ -39,9 +40,9 @@ public abstract class Subsystem implements Sendable {
         robotState = rs;
         infrastructure = inf;
         SendableRegistry.addLW(this, name, name);
+        createLogs();
+        createCommands();
     }
-
-    public void writeToLog() {}
 
     // Optional design pattern for caching periodic reads to avoid hammering the HAL/CAN.
     public void readFromHardware() {}
@@ -57,19 +58,23 @@ public abstract class Subsystem implements Sendable {
 
     public abstract boolean checkSystem();
 
-    public void CreateBadLogTopic(
+    public void createCommands() {}
+
+    public abstract void createLogs() {}
+
+    protected void createBadLogTopic(
         String topicName,
         String unit,
         Supplier<Double> supplier,
         String... attrs
     ) {
-        if (factory.getSubsystem(name).implemented) {
+        if (factory.getSubsystem(name).implemented && Constants.kIsBadlogEnabled) {
             BadLog.createTopic(topicName, unit, supplier, attrs);
         }
     }
 
-    public void CreateBadLogValue(String badLogName, String value) {
-        if (factory.getSubsystem(name).implemented) {
+    protected void createBadLogValue(String badLogName, String value) {
+        if (factory.getSubsystem(name).implemented && Constants.kIsBadlogEnabled) {
             BadLog.createValue(badLogName, value);
         }
     }

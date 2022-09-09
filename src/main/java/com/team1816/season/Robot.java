@@ -185,9 +185,9 @@ public class Robot extends TimedRobot {
                         infrastructure::getZAcceleration
                     );
 
-                    drive.CreateBadLogValue("Drivetrain PID", drive.pidToString());
-                    turret.CreateBadLogValue("Turret PID", turret.pidToString());
-                    shooter.CreateBadLogValue("Shooter PID", shooter.pidToString());
+                    drive.createBadLogValue("Drivetrain PID", drive.pidToString());
+                    turret.createBadLogValue("Turret PID", turret.pidToString());
+                    shooter.createBadLogValue("Shooter PID", shooter.pidToString());
 
                     if (camera.isImplemented()) {
                         BadLog.createTopic(
@@ -202,42 +202,42 @@ public class Robot extends TimedRobot {
                         );
                     }
                 }
-                shooter.CreateBadLogTopic(
+                shooter.createBadLogTopic(
                     "Shooter/ActVel",
                     "NativeUnits",
                     shooter::getActualVelocity,
                     "hide",
                     "join:Shooter/Velocities"
                 );
-                shooter.CreateBadLogTopic(
+                shooter.createBadLogTopic(
                     "Shooter/TargetVel",
                     "NativeUnits",
                     shooter::getTargetVelocity,
                     "hide",
                     "join:Shooter/Velocities"
                 );
-                shooter.CreateBadLogTopic(
+                shooter.createBadLogTopic(
                     "Shooter/Error",
                     "NativeUnits",
                     shooter::getError,
                     "hide",
                     "join:Shooter/Velocities"
                 );
-                turret.CreateBadLogTopic(
+                turret.createBadLogTopic(
                     "Turret/ActPos",
                     "NativeUnits",
                     turret::getActualPosTicks,
                     "hide",
                     "join:Turret/Positions"
                 );
-                turret.CreateBadLogTopic(
+                turret.createBadLogTopic(
                     "Turret/TargetPos",
                     "NativeUnits",
                     turret::getDesiredPosTicks,
                     "hide",
                     "join:Turret/Positions"
                 );
-                turret.CreateBadLogTopic(
+                turret.createBadLogTopic(
                     "Turret/ErrorPos",
                     "NativeUnits",
                     turret::getPosError

@@ -17,21 +17,21 @@ public class DrivetrainLogger {
                 var name = module.getModuleName();
                 var prefix = "Drivetrain/" + name;
                 // Azimuth
-                subsystem.CreateBadLogTopic(
+                subsystem.createBadLogTopic(
                     prefix + "AzimuthPosition",
                     "ticks",
                     module::getActualAzimuth,
                     "hide",
                     "join:Drivetrain/AzimuthPosition"
                 );
-                subsystem.CreateBadLogTopic(
+                subsystem.createBadLogTopic(
                     prefix + "AzimuthDemand",
                     "ticks",
                     module::getDesiredAzimuth,
                     "hide",
                     "join:Drivetrain/AzimuthPosition"
                 );
-                subsystem.CreateBadLogTopic(
+                subsystem.createBadLogTopic(
                     prefix + "AzimuthError",
                     "ticks",
                     module::getAzimuthError,
@@ -40,28 +40,28 @@ public class DrivetrainLogger {
                 );
 
                 // Drive
-                subsystem.CreateBadLogTopic(
+                subsystem.createBadLogTopic(
                     prefix + "DriveVelocity",
                     "ticks",
                     module::getActualDrive,
                     "hide",
                     "join:Drivetrain/DriveVelocity"
                 );
-                subsystem.CreateBadLogTopic(
+                subsystem.createBadLogTopic(
                     prefix + "DriveVelocityDemand",
                     "ticks",
                     module::getDesiredDrive,
                     "hide",
                     "join:Drivetrain/DriveVelocity"
                 );
-                subsystem.CreateBadLogTopic(
+                subsystem.createBadLogTopic(
                     prefix + "DriveError",
                     "ticks",
                     module::getDriveError,
                     "hide",
                     "join:Drivetrain/DriveError"
                 );
-                subsystem.CreateBadLogTopic(
+                subsystem.createBadLogTopic(
                     prefix + "DriveTemperature",
                     "degrees C",
                     module::getMotorTemp,
@@ -70,42 +70,42 @@ public class DrivetrainLogger {
                 );
             }
         } else {
-            subsystem.CreateBadLogTopic(
+            subsystem.createBadLogTopic(
                 "Drivetrain/LeftActVel",
                 "NativeUnits",
                 ((TankDrive) drivetrain)::getLeftVelocityTicksActual,
                 "hide",
                 "join:Drivetrain/Velocities"
             );
-            subsystem.CreateBadLogTopic(
+            subsystem.createBadLogTopic(
                 "Drivetrain/RightActVel",
                 "NativeUnits",
                 ((TankDrive) drivetrain)::getRightVelocityTicksActual,
                 "hide",
                 "join:Drivetrain/Velocities"
             );
-            subsystem.CreateBadLogTopic(
+            subsystem.createBadLogTopic(
                 "Drivetrain/LeftVel",
                 "NativeUnits",
                 ((TankDrive) drivetrain)::getLeftVelocityTicksDemand,
                 "hide",
                 "join:Drivetrain/Velocities"
             );
-            subsystem.CreateBadLogTopic(
+            subsystem.createBadLogTopic(
                 "Drivetrain/RightVel",
                 "NativeUnits",
                 ((TankDrive) drivetrain)::getRightVelocityTicksDemand,
                 "hide",
                 "join:Drivetrain/Velocities"
             );
-            subsystem.CreateBadLogTopic(
+            subsystem.createBadLogTopic(
                 "Drivetrain/LeftError",
                 "NativeUnits",
                 ((TankDrive) drivetrain)::getLeftError,
                 "hide",
                 "join:Drivetrain/VelocityError"
             );
-            subsystem.CreateBadLogTopic(
+            subsystem.createBadLogTopic(
                 "Drivetrain/RightError",
                 "NativeUnits",
                 ((TankDrive) drivetrain)::getRightError,
@@ -113,42 +113,42 @@ public class DrivetrainLogger {
                 "join:Drivetrain/VelocityError"
             );
         }
-        subsystem.CreateBadLogTopic(
+        subsystem.createBadLogTopic(
             "Drivetrain/X Desired",
             "Inches",
             drivetrain::getFieldDesiredXDistance,
             "hide",
             "join:Drivetrain/Distance"
         );
-        subsystem.CreateBadLogTopic(
+        subsystem.createBadLogTopic(
             "Drivetrain/Y Desired",
             "Inches",
             drivetrain::getFieldDesiredYDistance,
             "hide",
             "join:Drivetrain/Distance"
         );
-        subsystem.CreateBadLogTopic(
+        subsystem.createBadLogTopic(
             "Drivetrain/X Actual",
             "Inches",
             drivetrain::getFieldXDistance,
             "hide",
             "join:Drivetrain/Distance"
         );
-        subsystem.CreateBadLogTopic(
+        subsystem.createBadLogTopic(
             "Drivetrain/Y Actual",
             "Inches",
             drivetrain::getFieldYDistance,
             "hide",
             "join:Drivetrain/Distance"
         );
-        subsystem.CreateBadLogTopic(
+        subsystem.createBadLogTopic(
             "Drivetrain/ActualHeading",
             "Angle",
             drivetrain::getActualHeadingDegrees,
             "hide",
             "join:Drivetrain/Heading"
         );
-        subsystem.CreateBadLogTopic(
+        subsystem.createBadLogTopic(
             "Drivetrain/DesiredHeading",
             "Angle",
             drivetrain::getDesiredHeadingDegrees,
