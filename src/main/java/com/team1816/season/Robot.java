@@ -22,6 +22,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.*;
 
 public class Robot extends TimedRobot {
+
     private final Looper enabledLoop;
     private final Looper disabledLoop;
 
@@ -103,11 +104,6 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         try {
-            // register controllers
-            controlBoard = Injector.get(IControlBoard.class);
-            DriverStation.silenceJoystickConnectionWarning(true);
-            ControllerSetup.subscribeEventToImputs();
-
             // register all subsystems
             subsystemManager.setSubsystems(
                 drive,
@@ -131,53 +127,56 @@ public class Robot extends TimedRobot {
                 subsystemManager.createLogs();
             }
 
+            // register controllers
+            controlBoard = Injector.get(IControlBoard.class);
+            DriverStation.silenceJoystickConnectionWarning(true);
             actionManager =
                 new ActionManager(
                     createHoldAction(
-                        () -> controlBoard.getAsBool("toggleCollector"),
+                        controlBoard.getAsBool("toggleCollector"),
                         pressed -> superstructure.setCollecting(pressed, true)
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("toggleCollectorReverse"),
+                        controlBoard.getAsBool("toggleCollectorReverse"),
                         pressed -> superstructure.setCollecting(pressed, false)
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("unlockClimber"),
+                        controlBoard.getAsBool("unlockClimber"),
                         climber::unlock
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("toggleManualShoot"),
+                        controlBoard.getAsBool("toggleManualShoot"),
                         () -> {
                             useManualShoot = !useManualShoot;
                             System.out.println("manual shooting toggled!");
                         }
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("zeroPose"),
+                        controlBoard.getAsBool("zeroPose"),
                         () -> {
                             turret.setTurretAngle(Turret.kSouth);
                             drive.zeroSensors(Constants.kDefaultZeroingPose);
                         }
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("brakeMode"),
+                        controlBoard.getAsBool("brakeMode"),
                         drive::setBraking
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("slowMode"),
+                        controlBoard.getAsBool("slowMode"),
                         drive::setSlowMode
                     ),
                     // Operator Gamepad
                     createAction(
-                        () -> controlBoard.getAsBool("raiseBucket"),
+                        controlBoard.getAsBool("raiseBucket"),
                         () -> distanceManager.incrementBucket(100)
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("lowerBucket"),
+                        controlBoard.getAsBool("lowerBucket"),
                         () -> distanceManager.incrementBucket(-100)
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("autoAim"),
+                        controlBoard.getAsBool("autoAim"),
                         aim -> {
                             if (aim) {
                                 superstructure.autoAim();
@@ -195,7 +194,7 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("yeetShot"),
+                        controlBoard.getAsBool("yeetShot"),
                         yeet -> {
                             if (useManualShoot) {
                                 superstructure.setRevving(
@@ -214,7 +213,7 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("shoot"),
+                        controlBoard.getAsBool("shoot"),
                         shooting -> {
                             superstructure.setRevving(
                                 shooting,
@@ -225,7 +224,7 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("turretJogLeft"),
+                        controlBoard.getAsBool("turretJogLeft"),
                         moving -> {
                             turret.setTurretSpeed(moving ? Turret.kJogSpeed : 0);
                             ledManager.indicateStatus(
@@ -234,7 +233,7 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("turretJogRight"),
+                        controlBoard.getAsBool("turretJogRight"),
                         moving -> {
                             turret.setTurretSpeed(moving ? -Turret.kJogSpeed : 0);
                             ledManager.indicateStatus(
@@ -243,27 +242,25 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createHoldAction( // climber up
-                        () ->
-                            controlBoard.getAsDouble("manualClimberArm") >
-                            Controller.kJoystickBooleanThreshold,
+                        controlBoard.getAsDouble("manualClimberArm") >
+                        Controller.kJoystickBooleanThreshold,
                         moving -> climber.setClimberPower(moving ? -.5 : 0)
                     ),
                     createHoldAction( // climber down
-                        () ->
-                            controlBoard.getAsDouble("manualClimberArm") <
-                            Controller.kJoystickBooleanThreshold,
+                        controlBoard.getAsDouble("manualClimberArm") <
+                        Controller.kJoystickBooleanThreshold,
                         moving -> climber.setClimberPower(moving ? .5 : 0)
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("toggleTopClamp"),
+                        controlBoard.getAsBool("toggleTopClamp"),
                         climber::setTopClamp
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("toggleBottomClamp"),
+                        controlBoard.getAsBool("toggleBottomClamp"),
                         climber::setBottomClamp
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("autoClimb"),
+                        controlBoard.getAsBool("autoClimb"),
                         () -> {
                             if (climber.getCurrentStage() == 0) {
                                 turret.setTurretAngle(Turret.kSouth);

@@ -55,7 +55,7 @@ public class SubsystemManager implements ILooper {
         System.out.println("********** Subsystems set **********");
     }
 
-    public void createLogs(){
+    public void createLogs() {
         for (Subsystem subsystem : mAllSubsystems) {
             subsystem.createLogs();
         }

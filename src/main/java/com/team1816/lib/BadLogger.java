@@ -1,12 +1,10 @@
 package com.team1816.lib;
 
 import badlog.lib.BadLog;
-import com.team1816.lib.subsystems.SubsystemManager;
 import com.team1816.season.Robot;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -15,8 +13,9 @@ import java.util.Date;
 public class BadLogger {
 
     private static BadLog logger;
-    public static void setupLogs(TimedRobot tr){
-        if(tr instanceof Robot){
+
+    public static void setupLogs(TimedRobot tr) {
+        if (tr instanceof Robot) {
             var logFile = new SimpleDateFormat("MMdd_HH-mm").format(new Date());
             var robotName = System.getenv("ROBOT_NAME");
             if (robotName == null) robotName = "default";
@@ -61,7 +60,7 @@ public class BadLogger {
         }
     }
 
-    public static void update(){
+    public static void update() {
         logger.updateTopics();
         logger.log();
     }

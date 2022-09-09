@@ -30,18 +30,15 @@ public class ControlUtils implements Controller.Factory {
         }
     }
 
-    public static PressAction createAction(BooleanSupplier input, Runnable action) {
+    public static PressAction createAction(boolean input, Runnable action) {
         return new PressAction(input, action);
     }
 
-    public static HoldAction createHoldAction(
-        BooleanSupplier input,
-        Consumer<Boolean> action
-    ) {
+    public static HoldAction createHoldAction(boolean input, Consumer<Boolean> action) {
         return new HoldAction(input, action);
     }
 
-    public static ScalarAction createScalar(DoubleSupplier input, DoubleConsumer output) {
+    public static ScalarAction createScalar(double input, DoubleConsumer output) {
         return new ScalarAction(input, output);
     }
 
@@ -56,8 +53,8 @@ public class ControlUtils implements Controller.Factory {
         private final BooleanSupplier input;
         private final Runnable action;
 
-        private PressAction(BooleanSupplier input, Runnable action) {
-            this.input = input;
+        private PressAction(boolean input, Runnable action) {
+            this.input = () -> input;
             this.action = action;
         }
 
@@ -83,8 +80,8 @@ public class ControlUtils implements Controller.Factory {
         private LatchedBoolean pressedState = new LatchedBoolean();
         private LatchedBoolean releasedState = new LatchedBoolean();
 
-        private HoldAction(BooleanSupplier input, Consumer<Boolean> action) {
-            this.input = input;
+        private HoldAction(boolean input, Consumer<Boolean> action) {
+            this.input = () -> input;
             this.action = action;
         }
 
@@ -109,8 +106,8 @@ public class ControlUtils implements Controller.Factory {
 
         private double lastValue;
 
-        private ScalarAction(DoubleSupplier input, DoubleConsumer action) {
-            this.input = input;
+        private ScalarAction(double input, DoubleConsumer action) {
+            this.input = () -> input;
             this.action = action;
         }
 

@@ -82,29 +82,13 @@ public class Infrastructure {
         return pd;
     }
 
-    public void createLogs(){
-        if(RobotBase.isReal() && Constants.kIsBadlogEnabled){
-            BadLog.createTopic(
-                "PDP/Current",
-                "Amps",
-                this.getPd()::getTotalCurrent
-            );
+    public void createLogs() {
+        if (RobotBase.isReal() && Constants.kIsBadlogEnabled) {
+            BadLog.createTopic("PDP/Current", "Amps", this.getPd()::getTotalCurrent);
 
-            BadLog.createTopic(
-                "Pigeon/AccelerationX",
-                "G",
-                this::getXAcceleration
-            );
-            BadLog.createTopic(
-                "Pigeon/AccelerationY",
-                "G",
-                this::getYAcceleration
-            );
-            BadLog.createTopic(
-                "Pigeon/AccelerationX",
-                "G",
-                this::getZAcceleration
-            );
+            BadLog.createTopic("Pigeon/AccelerationX", "G", this::getXAcceleration);
+            BadLog.createTopic("Pigeon/AccelerationY", "G", this::getYAcceleration);
+            BadLog.createTopic("Pigeon/AccelerationX", "G", this::getZAcceleration);
         }
     }
 
