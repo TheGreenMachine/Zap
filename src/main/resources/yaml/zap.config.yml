@@ -1,6 +1,6 @@
 subsystems:
     drivetrain:
-        implemented: false
+        implemented: true
         falcons:
             FLDr: 7
             FRDr: 10 #1
@@ -81,7 +81,7 @@ subsystems:
             cameraLed: 1
             maxLevel: 255
     turret:
-        implemented: false
+        implemented: true
         pidConfig:
             slot0:
                 kP: 1.25
@@ -123,7 +123,7 @@ subsystems:
             maxVel: 16500
             coast: 8000
     climber:
-        implemented: false
+        implemented: true
         falcons:
             climberMain: 34 #20
             climberFollower: 35 #-1
@@ -176,7 +176,7 @@ subsystems:
             coastPow: 0.25
             firePow: 0.85
     collector:
-        implemented: false
+        implemented: true
         sparkmaxes:
             intake: 23 # maxVelTicks100ms 10617
         invertMotor:
@@ -204,7 +204,7 @@ subsystems:
             maxDeltaX: 1200
             allowableDistanceError: 50
     cooler:
-        implemented: false
+        implemented: true
         solenoids:
             lock: 1
             dump: 3
