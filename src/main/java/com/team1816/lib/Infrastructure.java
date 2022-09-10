@@ -5,6 +5,7 @@ import com.google.inject.Singleton;
 import com.team1816.lib.hardware.components.IPigeonIMU;
 import com.team1816.lib.hardware.components.pcm.ICompressor;
 import com.team1816.lib.hardware.factory.RobotFactory;
+import com.team1816.season.Constants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.PowerDistribution;
 
@@ -56,6 +57,14 @@ public class Infrastructure {
 
     public double getYaw() {
         return pigeon.getYaw();
+    }
+
+    public Double[] getAcceleration() {
+        return new Double[] {
+            pigeon.getAcceleration()[0] * Constants.gravitationalAccelerationConstant,
+            pigeon.getAcceleration()[1] * Constants.gravitationalAccelerationConstant,
+            pigeon.getAcceleration()[2] * Constants.gravitationalAccelerationConstant,
+        };
     }
 
     public PowerDistribution getPd() {

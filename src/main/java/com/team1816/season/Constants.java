@@ -41,6 +41,7 @@ public class Constants {
     );
 
     // Drivetrain characterization
+    public static final double gravitationalAccelerationConstant = 9.8d;
     public static double kMaxAccelDiffThreshold = 1d;
 
     public static final double kDriveWheelTrackWidthInches = factory.getConstant(

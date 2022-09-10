@@ -227,17 +227,17 @@ public class Superstructure {
             (
                 Math.abs(
                     robotState.getCalculatedAccel().vxMetersPerSecond -
-                    robotState.ZedAccel.get(0)[0]
+                    robotState.triAxialAcceleration[0]
                 ) >
                 Constants.kMaxAccelDiffThreshold ||
                 Math.abs(
                     robotState.getCalculatedAccel().vyMetersPerSecond -
-                    robotState.ZedAccel.get(0)[1]
+                    robotState.triAxialAcceleration[1]
                 ) >
                 Constants.kMaxAccelDiffThreshold ||
                 Math.abs(
                     robotState.getCalculatedAccel().omegaRadiansPerSecond -
-                    robotState.ZedAccel.get(0)[2]
+                    robotState.triAxialAcceleration[2]
                 ) >
                 Constants.kMaxAccelDiffThreshold
             );

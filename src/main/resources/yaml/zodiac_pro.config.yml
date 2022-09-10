@@ -149,7 +149,7 @@ infrastructure:
     # pigeon
     pigeonId: 9
     isPigeon2: false
-controlboard: demo
+controlboard: example # demo
 constants:
     # drivetrain dimensions and movement
     maxRotVel: 7.2
