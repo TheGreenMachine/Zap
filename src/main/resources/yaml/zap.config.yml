@@ -1,6 +1,6 @@
 subsystems:
     drivetrain:
-        implemented: true
+        implemented: false
         falcons:
             FLDr: 7
             FRDr: 10 #1
@@ -191,7 +191,7 @@ subsystems:
                 kF: 0.0001
                 allowableError: 10
         constants:
-            maxVelTicks100MS: 10000
+            maxVelTicks100MS: 1000
             isVelocity: 0
             revving: 0 #.05
             collecting: -.5 #-3600
@@ -204,7 +204,7 @@ subsystems:
             maxDeltaX: 1200
             allowableDistanceError: 50
     cooler:
-        implemented: true
+        implemented: false
         solenoids:
             lock: 1
             dump: 3
