@@ -18,7 +18,7 @@ public class Elevator extends Subsystem {
 
     // Components
     private final IGreenMotor elevatorMotor;
-    private final DigitalInput ballSensor;
+    //private final DigitalInput ballSensor;
 
     // State
     private double desiredOutput;
@@ -38,8 +38,8 @@ public class Elevator extends Subsystem {
         this.elevatorMotor = factory.getMotor(NAME, "elevator");
 
         PIDSlotConfiguration config = factory.getPidSlotConfig(NAME);
-        this.ballSensor =
-            new DigitalInput((int) factory.getConstant(NAME, "ballSensor", 0));
+        //this.ballSensor =
+        //    new DigitalInput((int) factory.getConstant(NAME, "ballSensor", 0));
 
         isVelocity = factory.getConstant(NAME, "isVelocity", 0) > 0;
 
@@ -102,7 +102,8 @@ public class Elevator extends Subsystem {
     }
 
     public boolean hasBallInElevator() {
-        return !ballSensor.get();
+        return true; //temporary
+        //return !ballSensor.get();
     }
 
     @Override
