@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotBase;
 
 /**
  * The class responsible for organizing the collector, spindexer, elevator, and shooter into runnable actions -
@@ -223,6 +224,7 @@ public class Superstructure {
         if (!robotState.isPoseUpdated) {
             return true;
         }
+        if (RobotBase.isSimulation()) return false; // requires way too much effort
         boolean needsVisionUpdate =
             (
                 Math.abs(
@@ -235,10 +237,7 @@ public class Superstructure {
                     robotState.triAxialAcceleration[1]
                 ) >
                 Constants.kMaxAccelDiffThreshold ||
-                Math.abs(
-                    robotState.getCalculatedAccel().omegaRadiansPerSecond -
-                    robotState.triAxialAcceleration[2]
-                ) >
+                Math.abs(-9.8d - robotState.triAxialAcceleration[2]) >
                 Constants.kMaxAccelDiffThreshold
             );
         if (needsVisionUpdate) {
