@@ -67,7 +67,7 @@ public class Robot extends TimedRobot {
 
     // hack variables
     private final Turret.ControlMode defaultTurretControlMode =
-        Turret.ControlMode.FIELD_FOLLOWING;
+        Turret.ControlMode.CENTER_FOLLOWING;
     private boolean faulted;
     private boolean useManualShoot = false;
 
@@ -338,13 +338,13 @@ public class Robot extends TimedRobot {
                                     yeet,
                                     Shooter.TARMAC_TAPE_VEL,
                                     true
-                                ); // Tarmac
+                                );
                             } else {
                                 superstructure.setRevving(
                                     yeet,
                                     Shooter.NEAR_VELOCITY,
                                     true
-                                ); // Barf shot
+                                );
                             }
                             superstructure.setFiring(yeet);
                         }
@@ -356,7 +356,7 @@ public class Robot extends TimedRobot {
                                 shooting,
                                 Shooter.LAUNCHPAD_VEL,
                                 useManualShoot
-                            ); // Launchpad
+                            );
                             superstructure.setFiring(shooting);
                         }
                     ),
@@ -590,9 +590,9 @@ public class Robot extends TimedRobot {
 
         try {
             manualControl(); // controls drivetrain and turret joystick control mode
-            //            if (superstructure.needsVisionUpdate()) {
-            //                superstructure.updatePoseWithCamera();
-            //            }
+            if (superstructure.needsVisionUpdate()) {
+                superstructure.updatePoseWithCamera();
+            }
         } catch (Throwable t) {
             faulted = true;
             throw t;
