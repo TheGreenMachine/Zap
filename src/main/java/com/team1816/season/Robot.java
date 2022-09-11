@@ -417,8 +417,11 @@ public class Robot extends TimedRobot {
                     ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("eject"),
-                        (eject) -> {
-                            if (eject && !turret.getControlMode().equals(Turret.ControlMode.EJECT)) {
+                        eject -> {
+                            if (
+                                eject &&
+                                !turret.getControlMode().equals(Turret.ControlMode.EJECT)
+                            ) {
                                 turret.setControlMode(Turret.ControlMode.EJECT);
                             } else {
                                 turret.revolve();
@@ -625,7 +628,7 @@ public class Robot extends TimedRobot {
         if (
             Math.abs(controlBoard.getAsDouble("manualTurretXVal")) > 0.90 ||
             Math.abs(controlBoard.getAsDouble("manualTurretYVal")) > 0.90 &&
-                turret.getControlMode().equals(Turret.ControlMode.FIELD_FOLLOWING)
+            turret.getControlMode().equals(Turret.ControlMode.FIELD_FOLLOWING)
         ) {
             //turret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
             turret.setFollowingAngle(
