@@ -267,13 +267,13 @@ public class Superstructure {
     public void updatePoseWithCamera() {
         double cameraDist = camera.getDistance(); // flat distance in meters
         // 26.56 = radius of center hub - - 5629 = square of height of hub
-        double distanceToCenterMeters = Units.inchesToMeters(26.56) + cameraDist;
+        double distanceToCenterMeters = Units.inchesToMeters(Constants.kTargetRadius) + cameraDist;
 
         Translation2d deltaToHub = new Translation2d(
             distanceToCenterMeters,
             robotState.getLatestFieldToTurret()
         )
-        .rotateBy(Rotation2d.fromDegrees(robotState.visionPoint.cX)); // TODO need to see whether or not to invert
+        .rotateBy(Rotation2d.fromDegrees(robotState.visionPoint.thetaX)); // TODO need to see whether or not to invert
         Pose2d newRobotPose = Constants.targetPos.transformBy(
             new Transform2d(
                 deltaToHub.unaryMinus(),

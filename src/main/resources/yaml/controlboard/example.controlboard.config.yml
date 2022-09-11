@@ -38,8 +38,8 @@ operator:
         leftTrigger: yeetShot
         rightTrigger: shoot
     buttons:
-        leftBumper: autoAim
-        rightBumper: toggleHood
+        leftBumper: fatBoy
+        rightBumper: littleMan
         start: toggleTopClamp
         back: toggleBottomClamp
 demoMode: false

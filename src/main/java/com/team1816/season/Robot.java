@@ -311,12 +311,6 @@ public class Robot extends TimedRobot {
                                 turret.snap();
                             } else {
                                 superstructure.updatePoseWithCamera();
-                                if (
-                                    defaultTurretControlMode ==
-                                    Turret.ControlMode.CENTER_FOLLOWING
-                                ) {
-                                    turret.setFollowingAngle(Turret.kSouth);
-                                }
                                 turret.setControlMode(defaultTurretControlMode);
                             }
                         }
@@ -426,6 +420,18 @@ public class Robot extends TimedRobot {
                             } else {
                                 turret.revolve();
                             }
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("littleMan"),
+                        () -> {
+                            superstructure.setSuperstructureState(Superstructure.STATE.LITTLE_MAN);
+                        }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("fatBoy"),
+                        () -> {
+                            superstructure.setSuperstructureState(Superstructure.STATE.FAT_BOY);
                         }
                     )
                 );
