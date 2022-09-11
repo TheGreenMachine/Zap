@@ -410,6 +410,20 @@ public class Robot extends TimedRobot {
 
                             climber.incrementClimberStage();
                         }
+                    ),
+                    createAction(
+                        () -> controlBoard.getAsBool("toggleTurretMode"),
+                        turret::revolve
+                    ),
+                    createHoldAction(
+                        () -> controlBoard.getAsBool("eject"),
+                        (eject) -> {
+                            if (eject && !turret.getControlMode().equals(Turret.ControlMode.EJECT)) {
+                                turret.setControlMode(Turret.ControlMode.EJECT);
+                            } else {
+                                turret.revolve();
+                            }
+                        }
                     )
                 );
         } catch (Throwable t) {
@@ -610,9 +624,10 @@ public class Robot extends TimedRobot {
         // Field-relative controls for turret (ie: left on joystick makes turret point left on the field, instead of left relative to the robot)
         if (
             Math.abs(controlBoard.getAsDouble("manualTurretXVal")) > 0.90 ||
-            Math.abs(controlBoard.getAsDouble("manualTurretYVal")) > 0.90
+            Math.abs(controlBoard.getAsDouble("manualTurretYVal")) > 0.90 &&
+                turret.getControlMode().equals(Turret.ControlMode.FIELD_FOLLOWING)
         ) {
-            turret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
+            //turret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
             turret.setFollowingAngle(
                 (
                     new Rotation2d(

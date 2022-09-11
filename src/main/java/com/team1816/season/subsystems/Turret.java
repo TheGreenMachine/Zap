@@ -292,6 +292,27 @@ public class Turret extends Subsystem implements PidProvider {
         }
     }
 
+    public void revolve() {
+        switch (controlMode) {
+            case FIELD_FOLLOWING:
+                setControlMode(ControlMode.EJECT);
+                break;
+            case EJECT:
+                setControlMode(ControlMode.CENTER_FOLLOWING);
+                break;
+            case CENTER_FOLLOWING:
+                setControlMode(ControlMode.ABSOLUTE_FOLLOWING);
+                break;
+            case ABSOLUTE_FOLLOWING:
+                setControlMode(ControlMode.FIELD_FOLLOWING);
+                break;
+            case POSITION:
+                break;
+            case MANUAL:
+                break;
+        }
+    }
+
     /** offsets */
     private int fieldFollowingOffset() {
         return -convertTurretDegreesToTicks( // this is currently negated because motor is running counterclockwise

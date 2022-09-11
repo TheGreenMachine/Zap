@@ -32,8 +32,8 @@ operator:
     buttonpad:
         x: cameraToggle
         y: autoClimb
-        a: getFieldFollowing # dummy for example purposes
-        b: getSuperstructure # dummy for example purposes
+        a: toggleTurretMode
+        b: eject
     axes:
         leftTrigger: yeetShot
         rightTrigger: shoot
