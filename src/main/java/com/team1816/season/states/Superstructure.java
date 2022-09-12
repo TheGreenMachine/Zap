@@ -273,7 +273,7 @@ public class Superstructure {
             distanceToCenterMeters,
             robotState.getLatestFieldToTurret()
         )
-        .rotateBy(Rotation2d.fromDegrees(robotState.visionPoint.thetaX)); // TODO need to see whether or not to invert
+        .rotateBy(Rotation2d.fromDegrees(robotState.visionPoint.cX)); // TODO need to see whether or not to invert
         Pose2d newRobotPose = Constants.targetPos.transformBy(
             new Transform2d(
                 deltaToHub.unaryMinus(),
