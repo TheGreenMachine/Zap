@@ -18,6 +18,8 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.List;
 
 public abstract class Drive
@@ -29,6 +31,13 @@ public abstract class Drive
     }
 
     public static final String NAME = "drivetrain";
+
+    // Demo Mode
+    protected double demoModeMultiplier;
+    protected SendableChooser<DemoMode> demoModeChooser;
+    protected DemoMode desiredMode;
+    public static final boolean isDemoMode =
+        factory.getConstant(NAME, "isDemoMode", 0) > 0;
 
     // Components
     protected static LedManager ledManager;
@@ -131,6 +140,23 @@ public abstract class Drive
     public Drive(LedManager lm, Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
         ledManager = lm;
+
+        if (isDemoMode) {
+            demoModeChooser = new SendableChooser<>();
+            SmartDashboard.putData("Demo Mode", demoModeChooser);
+            // demo mode functionality configuration
+
+            System.out.println("    Using Demo Control Board");
+
+            demoModeChooser = new SendableChooser<>();
+            SmartDashboard.putData("Demo Mode", demoModeChooser);
+
+            for (DemoMode demoMode : DemoMode.values()) {
+                demoModeChooser.addOption(demoMode.name(), demoMode);
+            }
+            demoModeChooser.setDefaultOption(DemoMode.SLOW.name(), DemoMode.SLOW);
+            demoModeMultiplier = 0.25;
+        }
     }
 
     // calls periodic methods in swerve/tank based on current control state
@@ -310,5 +336,42 @@ public abstract class Drive
     public enum ControlState {
         OPEN_LOOP, // open loop voltage control
         TRAJECTORY_FOLLOWING,
+    }
+
+    private enum DemoMode {
+        SLOW,
+        COMFORT,
+        SPORT,
+        PLAID,
+    }
+
+    public boolean update() {
+        DemoMode selectedMode = demoModeChooser.getSelected();
+        boolean modeChanged = desiredMode != selectedMode;
+
+        // if auto has been changed, update selected auto mode + thread
+        if (modeChanged) {
+            System.out.println(
+                "Demo mode changed from: " + desiredMode + ", to: " + selectedMode.name()
+            );
+
+            switch (selectedMode) {
+                case SLOW:
+                    demoModeMultiplier = 0.25;
+                    break;
+                case COMFORT:
+                    demoModeMultiplier = 0.5;
+                    break;
+                case SPORT:
+                    demoModeMultiplier = 0.75;
+                    break;
+                case PLAID:
+                    demoModeMultiplier = 1;
+                    break;
+            }
+        }
+        desiredMode = selectedMode;
+
+        return modeChanged;
     }
 }

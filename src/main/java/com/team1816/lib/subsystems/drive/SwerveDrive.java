@@ -228,9 +228,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             controlState = ControlState.OPEN_LOOP;
         }
         SwerveDriveSignal signal = swerveDriveHelper.calculateDriveSignal(
-            forward,
-            strafe,
-            rotation,
+            (isDemoMode ? forward * demoModeMultiplier : forward),
+            (isDemoMode ? strafe * demoModeMultiplier : strafe),
+            (isDemoMode ? rotation * demoModeMultiplier : rotation),
             isSlowMode,
             true,
             false

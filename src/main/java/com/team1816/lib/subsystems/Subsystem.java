@@ -60,7 +60,7 @@ public abstract class Subsystem implements Sendable {
 
     public void createCommands() {}
 
-    public abstract void createLogs();
+    public void createLogs() {}
 
     public void createBadLogTopic(
         String topicName,

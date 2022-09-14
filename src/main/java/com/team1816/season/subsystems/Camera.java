@@ -1,6 +1,5 @@
 package com.team1816.season.subsystems;
 
-import badlog.lib.BadLog;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
@@ -148,16 +147,8 @@ public class Camera extends Subsystem {
 
     @Override
     public void createLogs() {
-        createBadLogTopic(
-            "Vision/DeltaXAngle",
-            "Degrees",
-            this::getDeltaX
-        );
-        createBadLogTopic(
-            "Vision/Distance",
-            "inches",
-            this::getDistance
-        );
+        createBadLogTopic("Vision/DeltaXAngle", "Degrees", this::getDeltaX);
+        createBadLogTopic("Vision/Distance", "inches", this::getDistance);
     }
 
     public double simulateDeltaX() {

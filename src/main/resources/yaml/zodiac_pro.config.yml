@@ -30,6 +30,7 @@ subsystems:
             maxVelPathFollowing: 2.2 # meters/s
             maxAccel: 2.54 # meters/s^ 2
             currentLimit: 40
+            isDemoMode: 1
     ledmanager:
         implemented: true
         canifier: -1

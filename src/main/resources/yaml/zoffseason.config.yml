@@ -71,6 +71,7 @@ subsystems:
             maxVelOpenLoop: 3 # meters/s
             maxVelPathFollowing: 3 # meters/s (2.2)
             maxAccel: 2.54 # meters/s^ 2
+            isDemoMode: 0
 infrastructure:
     canivoreBusName: rio
     # power distribution

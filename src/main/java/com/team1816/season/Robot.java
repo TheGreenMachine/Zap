@@ -1,21 +1,17 @@
 package com.team1816.season;
 
-import static com.team1816.lib.subsystems.drive.Drive.kPathFollowingMaxAccelMeters;
-import static com.team1816.lib.subsystems.drive.Drive.kPathFollowingMaxVelMeters;
 import static com.team1816.season.controlboard.ControlUtils.createAction;
 import static com.team1816.season.controlboard.ControlUtils.createHoldAction;
 
 import badlog.lib.BadLog;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
-import com.team1816.lib.controlboard.ControlBoardBrige;
 import com.team1816.lib.controlboard.Controller;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.SubsystemManager;
 import com.team1816.lib.subsystems.drive.Drive;
-import com.team1816.lib.subsystems.drive.DrivetrainLogger;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.controlboard.ActionManager;
 import com.team1816.season.states.RobotState;
@@ -429,10 +425,6 @@ public class Robot extends TimedRobot {
             robotState.outputToSmartDashboard();
             // update shuffleboard selected auto mode
             autoModeManager.outputToSmartDashboard();
-
-            if (ControlBoardBrige.getInstance().isDemoMode()) { //todo: should be using injector
-                controlBoard.outputToSmartDashboard();
-            }
         } catch (Throwable t) {
             faulted = true;
             System.out.println(t.getMessage());
@@ -466,8 +458,8 @@ public class Robot extends TimedRobot {
             }
 
             // check if demo mode speed multiplier changed
-            if (ControlBoardBrige.getInstance().isDemoMode()) { //todo: should be using injector
-                controlBoard.update();
+            if (Drive.isDemoMode) { //todo: should be using injector
+                drive.update();
             }
         } catch (Throwable t) {
             faulted = true;

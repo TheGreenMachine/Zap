@@ -450,11 +450,7 @@ public class Turret extends Subsystem implements PidProvider {
             "hide",
             "join:Turret/Positions"
         );
-        createBadLogTopic(
-            "Turret/ErrorPos",
-            "NativeUnits",
-            this::getPosError
-        );
+        createBadLogTopic("Turret/ErrorPos", "NativeUnits", this::getPosError);
     }
 
     public enum ControlMode {
