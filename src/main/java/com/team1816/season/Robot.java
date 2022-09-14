@@ -3,7 +3,7 @@ package com.team1816.season;
 import static com.team1816.season.controlboard.ControlUtils.createAction;
 import static com.team1816.season.controlboard.ControlUtils.createHoldAction;
 
-import badlog.lib.BadLog;
+import com.team1816.lib.BadLogger;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
 import com.team1816.lib.controlboard.Controller;
@@ -19,14 +19,8 @@ import com.team1816.season.states.Superstructure;
 import com.team1816.season.subsystems.*;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class Robot extends TimedRobot {
-
-    private BadLog logger;
 
     private final Looper enabledLoop;
     private final Looper disabledLoop;
@@ -98,59 +92,18 @@ public class Robot extends TimedRobot {
         return factory;
     }
 
-    private Double getLastLoop() {
+    public Double getLastRobotLoop() {
         return (Timer.getFPGATimestamp() - loopStart) * 1000;
+    }
+
+    public Double getLastLooperLoop() {
+        return enabledLoop.getLastLoop();
     }
 
     @Override
     public void robotInit() {
         try {
-            controlBoard = Injector.get(IControlBoard.class);
-            DriverStation.silenceJoystickConnectionWarning(true);
-            if (Constants.kIsBadlogEnabled) {
-                var logFile = new SimpleDateFormat("MMdd_HH-mm").format(new Date());
-                var robotName = System.getenv("ROBOT_NAME");
-                if (robotName == null) robotName = "default";
-                var logFileDir = "/home/lvuser/";
-                // if there is a USB drive use it
-                if (Files.exists(Path.of("/media/sda1"))) {
-                    logFileDir = "/media/sda1/";
-                }
-                if (RobotBase.isSimulation()) {
-                    if (System.getProperty("os.name").toLowerCase().contains("win")) {
-                        logFileDir = System.getenv("temp") + "\\";
-                    } else {
-                        logFileDir = System.getProperty("user.dir") + "/";
-                    }
-                }
-                var filePath = logFileDir + robotName + "_" + logFile + ".bag";
-                logger = BadLog.init(filePath);
-
-                BadLog.createTopic(
-                    "Timings/Looper",
-                    "ms",
-                    enabledLoop::getLastLoop,
-                    "hide",
-                    "join:Timings"
-                );
-                BadLog.createTopic(
-                    "Timings/RobotLoop",
-                    "ms",
-                    this::getLastLoop,
-                    "hide",
-                    "join:Timings"
-                );
-                BadLog.createTopic(
-                    "Timings/Timestamp",
-                    "s",
-                    Timer::getFPGATimestamp,
-                    "xaxis",
-                    "hide"
-                );
-
-                logger.finishInitialization();
-            }
-
+            // register all subsystems
             subsystemManager.setSubsystems(
                 drive,
                 elevator,
@@ -167,53 +120,62 @@ public class Robot extends TimedRobot {
             subsystemManager.registerDisabledLoops(disabledLoop);
             subsystemManager.zeroSensors();
 
+            // register badlogs
+            if (Constants.kIsBadlogEnabled) {
+                BadLogger.setupLogs(this);
+                subsystemManager.createLogs();
+            }
+
+            // register controllers
+            controlBoard = Injector.get(IControlBoard.class);
+            DriverStation.silenceJoystickConnectionWarning(true);
             actionManager =
                 new ActionManager(
                     createHoldAction(
-                        () -> controlBoard.getAsBool("toggleCollector"),
+                        controlBoard.getAsBool("toggleCollector"),
                         pressed -> superstructure.setCollecting(pressed, true)
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("toggleCollectorReverse"),
+                        controlBoard.getAsBool("toggleCollectorReverse"),
                         pressed -> superstructure.setCollecting(pressed, false)
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("unlockClimber"),
+                        controlBoard.getAsBool("unlockClimber"),
                         climber::unlock
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("toggleManualShoot"),
+                        controlBoard.getAsBool("toggleManualShoot"),
                         () -> {
                             useManualShoot = !useManualShoot;
                             System.out.println("manual shooting toggled!");
                         }
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("zeroPose"),
+                        controlBoard.getAsBool("zeroPose"),
                         () -> {
                             turret.setTurretAngle(Turret.kSouth);
                             drive.zeroSensors(Constants.kDefaultZeroingPose);
                         }
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("brakeMode"),
+                        controlBoard.getAsBool("brakeMode"),
                         drive::setBraking
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("slowMode"),
+                        controlBoard.getAsBool("slowMode"),
                         drive::setSlowMode
                     ),
                     // Operator Gamepad
                     createAction(
-                        () -> controlBoard.getAsBool("raiseBucket"),
+                        controlBoard.getAsBool("raiseBucket"),
                         () -> distanceManager.incrementBucket(100)
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("lowerBucket"),
+                        controlBoard.getAsBool("lowerBucket"),
                         () -> distanceManager.incrementBucket(-100)
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("autoAim"),
+                        controlBoard.getAsBool("autoAim"),
                         aim -> {
                             if (aim) {
                                 superstructure.autoAim();
@@ -231,7 +193,7 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("yeetShot"),
+                        controlBoard.getAsBool("yeetShot"),
                         yeet -> {
                             if (useManualShoot) {
                                 superstructure.setRevving(
@@ -250,7 +212,7 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("shoot"),
+                        controlBoard.getAsBool("shoot"),
                         shooting -> {
                             superstructure.setRevving(
                                 shooting,
@@ -261,7 +223,7 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("turretJogLeft"),
+                        controlBoard.getAsBool("turretJogLeft"),
                         moving -> {
                             turret.setTurretSpeed(moving ? Turret.kJogSpeed : 0);
                             ledManager.indicateStatus(
@@ -270,7 +232,7 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("turretJogRight"),
+                        controlBoard.getAsBool("turretJogRight"),
                         moving -> {
                             turret.setTurretSpeed(moving ? -Turret.kJogSpeed : 0);
                             ledManager.indicateStatus(
@@ -279,27 +241,25 @@ public class Robot extends TimedRobot {
                         }
                     ),
                     createHoldAction( // climber up
-                        () ->
-                            controlBoard.getAsDouble("manualClimberArm") >
-                            Controller.kJoystickBooleanThreshold,
+                        controlBoard.getAsDouble("manualClimberArm") >
+                        Controller.kJoystickBooleanThreshold,
                         moving -> climber.setClimberPower(moving ? -.5 : 0)
                     ),
                     createHoldAction( // climber down
-                        () ->
-                            controlBoard.getAsDouble("manualClimberArm") <
-                            Controller.kJoystickBooleanThreshold,
+                        controlBoard.getAsDouble("manualClimberArm") <
+                        Controller.kJoystickBooleanThreshold,
                         moving -> climber.setClimberPower(moving ? .5 : 0)
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("toggleTopClamp"),
+                        controlBoard.getAsBool("toggleTopClamp"),
                         climber::setTopClamp
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("toggleBottomClamp"),
+                        controlBoard.getAsBool("toggleBottomClamp"),
                         climber::setBottomClamp
                     ),
                     createAction(
-                        () -> controlBoard.getAsBool("autoClimb"),
+                        controlBoard.getAsBool("autoClimb"),
                         () -> {
                             if (climber.getCurrentStage() == 0) {
                                 turret.setTurretAngle(Turret.kSouth);
@@ -475,8 +435,7 @@ public class Robot extends TimedRobot {
             .setTrajectory(autoModeManager.getSelectedAuto().getCurrentTrajectory());
 
         if (Constants.kIsLoggingAutonomous) {
-            logger.updateTopics();
-            logger.log();
+            BadLogger.update();
         }
     }
 
@@ -491,8 +450,7 @@ public class Robot extends TimedRobot {
             throw t;
         }
         if (Constants.kIsLoggingTeleOp) {
-            logger.updateTopics();
-            logger.log();
+            BadLogger.update();
         }
     }
 

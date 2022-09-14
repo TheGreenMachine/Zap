@@ -50,8 +50,15 @@ public class SubsystemManager implements ILooper {
                     "Warning: " + subsystem.getSubsystemName() + " is not implemented"
                 );
             }
+            subsystem.createCommands();
         }
         System.out.println("********** Subsystems set **********");
+    }
+
+    public void createLogs() {
+        for (Subsystem subsystem : mAllSubsystems) {
+            subsystem.createLogs();
+        }
     }
 
     private class EnabledLoop implements Loop {
