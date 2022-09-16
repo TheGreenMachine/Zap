@@ -101,7 +101,7 @@ subsystems:
             turretMotor: 33
         constants:
             deltaXScalar: 150 #value worked best at 150 in sim
-            revLimit: -4296 # adjusted for zero-offset
+            revLimit: -6080 # adjusted for zero-offset
             fwdLimit: 26321 # adjusted for zero-offset
             absPosTicksSouth: 0 # absolute
             absPPR: 4096
@@ -135,9 +135,11 @@ subsystems:
         falcons:
             climberMain: 34 #20
             climberFollower: 35 #-1
+        invertMotor:
+            - climberMain
         solenoids:
-            topClamp: 7
-            bottomClamp: 6
+            topClamp: 6
+            bottomClamp: 7
         pidConfig:
             slot0:
                 kP: 0.050 #0.075 #tunned at 4000
@@ -147,12 +149,12 @@ subsystems:
                 allowableError: 5000
         constants:
             maxVelTicks100ms: 1
-            unlockPos: -14400
+            unlockPos: 14400
             startPos: 0
             returnPos: 0
-            firstToSecondRungPos: 150000
-            secondToLastRungPos: 342000
-            lastPos: 370000
+            firstToSecondRungPos: -150000
+            secondToLastRungPos: -342000
+            lastPos: -370000
     elevator:
         implemented: false
         talons:
@@ -186,25 +188,23 @@ subsystems:
             firePow: 0.85
     collector:
         implemented: true
-        sparkmaxes:
+        talons:
             intake: 23 # maxVelTicks100ms 10617
-        invertMotor:
-            - intake
         solenoids:
             arm: 2
         pidConfig:
             slot0:
-                kP: 0.0001 #tunned at 4000
+                kP: 0.1
                 kI: 0.0
-                kD: 0.006
+                kD: 0.1
                 kF: 0.0001
                 allowableError: 10
         constants:
             maxVelTicks100ms: 10000
-            isVelocity: 1
+            isVelocity: 0
             revving: 0 #.05
-            collecting: -.5 #-3600
-            flush: 0.5 #.35
+            collecting: 0.25 #-3600
+            flush: -0.25 #.35
     camera:
         implemented: false
         constants:

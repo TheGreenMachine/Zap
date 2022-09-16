@@ -30,11 +30,14 @@ public class ControlUtils implements Controller.Factory {
         }
     }
 
-    public static PressAction createAction(boolean input, Runnable action) {
+    public static PressAction createAction(BooleanSupplier input, Runnable action) {
         return new PressAction(input, action);
     }
 
-    public static HoldAction createHoldAction(boolean input, Consumer<Boolean> action) {
+    public static HoldAction createHoldAction(
+        BooleanSupplier input,
+        Consumer<Boolean> action
+    ) {
         return new HoldAction(input, action);
     }
 
@@ -55,6 +58,11 @@ public class ControlUtils implements Controller.Factory {
 
         private PressAction(boolean input, Runnable action) {
             this.input = () -> input;
+            this.action = action;
+        }
+
+        private PressAction(BooleanSupplier input, Runnable action) {
+            this.input = input;
             this.action = action;
         }
 
@@ -80,8 +88,8 @@ public class ControlUtils implements Controller.Factory {
         private LatchedBoolean pressedState = new LatchedBoolean();
         private LatchedBoolean releasedState = new LatchedBoolean();
 
-        private HoldAction(boolean input, Consumer<Boolean> action) {
-            this.input = () -> input;
+        private HoldAction(BooleanSupplier input, Consumer<Boolean> action) {
+            this.input = input;
             this.action = action;
         }
 
