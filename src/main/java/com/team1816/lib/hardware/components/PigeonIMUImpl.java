@@ -6,8 +6,12 @@ import com.ctre.phoenix.sensors.PigeonImuJNI;
 
 public class PigeonIMUImpl extends PigeonIMU implements IPigeonIMU {
 
+    private long m_handle = 0l;
+
     public PigeonIMUImpl(int id) {
         super(id);
+        m_handle = super.getHandle();
+        System.out.println("PIGEON HANDLE: " + m_handle);
     }
 
     @Override
@@ -16,10 +20,9 @@ public class PigeonIMUImpl extends PigeonIMU implements IPigeonIMU {
     }
 
     public double[] getAcceleration() {
-        short[] accel = new short[3];
-        long handle = 0l;
-        PigeonImuJNI.JNI_GetBiasedAccelerometer(handle, accel);
-        return new double[] { accel[0], accel[1], accel[2] };
+        short[] _accel = new short[3];
+        int retVal = PigeonImuJNI.JNI_GetBiasedAccelerometer(m_handle, _accel);
+        return new double[] { _accel[0], _accel[1], _accel[2] };
     }
 
     @Override
