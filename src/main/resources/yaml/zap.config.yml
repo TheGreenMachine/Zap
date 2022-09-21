@@ -94,7 +94,7 @@ subsystems:
         constants:
             deltaXScalar: 150 #value worked best at 150 in sim
             revLimit: -4296 # adjusted for zero-offset
-            fwdLimit: 26321 # adjusted for zero-offset
+            fwdLimit: 29000 # adjusted for zero-offset
             absPosTicksSouth: 0 # absolute
             absPPR: 4096
             turretPPR: 53248 # 4096 * 13
@@ -132,11 +132,11 @@ subsystems:
             bottomClamp: 7
         pidConfig:
             slot0:
-                kP: 0.050 #0.075 #tunned at 4000
+                kP: 0.035 #0.075 #tunned at 4000
                 kI: 0.000
                 kD: .6
                 kF: 0.0
-                allowableError: 5000
+                allowableError: 3000
         constants:
             maxVelTicks100ms: 1
             unlockPos: -14400
