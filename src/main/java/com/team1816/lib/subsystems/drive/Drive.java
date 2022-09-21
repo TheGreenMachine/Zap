@@ -36,7 +36,7 @@ public abstract class Drive
     protected double demoModeMultiplier;
     protected SendableChooser<DemoMode> demoModeChooser;
     protected DemoMode desiredMode;
-    public static final boolean isDemoMode =
+    protected static final boolean isDemoMode =
         factory.getConstant(NAME, "isDemoMode", 0) > 0;
 
     // Components
@@ -287,6 +287,10 @@ public abstract class Drive
     public abstract void setBraking(boolean on);
 
     public abstract void resetOdometry(Pose2d pose);
+
+    public boolean isDemoMode() {
+        return isDemoMode;
+    }
 
     @Override
     public void zeroSensors() {

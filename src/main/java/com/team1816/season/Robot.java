@@ -1,21 +1,17 @@
 package com.team1816.season;
 
-import static com.team1816.lib.subsystems.drive.Drive.kPathFollowingMaxAccelMeters;
-import static com.team1816.lib.subsystems.drive.Drive.kPathFollowingMaxVelMeters;
 import static com.team1816.season.controlboard.ControlUtils.createAction;
 import static com.team1816.season.controlboard.ControlUtils.createHoldAction;
 
 import com.team1816.lib.BadLogger;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
-import com.team1816.lib.controlboard.ControlBoardBrige;
 import com.team1816.lib.controlboard.Controller;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.SubsystemManager;
 import com.team1816.lib.subsystems.drive.Drive;
-import com.team1816.lib.subsystems.drive.DrivetrainLogger;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.controlboard.ActionManager;
 import com.team1816.season.states.RobotState;
@@ -23,14 +19,8 @@ import com.team1816.season.states.Superstructure;
 import com.team1816.season.subsystems.*;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class Robot extends TimedRobot {
-
-    private BadLog logger;
 
     private final Looper enabledLoop;
     private final Looper disabledLoop;
@@ -102,8 +92,12 @@ public class Robot extends TimedRobot {
         return factory;
     }
 
-    private Double getLastLoop() {
+    public Double getLastRobotLoop() {
         return (Timer.getFPGATimestamp() - loopStart) * 1000;
+    }
+
+    public Double getLastEnabledLoop() {
+        return enabledLoop.getLastLoop();
     }
 
     @Override
@@ -204,10 +198,7 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("toggleCamera"),
                         () -> {
-                            robotState.overheating = !robotState.overheating;
-                            System.out.println(
-                                "overheating changed to = " + robotState.overheating
-                            );
+                            camera.setCameraEnabled(!camera.isEnabled());
                         }
                     ),
                     createHoldAction(
@@ -239,10 +230,6 @@ public class Robot extends TimedRobot {
                             ); // Launchpad
                             superstructure.setFiring(shooting);
                         }
-                    ),
-                    createAction(
-                        () -> controlBoard.getAsBool("cameraToggle"),
-                        () -> System.out.println("toggleCamera")
                     ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("turretJogLeft"),
@@ -409,10 +396,6 @@ public class Robot extends TimedRobot {
             robotState.outputToSmartDashboard();
             // update shuffleboard selected auto mode
             autoModeManager.outputToSmartDashboard();
-
-            if (ControlBoardBrige.getInstance().isDemoMode()) { //todo: should be using injector
-                controlBoard.outputToSmartDashboard();
-            }
         } catch (Throwable t) {
             faulted = true;
             System.out.println(t.getMessage());
@@ -446,7 +429,7 @@ public class Robot extends TimedRobot {
             }
 
             // check if demo mode speed multiplier changed
-            if (Drive.isDemoMode) { //todo: should be using injector
+            if (drive.isDemoMode()) { //todo: should be using injector
                 drive.update();
             }
         } catch (Throwable t) {

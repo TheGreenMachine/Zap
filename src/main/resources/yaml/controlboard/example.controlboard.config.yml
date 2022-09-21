@@ -30,7 +30,7 @@ operator:
         left: turretJogLeft
         right: turretJogRight
     buttonpad:
-        x: cameraToggle
+        x: toggleCamera
         y: autoClimb
         a: getFieldFollowing # dummy for example purposes
         b: getSuperstructure # dummy for example purposes

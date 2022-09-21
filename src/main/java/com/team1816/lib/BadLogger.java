@@ -37,7 +37,7 @@ public class BadLogger {
             BadLog.createTopic(
                 "Timings/Looper",
                 "ms",
-                ((Robot) tr)::getLastLooperLoop,
+                ((Robot) tr)::getLastRobotLoop,
                 "hide",
                 "join:Timings"
             );
