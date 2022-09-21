@@ -22,7 +22,7 @@ public class TwoBallModeB extends AutoMode {
         runAction(
             new SeriesAction(
                 new ParallelAction(
-                    new TurretAction(Turret.kNorth + 5), // to be changed
+                    new TurretAction(Turret.kNorth), // to be changed
                     new CollectAction(true),
                     new RampUpShooterAction(Shooter.MID_VELOCITY)
                 ),

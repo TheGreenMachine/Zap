@@ -102,7 +102,7 @@ public class Elevator extends Subsystem {
     }
 
     public boolean hasBallInElevator() {
-        if(ballSensor.getChannel() == 0){
+        if (ballSensor.getChannel() == 0) {
             return true;
         } else {
             return !ballSensor.get();
