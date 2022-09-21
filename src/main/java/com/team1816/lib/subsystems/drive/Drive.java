@@ -15,6 +15,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import java.util.List;
 
@@ -63,6 +65,63 @@ public abstract class Drive
         "maxVelTicks100ms"
     );
     public static final double driveEncPPR = factory.getConstant(NAME, "encPPR");
+
+    // Drivetrain characterization
+    public static final double kDriveWheelTrackWidthInches = factory.getConstant(
+        "trackWidth",
+        22
+    );
+    public static final double kDriveWheelbaseLengthInches = factory.getConstant(
+        "wheelbaseLength",
+        22
+    );
+    public static final double kDriveWheelDiameterInches = factory.getConstant(
+        "wheelDiameter"
+    );
+    public static final double kWheelCircumferenceInches =
+        kDriveWheelDiameterInches * Math.PI;
+    public static final double kDriveWheelRadiusInches = kDriveWheelDiameterInches / 2.0;
+
+    public static final double kDriveWheelTrackWidthMeters = Units.inchesToMeters(
+        kDriveWheelTrackWidthInches
+    );
+    public static final double kDriveWheelbaseLengthMeters = Units.inchesToMeters(
+        kDriveWheelbaseLengthInches
+    );
+    public static final double kDriveWheelDiameterMeters = Units.inchesToMeters(
+        kDriveWheelDiameterInches
+    );
+    public static final double kWheelCircumferenceMeters = Units.inchesToMeters(
+        kWheelCircumferenceInches
+    );
+    public static final double kDriveWheelRadiusMeters = Units.inchesToMeters(
+        kDriveWheelRadiusInches
+    );
+    public static double kTrackScrubFactor = factory.getConstant("kTrackScrubFactor");
+    // Drive speed
+    public static final double kPathFollowingMaxAccelMeters = factory.getConstant(
+        "maxAccel",
+        4
+    );
+    public static final double kPathFollowingMaxVelMeters = factory.getConstant(
+        "maxVelPathFollowing"
+    );
+    public static final double kOpenLoopMaxVelMeters = factory.getConstant(
+        "maxVelOpenLoop"
+    );
+
+    public static final double kPXController = 1;
+    public static final double kPYController = 1;
+    public static final double kPThetaController = 4;
+    public static final double kMaxAngularSpeed = factory.getConstant("maxRotVel"); // rad/sec
+    public static final double kMaxAngularAccelerationRadiansPerSecondSquared =
+        2 * Math.PI;
+
+    // Constraint for the motion profilied robot angle controller
+    public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
+        kMaxAngularSpeed,
+        kMaxAngularAccelerationRadiansPerSecondSquared
+    );
 
     @Inject
     public Drive(LedManager lm, Infrastructure inf, RobotState rs) {

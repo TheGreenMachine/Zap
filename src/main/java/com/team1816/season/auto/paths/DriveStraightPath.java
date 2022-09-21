@@ -1,7 +1,8 @@
 package com.team1816.season.auto.paths;
 
+import static com.team1816.lib.subsystems.drive.Drive.kPathFollowingMaxVelMeters;
+
 import com.team1816.lib.auto.paths.AutoPath;
-import com.team1816.season.Constants;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import java.util.List;
@@ -15,7 +16,7 @@ public class DriveStraightPath extends AutoPath {
     }
 
     public DriveStraightPath(int driveDistance) {
-        this(driveDistance, Constants.kPathFollowingMaxVelMeters);
+        this(driveDistance, kPathFollowingMaxVelMeters);
     }
 
     public DriveStraightPath() {

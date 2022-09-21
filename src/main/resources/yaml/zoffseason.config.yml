@@ -1,0 +1,231 @@
+subsystems:
+    drivetrain:
+        implemented: true
+        talons:
+            FLDr: 3
+            FRDr: 13
+            RLDr: 1 #13
+            RRDr: 14
+            FLAz: -1 #2
+            FRAz: 12
+            RLAz: -1 #10
+            RRAz: -1 #15
+        invertMotor:
+            - FRAz
+        invertSensorPhase:
+            - FRAz
+        swerveModules:
+            modules:
+                frontLeft:
+                    drive: FLDr
+                    azimuth: FLAz
+                    constants:
+                        encoderOffset: 1591
+                frontRight:
+                    drive: FRDr
+                    azimuth: FRAz
+                    constants:
+                        encoderOffset: 1626
+                backLeft:
+                    drive: RLDr
+                    azimuth: RLAz
+                    constants:
+                        encoderOffset: 3120 #1539
+                backRight:
+                    drive: RRDr
+                    azimuth: RRAz
+                    constants:
+                        encoderOffset: 2843
+            drivePID:
+                slot0:
+                    kP: .3
+                    kI: 0.0001
+                    kD: 4.0
+                    kF: 0.0499
+            azimuthPID:
+                slot0:
+                    kP: 0.5 # 6.0
+                    kI: 0.0000
+                    kD: 0
+                    kF: 0
+                    allowableError: 5
+        constants:
+            maxVelTicks100ms: 12275.7 # ticks per 100ms
+            openLoopRampRate: 0.8
+            isSwerve: 1
+            encPPR: 14255
+            azimuthEncPPR: 4096
+            heatThreshold: 65 # degrees C
+    ledmanager:
+        implemented: false
+        canifier: -1
+        candle: -1
+        constants:
+            raveEnabled: 1
+            raveSpeed: 0.05
+            cameraLed: 1
+            maxLevel: 255
+    turret:
+        implemented: false
+        pidConfig:
+            slot0:
+                kP: 1.25
+                kI: 0.0003
+                kD: 40.5
+                kF: 0 # Should be 0 for position control
+                allowableError: 40
+        talons:
+            turretMotor: 33
+        constants:
+            deltaXScalar: 150 #value worked best at 150 in sim
+            revLimit: -4296 # adjusted for zero-offset
+            fwdLimit: 26321 # adjusted for zero-offset
+            absPosTicksSouth: 0 # absolute
+            absPPR: 4096
+            turretPPR: 53248 # 4096 * 13
+    shooter:
+        implemented: false
+        falcons:
+            shooterMain: 21
+        invertMotor:
+            - shooterMain
+        pidConfig:
+            slot0:
+                kP: 0.38 #.45
+                kI: 0.0002
+                kD: 13.5 # 11 - 4.5
+                kF: 0.0487
+                allowableError: 100
+        constants:
+            useLinearPiecewise: 0
+            useCubicSpline: 0
+            usingPoseForSpeed: 0
+            maxVelTicks100ms: 20700
+            nearVel: 4500
+            midVel: 8450
+            tarmacTapeVel: 8125
+            launchpadVel: 10150
+            maxVel: 16500
+            coast: 8000
+    climber:
+        implemented: false
+        falcons:
+            climberMain: 34 #20
+            climberFollower: 35 #-1
+        solenoids:
+            topClamp: 7
+            bottomClamp: 6
+        pidConfig:
+            slot0:
+                kP: 0.050 #0.075 #tunned at 4000
+                kI: 0.000
+                kD: .6
+                kF: 0.0
+                allowableError: 5000
+        constants:
+            maxVelTicks100ms: 1
+            unlockPos: -14400
+            startPos: 0
+            returnPos: 0
+            firstToSecondRungPos: 150000
+            secondToLastRungPos: 342000
+            lastPos: 370000
+    elevator:
+        implemented: false
+        talons:
+            elevator: 32
+        pidConfig:
+            slot0:
+                kP: 0.060
+                kI: 0
+                kD: 2
+                kF: 0.05
+                allowableError: 3000
+        invertMotor:
+            - elevator
+        constants:
+            isVelocity: 1
+            maxVelTicks100ms: 20000
+            ballSensor: 0
+            firePow: 0.35
+            flushPow: -0.3
+            intakePow: 0.3
+    spindexer:
+        implemented: false
+        talons:
+            spindexer: 31
+        constants:
+            collectPow: 0.5
+            indexPow: -0.5
+            flushPow: -1
+            coastPow: 0.25
+            firePow: 0.85
+    collector:
+        implemented: false
+        sparkmaxes:
+            intake: 23 # maxVelTicks100ms 10617
+        invertMotor:
+            - intake
+        solenoids:
+            arm: 2
+        pidConfig:
+            slot0:
+                kP: 0.0001 #tunned at 4000
+                kI: 0.0
+                kD: 0.006
+                kF: 0.0001
+                allowableError: 10
+        constants:
+            maxVelTicks100MS: 10000
+            isVelocity: 1
+            revving: 0 #.05
+            collecting: -.5 #-3600
+            flush: 0.5 #.35
+    camera:
+        implemented: false
+        constants:
+            debug: 0
+            maxDist: 400
+            maxDeltaX: 1200
+            allowableDistanceError: 50
+    cooler:
+        implemented: false
+        solenoids:
+            lock: 1
+            dump: 3
+infrastructure:
+    canivoreBusName: rio
+    # power distribution
+    pdId: 9
+    pdIsRev: false
+    # pneumatics control
+    compressorEnabled: false
+    pcmIsRev: false
+    pcmId: 2
+    # pigeon
+    pigeonId: 32
+    isPigeon2: false
+controlboard: example
+constants:
+    # drivetrain dimensions and movement
+    maxRotVel: 14
+    trackWidth: 21 #inches
+    wheelbaseLength: 21.5 #inches
+    wheelDiameter: 4
+    kTrackScrubFactor: 1.0
+    maxVelOpenLoop: 3 # meters/s
+    maxVelPathFollowing: 3 # meters/s (2.2)
+    maxAccel: 2.54 # meters/s^ 2
+    maxAllowablePoseError: 0.1
+    ## Logging ##
+    logTeleOp: 1 # 0 or 1
+    logAuto: 0 # 0 or 1
+    badLogEnabled: 1 # 0 or 1
+    configStatusFrames: 0 # 0 or 1
+    verbose: 0 # 0 or 1
+    ## General ##
+    EnableBucketTuning: 0
+    teleopFieldCentric: 1 # 0 or 1
+    kLooperDt: .035 # seconds
+    resetFactoryDefaults: 0 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret
+

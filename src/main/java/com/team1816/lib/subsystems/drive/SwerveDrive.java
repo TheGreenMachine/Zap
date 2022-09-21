@@ -24,7 +24,47 @@ import java.util.List;
 @Singleton
 public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider {
 
-    public static final String NAME = "drivetrain";
+    // azimuth position
+    private static final double moduleDeltaX = kDriveWheelbaseLengthMeters / 2.0;
+    private static final double moduleDeltaY = kDriveWheelTrackWidthMeters / 2.0;
+
+    // Module Indicies
+    public static final int kFrontLeft = 0;
+    public static final int kFrontRight = 1;
+    public static final int kBackLeft = 2;
+    public static final int kBackRight = 3;
+
+    public static final Translation2d kFrontLeftModulePosition = new Translation2d(
+        moduleDeltaX,
+        moduleDeltaY
+    );
+    public static final Translation2d kFrontRightModulePosition = new Translation2d(
+        moduleDeltaX,
+        -moduleDeltaY
+    );
+    public static final Translation2d kBackLeftModulePosition = new Translation2d(
+        -moduleDeltaX,
+        moduleDeltaY
+    );
+    public static final Translation2d kBackRightModulePosition = new Translation2d(
+        -moduleDeltaX,
+        -moduleDeltaY
+    );
+
+    public static final Translation2d[] kModulePositions = {
+        kFrontLeftModulePosition,
+        kFrontRightModulePosition,
+        kBackRightModulePosition,
+        kBackLeftModulePosition,
+    };
+
+    // See https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/swerve-drive-kinematics.html
+    public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
+        kFrontLeftModulePosition,
+        kFrontRightModulePosition,
+        kBackLeftModulePosition,
+        kBackRightModulePosition
+    );
 
     // Components
     public SwerveModule[] swerveModules;
@@ -34,7 +74,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     protected int trajectoryIndex = 0;
 
     // Odometry variables
-    private SwerveDriveOdometry swerveOdometry;
+    private final SwerveDriveOdometry swerveOdometry;
     private final SwerveDriveHelper swerveDriveHelper = new SwerveDriveHelper();
 
     // States
@@ -49,22 +89,14 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         swerveModules = new SwerveModule[4];
 
         // enableDigital all Talons in open loop mode
-        swerveModules[Constants.Swerve.kFrontLeft] =
-            factory.getSwerveModule(NAME, "frontLeft");
-        swerveModules[Constants.Swerve.kFrontRight] =
-            factory.getSwerveModule(NAME, "frontRight");
-        swerveModules[Constants.Swerve.kBackLeft] =
-            factory.getSwerveModule(NAME, "backLeft");
-        swerveModules[Constants.Swerve.kBackRight] =
-            factory.getSwerveModule(NAME, "backRight");
+        swerveModules[kFrontLeft] = factory.getSwerveModule(NAME, "frontLeft");
+        swerveModules[kFrontRight] = factory.getSwerveModule(NAME, "frontRight");
+        swerveModules[kBackLeft] = factory.getSwerveModule(NAME, "backLeft");
+        swerveModules[kBackRight] = factory.getSwerveModule(NAME, "backRight");
 
         setOpenLoop(SwerveDriveSignal.NEUTRAL);
 
-        swerveOdometry =
-            new SwerveDriveOdometry(
-                Constants.Swerve.swerveKinematics,
-                getActualHeading()
-            );
+        swerveOdometry = new SwerveDriveOdometry(swerveKinematics, getActualHeading());
     }
 
     // autonomous (Trajectory_Following) loop is in setModuleStates
@@ -73,7 +105,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         if (controlState == ControlState.OPEN_LOOP) {
             SwerveDriveKinematics.desaturateWheelSpeeds(
                 desiredModuleStates,
-                Constants.kOpenLoopMaxVelMeters
+                kOpenLoopMaxVelMeters
             );
             for (int i = 0; i < 4; i++) {
                 swerveModules[i].setDesiredState(desiredModuleStates[i], true);
@@ -90,8 +122,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             // logging current temperatures of each module's drive motor
             motorTemperatures[i] = swerveModules[i].getMotorTemp();
         }
-        chassisSpeed =
-            Constants.Swerve.swerveKinematics.toChassisSpeeds(actualModuleStates);
+        chassisSpeed = swerveKinematics.toChassisSpeeds(actualModuleStates);
 
         if (RobotBase.isSimulation()) {
             simulateGyroOffset();
@@ -150,7 +181,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
         SwerveDriveKinematics.desaturateWheelSpeeds(
             desiredStates,
-            (Constants.kPathFollowingMaxVelMeters)
+            (kPathFollowingMaxVelMeters)
         );
         desiredModuleStates = desiredStates;
         for (int i = 0; i < 4; i++) {
@@ -210,9 +241,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         if (controlState != ControlState.OPEN_LOOP) {
             controlState = ControlState.OPEN_LOOP;
         }
-        if (Math.abs(forward) <= Constants.kAxisThreshold) forward = 0;
-        if (Math.abs(strafe) <= Constants.kAxisThreshold) strafe = 0;
-        if (Math.abs(rotation) <= Constants.kAxisThreshold) rotation = 0;
         SwerveDriveSignal signal = swerveDriveHelper.calculateDriveSignal(
             forward,
             strafe,
@@ -243,7 +271,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     public SwerveModuleState[] getStates() {
-        return Constants.Swerve.swerveKinematics.toSwerveModuleStates(chassisSpeed);
+        return swerveKinematics.toSwerveModuleStates(chassisSpeed);
     }
 
     @Override
@@ -261,6 +289,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         // resetting ACTUAL module states
         for (int i = 0; i < 4; i++) {
             actualModuleStates[i] = new SwerveModuleState();
+            swerveModules[i].zeroAzimuthSensor();
         }
 
         resetOdometry(pose);

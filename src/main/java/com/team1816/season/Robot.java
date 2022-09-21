@@ -1,5 +1,7 @@
 package com.team1816.season;
 
+import static com.team1816.lib.subsystems.drive.Drive.kPathFollowingMaxAccelMeters;
+import static com.team1816.lib.subsystems.drive.Drive.kPathFollowingMaxVelMeters;
 import static com.team1816.season.controlboard.ControlUtils.createAction;
 import static com.team1816.season.controlboard.ControlUtils.createHoldAction;
 
@@ -7,6 +9,7 @@ import badlog.lib.BadLog;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
 import com.team1816.lib.controlboard.ControlBoardBrige;
+import com.team1816.lib.controlboard.Controller;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.Looper;
@@ -129,11 +132,11 @@ public class Robot extends TimedRobot {
 
                 BadLog.createValue(
                     "Max Velocity",
-                    String.valueOf(Constants.kPathFollowingMaxVelMeters)
+                    String.valueOf(kPathFollowingMaxVelMeters)
                 );
                 BadLog.createValue(
                     "Max Acceleration",
-                    String.valueOf(Constants.kPathFollowingMaxAccelMeters)
+                    String.valueOf(kPathFollowingMaxAccelMeters)
                 );
 
                 BadLog.createTopic(
@@ -179,6 +182,22 @@ public class Robot extends TimedRobot {
                         "PDP/Current",
                         "Amps",
                         infrastructure.getPd()::getTotalCurrent
+                    );
+
+                    BadLog.createTopic(
+                        "Pigeon/AccelerationX",
+                        "G",
+                        infrastructure::getXAcceleration
+                    );
+                    BadLog.createTopic(
+                        "Pigeon/AccelerationY",
+                        "G",
+                        infrastructure::getYAcceleration
+                    );
+                    BadLog.createTopic(
+                        "Pigeon/AccelerationX",
+                        "G",
+                        infrastructure::getZAcceleration
                     );
 
                     drive.CreateBadLogValue("Drivetrain PID", drive.pidToString());
@@ -238,9 +257,9 @@ public class Robot extends TimedRobot {
                     "NativeUnits",
                     turret::getPosError
                 );
-            }
 
-            logger.finishInitialization();
+                logger.finishInitialization();
+            }
 
             subsystemManager.setSubsystems(
                 drive,
@@ -381,13 +400,13 @@ public class Robot extends TimedRobot {
                     createHoldAction( // climber up
                         () ->
                             controlBoard.getAsDouble("manualClimberArm") >
-                            Constants.kJoystickBooleanThreshold,
+                            Controller.kJoystickBooleanThreshold,
                         moving -> climber.setClimberPower(moving ? -.5 : 0)
                     ),
                     createHoldAction( // climber down
                         () ->
                             controlBoard.getAsDouble("manualClimberArm") <
-                            Constants.kJoystickBooleanThreshold,
+                            Controller.kJoystickBooleanThreshold,
                         moving -> climber.setClimberPower(moving ? .5 : 0)
                     ),
                     createAction(
@@ -618,15 +637,6 @@ public class Robot extends TimedRobot {
                     )
                 ).getDegrees()
             );
-        }
-
-        // Optional functionality making shooter always rev to velocity needed to score based on predicted position on field
-        if (
-            !controlBoard.getAsBool("shoot") &&
-            !controlBoard.getAsBool("yeetShot") &&
-            Constants.kUsePoseTrack
-        ) {
-            superstructure.setRevving(true, -1, true);
         }
 
         drive.setTeleopInputs(

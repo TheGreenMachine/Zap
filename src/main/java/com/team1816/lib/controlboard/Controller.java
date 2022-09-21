@@ -1,6 +1,5 @@
 package com.team1816.lib.controlboard;
 
-import com.team1816.season.Constants;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import java.util.EnumMap;
@@ -12,6 +11,8 @@ public abstract class Controller {
     }
 
     protected final Joystick mController;
+    public static final double kAxisThreshold = 0.04; // deadband //TODO: might want to increase this
+    public static final double kJoystickBooleanThreshold = 0.80;
     protected final EnumMap<Button, Integer> mJoystickButtonMap = new EnumMap<>(
         Button.class
     );
@@ -59,9 +60,7 @@ public abstract class Controller {
     //Treats an Axis like a button
     public boolean getTrigger(Axis axis) {
         if (!mJoystickAxisMap.containsKey(axis)) return false;
-        return (
-            mController.getRawAxis(mJoystickAxisMap.get(axis)) > Constants.kAxisThreshold
-        );
+        return (mController.getRawAxis(mJoystickAxisMap.get(axis)) > kAxisThreshold);
     }
 
     public double getJoystick(Axis axis) {

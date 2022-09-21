@@ -17,6 +17,7 @@ import com.team1816.season.subsystems.LedManager;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -32,6 +33,9 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     // Odometry
     private DifferentialDriveOdometry tankOdometry;
+    private static final DifferentialDriveKinematics tankKinematics = new DifferentialDriveKinematics(
+        kDriveWheelTrackWidthMeters
+    );
     private final CheesyDriveHelper driveHelper = new CheesyDriveHelper();
     private final double tickRatioPerLoop = Constants.kLooperDt / .1d; // Convert Ticks/100MS into Ticks/Robot Loop
 
@@ -131,7 +135,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
         // update current movement of the whole drivetrain
         chassisSpeed =
-            Constants.Tank.tankKinematics.toChassisSpeeds(
+            tankKinematics.toChassisSpeeds(
                 new DifferentialDriveWheelSpeeds(getLeftMPSActual(), getRightMPSActual())
             );
 

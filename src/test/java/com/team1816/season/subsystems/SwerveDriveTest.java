@@ -1,5 +1,7 @@
 package com.team1816.season.subsystems;
 
+import static com.team1816.lib.subsystems.drive.Drive.*;
+import static com.team1816.lib.subsystems.drive.SwerveDrive.swerveKinematics;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -61,7 +63,7 @@ public class SwerveDriveTest {
         Rotation2d robotAngle
     ) {
         // TODO remove conversion when constants class is converted to metric
-        var states = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
+        var states = swerveKinematics.toSwerveModuleStates(
             ChassisSpeeds.fromFieldRelativeSpeeds(
                 vxMetersPerSecond,
                 vyMetersPerSecond,
@@ -75,13 +77,9 @@ public class SwerveDriveTest {
 
     @Test
     public void testFactoryMock() {
-        assertEquals(maxVel, Constants.kOpenLoopMaxVelMeters, .01);
-        assertEquals(maxRotVel, Constants.kMaxAngularSpeed, .01);
-        assertEquals(
-            Constants.kDriveWheelTrackWidthMeters,
-            Constants.kDriveWheelbaseLengthMeters,
-            .01
-        );
+        assertEquals(maxVel, kOpenLoopMaxVelMeters, .01);
+        assertEquals(maxRotVel, kMaxAngularSpeed, .01);
+        assertEquals(kDriveWheelTrackWidthMeters, kDriveWheelbaseLengthMeters, .01);
     }
 
     @Test

@@ -3,12 +3,15 @@ package com.team1816.season.controlboard;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.controlboard.*;
-import com.team1816.season.Constants;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 @Singleton
 public class ControlBoard implements IControlBoard {
+
+    // Control Board
+    public static final int kDriveGamepadPort = 0;
+    public static final int kOperatorGamepadPort = 1;
 
     private static final ControlBoardBrige controlBoardBridge = ControlBoardBrige.getInstance();
 
@@ -22,9 +25,8 @@ public class ControlBoard implements IControlBoard {
 
     @Inject
     private ControlBoard(Controller.Factory controller) {
-        driverController = controller.getControllerInstance(Constants.kDriveGamepadPort);
-        operatorController =
-            controller.getControllerInstance(Constants.kOperatorGamepadPort);
+        driverController = controller.getControllerInstance(kDriveGamepadPort);
+        operatorController = controller.getControllerInstance(kOperatorGamepadPort);
 
         // demo mode functionality configuration
         if (controlBoardBridge.isDemoMode()) {

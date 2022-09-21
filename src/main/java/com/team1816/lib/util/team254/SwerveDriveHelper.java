@@ -1,7 +1,9 @@
 package com.team1816.lib.util.team254;
 
+import static com.team1816.lib.subsystems.drive.Drive.kMaxAngularSpeed;
+import static com.team1816.lib.subsystems.drive.Drive.kOpenLoopMaxVelMeters;
+
 import com.team1816.lib.math.SwerveKinematics;
-import com.team1816.season.Constants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
@@ -12,8 +14,8 @@ public class SwerveDriveHelper implements DriveHelper {
 
     private static final double kHighAdjustmentPower = 1.50; // 1.75 + 0.4375
     private static final double kLowAdjustmentPower = 1.50;
-    private static final double kMaxSpeed = (Constants.kOpenLoopMaxVelMeters);
-    private static final double kMaxRotation = Constants.kMaxAngularSpeed;
+    private static final double kMaxSpeed = (kOpenLoopMaxVelMeters);
+    private static final double kMaxRotation = kMaxAngularSpeed;
 
     private static final double kHighPowerRotationScalar = 0.8;
     private static final double kLowPowerRotationScalar = 0.025; //yml time

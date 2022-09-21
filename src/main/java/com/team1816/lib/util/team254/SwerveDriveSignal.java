@@ -1,8 +1,10 @@
 package com.team1816.lib.util.team254;
 
 import static com.team1816.lib.math.DriveConversions.inchesPerSecondToTicksPer100ms;
+import static com.team1816.lib.subsystems.drive.Drive.kOpenLoopMaxVelMeters;
+import static com.team1816.lib.subsystems.drive.SwerveDrive.kFrontLeft;
+import static com.team1816.lib.subsystems.drive.SwerveDrive.kFrontRight;
 
-import com.team1816.season.Constants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -63,10 +65,7 @@ public class SwerveDriveSignal extends DriveSignal {
         Rotation2d[] wheelAzimuths,
         boolean brakeMode
     ) {
-        super(
-            wheelSpeeds[Constants.Swerve.kFrontLeft],
-            wheelSpeeds[Constants.Swerve.kFrontRight]
-        );
+        super(wheelSpeeds[kFrontLeft], wheelSpeeds[kFrontRight]);
         mWheelSpeeds = wheelSpeeds;
         mWheelAzimuths = wheelAzimuths;
         mBrakeMode = brakeMode;
@@ -80,11 +79,7 @@ public class SwerveDriveSignal extends DriveSignal {
         return new SwerveDriveSignal(
             Arrays
                 .stream(this.mWheelSpeeds)
-                .map(
-                    x ->
-                        x *
-                        inchesPerSecondToTicksPer100ms(Constants.kOpenLoopMaxVelMeters)
-                )
+                .map(x -> x * inchesPerSecondToTicksPer100ms(kOpenLoopMaxVelMeters))
                 .toArray(),
             this.mWheelAzimuths,
             this.mBrakeMode
