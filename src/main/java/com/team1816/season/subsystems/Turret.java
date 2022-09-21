@@ -1,6 +1,8 @@
 package com.team1816.season.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
@@ -438,6 +440,26 @@ public class Turret extends Subsystem implements PidProvider {
         passed = passed & diff <= 50;
         turretMotor.set(com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput, 0);
         return passed;
+    }
+
+    @Override
+    public void createLogs() {
+        createBadLogValue("Turret PID", this.pidToString());
+        createBadLogTopic(
+            "Turret/ActPos",
+            "NativeUnits",
+            this::getActualPosTicks,
+            "hide",
+            "join:Turret/Positions"
+        );
+        createBadLogTopic(
+            "Turret/TargetPos",
+            "NativeUnits",
+            this::getDesiredPosTicks,
+            "hide",
+            "join:Turret/Positions"
+        );
+        createBadLogTopic("Turret/ErrorPos", "NativeUnits", this::getPosError);
     }
 
     public enum ControlMode {

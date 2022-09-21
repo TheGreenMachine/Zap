@@ -26,15 +26,8 @@ public class Climber extends Subsystem {
     private final ISolenoid topClamp;
     private final ISolenoid bottomClamp;
 
-    // Config
-    private double maxVel = 2; // arbitrary constants TODO: tune and move to yaml
-    private double maxAccel = 1; // arbitrary constants TODO: tune and move to yaml
-    private double feedForward = 0;
-
     // State
     private ControlMode controlMode = ControlMode.MANUAL;
-
-    private double profileTime = 0;
     private double error;
     private boolean unlocked;
     private boolean needsOverShoot = false;
@@ -57,9 +50,8 @@ public class Climber extends Subsystem {
     public Climber(Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
         climberMain = factory.getMotor(NAME, "climberMain");
-        climberFollower =
-            (IGreenMotor) factory.getMotor(NAME, "climberFollower", climberMain);
-        climberFollower.setInverted(true);
+        climberFollower = factory.getMotor(NAME, "climberFollower", climberMain);
+        climberFollower.setInverted(!climberMain.getInverted());
         topClamp = factory.getSolenoid(NAME, "topClamp");
         bottomClamp = factory.getSolenoid(NAME, "bottomClamp");
 
@@ -100,6 +92,7 @@ public class Climber extends Subsystem {
     }
 
     public void unlock() {
+        System.out.println("unlocking climber !");
         unlocked = true;
     }
 

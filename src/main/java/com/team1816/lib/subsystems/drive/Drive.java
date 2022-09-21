@@ -18,6 +18,8 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.List;
 
 public abstract class Drive
@@ -29,6 +31,13 @@ public abstract class Drive
     }
 
     public static final String NAME = "drivetrain";
+
+    // Demo Mode
+    protected double demoModeMultiplier;
+    protected SendableChooser<DemoMode> demoModeChooser;
+    protected DemoMode desiredMode;
+    public static final boolean isDemoMode =
+        factory.getConstant(NAME, "isDemoMode", 0) > 0;
 
     // Components
     protected static LedManager ledManager;
@@ -55,11 +64,6 @@ public abstract class Drive
     protected final double tickRatioPerLoop = Constants.kLooperDt / .01d;
 
     // Constants
-    protected final double heatThreshold = factory.getConstant(
-        NAME,
-        "heatThreshold",
-        100
-    );
     public static final double maxVelTicks100ms = factory.getConstant(
         NAME,
         "maxVelTicks100ms"
@@ -68,14 +72,17 @@ public abstract class Drive
 
     // Drivetrain characterization
     public static final double kDriveWheelTrackWidthInches = factory.getConstant(
+        NAME,
         "trackWidth",
         22
     );
     public static final double kDriveWheelbaseLengthInches = factory.getConstant(
+        NAME,
         "wheelbaseLength",
         22
     );
     public static final double kDriveWheelDiameterInches = factory.getConstant(
+        NAME,
         "wheelDiameter"
     );
     public static final double kWheelCircumferenceInches =
@@ -97,23 +104,29 @@ public abstract class Drive
     public static final double kDriveWheelRadiusMeters = Units.inchesToMeters(
         kDriveWheelRadiusInches
     );
-    public static double kTrackScrubFactor = factory.getConstant("kTrackScrubFactor");
+    public static double kTrackScrubFactor = factory.getConstant(
+        NAME,
+        "kTrackScrubFactor"
+    );
     // Drive speed
     public static final double kPathFollowingMaxAccelMeters = factory.getConstant(
+        NAME,
         "maxAccel",
         4
     );
     public static final double kPathFollowingMaxVelMeters = factory.getConstant(
+        NAME,
         "maxVelPathFollowing"
     );
     public static final double kOpenLoopMaxVelMeters = factory.getConstant(
+        NAME,
         "maxVelOpenLoop"
     );
 
     public static final double kPXController = 1;
     public static final double kPYController = 1;
     public static final double kPThetaController = 4;
-    public static final double kMaxAngularSpeed = factory.getConstant("maxRotVel"); // rad/sec
+    public static final double kMaxAngularSpeed = factory.getConstant(NAME, "maxRotVel"); // rad/sec
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared =
         2 * Math.PI;
 
@@ -127,6 +140,23 @@ public abstract class Drive
     public Drive(LedManager lm, Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
         ledManager = lm;
+
+        if (isDemoMode) {
+            demoModeChooser = new SendableChooser<>();
+            SmartDashboard.putData("Demo Mode", demoModeChooser);
+            // demo mode functionality configuration
+
+            System.out.println("    Using Demo Control Board");
+
+            demoModeChooser = new SendableChooser<>();
+            SmartDashboard.putData("Demo Mode", demoModeChooser);
+
+            for (DemoMode demoMode : DemoMode.values()) {
+                demoModeChooser.addOption(demoMode.name(), demoMode);
+            }
+            demoModeChooser.setDefaultOption(DemoMode.SLOW.name(), DemoMode.SLOW);
+            demoModeMultiplier = 0.25;
+        }
     }
 
     // calls periodic methods in swerve/tank based on current control state
@@ -268,6 +298,12 @@ public abstract class Drive
     @Override
     public abstract void stop();
 
+    @Override
+    public void createLogs() {
+        createBadLogValue("Drivetrain PID", this.pidToString());
+        DrivetrainLogger.init(this);
+    }
+
     // other
     @Override
     public abstract boolean checkSystem();
@@ -300,5 +336,42 @@ public abstract class Drive
     public enum ControlState {
         OPEN_LOOP, // open loop voltage control
         TRAJECTORY_FOLLOWING,
+    }
+
+    private enum DemoMode {
+        SLOW,
+        COMFORT,
+        SPORT,
+        PLAID,
+    }
+
+    public boolean update() {
+        DemoMode selectedMode = demoModeChooser.getSelected();
+        boolean modeChanged = desiredMode != selectedMode;
+
+        // if auto has been changed, update selected auto mode + thread
+        if (modeChanged) {
+            System.out.println(
+                "Demo mode changed from: " + desiredMode + ", to: " + selectedMode.name()
+            );
+
+            switch (selectedMode) {
+                case SLOW:
+                    demoModeMultiplier = 0.25;
+                    break;
+                case COMFORT:
+                    demoModeMultiplier = 0.5;
+                    break;
+                case SPORT:
+                    demoModeMultiplier = 0.75;
+                    break;
+                case PLAID:
+                    demoModeMultiplier = 1;
+                    break;
+            }
+        }
+        desiredMode = selectedMode;
+
+        return modeChanged;
     }
 }

@@ -85,6 +85,7 @@ subsystems:
             azimuthEncPPR: 4096
             azimuthAllowableErrorTicks: 20
             azimuthHomeAdjustmentDegrees: 1
+            isDemoMode: 0
 pcm: 8
 constants:
     maxVelTicks100ms: 12275.7 # ticks per 100ms TODO make into constant unique to each subsystem

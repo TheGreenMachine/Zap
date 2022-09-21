@@ -70,7 +70,15 @@ subsystems:
             isSwerve: 1
             encPPR: 14255
             azimuthEncPPR: 4096
-            heatThreshold: 65 # degrees C
+            maxRotVel: 14
+            trackWidth: 21 #inches
+            wheelbaseLength: 21.5 #inches
+            wheelDiameter: 4
+            kTrackScrubFactor: 1.0
+            maxVelOpenLoop: 3 # meters/s
+            maxVelPathFollowing: 3 # meters/s (2.2)
+            maxAccel: 2.54 # meters/s^ 2
+            isDemoMode: 0
     ledmanager:
         implemented: false
         canifier: -1
@@ -93,7 +101,7 @@ subsystems:
             turretMotor: 33
         constants:
             deltaXScalar: 150 #value worked best at 150 in sim
-            revLimit: -4296 # adjusted for zero-offset
+            revLimit: -6080 # adjusted for zero-offset
             fwdLimit: 29000 # adjusted for zero-offset
             absPosTicksSouth: 0 # absolute
             absPPR: 4096
@@ -127,6 +135,8 @@ subsystems:
         falcons:
             climberMain: 34 #20
             climberFollower: 35 #-1
+        invertMotor:
+            - climberMain
         solenoids:
             topClamp: 6
             bottomClamp: 7
@@ -139,14 +149,14 @@ subsystems:
                 allowableError: 3000
         constants:
             maxVelTicks100ms: 1
-            unlockPos: -14400
+            unlockPos: 14400
             startPos: 0
             returnPos: 0
-            firstToSecondRungPos: 150000
-            secondToLastRungPos: 342000
-            lastPos: 370000
+            firstToSecondRungPos: -150000
+            secondToLastRungPos: -342000
+            lastPos: -370000
     elevator:
-        implemented: false
+        implemented: true
         talons:
             elevator: 32
         pidConfig:
@@ -166,10 +176,11 @@ subsystems:
             flushPow: -0.3
             intakePow: 0.3
     spindexer:
-        implemented: false
+        implemented: true
         talons:
             spindexer: 31
         constants:
+            maxVelTicks100ms: 1
             collectPow: 0.5
             indexPow: -0.5
             flushPow: -1
@@ -179,20 +190,18 @@ subsystems:
         implemented: true
         talons:
             intake: 23 # maxVelTicks100ms 10617
-        invertMotor:
-            - intake
         solenoids:
             arm: 2
         pidConfig:
             slot0:
-                kP: 0.0001 #tunned at 4000
+                kP: 0.1
                 kI: 0.0
-                kD: 0.006
+                kD: 0.1
                 kF: 0.0001
                 allowableError: 10
         constants:
-            maxVelTicks100MS: 1000
-            isVelocity: 0
+            maxVelTicks100MS: 10000
+            isVelocity: 1
             revving: 0 #.05
             collecting: -.5 #-3600
             flush: 0.5 #.35
@@ -208,6 +217,8 @@ subsystems:
         solenoids:
             lock: 1
             dump: 3
+        constants:
+            heatThreshold: 65 # degrees Celsius
 infrastructure:
     canivoreBusName: highSpeed
     # power distribution

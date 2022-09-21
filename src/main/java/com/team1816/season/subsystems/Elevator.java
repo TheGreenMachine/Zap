@@ -8,6 +8,7 @@ import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.states.RobotState;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 
 @Singleton
@@ -17,7 +18,7 @@ public class Elevator extends Subsystem {
 
     // Components
     private final IGreenMotor elevatorMotor;
-    //private final DigitalInput ballSensor;
+    private final DigitalInput ballSensor;
 
     // State
     private double desiredOutput;
@@ -37,8 +38,8 @@ public class Elevator extends Subsystem {
         this.elevatorMotor = factory.getMotor(NAME, "elevator");
 
         PIDSlotConfiguration config = factory.getPidSlotConfig(NAME);
-        //this.ballSensor =
-        //    new DigitalInput((int) factory.getConstant(NAME, "ballSensor", 0));
+        this.ballSensor =
+            new DigitalInput((int) factory.getConstant(NAME, "ballSensor", 0));
 
         isVelocity = factory.getConstant(NAME, "isVelocity", 0) > 0;
 
@@ -101,8 +102,11 @@ public class Elevator extends Subsystem {
     }
 
     public boolean hasBallInElevator() {
-        return true; //temporary
-        //return !ballSensor.get();
+        if (ballSensor.getChannel() == 0) {
+            return true;
+        } else {
+            return !ballSensor.get();
+        }
     }
 
     @Override

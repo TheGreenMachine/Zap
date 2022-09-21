@@ -47,9 +47,17 @@ public class SubsystemManager implements ILooper {
         for (Subsystem subsystem : mAllSubsystems) {
             if (!subsystem.isImplemented()) {
                 System.out.println(
-                    "  Warning: " + subsystem.getSubsystemName() + " is not implemented"
+                    "Warning: " + subsystem.getSubsystemName() + " is not implemented"
                 );
             }
+            subsystem.createCommands();
+        }
+        System.out.println("********** Subsystems set **********");
+    }
+
+    public void createLogs() {
+        for (Subsystem subsystem : mAllSubsystems) {
+            subsystem.createLogs();
         }
     }
 

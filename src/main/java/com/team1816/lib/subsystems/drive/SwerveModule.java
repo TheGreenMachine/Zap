@@ -91,8 +91,6 @@ public class SwerveModule implements ISwerveModule {
 
         /* Angle Encoder Config */
         this.canCoder = canCoder;
-
-        System.out.println("  " + this);
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {

@@ -44,16 +44,16 @@ public class Spindexer extends Subsystem {
         COAST = factory.getConstant(NAME, "coastPow", -.1);
     }
 
-    private void setSpindexer(double spindexerPower) {
+    private void spindexerControl(double spindexerPower) {
         this.desiredPower = spindexerPower;
         spindexer.set(ControlMode.PercentOutput, spindexerPower);
     }
 
     private void lockToElevator() { // bear in mind this might never fire if shooter not implemented - not rly important tho
         if (robotState.elevatorState == Elevator.STATE.FIRE) {
-            setSpindexer(FIRE);
+            spindexerControl(FIRE);
         } else {
-            setSpindexer(INDEX);
+            spindexerControl(INDEX);
             outputsChanged = true; // keep looping through writeToHardWare if shooter not up to speed
         }
     }
@@ -81,22 +81,22 @@ public class Spindexer extends Subsystem {
             outputsChanged = false;
             switch (desiredState) {
                 case STOP:
-                    setSpindexer(0);
+                    spindexerControl(0);
                     break;
                 case COLLECT:
-                    setSpindexer(COLLECT);
+                    spindexerControl(COLLECT);
                     break;
                 case INDEX:
-                    setSpindexer(INDEX);
+                    spindexerControl(INDEX);
                     break;
                 case FLUSH:
-                    setSpindexer(FLUSH);
+                    spindexerControl(FLUSH);
                     break;
                 case FIRE:
                     lockToElevator();
                     break;
                 case COAST:
-                    setSpindexer(COAST);
+                    spindexerControl(COAST);
                     break;
             }
         }

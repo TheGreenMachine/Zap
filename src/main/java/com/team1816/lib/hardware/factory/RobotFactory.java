@@ -108,7 +108,7 @@ public class RobotFactory {
             reportGhostWarning("Motor", subsystemName, name);
             motor =
                 CtreMotorFactory.createGhostMotor(
-                    (int) (getConstant(subsystemName, "maxVelTicks100ms", 1)),
+                    (int) (getConstant(subsystemName, "maxVelTicks100ms", 1, false)),
                     0,
                     name
                 );
@@ -126,12 +126,12 @@ public class RobotFactory {
         //no need to invert of print if ghosted - this is done in both here and CTREMotorFactory - why?
         // Motor configuration
         if (subsystem.implemented && subsystem.invertMotor.contains(name)) {
-            System.out.println("Inverting " + name + " with ID " + motorId);
+            System.out.println("        Inverting " + name + " with ID " + motorId);
             motor.setInverted(true);
         }
         if (subsystem.implemented && subsystem.invertSensorPhase.contains(name)) {
             System.out.println(
-                "Inverting sensor phase of " + name + " with ID " + motorId
+                "       Inverting sensor phase of " + name + " with ID " + motorId
             );
             motor.setSensorPhase(true);
         }
@@ -399,7 +399,7 @@ public class RobotFactory {
     }
 
     public Double getConstant(String name) {
-        return getConstant(name, 0.0);
+        return getConstant(name, null);
     }
 
     public Map<String, Double> getConstants() {
@@ -423,7 +423,7 @@ public class RobotFactory {
 
     public double getConstant(String name, double defaultVal) {
         if (getConstants() == null || !getConstants().containsKey(name)) {
-            DriverStation.reportError("Yaml constants:" + name + " missing", true);
+            DriverStation.reportWarning("Yaml constants:" + name + " missing", true);
             return defaultVal;
         }
         return getConstants().get(name);
@@ -438,6 +438,15 @@ public class RobotFactory {
     }
 
     public double getConstant(String subsystemName, String name, double defaultVal) {
+        return getConstant(subsystemName, name, defaultVal, true);
+    }
+
+    public double getConstant(
+        String subsystemName,
+        String name,
+        double defaultVal,
+        boolean showWarning
+    ) {
         if (!getSubsystem(subsystemName).implemented) {
             return defaultVal;
         }
@@ -445,10 +454,16 @@ public class RobotFactory {
             getSubsystem(subsystemName).constants == null ||
             !getSubsystem(subsystemName).constants.containsKey(name)
         ) {
-            DriverStation.reportError(
-                "Yaml " + subsystemName + " constants:" + name + " missing",
-                defaultVal == 0
-            );
+            if (showWarning) {
+                DriverStation.reportWarning(
+                    "Yaml: subsystem \"" +
+                    subsystemName +
+                    "\" constant \"" +
+                    name +
+                    "\" missing",
+                    defaultVal == 0
+                );
+            }
             return defaultVal;
         }
         return getSubsystem(subsystemName).constants.get(name);
@@ -551,11 +566,11 @@ public class RobotFactory {
         System.out.println(
             "  " +
             type +
-            "  " +
+            " \"" +
             componentName +
-            " not defined or invalid in config for subsystem " +
+            "\" invalid in Yaml for subsystem \"" +
             subsystemName +
-            ", using ghost!"
+            "\", using ghost!"
         );
     }
 

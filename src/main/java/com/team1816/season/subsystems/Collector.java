@@ -4,7 +4,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
-import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
@@ -37,13 +36,6 @@ public class Collector extends Subsystem {
         super(NAME, inf, rs);
         armPiston = factory.getSolenoid(NAME, "arm");
         intakeMotor = factory.getMotor(NAME, "intake");
-
-        PIDSlotConfiguration config = factory.getPidSlotConfig(NAME);
-
-        intakeMotor.config_kP(0, config.kP, 100);
-        intakeMotor.config_kI(0, config.kI, 100);
-        intakeMotor.config_kD(0, config.kD, 100);
-        intakeMotor.config_kF(0, config.kF, 100);
 
         isVelocity = factory.getConstant(NAME, "isVelocity", 0) > 0;
 

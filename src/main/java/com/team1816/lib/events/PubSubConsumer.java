@@ -16,7 +16,7 @@ public class PubSubConsumer<T> extends EventBase {
     }
 
     /**
-     * Sends a event to the registered consumers
+     * Sends an event to the registered consumers
      * @param parameter this is the data to publish to the subscribers
      */
     public void Publish(T parameter) {

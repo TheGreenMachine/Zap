@@ -1,4 +1,3 @@
-isDemoControlBoard: true
 driver:
     rumble: false
     joysticks:

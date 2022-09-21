@@ -31,6 +31,13 @@ public class Cooler extends Subsystem {
     private final boolean blockAirFlow = false;
     private AsyncTimer coolTimer;
 
+    // Temp logging
+    protected final double heatThreshold = factory.getConstant(
+        NAME,
+        "heatThreshold",
+        100
+    );
+
     @Inject
     public Cooler(Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
@@ -39,23 +46,29 @@ public class Cooler extends Subsystem {
 
         coolTimer =
             new AsyncTimer(0.5, () -> lock.set(!needsDump), () -> dump.set(needsDump));
-        SmartDashboard.putBoolean("Drive/Overheating", robotState.overheating);
+        SmartDashboard.putBoolean("Drive/Overheating", needsDump);
     }
 
     @Override
     public void readFromHardware() {
-        if (robotState.overheating != needsDump) {
-            needsDump = robotState.overheating;
+        // Update whether Cooler needs to dump
+        if (robotState.drivetrainTemp > heatThreshold && !needsDump) {
+            needsDump = true;
             outputsChanged = true;
-        }
-        if (dump.get() == blockAirFlow) {
-            robotState.coolState = STATE.WAIT;
-        } else {
-            robotState.coolState = STATE.DUMP;
+        } else if (robotState.drivetrainTemp < heatThreshold - 10 && needsDump) {
+            needsDump = false;
+            outputsChanged = true;
         }
         if (DriverStation.getMatchTime() > 90) {
             shutDown = true;
             outputsChanged = true;
+        }
+
+        // Update robotState (actual state)
+        if (dump.get() == blockAirFlow) {
+            robotState.coolState = STATE.WAIT;
+        } else {
+            robotState.coolState = STATE.DUMP;
         }
     }
 
@@ -81,7 +94,7 @@ public class Cooler extends Subsystem {
                 outputsChanged = true;
             } else {
                 coolTimer.reset();
-                SmartDashboard.putBoolean("Drive/Overheating", robotState.overheating);
+                SmartDashboard.putBoolean("Drive/Overheating", needsDump);
             }
         }
     }

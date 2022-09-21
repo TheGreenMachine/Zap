@@ -86,7 +86,7 @@ public class Shooter extends Subsystem implements PidProvider {
         return Math.abs(actualVelocity - desiredVelocity);
     }
 
-    public void setVelocity(double velocity) {
+    public void velocityControl(double velocity) {
         desiredVelocity = velocity;
         shooterMain.set(ControlMode.Velocity, desiredVelocity);
     }
@@ -134,12 +134,12 @@ public class Shooter extends Subsystem implements PidProvider {
             outputsChanged = false;
             switch (desiredState) {
                 case STOP:
-                    setVelocity(0);
+                    velocityControl(0);
                     break;
                 case REVVING: // velocity is set in higher classes (superstructure)
                     break;
                 case COASTING:
-                    setVelocity(COAST_VELOCITY);
+                    velocityControl(COAST_VELOCITY);
                     break;
             }
         }
@@ -165,6 +165,32 @@ public class Shooter extends Subsystem implements PidProvider {
         boolean checkShooter = EnhancedMotorChecker.checkMotor(this, shooterMain);
 
         return checkShooter;
+    }
+
+    @Override
+    public void createLogs() {
+        createBadLogValue("Shooter PID", this.pidToString());
+        createBadLogTopic(
+            "Shooter/ActVel",
+            "NativeUnits",
+            this::getActualVelocity,
+            "hide",
+            "join:Shooter/Velocities"
+        );
+        createBadLogTopic(
+            "Shooter/TargetVel",
+            "NativeUnits",
+            this::getTargetVelocity,
+            "hide",
+            "join:Shooter/Velocities"
+        );
+        createBadLogTopic(
+            "Shooter/Error",
+            "NativeUnits",
+            this::getError,
+            "hide",
+            "join:Shooter/Velocities"
+        );
     }
 
     public enum STATE {
