@@ -11,6 +11,7 @@ public class GhostPigeonIMU implements IPigeonIMU {
 
     public GhostPigeonIMU(int id) {
         dummyYaw = 0;
+        dummyAccel = 9.8;
     }
 
     public GhostPigeonIMU(IGreenMotor motor) {}

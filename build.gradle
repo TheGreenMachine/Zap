@@ -183,7 +183,7 @@ task runZoffseason(type: JavaExec) {
 }
 
 
-task runZodiac_Pro(type: JavaExec) {
+task runZodiac(type: JavaExec) {
     String jniDir = "${project.buildDir}/jni/release"
     environment "PATH", jniDir
     String hal = fileTree(dir: "${project.buildDir}/jni/release", include: '*halsim_*.*').asPath
