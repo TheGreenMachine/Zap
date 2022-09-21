@@ -114,7 +114,7 @@ public class Camera extends Subsystem {
     }
 
     public void stop() {
-        //socket.close();
+        socket.close();
     }
 
     public void readFromHardware() {

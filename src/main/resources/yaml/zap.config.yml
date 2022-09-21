@@ -177,7 +177,7 @@ subsystems:
             firePow: 0.85
     collector:
         implemented: true
-        sparkmaxes:
+        talons:
             intake: 23 # maxVelTicks100ms 10617
         invertMotor:
             - intake
