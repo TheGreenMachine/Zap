@@ -128,8 +128,8 @@ subsystems:
             climberMain: 34 #20
             climberFollower: 35 #-1
         solenoids:
-            topClamp: 7
-            bottomClamp: 6
+            topClamp: 6
+            bottomClamp: 7
         pidConfig:
             slot0:
                 kP: 0.050 #0.075 #tunned at 4000

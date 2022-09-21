@@ -157,6 +157,21 @@ public class Robot extends TimedRobot {
                     "xaxis",
                     "hide"
                 );
+                BadLog.createTopic(
+                    "Pigeon/AccelerationX",
+                    "G",
+                    infrastructure::getXAcceleration
+                );
+                BadLog.createTopic(
+                    "Pigeon/AccelerationY",
+                    "G",
+                    infrastructure::getYAcceleration
+                );
+                BadLog.createTopic(
+                    "Pigeon/AccelerationZ",
+                    "G",
+                    infrastructure::getZAcceleration
+                );
 
                 DrivetrainLogger.init(drive);
                 if (RobotBase.isReal()) {
