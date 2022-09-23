@@ -107,7 +107,7 @@ subsystems:
             absPPR: 4096
             turretPPR: 53248 # 4096 * 13
     shooter:
-        implemented: false
+        implemented: true
         falcons:
             shooterMain: 21
         invertMotor:
@@ -201,7 +201,7 @@ subsystems:
                 allowableError: 10
         constants:
             maxVelTicks100MS: 10000
-            isVelocity: 1
+            isVelocity: 0
             revving: 0 #.05
             collecting: -.5 #-3600
             flush: 0.5 #.35
