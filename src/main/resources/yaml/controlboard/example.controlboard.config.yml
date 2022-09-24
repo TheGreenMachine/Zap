@@ -39,6 +39,6 @@ operator:
         rightTrigger: shoot
     buttons:
         leftBumper: autoAim
-        rightBumper: toggleHood
+        rightBumper: autoAim
         start: toggleTopClamp
         back: toggleBottomClamp

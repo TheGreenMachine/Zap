@@ -126,8 +126,8 @@ subsystems:
             maxVelTicks100ms: 20700
             nearVel: 4500
             midVel: 8450
-            tarmacTapeVel: 8525
-            launchpadVel: 10150
+            tarmacTapeVel: 8425
+            launchpadVel: 10100
             maxVel: 16500
             coast: 8000
     climber:
