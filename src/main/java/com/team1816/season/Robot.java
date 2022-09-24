@@ -59,7 +59,7 @@ public class Robot extends TimedRobot {
 
     // hack variables
     private final Turret.ControlMode defaultTurretControlMode =
-        Turret.ControlMode.FIELD_FOLLOWING;
+        Turret.ControlMode.POSITION;
     private boolean faulted;
     private boolean useManualShoot = false;
 
