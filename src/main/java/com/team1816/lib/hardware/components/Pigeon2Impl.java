@@ -17,13 +17,6 @@ public class Pigeon2Impl extends Pigeon2 implements IPigeonIMU {
     }
 
     @Override
-    public double[] getAcceleration() {
-        short[] _accel = new short[3];
-        int m_accel = PigeonImuJNI.JNI_GetBiasedAccelerometer(super.getHandle(), _accel);
-        return new double[] { _accel[0], _accel[1], _accel[2] };
-    }
-
-    @Override
     public ErrorCode setYaw(double angleDeg) {
         return super.setYaw(angleDeg);
     }
