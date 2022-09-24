@@ -213,7 +213,7 @@ public class Robot extends TimedRobot {
                             } else {
                                 superstructure.setRevving(
                                     yeet,
-                                    Shooter.NEAR_VELOCITY,
+                                    Shooter.TARMAC_TAPE_VEL, //Shooter.NEAR_VELOCITY
                                     true
                                 ); // Barf shot
                             }

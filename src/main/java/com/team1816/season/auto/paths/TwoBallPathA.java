@@ -11,13 +11,13 @@ public class TwoBallPathA extends AutoPath {
     public List<Pose2d> getWaypoints() {
         return List.of(
             new Pose2d(235, 207, Rotation2d.fromDegrees(135)),
-            new Pose2d(198, 243, Rotation2d.fromDegrees(130))
+            new Pose2d(198, 243, Rotation2d.fromDegrees(135))
         );
     }
 
     @Override
     public List<Rotation2d> getWaypointHeadings() {
-        return List.of(Rotation2d.fromDegrees(135), Rotation2d.fromDegrees(130));
+        return List.of(Rotation2d.fromDegrees(135), Rotation2d.fromDegrees(135));
     }
 
     @Override

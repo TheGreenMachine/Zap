@@ -126,7 +126,7 @@ subsystems:
             maxVelTicks100ms: 20700
             nearVel: 4500
             midVel: 8450
-            tarmacTapeVel: 8125
+            tarmacTapeVel: 8525
             launchpadVel: 10150
             maxVel: 16500
             coast: 8000
@@ -208,7 +208,7 @@ subsystems:
             collecting: -.5 #-3600
             flush: 0.5 #.35
     camera:
-        implemented: false
+        implemented: true
         constants:
             debug: 0
             maxDist: 400
