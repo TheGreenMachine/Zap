@@ -192,6 +192,8 @@ subsystems:
             intake: 23 # maxVelTicks100ms 10617
         solenoids:
             arm: 2
+        invertMotor:
+            - intake
         pidConfig:
             slot0:
                 kP: 0.1
