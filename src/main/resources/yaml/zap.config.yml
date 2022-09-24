@@ -80,7 +80,7 @@ subsystems:
             maxAccel: 2.54 # meters/s^ 2
             isDemoMode: 0
     ledmanager:
-        implemented: false
+        implemented: true
         canifier: -1
         candle: -1
         constants:
