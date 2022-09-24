@@ -206,7 +206,7 @@ subsystems:
             collecting: -.5 #-3600
             flush: 0.5 #.35
     camera:
-        implemented: true
+        implemented: false
         constants:
             debug: 0
             maxDist: 400
