@@ -66,6 +66,12 @@ public class Infrastructure {
         return pd;
     }
 
+    public void createLogs() {
+        if (RobotBase.isReal() && Constants.kIsBadlogEnabled) {
+            BadLog.createTopic("PDP/Current", "Amps", this.getPd()::getTotalCurrent);
+        }
+    }
+
     public void simulateGyro(double radianOffsetPerLoop, double gyroDrift) {
         pigeon.setYaw(getYaw() + radianOffsetPerLoop + gyroDrift);
     }
