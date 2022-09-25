@@ -112,7 +112,6 @@ public class Shooter extends Subsystem implements PidProvider {
         );
     }
 
-    /** periodic */
     @Override
     public void readFromHardware() {
         actualVelocity = shooterMain.getSelectedSensorVelocity(0);
@@ -157,6 +156,32 @@ public class Shooter extends Subsystem implements PidProvider {
         boolean checkShooter = EnhancedMotorChecker.checkMotor(this, shooterMain);
 
         return checkShooter;
+    }
+
+    @Override
+    public void createLogs() {
+        createBadLogValue("Shooter PID", this.pidToString());
+        createBadLogTopic(
+            "Shooter/ActVel",
+            "NativeUnits",
+            this::getActualVelocity,
+            "hide",
+            "join:Shooter/Velocities"
+        );
+        createBadLogTopic(
+            "Shooter/TargetVel",
+            "NativeUnits",
+            this::getTargetVelocity,
+            "hide",
+            "join:Shooter/Velocities"
+        );
+        createBadLogTopic(
+            "Shooter/Error",
+            "NativeUnits",
+            this::getError,
+            "hide",
+            "join:Shooter/Velocities"
+        );
     }
 
     /** states */

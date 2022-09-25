@@ -12,8 +12,7 @@ import com.team1816.lib.hardware.components.*;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.hardware.components.motor.LazySparkMax;
 import com.team1816.lib.hardware.components.pcm.*;
-import com.team1816.lib.subsystems.SwerveModule;
-import com.team1816.season.Constants;
+import com.team1816.lib.subsystems.drive.SwerveModule;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -109,7 +108,7 @@ public class RobotFactory {
             reportGhostWarning("Motor", subsystemName, name);
             motor =
                 CtreMotorFactory.createGhostMotor(
-                    (int) (getConstant(subsystemName, "maxVelTicks100ms", 1)),
+                    (int) (getConstant(subsystemName, "maxVelTicks100ms", 1, false)),
                     0,
                     name
                 );
@@ -125,18 +124,16 @@ public class RobotFactory {
         var motorId = motor.getDeviceID();
 
         //no need to invert of print if ghosted - this is done in both here and CTREMotorFactory - why?
-        if (true) {
-            // Motor configuration
-            if (subsystem.implemented && subsystem.invertMotor.contains(name)) {
-                System.out.println("Inverting " + name + " with ID " + motorId);
-                motor.setInverted(true);
-            }
-            if (subsystem.implemented && subsystem.invertSensorPhase.contains(name)) {
-                System.out.println(
-                    "Inverting sensor phase of " + name + " with ID " + motorId
-                );
-                motor.setSensorPhase(true);
-            }
+        // Motor configuration
+        if (subsystem.implemented && subsystem.invertMotor.contains(name)) {
+            System.out.println("        Inverting " + name + " with ID " + motorId);
+            motor.setInverted(true);
+        }
+        if (subsystem.implemented && subsystem.invertSensorPhase.contains(name)) {
+            System.out.println(
+                "       Inverting sensor phase of " + name + " with ID " + motorId
+            );
+            motor.setSensorPhase(true);
         }
         if (getConstant("configStatusFrames", 0) > 0) {
             setStatusFrame(motor); // make motor send one signal per second - FOR DEBUGGING!
@@ -257,26 +254,18 @@ public class RobotFactory {
             return null;
         }
 
-        var swerveConstants = new Constants.Swerve();
-        swerveConstants.kModuleName = name;
-        swerveConstants.kAzimuthMotorName = module.azimuth; //getAzimuth and drive give ID i think - not the module name (ex: leftRear)
-        swerveConstants.kAzimuthPid =
+        var moduleConfig = new SwerveModule.ModuleConfig();
+        moduleConfig.moduleName = name;
+        moduleConfig.azimuthMotorName = module.azimuth; //getAzimuth and drive give ID i think - not the module name (ex: leftRear)
+        moduleConfig.azimuthPid =
             getPidSlotConfig(subsystemName, "slot0", PIDConfig.Azimuth);
-        swerveConstants.kDriveMotorName = module.drive;
-        swerveConstants.kDrivePid =
-            getPidSlotConfig(subsystemName, "slot0", PIDConfig.Drive);
-        swerveConstants.kAzimuthEncoderHomeOffset = module.constants.get("encoderOffset");
-        swerveConstants.kInvertAzimuthSensorPhase =
-            (module.constants.get("invertedSensorPhase") != null) &&
-            (module.constants.get("invertedSensorPhase") == 1); //boolean
+        moduleConfig.driveMotorName = module.drive;
+        moduleConfig.drivePid = getPidSlotConfig(subsystemName, "slot0", PIDConfig.Drive);
+        moduleConfig.azimuthEncoderHomeOffset = module.constants.get("encoderOffset");
 
         var canCoder = getCanCoder(subsystemName, name);
 
-        var swerveModule = canCoder == null
-            ? new SwerveModule(subsystemName, swerveConstants)
-            : new SwerveModule(subsystemName, swerveConstants, canCoder);
-
-        return swerveModule;
+        return new SwerveModule(subsystemName, moduleConfig, canCoder);
     }
 
     public boolean hasCanCoder(String subsystemName, String name) {
@@ -409,7 +398,7 @@ public class RobotFactory {
     }
 
     public Double getConstant(String name) {
-        return getConstant(name, 0.0);
+        return getConstant(name, null);
     }
 
     public Map<String, Double> getConstants() {
@@ -433,7 +422,7 @@ public class RobotFactory {
 
     public double getConstant(String name, double defaultVal) {
         if (getConstants() == null || !getConstants().containsKey(name)) {
-            DriverStation.reportError("Yaml constants:" + name + " missing", true);
+            DriverStation.reportWarning("Yaml constants:" + name + " missing", true);
             return defaultVal;
         }
         return getConstants().get(name);
@@ -448,6 +437,15 @@ public class RobotFactory {
     }
 
     public double getConstant(String subsystemName, String name, double defaultVal) {
+        return getConstant(subsystemName, name, defaultVal, true);
+    }
+
+    public double getConstant(
+        String subsystemName,
+        String name,
+        double defaultVal,
+        boolean showWarning
+    ) {
         if (!getSubsystem(subsystemName).implemented) {
             return defaultVal;
         }
@@ -455,10 +453,16 @@ public class RobotFactory {
             getSubsystem(subsystemName).constants == null ||
             !getSubsystem(subsystemName).constants.containsKey(name)
         ) {
-            DriverStation.reportError(
-                "Yaml " + subsystemName + " constants:" + name + " missing",
-                defaultVal == 0
-            );
+            if (showWarning) {
+                DriverStation.reportWarning(
+                    "Yaml: subsystem \"" +
+                    subsystemName +
+                    "\" constant \"" +
+                    name +
+                    "\" missing",
+                    defaultVal == 0
+                );
+            }
             return defaultVal;
         }
         return getSubsystem(subsystemName).constants.get(name);
@@ -561,11 +565,11 @@ public class RobotFactory {
         System.out.println(
             "  " +
             type +
-            "  " +
+            " \"" +
             componentName +
-            " not defined or invalid in config for subsystem " +
+            "\" invalid in Yaml for subsystem \"" +
             subsystemName +
-            ", using ghost!"
+            "\", using ghost!"
         );
     }
 

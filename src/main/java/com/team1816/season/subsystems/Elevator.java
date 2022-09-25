@@ -103,7 +103,11 @@ public class Elevator extends Subsystem {
     }
 
     public boolean hasBallInElevator() {
-        return !ballSensor.get();
+        if (ballSensor.getChannel() == 0) {
+            return true;
+        } else {
+            return !ballSensor.get();
+        }
     }
 
     /** periodic */

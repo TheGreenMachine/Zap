@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Used to zero, enableDigital, stop, and update all subsystems at once
+ * Used to zero, enable, stop, and update all subsystems at once
  */
 public class SubsystemManager implements ILooper {
 
@@ -47,9 +47,17 @@ public class SubsystemManager implements ILooper {
         for (Subsystem subsystem : mAllSubsystems) {
             if (!subsystem.isImplemented()) {
                 System.out.println(
-                    "  Warning: " + subsystem.getSubsystemName() + " is not implemented"
+                    "Warning: " + subsystem.getSubsystemName() + " is not implemented"
                 );
             }
+            subsystem.createCommands();
+        }
+        System.out.println("********** Subsystems set **********");
+    }
+
+    public void createLogs() {
+        for (Subsystem subsystem : mAllSubsystems) {
+            subsystem.createLogs();
         }
     }
 

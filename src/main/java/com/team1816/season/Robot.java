@@ -3,7 +3,7 @@ package com.team1816.season;
 import static com.team1816.season.controlboard.ControlUtils.createAction;
 import static com.team1816.season.controlboard.ControlUtils.createHoldAction;
 
-import badlog.lib.BadLog;
+import com.team1816.lib.BadLogger;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
 import com.team1816.lib.controlboard.ControlBoardBrige;
@@ -27,13 +27,10 @@ import java.util.Date;
 
 public class Robot extends TimedRobot {
 
-    private BadLog logger;
-
     private final Looper enabledLoop;
     private final Looper disabledLoop;
 
     // controls
-    private final ControlBoardBrige controlBoardBridge;
     private IControlBoard controlBoard;
     private ActionManager actionManager;
 
@@ -67,7 +64,7 @@ public class Robot extends TimedRobot {
 
     // hack variables
     private final Turret.ControlMode defaultTurretControlMode =
-        Turret.ControlMode.CENTER_FOLLOWING;
+        Turret.ControlMode.POSITION;
     private boolean faulted;
     private boolean useManualShoot = false;
 
@@ -77,7 +74,6 @@ public class Robot extends TimedRobot {
         Injector.registerModule(new SeasonModule());
         enabledLoop = new Looper(this);
         disabledLoop = new Looper(this);
-        controlBoardBridge = Injector.get(ControlBoardBrige.class);
         drive = (Injector.get(Drive.Factory.class)).getInstance(); //TODO: need to fix this get drive instance should just return the proper one
         turret = Injector.get(Turret.class);
         climber = Injector.get(Climber.class);
@@ -101,146 +97,20 @@ public class Robot extends TimedRobot {
         return factory;
     }
 
-    private Double getLastLoop() {
+    public Double getLastRobotLoop() {
         return (Timer.getFPGATimestamp() - loopStart) * 1000;
+    }
+
+    public Double getLastEnabledLoop() {
+        return enabledLoop.getLastLoop();
     }
 
     @Override
     public void robotInit() {
         try {
+            /** register all subsystems */
             controlBoard = Injector.get(IControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
-            if (Constants.kIsBadlogEnabled) {
-                var logFile = new SimpleDateFormat("MMdd_HH-mm").format(new Date());
-                var robotName = System.getenv("ROBOT_NAME");
-                if (robotName == null) robotName = "default";
-                var logFileDir = "/home/lvuser/";
-                // if there is a USB drive use it
-                if (Files.exists(Path.of("/media/sda1"))) {
-                    logFileDir = "/media/sda1/";
-                }
-                if (RobotBase.isSimulation()) {
-                    if (System.getProperty("os.name").toLowerCase().contains("win")) {
-                        logFileDir = System.getenv("temp") + "\\";
-                    } else {
-                        logFileDir = System.getProperty("user.dir") + "/";
-                    }
-                }
-                var filePath = logFileDir + robotName + "_" + logFile + ".bag";
-                logger = BadLog.init(filePath);
-
-                BadLog.createValue(
-                    "Max Velocity",
-                    String.valueOf(Constants.kPathFollowingMaxVelMeters)
-                );
-                BadLog.createValue(
-                    "Max Acceleration",
-                    String.valueOf(Constants.kPathFollowingMaxAccelMeters)
-                );
-
-                BadLog.createValue(
-                    "Drivetrain/Calculated X Accel",
-                    String.valueOf(robotState.getCalculatedAccel().vxMetersPerSecond)
-                );
-                BadLog.createValue(
-                    "Drivetrain/Calculated Y Accel",
-                    String.valueOf(robotState.getCalculatedAccel().vyMetersPerSecond)
-                );
-                BadLog.createValue(
-                    "Drivetrain/Calculated Z Accel",
-                    String.valueOf(robotState.getCalculatedAccel().omegaRadiansPerSecond)
-                );
-
-                BadLog.createTopic(
-                    "Timings/Looper",
-                    "ms",
-                    enabledLoop::getLastLoop,
-                    "hide",
-                    "join:Timings"
-                );
-                BadLog.createTopic(
-                    "Timings/RobotLoop",
-                    "ms",
-                    this::getLastLoop,
-                    "hide",
-                    "join:Timings"
-                );
-                BadLog.createTopic(
-                    "Timings/Timestamp",
-                    "s",
-                    Timer::getFPGATimestamp,
-                    "xaxis",
-                    "hide"
-                );
-
-                DrivetrainLogger.init(drive);
-                if (RobotBase.isReal()) {
-                    BadLog.createTopic(
-                        "PDP/Current",
-                        "Amps",
-                        infrastructure.getPd()::getTotalCurrent
-                    );
-
-                    drive.CreateBadLogValue("Drivetrain PID", drive.pidToString());
-                    turret.CreateBadLogValue("Turret PID", turret.pidToString());
-                    shooter.CreateBadLogValue("Shooter PID", shooter.pidToString());
-
-                    if (camera.isImplemented()) {
-                        BadLog.createTopic(
-                            "Vision/DeltaXAngle",
-                            "Degrees",
-                            camera::getDeltaX
-                        );
-                        BadLog.createTopic(
-                            "Vision/Distance",
-                            "inches",
-                            camera::getDistance
-                        );
-                    }
-                }
-                shooter.CreateBadLogTopic(
-                    "Shooter/ActVel",
-                    "NativeUnits",
-                    shooter::getActualVelocity,
-                    "hide",
-                    "join:Shooter/Velocities"
-                );
-                shooter.CreateBadLogTopic(
-                    "Shooter/TargetVel",
-                    "NativeUnits",
-                    shooter::getTargetVelocity,
-                    "hide",
-                    "join:Shooter/Velocities"
-                );
-                shooter.CreateBadLogTopic(
-                    "Shooter/Error",
-                    "NativeUnits",
-                    shooter::getError,
-                    "hide",
-                    "join:Shooter/Velocities"
-                );
-                turret.CreateBadLogTopic(
-                    "Turret/ActPos",
-                    "NativeUnits",
-                    turret::getActualPosTicks,
-                    "hide",
-                    "join:Turret/Positions"
-                );
-                turret.CreateBadLogTopic(
-                    "Turret/TargetPos",
-                    "NativeUnits",
-                    turret::getDesiredPosTicks,
-                    "hide",
-                    "join:Turret/Positions"
-                );
-                turret.CreateBadLogTopic(
-                    "Turret/ErrorPos",
-                    "NativeUnits",
-                    turret::getPosError
-                );
-
-                logger.finishInitialization();
-            }
 
             subsystemManager.setSubsystems(
                 drive,
@@ -257,6 +127,16 @@ public class Robot extends TimedRobot {
             subsystemManager.registerEnabledLoops(enabledLoop);
             subsystemManager.registerDisabledLoops(disabledLoop);
             subsystemManager.zeroSensors();
+
+            // register badlogs
+            if (Constants.kIsBadlogEnabled) {
+                BadLogger.setupLogs(this);
+                subsystemManager.createLogs();
+            }
+
+            // register controllers
+            controlBoard = Injector.get(IControlBoard.class);
+            DriverStation.silenceJoystickConnectionWarning(true);
 
             actionManager =
                 new ActionManager(
@@ -318,10 +198,7 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("toggleCamera"),
                         () -> {
-                            robotState.overheating = !robotState.overheating;
-                            System.out.println(
-                                "overheating changed to = " + robotState.overheating
-                            );
+                            camera.setCameraEnabled(!camera.isEnabled());
                         }
                     ),
                     createHoldAction(
@@ -332,13 +209,13 @@ public class Robot extends TimedRobot {
                                     yeet,
                                     Shooter.TARMAC_TAPE_VEL,
                                     true
-                                );
+                                ); // Tarmac
                             } else {
                                 superstructure.setRevving(
                                     yeet,
                                     Shooter.NEAR_VELOCITY,
                                     true
-                                );
+                                ); // Low
                             }
                             superstructure.setFiring(yeet);
                         }
@@ -350,7 +227,7 @@ public class Robot extends TimedRobot {
                                 shooting,
                                 Shooter.LAUNCHPAD_VEL,
                                 useManualShoot
-                            );
+                            ); // Launchpad
                             superstructure.setFiring(shooting);
                         }
                     ),
@@ -375,13 +252,13 @@ public class Robot extends TimedRobot {
                     createHoldAction( // climber up
                         () ->
                             controlBoard.getAsDouble("manualClimberArm") >
-                            Constants.kJoystickBooleanThreshold,
+                            Controller.kJoystickBooleanThreshold,
                         moving -> climber.setClimberPower(moving ? -.5 : 0)
                     ),
                     createHoldAction( // climber down
                         () ->
                             controlBoard.getAsDouble("manualClimberArm") <
-                            Constants.kJoystickBooleanThreshold,
+                            Controller.kJoystickBooleanThreshold,
                         moving -> climber.setClimberPower(moving ? .5 : 0)
                     ),
                     createAction(
@@ -552,10 +429,6 @@ public class Robot extends TimedRobot {
             robotState.outputToSmartDashboard();
             // update shuffleboard selected auto mode
             autoModeManager.outputToSmartDashboard();
-
-            if (controlBoardBridge.isDemoMode()) { //todo: should be using injector
-                controlBoard.outputToSmartDashboard();
-            }
         } catch (Throwable t) {
             faulted = true;
             System.out.println(t.getMessage());
@@ -589,8 +462,8 @@ public class Robot extends TimedRobot {
             }
 
             // check if demo mode speed multiplier changed
-            if (controlBoardBridge.isDemoMode()) { //todo: should be using injector
-                controlBoard.update();
+            if (drive.isDemoMode()) { //todo: should be using injector
+                drive.update();
             }
         } catch (Throwable t) {
             faulted = true;
@@ -606,8 +479,7 @@ public class Robot extends TimedRobot {
             .setTrajectory(autoModeManager.getSelectedAuto().getCurrentTrajectory());
 
         if (Constants.kIsLoggingAutonomous) {
-            logger.updateTopics();
-            logger.log();
+            BadLogger.update();
         }
     }
 
@@ -617,16 +489,12 @@ public class Robot extends TimedRobot {
 
         try {
             manualControl(); // controls drivetrain and turret joystick control mode
-            if (superstructure.needsVisionUpdate()) {
-                superstructure.updatePoseWithCamera();
-            }
         } catch (Throwable t) {
             faulted = true;
             throw t;
         }
         if (Constants.kIsLoggingTeleOp) {
-            logger.updateTopics();
-            logger.log();
+            BadLogger.update();
         }
     }
 
@@ -637,10 +505,9 @@ public class Robot extends TimedRobot {
         // Field-relative controls for turret (ie: left on joystick makes turret point left on the field, instead of left relative to the robot)
         if (
             Math.abs(controlBoard.getAsDouble("manualTurretXVal")) > 0.90 ||
-            Math.abs(controlBoard.getAsDouble("manualTurretYVal")) > 0.90 &&
-            turret.getControlMode().equals(Turret.ControlMode.FIELD_FOLLOWING)
+            Math.abs(controlBoard.getAsDouble("manualTurretYVal")) > 0.90
         ) {
-            //turret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
+            turret.setControlMode(Turret.ControlMode.FIELD_FOLLOWING);
             turret.setFollowingAngle(
                 (
                     new Rotation2d(
@@ -649,15 +516,6 @@ public class Robot extends TimedRobot {
                     )
                 ).getDegrees()
             );
-        }
-
-        // Optional functionality making shooter always rev to velocity needed to score based on predicted position on field
-        if (
-            !controlBoard.getAsBool("shoot") &&
-            !controlBoard.getAsBool("yeetShot") &&
-            Constants.kUsePoseTrack
-        ) {
-            superstructure.setRevving(true, -1, true);
         }
 
         drive.setTeleopInputs(

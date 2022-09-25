@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.subsystems.Subsystem;
-import com.team1816.lib.vision.VisionSocket;
+import com.team1816.lib.subsystems.vision.VisionSocket;
 import com.team1816.season.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.util.Units;
@@ -123,7 +123,7 @@ public class Camera extends Subsystem {
     }
 
     public void stop() {
-        socket.close();
+        //socket.close();
     }
 
     public void readFromHardware() {
@@ -152,6 +152,12 @@ public class Camera extends Subsystem {
             setCameraEnabled(false);
         }
         return true;
+    }
+
+    @Override
+    public void createLogs() {
+        createBadLogTopic("Vision/DeltaXAngle", "Degrees", this::getDeltaX);
+        createBadLogTopic("Vision/Distance", "inches", this::getDistance);
     }
 
     public double simulateDeltaX() {

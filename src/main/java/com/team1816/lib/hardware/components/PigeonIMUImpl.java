@@ -5,8 +5,12 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 
 public class PigeonIMUImpl extends PigeonIMU implements IPigeonIMU {
 
+    private long m_handle = 0l;
+
     public PigeonIMUImpl(int id) {
         super(id);
+        m_handle = super.getHandle();
+        System.out.println("PIGEON HANDLE: " + m_handle);
     }
 
     @Override

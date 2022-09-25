@@ -5,20 +5,16 @@ import static com.team1816.lib.subsystems.Subsystem.robotState;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.team1816.lib.math.PoseUtil;
 import com.team1816.lib.subsystems.Drive;
 import com.team1816.season.Constants;
 import com.team1816.season.subsystems.*;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.RobotBase;
 
-/**
- * The class responsible for organizing the collector, spindexer, elevator, and shooter into runnable actions -
- * manages the robot's DESIRED states
- */
+/* class responsible for organizing the collector, spindexer, elevator, and shooter into runnable actions - manages the robot's DESIRED states */
 
 @Singleton
 public class Superstructure {
@@ -211,9 +207,9 @@ public class Superstructure {
 
     public double getOutput(DistanceManager.SUBSYSTEM subsystem) {
         if (useVision) {
-            double dis = robotState.getEstimatedDistanceToGoal();
-            System.out.println("tracked camera distance is . . . " + dis);
-            return distanceManager.getOutput(dis, subsystem);
+            double camDis = camera.getDistance();
+            System.out.println("tracked camera distance is . . . " + camDis);
+            return distanceManager.getOutput(camDis, subsystem);
         } else {
             System.out.println("using neither poseTracking nor vision ! - not intended");
             return -1;
@@ -248,8 +244,14 @@ public class Superstructure {
 
     public Pose2d getCameraPose() {
         double cameraDist = camera.getDistance(); // flat distance in meters
-        double distanceToCenterMeters = Units.inchesToMeters(26.56) + cameraDist;
-
+        double distanceToCenterMeters = Units.inchesToMeters(
+            Constants.kTargetRadius +
+                (
+                    Math.sqrt(
+                        (cameraDist * cameraDist) - Math.pow(Constants.kHeightFromCamToHub, 2)
+                    )
+                )
+        );
         Translation2d deltaToHub = new Translation2d(
             distanceToCenterMeters,
             robotState.getLatestFieldToTurret()
@@ -267,8 +269,14 @@ public class Superstructure {
     public void updatePoseWithCamera() {
         double cameraDist = camera.getDistance(); // flat distance in meters
         // 26.56 = radius of center hub - - 5629 = square of height of hub
-        double distanceToCenterMeters =
-            Units.inchesToMeters(Constants.kTargetRadius) + cameraDist;
+        double distanceToCenterMeters = Units.inchesToMeters(
+            Constants.kTargetRadius +
+            (
+                Math.sqrt(
+                    (cameraDist * cameraDist) - Math.pow(Constants.kHeightFromCamToHub, 2)
+                )
+            )
+        );
 
         Translation2d deltaToHub = new Translation2d(
             distanceToCenterMeters,

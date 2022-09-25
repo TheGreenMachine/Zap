@@ -1,22 +1,24 @@
 package com.team1816.lib.math;
 
-import com.team1816.lib.subsystems.Drive;
+import static com.team1816.lib.subsystems.drive.Drive.*;
+
+import com.team1816.lib.subsystems.drive.Drive;
+import com.team1816.lib.subsystems.drive.SwerveModule;
 import com.team1816.lib.util.Util;
-import com.team1816.season.Constants;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 
 public class DriveConversions {
 
-    private static final double azimuthPPR = Constants.Swerve.kAzimuthPPR;
+    private static final double azimuthPPR = SwerveModule.ModuleConfig.kAzimuthPPR;
     private static final double drivePPR = Drive.driveEncPPR;
 
     public static double ticksToMeters(double ticks) {
-        return ticks / drivePPR * Constants.kWheelCircumferenceMeters;
+        return ticks / drivePPR * kWheelCircumferenceMeters;
     }
 
     public static double inchesToTicks(double inches) {
-        return inches / Math.PI * azimuthPPR / Constants.kWheelCircumferenceInches;
+        return inches / Math.PI * azimuthPPR / kWheelCircumferenceInches;
     }
 
     public static double metersToTicks(double meters) {
@@ -40,11 +42,11 @@ public class DriveConversions {
     }
 
     public static double rotationsToInches(double rotations) {
-        return rotations * (Constants.kWheelCircumferenceInches);
+        return rotations * (kWheelCircumferenceInches);
     }
 
     public static double rotationsToMeters(double rotations) {
-        return rotations * (Constants.kWheelCircumferenceMeters);
+        return rotations * (kWheelCircumferenceMeters);
     }
 
     public static double rpmToInchesPerSecond(double rpm) {
@@ -52,7 +54,7 @@ public class DriveConversions {
     }
 
     public static double inchesToRotations(double inches) {
-        return inches / (Constants.kDriveWheelDiameterInches * Math.PI);
+        return inches / (kDriveWheelDiameterInches * Math.PI);
     }
 
     public static double metersPerSecondToTicksPer100ms(double meters_per_second) {

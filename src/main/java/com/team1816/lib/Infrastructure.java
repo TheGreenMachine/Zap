@@ -1,5 +1,6 @@
 package com.team1816.lib;
 
+import badlog.lib.BadLog;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.components.IPigeonIMU;
@@ -8,6 +9,7 @@ import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.season.Constants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.RobotBase;
 
 /**
  * Subsystem housing compressor and pigeon - should we add pcm/pdh here?
@@ -30,6 +32,7 @@ public class Infrastructure {
         pigeon = factory.getPigeon();
         pd = factory.getPd();
         compressorEnabled = factory.isCompressorEnabled();
+        createLogs();
     }
 
     public void startCompressor() { // not used because compressor currently turns on by default once robot is enabled
@@ -65,6 +68,12 @@ public class Infrastructure {
 
     public PowerDistribution getPd() {
         return pd;
+    }
+
+    public void createLogs() {
+        if (RobotBase.isReal() && Constants.kIsBadlogEnabled) {
+            BadLog.createTopic("PDP/Current", "Amps", this.getPd()::getTotalCurrent);
+        }
     }
 
     public void simulateGyro(double radianOffsetPerLoop, double gyroDrift) {

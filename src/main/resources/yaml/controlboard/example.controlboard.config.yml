@@ -30,7 +30,7 @@ operator:
         left: turretJogLeft
         right: turretJogRight
     buttonpad:
-        x: cameraToggle
+        x: toggleCamera
         y: autoClimb
         a: toggleTurretMode
         b: eject
@@ -38,8 +38,8 @@ operator:
         leftTrigger: yeetShot
         rightTrigger: shoot
     buttons:
-        leftBumper: fatBoy
-        rightBumper: littleMan
+        leftBumper: autoAim #TODO Decide
+        rightBumper: toggleHood #TODO Decide
         start: toggleTopClamp
         back: toggleBottomClamp
 demoMode: false

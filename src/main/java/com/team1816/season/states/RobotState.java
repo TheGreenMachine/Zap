@@ -5,6 +5,7 @@ import com.team1816.season.Constants;
 import com.team1816.season.subsystems.*;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -30,8 +31,7 @@ public class RobotState {
     public Spindexer.STATE spinState = Spindexer.STATE.STOP;
     public Elevator.STATE elevatorState = Elevator.STATE.STOP;
     public Cooler.STATE coolState = Cooler.STATE.WAIT;
-
-    public boolean overheating = false;
+    public double drivetrainTemp = 0;
 
     public RobotState() {
         SmartDashboard.putData("Field", field);
@@ -69,7 +69,7 @@ public class RobotState {
         triAxialAcceleration = new Double[] { 0d, 0d, 0d };
         isPoseUpdated = true;
         visionPoint = new Point();
-        overheating = false;
+        drivetrainTemp = 0;
     }
 
     public synchronized Pose2d getLatestFieldToVehicle() {
@@ -111,17 +111,17 @@ public class RobotState {
         double estimatedDistanceToGoalMeters = fieldToVehicle
             .getTranslation()
             .getDistance(Constants.targetPos.getTranslation());
-        //        double distInches =
-        //            (
-        //                Math.sqrt(
-        //                    Units.metersToInches(estimatedDistanceToGoalMeters) *
-        //                    Units.metersToInches(estimatedDistanceToGoalMeters) +
-        //                    (Constants.kHeightFromCamToHub * Constants.kHeightFromCamToHub)
-        //                ) -
-        //                Constants.kTargetRadius
-        //            );
-        System.out.println("estimated distance = " + estimatedDistanceToGoalMeters);
-        return estimatedDistanceToGoalMeters;
+        double distInches =
+            (
+                Math.sqrt(
+                    Units.metersToInches(estimatedDistanceToGoalMeters) *
+                    Units.metersToInches(estimatedDistanceToGoalMeters) +
+                    (Constants.kHeightFromCamToHub * Constants.kHeightFromCamToHub)
+                ) -
+                Constants.kTargetRadius
+            );
+        System.out.println("estimated distance = " + distInches);
+        return distInches;
     }
 
     public synchronized void outputToSmartDashboard() {
@@ -136,14 +136,10 @@ public class RobotState {
 
         public double cX;
         public double cY;
-        public double thetaX;
-        public double thetaY;
 
         public Point() {
             cX = 0;
             cY = 0;
-            thetaX = 0;
-            thetaY = 0;
         }
     }
 }

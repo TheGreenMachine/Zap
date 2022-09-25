@@ -3,43 +3,26 @@ package com.team1816.season.controlboard;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.controlboard.*;
-import com.team1816.season.Constants;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 @Singleton
 public class ControlBoard implements IControlBoard {
 
     private final ControlBoardBrige controlBoardBridge;
 
+    // Control Board
+    public static final int kDriveGamepadPort = 0;
+    public static final int kOperatorGamepadPort = 1;
+
     private final Controller driverController;
     private final Controller operatorController;
 
-    // For demo only
-    private double demoModeMultiplier;
-    private SendableChooser<DemoMode> demoModeChooser;
-    private DemoMode desiredMode;
-
     @Inject
     private ControlBoard(ControlBoardBrige bridge, Controller.Factory controller) {
-        driverController = controller.getControllerInstance(Constants.kDriveGamepadPort);
+        driverController = controller.getControllerInstance(kDriveGamepadPort);
         operatorController =
-            controller.getControllerInstance(Constants.kOperatorGamepadPort);
+            controller.getControllerInstance(kOperatorGamepadPort);
 
         controlBoardBridge = bridge;
-
-        // demo mode functionality configuration
-        if (controlBoardBridge.isDemoMode()) {
-            System.out.println("Using Demo Control Board");
-
-            demoModeChooser = new SendableChooser<>();
-            SmartDashboard.putData("Demo Mode", demoModeChooser);
-            for (DemoMode demoMode : DemoMode.values()) {
-                demoModeChooser.addOption(demoMode.name(), demoMode);
-            }
-            demoModeChooser.setDefaultOption(DemoMode.SLOW.name(), DemoMode.SLOW);
-            demoModeMultiplier = 0.25;
-        }
     }
 
     @Override
@@ -49,48 +32,7 @@ public class ControlBoard implements IControlBoard {
 
     @Override
     public double getAsDouble(String getName) {
-        if (controlBoardBridge.isDemoMode()) {
-            return getDoubleFromControllerYaml(getName) * demoModeMultiplier;
-        } else {
-            return getDoubleFromControllerYaml(getName);
-        }
-    }
-
-    @Override
-    public boolean update() {
-        DemoMode selectedMode = demoModeChooser.getSelected();
-        boolean modeChanged = desiredMode != selectedMode;
-
-        // if auto has been changed, update selected auto mode + thread
-        if (modeChanged) {
-            System.out.println(
-                "Demo mode changed from: " + desiredMode + ", to: " + selectedMode.name()
-            );
-
-            switch (selectedMode) {
-                case SLOW:
-                    demoModeMultiplier = 0.25;
-                    break;
-                case COMFORT:
-                    demoModeMultiplier = 0.5;
-                    break;
-                case SPORT:
-                    demoModeMultiplier = 0.75;
-                    break;
-                case PLAID:
-                    demoModeMultiplier = 1;
-                    break;
-            }
-        }
-        desiredMode = selectedMode;
-
-        return modeChanged;
-    }
-
-    public void outputToSmartDashboard() {
-        if (desiredMode != null) {
-            SmartDashboard.putString("Selected Demo Mode", desiredMode.name());
-        }
+        return getDoubleFromControllerYaml(getName);
     }
 
     public double getDoubleFromControllerYaml(String name) {
@@ -166,12 +108,5 @@ public class ControlBoard implements IControlBoard {
         }
 
         return defaultVal;
-    }
-
-    private enum DemoMode {
-        SLOW,
-        COMFORT,
-        SPORT,
-        PLAID,
     }
 }

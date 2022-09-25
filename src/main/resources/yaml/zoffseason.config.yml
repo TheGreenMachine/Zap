@@ -1,41 +1,49 @@
-subsystems:
+asubsystems:
     drivetrain:
         implemented: true
         talons:
             FLDr: 3
-            FRDr: 13 #1
+            FRDr: 13
             RLDr: 1 #13
             RRDr: 14
             FLAz: 2
             FRAz: 12
             RLAz: 10
             RRAz: 15
+        invertMotor:
+            - FRDr
+            - RRDr
+            - FLAz
+            - FRAz
+            - RLAz
+            - RRAz
+        invertSensorPhase:
+            - FLAz
+            - FRAz
+            - RLAz
+            - RRAz
         swerveModules:
             modules:
                 frontLeft:
                     drive: FLDr
                     azimuth: FLAz
                     constants:
-                        encoderOffset: 2993
-                        invertSensorPhase: 1
+                        encoderOffset: 2463
                 frontRight:
                     drive: FRDr
                     azimuth: FRAz
                     constants:
-                        encoderOffset: 1503
-                        invertSensorPhase: 1
+                        encoderOffset: 1482
                 backLeft:
                     drive: RLDr
                     azimuth: RLAz
                     constants:
-                        encoderOffset: 426 #1539
-                        invertSensorPhase: 1
+                        encoderOffset: 506
                 backRight:
                     drive: RRDr
                     azimuth: RRAz
                     constants:
-                        encoderOffset: 509
-                        invertSensorPhase: 1
+                        encoderOffset: 497
             drivePID:
                 slot0:
                     kP: .3
@@ -44,9 +52,9 @@ subsystems:
                     kF: 0.0499
             azimuthPID:
                 slot0:
-                    kP: 3.8 # 6.0
-                    kI: 0.00075
-                    kD: 77
+                    kP: 6.0
+                    kI: 0.0000
+                    kD: 15.0
                     kF: 0
                     allowableError: 5
         constants:
@@ -55,144 +63,15 @@ subsystems:
             isSwerve: 1
             encPPR: 14255
             azimuthEncPPR: 4096
-            heatThreshold: 65 # degrees C
-    ledmanager:
-        implemented: false
-        canifier: -1
-        candle: -1
-        constants:
-            raveEnabled: 1
-            raveSpeed: 0.05
-            cameraLed: 1
-            maxLevel: 255
-    turret:
-        implemented: false
-        pidConfig:
-            slot0:
-                kP: 1.25
-                kI: 0.0003
-                kD: 40.5
-                kF: 0 # Should be 0 for position control
-                allowableError: 40
-        talons:
-            turretMotor: 33
-        constants:
-            deltaXScalar: 150 #value worked best at 150 in sim
-            revLimit: -4296 # adjusted for zero-offset
-            fwdLimit: 26321 # adjusted for zero-offset
-            absPosTicksSouth: 0 # absolute
-            absPPR: 4096
-            turretPPR: 53248 # 4096 * 13
-    shooter:
-        implemented: false
-        falcons:
-            shooterMain: 21
-        invertMotor:
-            - shooterMain
-        pidConfig:
-            slot0:
-                kP: 0.38 #.45
-                kI: 0.0002
-                kD: 13.5 # 11 - 4.5
-                kF: 0.0487
-                allowableError: 100
-        constants:
-            useLinearPiecewise: 0
-            useCubicSpline: 0
-            usingPoseForSpeed: 0
-            maxVelTicks100ms: 20700
-            nearVel: 4500
-            midVel: 8450
-            tarmacTapeVel: 8125
-            launchpadVel: 10150
-            maxVel: 16500
-            coast: 8000
-    climber:
-        implemented: false
-        falcons:
-            climberMain: 34 #20
-            climberFollower: 35 #-1
-        solenoids:
-            topClamp: 7
-            bottomClamp: 6
-        pidConfig:
-            slot0:
-                kP: 0.050 #0.075 #tunned at 4000
-                kI: 0.000
-                kD: .6
-                kF: 0.0
-                allowableError: 5000
-        constants:
-            maxVelTicks100ms: 1
-            unlockPos: -14400
-            startPos: 0
-            returnPos: 0
-            firstToSecondRungPos: 150000
-            secondToLastRungPos: 342000
-            lastPos: 370000
-    elevator:
-        implemented: false
-        talons:
-            elevator: 32
-        pidConfig:
-            slot0:
-                kP: 0.060
-                kI: 0
-                kD: 2
-                kF: 0.05
-                allowableError: 3000
-        invertMotor:
-            - elevator
-        constants:
-            isVelocity: 1
-            maxVelTicks100ms: 20000
-            ballSensor: 0
-            firePow: 0.35
-            flushPow: -0.3
-            intakePow: 0.3
-    spindexer:
-        implemented: false
-        talons:
-            spindexer: 31
-        constants:
-            collectPow: 0.5
-            indexPow: -0.5
-            flushPow: -1
-            coastPow: 0.25
-            firePow: 0.85
-    collector:
-        implemented: false
-        sparkmaxes:
-            intake: 23 # maxVelTicks100ms 10617
-        invertMotor:
-            - intake
-        solenoids:
-            arm: 2
-        pidConfig:
-            slot0:
-                kP: 0.0001 #tunned at 4000
-                kI: 0.0
-                kD: 0.006
-                kF: 0.0001
-                allowableError: 10
-        constants:
-            maxVelTicks100MS: 10000
-            isVelocity: 1
-            revving: 0 #.05
-            collecting: -.5 #-3600
-            flush: 0.5 #.35
-    camera:
-        implemented: false
-        constants:
-            debug: 0
-            maxDist: 400
-            maxDeltaX: 1200
-            allowableDistanceError: 50
-    cooler:
-        implemented: false
-        solenoids:
-            lock: 1
-            dump: 3
+            maxRotVel: 14
+            trackWidth: 21 #inches
+            wheelbaseLength: 21.5 #inches
+            wheelDiameter: 4
+            kTrackScrubFactor: 1.0
+            maxVelOpenLoop: 3 # meters/s
+            maxVelPathFollowing: 3 # meters/s (2.2)
+            maxAccel: 2.54 # meters/s^ 2
+            isDemoMode: 0
 infrastructure:
     canivoreBusName: rio
     # power distribution
@@ -201,27 +80,18 @@ infrastructure:
     # pneumatics control
     compressorEnabled: false
     pcmIsRev: false
-    pcmId: -1
+    pcmId: 2
     # pigeon
     pigeonId: 32
     isPigeon2: false
 controlboard: example
 constants:
-    # drivetrain dimensions and movement
-    maxRotVel: 14
-    trackWidth:
-    21 #inches
-    wheelbaseLength: 21.5 #inches
-    wheelDiameter: 4
-    kTrackScrubFactor: 1.0
-    maxVelOpenLoop: 3 # meters/s
-    maxVelPathFollowing: 3 # meters/s (2.2)
-    maxAccel: 2.54 # meters/s^ 2
+    # drivetrain misc
     maxAllowablePoseError: 0.1
     ## Logging ##
-    logTeleOp: 0 # 0 or 1
-    logAuto: 0 # 0 or 1
-    badLogEnabled: 0 # 0 or 1
+    logTeleOp: 1 # 0 or 1
+    logAuto: 1 # 0 or 1
+    badLogEnabled: 1 # 0 or 1
     configStatusFrames: 0 # 0 or 1
     verbose: 0 # 0 or 1
     ## General ##

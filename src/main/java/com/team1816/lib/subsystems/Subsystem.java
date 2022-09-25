@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.ILooper;
+import com.team1816.season.Constants;
 import com.team1816.season.Robot;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.util.sendable.Sendable;
@@ -18,9 +19,11 @@ import java.util.function.Supplier;
  * with calibration.
  * <p>
  * All Subsystems only have one instance (after all, one robot does not have two drivetrains), and functions get the
- * instance of the drivetrain and act accordingly. Subsystems are also a state machine with a desired state and actual
+ * instance of the drivetrain and act accordingly.
+ * <p>
+ * Subsystems are also a state machine with a desired state and actual
  * state; the robot code will try to match the two states with actions. Each Subsystem also is responsible for
- * initializing all member components at the enableDigital of the match.
+ * initializing all member components on match start.
  */
 public abstract class Subsystem implements Sendable {
 
@@ -55,21 +58,23 @@ public abstract class Subsystem implements Sendable {
 
     public abstract boolean checkSystem();
 
-    public void writeToLog() {}
+    public void createCommands() {}
 
-    public void CreateBadLogTopic(
+    public void createLogs() {}
+
+    public void createBadLogTopic(
         String topicName,
         String unit,
         Supplier<Double> supplier,
         String... attrs
     ) {
-        if (factory.getSubsystem(name).implemented) {
+        if (factory.getSubsystem(name).implemented && Constants.kIsBadlogEnabled) {
             BadLog.createTopic(topicName, unit, supplier, attrs);
         }
     }
 
-    public void CreateBadLogValue(String badLogName, String value) {
-        if (factory.getSubsystem(name).implemented) {
+    public void createBadLogValue(String badLogName, String value) {
+        if (factory.getSubsystem(name).implemented && Constants.kIsBadlogEnabled) {
             BadLog.createValue(badLogName, value);
         }
     }

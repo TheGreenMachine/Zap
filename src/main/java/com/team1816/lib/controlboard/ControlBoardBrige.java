@@ -46,7 +46,7 @@ public class ControlBoardBrige {
                         )
                 );
             System.out.println(
-                "Loading " + controlBoardConfigName + " control board config"
+                "Loading \"" + controlBoardConfigName + "\" control board config"
             );
         } catch (Exception e) {
             System.out.println(e);
@@ -298,10 +298,5 @@ public class ControlBoardBrige {
             operatorButtonMap.containsKey(key) ||
             operatorDpadMap.containsKey(key)
         );
-    }
-
-    public boolean isDemoMode() {
-        if (config == null) return false;
-        return Objects.requireNonNullElse(config.isDemoControlBoard, false);
     }
 }

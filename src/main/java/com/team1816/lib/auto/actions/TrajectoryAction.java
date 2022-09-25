@@ -1,11 +1,13 @@
 package com.team1816.lib.auto.actions;
 
+import static com.team1816.lib.subsystems.drive.Drive.*;
+import static com.team1816.lib.subsystems.drive.SwerveDrive.swerveKinematics;
+
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.paths.AutoPath;
-import com.team1816.lib.subsystems.Drive;
-import com.team1816.lib.subsystems.SwerveDrive;
-import com.team1816.lib.subsystems.TankDrive;
-import com.team1816.season.Constants;
+import com.team1816.lib.subsystems.drive.Drive;
+import com.team1816.lib.subsystems.drive.SwerveDrive;
+import com.team1816.lib.subsystems.drive.TankDrive;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.RamseteController;
@@ -42,16 +44,16 @@ public class TrajectoryAction implements Action {
                     drive::getPose,
                     new RamseteController(), //defaults of
                     new DifferentialDriveKinematics(
-                        Units.inchesToMeters(Constants.kDriveWheelTrackWidthInches)
+                        Units.inchesToMeters(kDriveWheelTrackWidthInches)
                     ),
                     ((TankDrive) drive)::updateTrajectoryVelocities
                 );
         } else if (drive instanceof SwerveDrive) {
             var thetaController = new ProfiledPIDController(
-                Constants.kPThetaController,
+                kPThetaController,
                 0,
                 0,
-                Constants.kThetaControllerConstraints
+                kThetaControllerConstraints
             );
             thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
@@ -59,9 +61,9 @@ public class TrajectoryAction implements Action {
                 new SwerveControllerCommand(
                     trajectory,
                     drive::getPose,
-                    Constants.Swerve.swerveKinematics,
-                    new PIDController(Constants.kPXController, 0, 0),
-                    new PIDController(Constants.kPYController, 0, 0),
+                    swerveKinematics,
+                    new PIDController(kPXController, 0, 0),
+                    new PIDController(kPYController, 0, 0),
                     thetaController,
                     ((SwerveDrive) drive)::getTrajectoryHeadings,
                     ((SwerveDrive) drive)::setModuleStates

@@ -1,18 +1,22 @@
 package com.team1816.season.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.GhostMotor;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
+import com.team1816.lib.hardware.components.motor.IMotorSensor;
+import com.team1816.lib.loops.AsyncTimer;
+import com.team1816.lib.math.PoseUtil;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -102,7 +106,7 @@ public class Turret extends Subsystem implements PidProvider {
         kRevWrapAroundPos = kRevLimit - MASK;
 
         // Position Control
-        double peakOutput = 0.8;
+        double peakOutput = 0.5;
         pidConfig = factory.getPidSlotConfig(NAME);
         turretMotor.configPeakOutputForward(peakOutput, Constants.kCANTimeoutMs);
         turretMotor.configNominalOutputForward(0, Constants.kCANTimeoutMs);
@@ -133,7 +137,6 @@ public class Turret extends Subsystem implements PidProvider {
         return ticks / kTurretPPR * 360;
     }
 
-    /** zeroing */
     @Override
     public synchronized void zeroSensors() {
         zeroSensors(false);
@@ -144,11 +147,10 @@ public class Turret extends Subsystem implements PidProvider {
         followingPos = 0;
         lostEncPos = false;
 
-        if ((int) kRatioTurretAbs == 1 && !(turretMotor instanceof GhostMotor)) {
-            var sensors = ((TalonSRX) turretMotor).getSensorCollection();
-            var sensorVal = sensors.getPulseWidthPosition() % kAbsPPR;
-            sensors.setQuadraturePosition(sensorVal, Constants.kLongCANTimeoutMs);
-            System.out.println("zeroing turret at " + sensorVal);
+        if ((int) kRatioTurretAbs == 1) {
+            var sensor = ((IMotorSensor) turretMotor);
+            var sensorVal = sensor.getPulseWidthPosition() % kAbsPPR;
+            sensor.setQuadraturePosition(sensorVal);System.out.println("zeroing turret at " + sensorVal);
         } else {
             if (resetEncPos) {
                 turretMotor.setSelectedSensorPosition(
@@ -160,7 +162,6 @@ public class Turret extends Subsystem implements PidProvider {
         }
     }
 
-    /** actions */
     public ControlMode getControlMode() {
         return controlMode;
     }
@@ -267,16 +268,16 @@ public class Turret extends Subsystem implements PidProvider {
     @Override
     public void writeToHardware() {
         switch (controlMode) {
+            case CAMERA_FOLLOWING:
+                autoHome();
+                positionControl(followingPos);
+                break;
             case FIELD_FOLLOWING:
                 trackGyro();
                 positionControl(followingPos);
                 break;
             case CENTER_FOLLOWING:
                 trackCenter();
-                positionControl(followingPos);
-                break;
-            case CAMERA_FOLLOWING:
-                autoHome();
                 positionControl(followingPos);
                 break;
             case ABSOLUTE_FOLLOWING:
@@ -477,11 +478,32 @@ public class Turret extends Subsystem implements PidProvider {
         SmartDashboard.putString("Turret/Deadzone", deadzone ? "Deadzone" : "Free");
     }
 
+
+    @Override
+    public void createLogs() {
+        createBadLogValue("Turret PID", this.pidToString());
+        createBadLogTopic(
+            "Turret/ActPos",
+            "NativeUnits",
+            this::getActualPosTicks,
+            "hide",
+            "join:Turret/Positions"
+        );
+        createBadLogTopic(
+            "Turret/TargetPos",
+            "NativeUnits",
+            this::getDesiredPosTicks,
+            "hide",
+            "join:Turret/Positions"
+        );
+        createBadLogTopic("Turret/ErrorPos", "NativeUnits", this::getPosError);
+    }
+
     /** modes */
     public enum ControlMode {
+        CAMERA_FOLLOWING,
         FIELD_FOLLOWING,
         CENTER_FOLLOWING,
-        CAMERA_FOLLOWING,
         ABSOLUTE_FOLLOWING,
         EJECT,
         POSITION,

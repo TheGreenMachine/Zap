@@ -17,16 +17,26 @@ subsystems:
                 kD: 4.0 # 3.6
                 kF: 0.0475813
         constants:
-            maxVelTicks100ms: 12275.7 # ticks per 100ms TODO tune - value currently from swerve
+            maxVelTicks100ms: 40275.7
             encPPR: 22220.8
             openLoopRampRate: 0.8
             isSwerve: 0
+            maxRotVel: 7.2
+            trackWidth: 21 #inches
+            wheelbaseLength: 21.5 #inches
+            wheelDiameter: 4
+            kTrackScrubFactor: 1.0
+            maxVelOpenLoop: 3 # meters/s
+            maxVelPathFollowing: 2.2 # meters/s
+            maxAccel: 2.54 # meters/s^ 2
+            currentLimit: 40
+            isDemoMode: 1
     ledmanager:
         implemented: true
         canifier: -1
         candle: -1
         constants:
-            raveEnabled: 1
+            raveEnabled: 0
             raveSpeed: 0.05
             cameraLed: 1
             maxLevel: 255
@@ -151,15 +161,7 @@ infrastructure:
     isPigeon2: false
 controlboard: example # demo
 constants:
-    # drivetrain dimensions and movement
-    maxRotVel: 7.2
-    trackWidth: 21 #inches
-    wheelbaseLength: 21.5 #inches
-    wheelDiameter: 4
-    kTrackScrubFactor: 1.0
-    maxVelOpenLoop: 3 # meters/s
-    maxVelPathFollowing: 2.2 # meters/s
-    maxAccel: 2.54 # meters/s^ 2
+    # drivetrain misc
     maxAllowablePoseError: 0.1
     ## Logging ##
     logTeleOp: 1 # 0 or 1

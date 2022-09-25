@@ -4,7 +4,7 @@ import com.team1816.lib.controlboard.Controller;
 import com.team1816.lib.controlboard.LogitechController;
 import com.team1816.lib.controlboard.WasdController;
 import com.team1816.lib.controlboard.XboxController;
-import com.team254.lib.util.LatchedBoolean;
+import com.team1816.lib.util.team254.LatchedBoolean;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotBase;
 import java.util.function.BooleanSupplier;
@@ -19,13 +19,13 @@ public class ControlUtils implements Controller.Factory {
         var hid = new Joystick(port);
         var axisCount = hid.getAxisCount();
         if (axisCount <= 3 && RobotBase.isSimulation()) {
-            System.out.println("Using Wasd Controller for port: " + port);
+            System.out.println("    Using Wasd Controller for port: " + port);
             return new WasdController(port);
         } else if (axisCount == 4) {
-            System.out.println("Using Logitech Controller for port: " + port);
+            System.out.println("    Using Logitech Controller for port: " + port);
             return new LogitechController(port);
         } else {
-            System.out.println("Using XboxController Controller for port: " + port);
+            System.out.println("    Using XboxController Controller for port: " + port);
             return new XboxController(port);
         }
     }
@@ -41,7 +41,7 @@ public class ControlUtils implements Controller.Factory {
         return new HoldAction(input, action);
     }
 
-    public static ScalarAction createScalar(DoubleSupplier input, DoubleConsumer output) {
+    public static ScalarAction createScalar(double input, DoubleConsumer output) {
         return new ScalarAction(input, output);
     }
 
@@ -55,6 +55,11 @@ public class ControlUtils implements Controller.Factory {
         private final LatchedBoolean releasedState = new LatchedBoolean();
         private final BooleanSupplier input;
         private final Runnable action;
+
+        private PressAction(boolean input, Runnable action) {
+            this.input = () -> input;
+            this.action = action;
+        }
 
         private PressAction(BooleanSupplier input, Runnable action) {
             this.input = input;
@@ -109,8 +114,8 @@ public class ControlUtils implements Controller.Factory {
 
         private double lastValue;
 
-        private ScalarAction(DoubleSupplier input, DoubleConsumer action) {
-            this.input = input;
+        private ScalarAction(double input, DoubleConsumer action) {
+            this.input = () -> input;
             this.action = action;
         }
 

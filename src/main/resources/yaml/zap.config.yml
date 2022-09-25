@@ -70,7 +70,15 @@ subsystems:
             isSwerve: 1
             encPPR: 14255
             azimuthEncPPR: 4096
-            heatThreshold: 65 # degrees C
+            maxRotVel: 14
+            trackWidth: 21 #inches
+            wheelbaseLength: 21.5 #inches
+            wheelDiameter: 4
+            kTrackScrubFactor: 1.0
+            maxVelOpenLoop: 3 # meters/s
+            maxVelPathFollowing: 3 # meters/s (2.2)
+            maxAccel: 2.54 # meters/s^ 2
+            isDemoMode: 0
     ledmanager:
         implemented: true
         canifier: -1
@@ -93,13 +101,13 @@ subsystems:
             turretMotor: 33
         constants:
             deltaXScalar: 150 #value worked best at 150 in sim
-            revLimit: -4296 # adjusted for zero-offset
-            fwdLimit: 26321 # adjusted for zero-offset
-            absPosTicksSouth: 0 # absolute
+            revLimit: -5580 # adjusted for zero-offset
+            fwdLimit: 29600 # adjusted for zero-offset
+            absPosTicksSouth: 200 # absolute
             absPPR: 4096
             turretPPR: 53248 # 4096 * 13
     shooter:
-        implemented: false
+        implemented: true
         falcons:
             shooterMain: 21
         invertMotor:
@@ -119,8 +127,8 @@ subsystems:
             maxVelTicks100ms: 20700
             nearVel: 4500
             midVel: 8450
-            tarmacTapeVel: 8125
-            launchpadVel: 10150
+            tarmacTapeVel: 8425
+            launchpadVel: 10100
             maxVel: 16500
             coast: 8000
     climber:
@@ -128,26 +136,28 @@ subsystems:
         falcons:
             climberMain: 34 #20
             climberFollower: 35 #-1
+        invertMotor:
+            - climberMain
         solenoids:
-            topClamp: 7
-            bottomClamp: 6
+            topClamp: 6
+            bottomClamp: 7
         pidConfig:
             slot0:
-                kP: 0.050 #0.075 #tunned at 4000
+                kP: 0.035 #0.075 #tunned at 4000
                 kI: 0.000
                 kD: .6
                 kF: 0.0
-                allowableError: 5000
+                allowableError: 3000
         constants:
             maxVelTicks100ms: 1
-            unlockPos: -14400
+            unlockPos: 14400
             startPos: 0
             returnPos: 0
-            firstToSecondRungPos: 150000
-            secondToLastRungPos: 342000
-            lastPos: 370000
+            firstToSecondRungPos: -150000
+            secondToLastRungPos: -342000
+            lastPos: -370000
     elevator:
-        implemented: false
+        implemented: true
         talons:
             elevator: 32
         pidConfig:
@@ -167,10 +177,11 @@ subsystems:
             flushPow: -0.3
             intakePow: 0.3
     spindexer:
-        implemented: false
+        implemented: true
         talons:
             spindexer: 31
         constants:
+            maxVelTicks100ms: 1
             collectPow: 0.5
             indexPow: -0.5
             flushPow: -1
@@ -178,27 +189,27 @@ subsystems:
             firePow: 0.85
     collector:
         implemented: true
-        sparkmaxes:
+        talons:
             intake: 23 # maxVelTicks100ms 10617
-        invertMotor:
-            - intake
         solenoids:
             arm: 2
+        invertMotor:
+            - intake
         pidConfig:
             slot0:
-                kP: 0.0001 #tunned at 4000
+                kP: 0.1
                 kI: 0.0
-                kD: 0.006
+                kD: 0.1
                 kF: 0.0001
                 allowableError: 10
         constants:
             maxVelTicks100MS: 10000
-            isVelocity: 1
+            isVelocity: 0
             revving: 0 #.05
             collecting: -.5 #-3600
             flush: 0.5 #.35
     camera:
-        implemented: false
+        implemented: true
         constants:
             debug: 0
             maxDist: 400
@@ -209,6 +220,8 @@ subsystems:
         solenoids:
             lock: 1
             dump: 3
+        constants:
+            heatThreshold: 65 # degrees Celsius
 infrastructure:
     canivoreBusName: highSpeed
     # power distribution
