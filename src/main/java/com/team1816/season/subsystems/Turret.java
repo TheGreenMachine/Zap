@@ -314,8 +314,10 @@ public class Turret extends Subsystem implements PidProvider {
                 setControlMode(ControlMode.FIELD_FOLLOWING);
                 break;
             case POSITION:
+                setControlMode(ControlMode.FIELD_FOLLOWING);
                 break;
             case MANUAL:
+                setControlMode(ControlMode.FIELD_FOLLOWING);
                 break;
         }
     }
