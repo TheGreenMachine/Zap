@@ -224,7 +224,7 @@ public class Superstructure {
         if (!robotState.isPoseUpdated) {
             return true;
         }
-        if (RobotBase.isSimulation()) return false; // requires way too much effort
+        if (RobotBase.isSimulation() || RobotBase.isReal()) return false; // simulation requires too much effort, reality can't happen right now
         boolean needsVisionUpdate =
             (
                 Math.abs(
@@ -299,6 +299,5 @@ public class Superstructure {
     public enum STATE {
         FAT_BOY,
         LITTLE_MAN,
-        TSAR_BOMBA,
     }
 }

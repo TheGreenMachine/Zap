@@ -60,11 +60,7 @@ public class Infrastructure {
     }
 
     public Double[] getAcceleration() {
-        return new Double[] {
-            pigeon.getAcceleration()[0] * Constants.gravitationalAccelerationConstant,
-            pigeon.getAcceleration()[1] * Constants.gravitationalAccelerationConstant,
-            pigeon.getAcceleration()[2] * Constants.gravitationalAccelerationConstant,
-        };
+        return new Double[] {0d, 0d, -Constants.gravitationalAccelerationConstant};
     }
 
     public PowerDistribution getPd() {

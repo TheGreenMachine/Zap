@@ -297,6 +297,10 @@ public class Turret extends Subsystem implements PidProvider {
             case FIELD_FOLLOWING:
                 setControlMode(ControlMode.EJECT);
                 break;
+            case CAMERA_FOLLOWING:
+                autoHome();
+                positionControl(followingPos);
+                break;
             case EJECT:
                 setControlMode(ControlMode.CENTER_FOLLOWING);
                 break;
@@ -318,6 +322,11 @@ public class Turret extends Subsystem implements PidProvider {
         return -convertTurretDegreesToTicks( // this is currently negated because motor is running counterclockwise
             robotState.fieldToVehicle.getRotation().getDegrees()
         );
+    }
+
+    private int cameraFollowingOffset() {
+        var delta = -camera.getDeltaX();
+        return ((int) (delta * kDeltaXScalar));
     }
 
     private int targetFollowingOffset() {
@@ -355,6 +364,24 @@ public class Turret extends Subsystem implements PidProvider {
         int targetOffset = targetFollowingOffset();
 
         int adj = (desiredPos + fieldTickOffset + targetOffset + visionCorroboration);
+        if (adj != followingPos) {
+            followingPos = adj;
+            outputsChanged = true;
+        }
+    }
+
+    private void autoHome() {
+        var cameraOffset = cameraFollowingOffset();
+        int adj = followingPos + cameraOffset;
+        if (adj != followingPos) {
+            followingPos = adj;
+            outputsChanged = true;
+        }
+    }
+
+    private void autoHomeWithOffset(int offset) {
+        var cameraOffset = cameraFollowingOffset();
+        int adj = followingPos + cameraOffset + offset;
         if (adj != followingPos) {
             followingPos = adj;
             outputsChanged = true;
@@ -448,6 +475,7 @@ public class Turret extends Subsystem implements PidProvider {
     /** modes */
     public enum ControlMode {
         FIELD_FOLLOWING,
+        CAMERA_FOLLOWING,
         CENTER_FOLLOWING,
         ABSOLUTE_FOLLOWING,
         EJECT,

@@ -6,8 +6,6 @@ import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 public interface IPigeonIMU {
     double getYaw();
 
-    double[] getAcceleration();
-
     ErrorCode setYaw(double angleDeg);
 
     ErrorCode setFusedHeading(double angleDeg);
