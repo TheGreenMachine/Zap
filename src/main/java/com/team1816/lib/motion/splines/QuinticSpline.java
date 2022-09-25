@@ -1,4 +1,4 @@
-package com.team1816.lib.math.motion.splines;
+package com.team1816.lib.motion.splines;
 
 import java.util.ArrayList;
 

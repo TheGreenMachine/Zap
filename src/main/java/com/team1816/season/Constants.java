@@ -39,6 +39,11 @@ public class Constants {
         fieldCenterY,
         EmptyRotation
     );
+    public static final Pose2d kDefaultZeroingPose = new Pose2d(
+        0.5,
+        fieldCenterY,
+        EmptyRotation
+    );
 
     // Drivetrain characterization
     public static final double gravitationalAccelerationConstant = 9.8d;
