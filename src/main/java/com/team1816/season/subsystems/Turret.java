@@ -275,6 +275,10 @@ public class Turret extends Subsystem implements PidProvider {
                 trackCenter();
                 positionControl(followingPos);
                 break;
+            case CAMERA_FOLLOWING:
+                autoHome();
+                positionControl(followingPos);
+                break;
             case ABSOLUTE_FOLLOWING:
                 trackAbsolute();
                 positionControl(followingPos);
@@ -298,8 +302,7 @@ public class Turret extends Subsystem implements PidProvider {
                 setControlMode(ControlMode.EJECT);
                 break;
             case CAMERA_FOLLOWING:
-                autoHome();
-                positionControl(followingPos);
+                setControlMode(ControlMode.CENTER_FOLLOWING);
                 break;
             case EJECT:
                 setControlMode(ControlMode.CENTER_FOLLOWING);
@@ -475,8 +478,8 @@ public class Turret extends Subsystem implements PidProvider {
     /** modes */
     public enum ControlMode {
         FIELD_FOLLOWING,
-        CAMERA_FOLLOWING,
         CENTER_FOLLOWING,
+        CAMERA_FOLLOWING,
         ABSOLUTE_FOLLOWING,
         EJECT,
         POSITION,
