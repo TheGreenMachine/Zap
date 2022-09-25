@@ -6,17 +6,13 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.PIDSlotConfiguration;
-import com.team1816.lib.hardware.components.motor.GhostMotor;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.hardware.components.motor.IMotorSensor;
-import com.team1816.lib.loops.AsyncTimer;
-import com.team1816.lib.math.PoseUtil;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -150,7 +146,8 @@ public class Turret extends Subsystem implements PidProvider {
         if ((int) kRatioTurretAbs == 1) {
             var sensor = ((IMotorSensor) turretMotor);
             var sensorVal = sensor.getPulseWidthPosition() % kAbsPPR;
-            sensor.setQuadraturePosition(sensorVal);System.out.println("zeroing turret at " + sensorVal);
+            sensor.setQuadraturePosition(sensorVal);
+            System.out.println("zeroing turret at " + sensorVal);
         } else {
             if (resetEncPos) {
                 turretMotor.setSelectedSensorPosition(
@@ -477,7 +474,6 @@ public class Turret extends Subsystem implements PidProvider {
     public void outputToSmartDashboard() {
         SmartDashboard.putString("Turret/Deadzone", deadzone ? "Deadzone" : "Free");
     }
-
 
     @Override
     public void createLogs() {

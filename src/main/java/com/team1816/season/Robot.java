@@ -10,8 +10,8 @@ import com.team1816.lib.controlboard.Controller;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.Looper;
-import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.SubsystemManager;
+import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.controlboard.ActionManager;
 import com.team1816.season.states.RobotState;
@@ -19,10 +19,6 @@ import com.team1816.season.states.Superstructure;
 import com.team1816.season.subsystems.*;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class Robot extends TimedRobot {
 
@@ -63,7 +59,7 @@ public class Robot extends TimedRobot {
 
     // hack variables
     private final Turret.ControlMode defaultTurretControlMode =
-        Turret.ControlMode.POSITION;
+        Turret.ControlMode.CENTER_FOLLOWING;
     private boolean faulted;
     private boolean useManualShoot = false;
 

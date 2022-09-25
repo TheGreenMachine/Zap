@@ -19,8 +19,7 @@ public class ControlBoard implements IControlBoard {
     @Inject
     private ControlBoard(ControlBoardBrige bridge, Controller.Factory controller) {
         driverController = controller.getControllerInstance(kDriveGamepadPort);
-        operatorController =
-            controller.getControllerInstance(kOperatorGamepadPort);
+        operatorController = controller.getControllerInstance(kOperatorGamepadPort);
 
         controlBoardBridge = bridge;
     }

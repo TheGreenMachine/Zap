@@ -5,7 +5,6 @@ import com.team1816.lib.Injector;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import edu.wpi.first.wpilibj.DriverStation;
 import java.util.HashMap;
-import java.util.Objects;
 
 // This is a bridging class that allows for yaml functionality and it's sole purpose is to map controls to their respective methods
 public class ControlBoardBrige {

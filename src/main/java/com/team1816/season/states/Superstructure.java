@@ -3,7 +3,6 @@ package com.team1816.season.states;
 import static com.team1816.lib.subsystems.Subsystem.factory;
 import static com.team1816.lib.subsystems.Subsystem.robotState;
 
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.subsystems.drive.Drive;
@@ -248,11 +247,11 @@ public class Superstructure {
         double cameraDist = camera.getDistance(); // flat distance in meters
         double distanceToCenterMeters = Units.inchesToMeters(
             Constants.kTargetRadius +
-                (
-                    Math.sqrt(
-                        (cameraDist * cameraDist) - Math.pow(Constants.kHeightFromCamToHub, 2)
-                    )
+            (
+                Math.sqrt(
+                    (cameraDist * cameraDist) - Math.pow(Constants.kHeightFromCamToHub, 2)
                 )
+            )
         );
         Translation2d deltaToHub = new Translation2d(
             distanceToCenterMeters,
