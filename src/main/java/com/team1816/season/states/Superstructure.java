@@ -267,7 +267,8 @@ public class Superstructure {
     public void updatePoseWithCamera() {
         double cameraDist = camera.getDistance(); // flat distance in meters
         // 26.56 = radius of center hub - - 5629 = square of height of hub
-        double distanceToCenterMeters = Units.inchesToMeters(Constants.kTargetRadius) + cameraDist;
+        double distanceToCenterMeters =
+            Units.inchesToMeters(Constants.kTargetRadius) + cameraDist;
 
         Translation2d deltaToHub = new Translation2d(
             distanceToCenterMeters,

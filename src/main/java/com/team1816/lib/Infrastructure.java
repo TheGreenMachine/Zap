@@ -60,7 +60,7 @@ public class Infrastructure {
     }
 
     public Double[] getAcceleration() {
-        return new Double[] {0d, 0d, -Constants.gravitationalAccelerationConstant};
+        return new Double[] { 0d, 0d, -Constants.gravitationalAccelerationConstant };
     }
 
     public PowerDistribution getPd() {

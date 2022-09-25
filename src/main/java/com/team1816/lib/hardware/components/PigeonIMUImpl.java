@@ -2,7 +2,6 @@ package com.team1816.lib.hardware.components;
 
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.sensors.PigeonIMU;
-import com.ctre.phoenix.sensors.PigeonImuJNI;
 
 public class PigeonIMUImpl extends PigeonIMU implements IPigeonIMU {
 

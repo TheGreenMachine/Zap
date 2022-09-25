@@ -425,13 +425,17 @@ public class Robot extends TimedRobot {
                     createAction(
                         () -> controlBoard.getAsBool("littleMan"),
                         () -> {
-                            superstructure.setSuperstructureState(Superstructure.STATE.LITTLE_MAN);
+                            superstructure.setSuperstructureState(
+                                Superstructure.STATE.LITTLE_MAN
+                            );
                         }
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("fatBoy"),
                         () -> {
-                            superstructure.setSuperstructureState(Superstructure.STATE.FAT_BOY);
+                            superstructure.setSuperstructureState(
+                                Superstructure.STATE.FAT_BOY
+                            );
                         }
                     )
                 );

@@ -141,7 +141,7 @@ task runAlpha(type: JavaExec) {
         environment "LD_LIBRARY_PATH", jniDir
         environment "DYLD_FALLBACK_LIBRARY_PATH", jniDir
         environment "DYLD_LIBRARY_PATH", jniDir
-        environment "DYLD_LIBRARY_PATH", jniDir
+        jvmArgs "-XstartOnFirstThread"
     }
     environment "HALSIM_EXTENSIONS", hal
     environment "ROBOT_NAME", "alpha"
@@ -150,7 +150,7 @@ task runAlpha(type: JavaExec) {
     jvmArgs "-Djava.library.path=${jniDir}"
 }
 
-task runSwerve(type: JavaExec) {
+task runZap(type: JavaExec) {
     String jniDir = "${project.buildDir}/jni/release"
     environment "PATH", jniDir
     String hal = fileTree(dir: "${project.buildDir}/jni/release", include: '*halsim_*.*').asPath
@@ -167,7 +167,25 @@ task runSwerve(type: JavaExec) {
     jvmArgs "-Djava.library.path=${jniDir}"
 }
 
-task runTank(type: JavaExec) {
+task runZoffseason(type: JavaExec) {
+    String jniDir = "${project.buildDir}/jni/release"
+    environment "PATH", jniDir
+    String hal = fileTree(dir: "${project.buildDir}/jni/release", include: '*halsim_*.*').asPath
+    if (!DefaultNativePlatform.currentOperatingSystem.isWindows()) {
+        environment "LD_LIBRARY_PATH", jniDir
+        environment "DYLD_FALLBACK_LIBRARY_PATH", jniDir
+        environment "DYLD_LIBRARY_PATH", jniDir
+        jvmArgs "-XstartOnFirstThread"
+    }
+    environment "HALSIM_EXTENSIONS", hal
+    environment "ROBOT_NAME", "zoffseason"
+    dependsOn(jar, simulateExternalJavaRelease)
+    classpath = files(jar)
+    jvmArgs "-Djava.library.path=${jniDir}"
+}
+
+
+task runZodiac(type: JavaExec) {
     String jniDir = "${project.buildDir}/jni/release"
     environment "PATH", jniDir
     String hal = fileTree(dir: "${project.buildDir}/jni/release", include: '*halsim_*.*').asPath
