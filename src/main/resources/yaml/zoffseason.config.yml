@@ -1,4 +1,4 @@
-asubsystems:
+subsystems:
     drivetrain:
         implemented: true
         talons:
