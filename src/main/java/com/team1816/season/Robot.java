@@ -61,6 +61,7 @@ public class Robot extends TimedRobot {
     private final Turret.ControlMode defaultTurretControlMode =
         Turret.ControlMode.CENTER_FOLLOWING;
     private boolean faulted;
+    private boolean colorChange = false;
     private boolean useManualShoot = false;
 
     Robot() {
@@ -355,6 +356,9 @@ public class Robot extends TimedRobot {
         superstructure.setStopped(false);
 
         drive.setControlState(Drive.ControlState.TRAJECTORY_FOLLOWING);
+        if (autoModeManager.getSelectedColor() == AutoModeManager.Color.RED) {
+            colorChange = true;
+        }
         autoModeManager.startAuto();
 
         enabledLoop.start();
@@ -365,6 +369,16 @@ public class Robot extends TimedRobot {
         try {
             disabledLoop.stop();
             ledManager.setDefaultStatus(LedManager.RobotStatus.ENABLED);
+
+            if (colorChange) {
+                System.out.println("Robot Color is RED");
+                var newRobotPose = robotState.fieldToVehicle
+                    .relativeTo(Constants.fieldCenterPose)
+                    .plus(Constants.fieldCenterTransform);
+                drive.resetOdometry(newRobotPose);
+                robotState.fieldToVehicle = newRobotPose;
+                colorChange = false;
+            }
 
             turret.zeroSensors();
             climber.zeroSensors();

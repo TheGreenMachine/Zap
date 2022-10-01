@@ -86,6 +86,7 @@
       "/SmartDashboard/Demo Mode": "String Chooser",
       "/SmartDashboard/Demo mode": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Robot color": "String Chooser",
       "/SmartDashboard/SendableChooser[0]": "String Chooser",
       "/SmartDashboard/SendableChooser[2]": "String Chooser",
       "/SmartDashboard/Starting Position": "String Chooser",
@@ -139,6 +140,11 @@
         "window": {
           "visible": true
         }
+      },
+      "/SmartDashboard/Robot color": {
+        "window": {
+          "visible": true
+        }
       }
     }
   },
@@ -166,8 +172,5 @@
       },
       "open": true
     }
-  },
-  "NetworkTables View": {
-    "visible": false
   }
 }

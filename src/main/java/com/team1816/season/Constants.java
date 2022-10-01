@@ -4,6 +4,7 @@ import com.google.inject.Singleton;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
 
 @Singleton
@@ -29,6 +30,15 @@ public class Constants {
     public static final double kTurretZedRadius = Units.inchesToMeters(7); // meters TODO: VERIFY VALUE
     public static final double fieldCenterY = 8.23 / 2.0;
     public static final double fieldCenterX = 16.46 / 2.0;
+    public static final Pose2d fieldCenterPose = new Pose2d(
+        fieldCenterX,
+        fieldCenterY,
+        EmptyRotation
+    );
+    public static final Transform2d fieldCenterTransform = new Transform2d(
+        new Pose2d(),
+        fieldCenterPose
+    );
     public static final Pose2d targetPos = new Pose2d(
         fieldCenterX,
         fieldCenterY,
