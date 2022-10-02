@@ -107,21 +107,21 @@ public class RobotState {
         return normalizedDeltaChassisSpeeds;
     }
 
-    public double getEstimatedDistanceToGoal() { // TODO: make metric along with distance manager and all other camera functionality
+    public double getEstimatedDistanceToGoal() {
         double estimatedDistanceToGoalMeters = fieldToVehicle
             .getTranslation()
             .getDistance(Constants.targetPos.getTranslation());
-        double distInches =
-            (
-                Math.sqrt(
-                    Units.metersToInches(estimatedDistanceToGoalMeters) *
-                    Units.metersToInches(estimatedDistanceToGoalMeters) +
-                    (Constants.kHeightFromCamToHub * Constants.kHeightFromCamToHub)
-                ) -
-                Constants.kTargetRadius
-            );
-        System.out.println("estimated distance = " + distInches);
-        return distInches;
+//        double distInches =
+//            (
+//                Math.sqrt(
+//                    Units.metersToInches(estimatedDistanceToGoalMeters) *
+//                    Units.metersToInches(estimatedDistanceToGoalMeters) +
+//                    (Constants.kHeightFromCamToHub * Constants.kHeightFromCamToHub)
+//                ) -
+//                Constants.kTargetRadius
+//            );
+        System.out.println("estimated distance = " + estimatedDistanceToGoalMeters);
+        return estimatedDistanceToGoalMeters;
     }
 
     public synchronized void outputToSmartDashboard() {

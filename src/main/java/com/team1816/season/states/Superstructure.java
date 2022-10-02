@@ -243,9 +243,9 @@ public class Superstructure {
         return needsVisionUpdate; // placeHolder
     }
 
-    public Pose2d getCameraPose() {
+    public Pose2d calculatePoseFromCamera() {
         double cameraDist = camera.getDistance(); // flat distance in meters
-        double distanceToCenterMeters = Units.inchesToMeters(
+        double distanceToTargetMeters = Units.inchesToMeters(
             Constants.kTargetRadius +
             (
                 Math.sqrt(
@@ -253,14 +253,14 @@ public class Superstructure {
                 )
             )
         );
-        Translation2d deltaToHub = new Translation2d(
-            distanceToCenterMeters,
+        Translation2d deltaToTarget = new Translation2d(
+            distanceToTargetMeters,
             robotState.getLatestFieldToTurret()
         )
-        .rotateBy(Rotation2d.fromDegrees(robotState.visionPoint.cX)); // TODO need to see weather or not to invert
+        .rotateBy(Rotation2d.fromDegrees(robotState.visionPoint.cX)); // TODO this will change based on how phtoton vision returns values
         Pose2d newRobotPose = Constants.targetPos.transformBy(
             new Transform2d(
-                deltaToHub.unaryMinus(),
+                deltaToTarget.unaryMinus(),
                 robotState.fieldToVehicle.getRotation()
             )
         );
@@ -268,28 +268,7 @@ public class Superstructure {
     }
 
     public void updatePoseWithCamera() {
-        double cameraDist = camera.getDistance(); // flat distance in meters
-        // 26.56 = radius of center hub - - 5629 = square of height of hub
-        double distanceToCenterMeters = Units.inchesToMeters(
-            Constants.kTargetRadius +
-            (
-                Math.sqrt(
-                    (cameraDist * cameraDist) - Math.pow(Constants.kHeightFromCamToHub, 2)
-                )
-            )
-        );
-
-        Translation2d deltaToHub = new Translation2d(
-            distanceToCenterMeters,
-            robotState.getLatestFieldToTurret()
-        )
-        .rotateBy(Rotation2d.fromDegrees(robotState.visionPoint.cX)); // TODO need to see whether or not to invert
-        Pose2d newRobotPose = Constants.targetPos.transformBy(
-            new Transform2d(
-                deltaToHub.unaryMinus(),
-                robotState.fieldToVehicle.getRotation()
-            )
-        );
+        Pose2d newRobotPose = calculatePoseFromCamera();
         if (
             Math.abs(
                 Math.hypot(

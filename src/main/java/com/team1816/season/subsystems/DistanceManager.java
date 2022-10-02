@@ -16,7 +16,7 @@ public class DistanceManager {
 
     private static final RobotFactory factory = Robot.getFactory();
 
-    // State
+    /** state */
     private int lastBucketIndex;
     private static boolean allowBucketOffset = false;
     private static Spline buckets;
@@ -24,26 +24,26 @@ public class DistanceManager {
     /** Control Points */
     private static final ArrayList<Double[]> points = new ArrayList<>() { // format: {distance, output, offset}
         {
-            add(new Double[] { 80d, (double) Shooter.NEAR_VELOCITY, 0d });
-            add(new Double[] { 105d, 7680d, 0d });
-            add(new Double[] { 115d, 8100d, 0d });
-            add(new Double[] { 125d, 8800d, 0d });
-            add(new Double[] { 135d, 8600d, 0d });
-            add(new Double[] { 145d, 8700d, 0d });
-            add(new Double[] { 155d, 9350.5d, 0d });
-            add(new Double[] { 165d, 9825d, 0d });
-            add(new Double[] { 175d, 10210d, 0d });
-            add(new Double[] { 190d, 11200d, 0d });
-            add(new Double[] { 200d, 10240d, 0d });
-            add(new Double[] { 210d, 11175d, 0d });
-            add(new Double[] { 230d, 11875d, 0d });
-            add(new Double[] { 250d, 11875d, 0d });
-            add(new Double[] { 275d, 11875d, 0d });
-            add(new Double[] { 295d, 11875d, 0d });
-            add(new Double[] { 320d, 11875d, 0d });
-            add(new Double[] { 340d, 11875d, 0d });
-            add(new Double[] { 360d, 11875d, 0d });
-            add(new Double[] { 380d, 11875d, 0d });
+            add(new Double[] { 1.40325, (double) Shooter.NEAR_VELOCITY, 0d });
+            add(new Double[] { 2.53272, 7680d, 0d });
+            add(new Double[] { 2.87653, 8100d, 0d });
+            add(new Double[] { 3.19722, 8800d, 0d });
+            add(new Double[] { 3.50475, 8600d, 0d });
+            add(new Double[] { 3.80236, 8700d, 0d });
+            add(new Double[] { 4.09263, 9350.5d, 0d });
+            add(new Double[] { 4.37730, 9825d, 0d });
+            add(new Double[] { 4.65756, 10210d, 0d });
+            add(new Double[] { 5.07153, 11200d, 0d });
+            add(new Double[] { 5.34110, 10240d, 0d });
+            add(new Double[] { 5.61449, 11175d, 0d });
+            add(new Double[] { 6.14997, 11875d, 0d });
+            add(new Double[] { 6.67996, 11875d, 0d });
+            add(new Double[] { 7.33675, 11875d, 0d });
+            add(new Double[] { 7.85868, 11875d, 0d });
+            add(new Double[] { 8.50766, 11875d, 0d });
+            add(new Double[] { 9.02489, 11875d, 0d });
+            add(new Double[] { 9.54048, 11875d, 0d });
+            add(new Double[] { 10.05479, 11875d, 0d });
         }
     };
 
