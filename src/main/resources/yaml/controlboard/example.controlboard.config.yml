@@ -33,13 +33,13 @@ operator:
         x: toggleCamera
         y: autoClimb
         a: toggleTurretMode
-        b: eject
+        b: toggleTurretMode
     axes:
         leftTrigger: yeetShot
         rightTrigger: shoot
     buttons:
         leftBumper: autoAim #TODO Decide
-        rightBumper: toggleHood #TODO Decide
+        rightBumper: autoAim #TODO Decide
         start: toggleTopClamp
         back: toggleBottomClamp
 demoMode: false

@@ -108,6 +108,11 @@ public class Superstructure {
         System.out.println("struct - rev " + revving);
         if (revving) {
             shooter.setDesiredState(Shooter.STATE.REVVING);
+            if (turret.getControlMode() == Turret.ControlMode.ABSOLUTE_FOLLOWING) {
+                setSuperstructureState(STATE.FAT_BOY);
+            } else {
+                setSuperstructureState(STATE.LITTLE_MAN);
+            }
             if (superstructureState == STATE.FAT_BOY) {
                 fatBoy();
             } else {
