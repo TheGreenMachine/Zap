@@ -6,11 +6,13 @@ import com.team1816.lib.Infrastructure;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
 import com.team1816.season.states.RobotState;
+import com.team1816.season.states.RobotState.Point;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.photonvision.*;
+import org.photonvision.targeting.*;
 
 @Singleton
 public class Camera extends Subsystem {
@@ -97,6 +99,18 @@ public class Camera extends Subsystem {
     public void readFromHardware() {
         if (RobotBase.isSimulation()) {
             return;
+        }
+        var result = cam.getLatestResult();
+        if (!result.hasTargets()) {
+            return;
+        }
+        robotState.visionPoint.clear();
+        for (PhotonTrackedTarget target : result.targets) {
+            Point p = new Point();
+            p.id = target.getFiducialId();
+            p.x = (int) target.getPitch();
+            p.y = (int) target.getYaw();
+            p.z = (int) target.getSkew();
         }
     }
 
