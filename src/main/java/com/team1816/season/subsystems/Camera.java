@@ -4,12 +4,13 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.subsystems.Subsystem;
-import com.team1816.lib.subsystems.vision.VisionSocket;
 import com.team1816.season.Constants;
 import com.team1816.season.states.RobotState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.photonvision.*;
 
 @Singleton
 public class Camera extends Subsystem {
@@ -17,7 +18,7 @@ public class Camera extends Subsystem {
     // Components
     static LedManager led;
 
-    public final VisionSocket socket = new VisionSocket();
+    private final PhotonCamera cam = new PhotonCamera("zed");
     // Constants
     private static final String NAME = "camera";
     private static final double CAMERA_FOCAL_LENGTH = 700; // px
@@ -28,6 +29,15 @@ public class Camera extends Subsystem {
     private final double MAX_DIST = factory.getConstant(NAME, "maxDist", 260);
     private final double MAX_DELTA_X = factory.getConstant(NAME, "maxDeltaX", 1200);
 
+    private final double CAMERA_HEIGHT_METERS = Units.inchesToMeters(
+        Constants.kCameraMountingHeight
+    );
+    private final double TARGET_HEIGHT_METERS = Units.inchesToMeters(
+        Constants.kTargetHeight
+    );
+    private final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(
+        Constants.kCameraMountingAngleY
+    );
     // state
     private boolean cameraEnabled;
 
@@ -36,76 +46,39 @@ public class Camera extends Subsystem {
         super(NAME, inf, rs);
         led = ledManager;
         SmartDashboard.putNumber("Camera/cy", 0);
-        socket.setDebug(factory.getConstant(NAME, "debug") > 0);
-    }
-
-    private double parseDeltaX(double x) {
-        if (Math.abs(x) > MAX_DELTA_X || x < 0) {
-            return 0;
-        }
-        double deltaXPixels = (x - (VIDEO_WIDTH / 2)); // Calculate deltaX from center of screen
-        double base = Math.toDegrees(Math.atan2(deltaXPixels, CAMERA_FOCAL_LENGTH)); // Converted to degrees
-        return base;
     }
 
     public double getDeltaX() {
         if (RobotBase.isSimulation()) { //simulate feedback loop
             return simulateDeltaX();
-        } else {
-            return parseDeltaX(
-                Math.atan2(
-                    robotState.visionPoint.get(0).x,
-                    robotState.visionPoint.get(0).y
-                )
-            ); //TODO Filler
         }
+        var result = cam.getLatestResult();
+        if (!result.hasTargets()) {
+            return -1.0;
+        }
+        return result.getBestTarget().getPitch();
     }
 
     public double getDistance() {
         if (RobotBase.isSimulation()) {
             return robotState.getEstimatedDistanceToGoal();
         }
-        //        double directInches =
-        //            (
-        //                (Constants.kHeightFromCamToHub) /
-        //                (
-        //                    Math.tan(
-        //                        Math.toRadians(
-        //                            Constants.kCameraMountingAngleY +
-        //                            (
-        //                                (
-        //                                    (VIDEO_HEIGHT - robotState.visionPoint.cY) -
-        //                                    (VIDEO_HEIGHT / 2)
-        //                                ) *
-        //                                CAMERA_VFOV /
-        //                                VIDEO_HEIGHT
-        //                            )
-        //                        )
-        //                    )
-        //                )
-        //            );
-        //        return (
-        //            Math.sqrt(
-        //                Math.pow(Units.inchesToMeters(directInches), 2) -
-        //                Math.pow(Units.inchesToMeters(Constants.kHeightFromCamToHub), 2)
-        //            ) +
-        //            Units.inchesToMeters(Constants.kTargetRadius)
-        //        );
-        return Math.hypot(
-            robotState.visionPoint.get(0).x,
-            robotState.visionPoint.get(0).y
-        ); //TODO Filler
+        var result = cam.getLatestResult();
+        if (!result.hasTargets()) {
+            return -1.0;
+        }
+        return PhotonUtils.calculateDistanceToTargetMeters(
+            CAMERA_HEIGHT_METERS,
+            TARGET_HEIGHT_METERS,
+            CAMERA_PITCH_RADIANS,
+            Units.degreesToRadians(result.getBestTarget().getPitch())
+        );
     }
-
-    public double getRawCenterX() {
-        return getDeltaX();
-    } // TODO Filler
 
     public void setCameraEnabled(boolean cameraEnabled) {
         if (this.isImplemented()) {
             this.cameraEnabled = cameraEnabled;
             led.setCameraLed(cameraEnabled);
-            socket.setEnabled(cameraEnabled);
         } else {
             System.out.println("not enabling camera because camera not implemented...");
         }
@@ -119,30 +92,11 @@ public class Camera extends Subsystem {
         setCameraEnabled(!cameraEnabled);
     }
 
-    private void cachePoint() {
-        // self.cx+'|'+self.cy+'|' + self.distance + "\n"
-        String[] data = socket.request("point");
-        if (data == null || data.length < 4) {
-            if (data != null) System.out.println("CAMERA DEBUG: Malformed point line: ");
-            return;
-        }
-        robotState.visionPoint.get(0).x = Double.parseDouble(data[1]); //TODO Filler
-        robotState.visionPoint.get(0).y = Double.parseDouble(data[2]); //TODO Filler
-    }
-
-    public void stop() {
-        //socket.close();
-    }
+    public void stop() {}
 
     public void readFromHardware() {
         if (RobotBase.isSimulation()) {
             return;
-        }
-        if (socket.shouldReconnect()) {
-            socket.connect();
-        }
-        if (socket.isConnected()) {
-            cachePoint();
         }
     }
 
@@ -160,12 +114,6 @@ public class Camera extends Subsystem {
             setCameraEnabled(false);
         }
         return true;
-    }
-
-    @Override
-    public void createLogs() {
-        createBadLogTopic("Vision/DeltaXAngle", "Degrees", this::getDeltaX);
-        createBadLogTopic("Vision/Distance", "inches", this::getDistance);
     }
 
     public double simulateDeltaX() {
