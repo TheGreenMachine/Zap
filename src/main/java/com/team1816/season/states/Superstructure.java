@@ -266,7 +266,7 @@ public class Superstructure {
                         .getLatestFieldToTurret()
                         .rotateBy(Rotation2d.fromDegrees(180))
                 )
-            ); // turret angle
+            ); // inverse turret angle
             sX += p.getX();
             sY += p.getY();
             poses.add(p);
