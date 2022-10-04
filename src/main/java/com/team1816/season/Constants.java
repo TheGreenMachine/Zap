@@ -7,6 +7,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
 
+import java.util.HashMap;
+
 @Singleton
 public class Constants {
 
@@ -44,6 +46,11 @@ public class Constants {
         fieldCenterY,
         EmptyRotation
     );
+    public static final HashMap<Integer, Double[]> fieldTargets = new HashMap<>() {
+        {
+            put(0, new Double[]{fieldCenterX, fieldCenterY, Units.inchesToMeters(kTargetHeight)}); // retro-reflective tape
+        }
+    };
     public static final Pose2d kDefaultZeroingPose = new Pose2d(
         0.5,
         fieldCenterY,

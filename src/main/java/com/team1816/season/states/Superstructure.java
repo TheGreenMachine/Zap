@@ -15,6 +15,9 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /* class responsible for organizing the collector, spindexer, elevator, and shooter into runnable actions - manages the robot's DESIRED states */
 
 @Singleton
@@ -249,27 +252,21 @@ public class Superstructure {
     }
 
     public Pose2d calculatePoseFromCamera() {
-        double cameraDist = camera.getDistance(); // flat distance in meters
-        double distanceToTargetMeters = Units.inchesToMeters(
-            Constants.kTargetRadius +
-            (
-                Math.sqrt(
-                    (cameraDist * cameraDist) - Math.pow(Constants.kHeightFromCamToHub, 2)
-                )
-            )
-        );
-        Translation2d deltaToTarget = new Translation2d(
-            distanceToTargetMeters,
-            robotState.getLatestFieldToTurret()
-        )
-        .rotateBy(Rotation2d.fromDegrees(robotState.visionPoint.cX)); // TODO this will change based on how phtoton vision returns values
-        Pose2d newRobotPose = Constants.targetPos.transformBy(
-            new Transform2d(
-                deltaToTarget.unaryMinus(),
-                robotState.fieldToVehicle.getRotation()
-            )
-        );
-        return newRobotPose;
+        var cameraPoint = robotState.visionPoint; // flat distance in meters
+        List<Pose2d> poses = new ArrayList<>();
+        double sX = 0, sY = 0;
+        for (RobotState.Point point : cameraPoint) {
+            Pose2d targetPos = new Pose2d(Constants.fieldTargets.get(point.id)[0], Constants.fieldTargets.get(point.id)[1], new Rotation2d());
+            Pose2d p = targetPos.plus(new Transform2d(new Translation2d(point.x, point.y), robotState.getLatestFieldToTurret().rotateBy(Rotation2d.fromDegrees(180)))); // turret angle
+            sX += p.getX();
+            sY += p.getY();
+            poses.add(p);
+        }
+        if(cameraPoint.size() > 0) {
+            Pose2d pose = new Pose2d( sX/cameraPoint.size(), sY/cameraPoint.size(), robotState.fieldToVehicle.getRotation());
+            return pose;
+        }
+        return robotState.fieldToVehicle;
     }
 
     public void updatePoseWithCamera() {

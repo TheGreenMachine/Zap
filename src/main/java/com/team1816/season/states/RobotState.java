@@ -9,6 +9,9 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /* class responsible with logging the robot's ACTUAL states - robot position (predicted) and superstructure subsystem actual states */
 
 @Singleton
@@ -25,7 +28,7 @@ public class RobotState {
 
     // Superstructure ACTUAL states
     public Superstructure.STATE superstructureState = Superstructure.STATE.LITTLE_MAN;
-    public Point visionPoint = new Point();
+    public List<Point> visionPoint = new ArrayList<>();
     public Collector.STATE collectorState = Collector.STATE.STOP;
     public Shooter.STATE shooterState = Shooter.STATE.STOP;
     public Spindexer.STATE spinState = Spindexer.STATE.STOP;
@@ -68,7 +71,7 @@ public class RobotState {
         normalizedDeltaChassisSpeeds = new ChassisSpeeds();
         triAxialAcceleration = new Double[] { 0d, 0d, 0d };
         isPoseUpdated = true;
-        visionPoint = new Point();
+        visionPoint.clear();
         drivetrainTemp = 0;
     }
 
@@ -133,13 +136,17 @@ public class RobotState {
 
     // Camera state
     public class Point {
+        public double id; // -1 if not detected
 
-        public double cX;
-        public double cY;
+        public double x;
+        public double y;
+        public double z;
 
         public Point() {
-            cX = 0;
-            cY = 0;
+            id = 0;
+            x = 0;
+            y = 0;
+            z = 0;
         }
     }
 }
