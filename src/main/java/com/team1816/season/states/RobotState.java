@@ -5,10 +5,8 @@ import com.team1816.season.Constants;
 import com.team1816.season.subsystems.*;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -114,15 +112,15 @@ public class RobotState {
         double estimatedDistanceToGoalMeters = fieldToVehicle
             .getTranslation()
             .getDistance(Constants.targetPos.getTranslation());
-//        double distInches =
-//            (
-//                Math.sqrt(
-//                    Units.metersToInches(estimatedDistanceToGoalMeters) *
-//                    Units.metersToInches(estimatedDistanceToGoalMeters) +
-//                    (Constants.kHeightFromCamToHub * Constants.kHeightFromCamToHub)
-//                ) -
-//                Constants.kTargetRadius
-//            );
+        //        double distInches =
+        //            (
+        //                Math.sqrt(
+        //                    Units.metersToInches(estimatedDistanceToGoalMeters) *
+        //                    Units.metersToInches(estimatedDistanceToGoalMeters) +
+        //                    (Constants.kHeightFromCamToHub * Constants.kHeightFromCamToHub)
+        //                ) -
+        //                Constants.kTargetRadius
+        //            );
         System.out.println("estimated distance = " + estimatedDistanceToGoalMeters);
         return estimatedDistanceToGoalMeters;
     }
@@ -136,6 +134,7 @@ public class RobotState {
 
     // Camera state
     public class Point {
+
         public double id; // -1 if not detected
 
         public double x;
