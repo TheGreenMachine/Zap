@@ -126,7 +126,7 @@ public class Robot extends TimedRobot {
                 cooler
             );
 
-            // register badlogs
+            /** Register BadLogs */
             if (Constants.kIsBadlogEnabled) {
                 var logFile = new SimpleDateFormat("MMdd_HH-mm").format(new Date());
                 var robotName = System.getenv("ROBOT_NAME");
@@ -149,7 +149,7 @@ public class Robot extends TimedRobot {
                 BadLog.createTopic(
                     "Timings/Looper",
                     "ms",
-                    this::getLastLooperLoop,
+                    this::getLastEnabledLoop,
                     "hide",
                     "join:Timings"
                 );
@@ -175,12 +175,13 @@ public class Robot extends TimedRobot {
             subsystemManager.registerDisabledLoops(disabledLoop);
             subsystemManager.zeroSensors();
 
-            // register controllers
+            /** register controlboard */
             controlBoard = Injector.get(IControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
 
             actionManager =
                 new ActionManager(
+                    // Driver Gamepad
                     createHoldAction(
                         () -> controlBoard.getAsBool("toggleCollector"),
                         pressed -> superstructure.setCollecting(pressed, true)

@@ -62,7 +62,11 @@ public class Infrastructure {
     }
 
     public Double[] getAcceleration() {
-        return new Double[] {pigeon.getAcceleration()[0], pigeon.getAcceleration()[1], pigeon.getAcceleration()[2]};
+        return new Double[] {
+            pigeon.getAcceleration()[0]*Constants.gravitationalAccelerationConstant,
+            pigeon.getAcceleration()[1]*Constants.gravitationalAccelerationConstant,
+            pigeon.getAcceleration()[2]*Constants.gravitationalAccelerationConstant
+        };
     }
 
     public double getXAccel() {
@@ -84,6 +88,9 @@ public class Infrastructure {
     public void createLogs() {
         if (RobotBase.isReal() && Constants.kIsBadlogEnabled) {
             BadLog.createTopic("PDP/Current", "Amps", this.getPd()::getTotalCurrent);
+            BadLog.createTopic("Pigeon/Accel/X", "m/s^2", this::getXAccel);
+            BadLog.createTopic("Pigeon/Accel/Y", "m/s^2", this::getYAccel);
+            BadLog.createTopic("Pigeon/Accel/Z", "m/s^2", this::getZAccel);
         }
     }
 
