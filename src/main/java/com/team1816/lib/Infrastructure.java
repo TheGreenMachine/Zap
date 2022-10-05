@@ -32,7 +32,6 @@ public class Infrastructure {
         pigeon = factory.getPigeon();
         pd = factory.getPd();
         compressorEnabled = factory.isCompressorEnabled();
-        createLogs();
     }
 
     public void startCompressor() { // not used because compressor currently turns on by default once robot is enabled
