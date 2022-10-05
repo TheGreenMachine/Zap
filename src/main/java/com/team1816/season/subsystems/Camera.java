@@ -8,7 +8,7 @@ import com.team1816.lib.Infrastructure;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
 import com.team1816.season.states.RobotState;
-import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
@@ -114,11 +114,12 @@ public class Camera extends Subsystem {
         
         for (PhotonTrackedTarget target : result.targets) {
             var p = new Point();
-            var camToTarget = new Pose3d();
+            var camToTarget = new Pose2d();
             camToTarget.plus(target.getCameraToTarget());
             p.id = target.getFiducialId();
             p.x = (int) camToTarget.getX();
             p.y = (int) camToTarget.getY();
+            p.z = (int) camToTarget.getZ();
             list.add(p);
         }
         return list;
