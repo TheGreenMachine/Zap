@@ -63,7 +63,19 @@ public class Infrastructure {
     }
 
     public Double[] getAcceleration() {
-        return new Double[] { 0d, 0d, -Constants.gravitationalAccelerationConstant };
+        return new Double[] {pigeon.getAcceleration()[0], pigeon.getAcceleration()[1], pigeon.getAcceleration()[2]};
+    }
+
+    public double getXAccel() {
+        return getAcceleration()[0];
+    }
+
+    public double getYAccel() {
+        return getAcceleration()[1];
+    }
+
+    public double getZAccel() {
+        return getAcceleration()[2];
     }
 
     public PowerDistribution getPd() {
