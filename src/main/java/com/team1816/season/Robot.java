@@ -3,7 +3,7 @@ package com.team1816.season;
 import static com.team1816.season.controlboard.ControlUtils.createAction;
 import static com.team1816.season.controlboard.ControlUtils.createHoldAction;
 
-import com.team1816.lib.BadLogger;
+import badlog.lib.BadLog;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
 import com.team1816.lib.controlboard.Controller;
@@ -19,11 +19,17 @@ import com.team1816.season.states.Superstructure;
 import com.team1816.season.subsystems.*;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Robot extends TimedRobot {
 
     private final Looper enabledLoop;
     private final Looper disabledLoop;
+
+    private static BadLog logger;
 
     // controls
     private IControlBoard controlBoard;
@@ -119,15 +125,55 @@ public class Robot extends TimedRobot {
                 ledManager,
                 cooler
             );
-            subsystemManager.registerEnabledLoops(enabledLoop);
-            subsystemManager.registerDisabledLoops(disabledLoop);
-            subsystemManager.zeroSensors();
 
             // register badlogs
             if (Constants.kIsBadlogEnabled) {
-                BadLogger.setupLogs(this);
+                var logFile = new SimpleDateFormat("MMdd_HH-mm").format(new Date());
+                var robotName = System.getenv("ROBOT_NAME");
+                if (robotName == null) robotName = "default";
+                var logFileDir = "/home/lvuser/";
+                // if there is a USB drive use it
+                if (Files.exists(Path.of("/media/sda1"))) {
+                    logFileDir = "/media/sda1/";
+                }
+                if (RobotBase.isSimulation()) {
+                    if (System.getProperty("os.name").toLowerCase().contains("win")) {
+                        logFileDir = System.getenv("temp") + "\\";
+                    } else {
+                        logFileDir = System.getProperty("user.dir") + "/";
+                    }
+                }
+                var filePath = logFileDir + robotName + "_" + logFile + ".bag";
+                logger = BadLog.init(filePath);
+
+                BadLog.createTopic(
+                    "Timings/Looper",
+                    "ms",
+                    this::getLastLooperLoop,
+                    "hide",
+                    "join:Timings"
+                );
+                BadLog.createTopic(
+                    "Timings/RobotLoop",
+                    "ms",
+                    this::getLastRobotLoop,
+                    "hide",
+                    "join:Timings"
+                );
+                BadLog.createTopic(
+                    "Timings/Timestamp",
+                    "s",
+                    Timer::getFPGATimestamp,
+                    "xaxis",
+                    "hide"
+                );
                 subsystemManager.createLogs();
+
+                logger.finishInitialization();
             }
+            subsystemManager.registerEnabledLoops(enabledLoop);
+            subsystemManager.registerDisabledLoops(disabledLoop);
+            subsystemManager.zeroSensors();
 
             // register controllers
             controlBoard = Injector.get(IControlBoard.class);
@@ -446,7 +492,8 @@ public class Robot extends TimedRobot {
             .setTrajectory(autoModeManager.getSelectedAuto().getCurrentTrajectory());
 
         if (Constants.kIsLoggingAutonomous) {
-            BadLogger.update();
+            logger.updateTopics();
+            logger.log();
         }
     }
 
@@ -461,7 +508,8 @@ public class Robot extends TimedRobot {
             throw t;
         }
         if (Constants.kIsLoggingTeleOp) {
-            BadLogger.update();
+            logger.updateTopics();
+            logger.log();
         }
     }
 

@@ -250,7 +250,6 @@ constants:
     logAuto: 1 # 0 or 1
     badLogEnabled: 1 # 0 or 1
     configStatusFrames: 0 # 0 or 1
-    verbose: 0 # 0 or 1
     ## General ##
     EnableBucketTuning: 1
     teleopFieldCentric: 1 # 0 or 1
