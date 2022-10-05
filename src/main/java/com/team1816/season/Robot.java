@@ -168,7 +168,7 @@ public class Robot extends TimedRobot {
                     "hide"
                 );
                 subsystemManager.createLogs();
-
+                infrastructure.createLogs();
                 logger.finishInitialization();
             }
             subsystemManager.registerEnabledLoops(enabledLoop);
