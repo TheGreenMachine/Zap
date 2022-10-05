@@ -8,11 +8,13 @@ import com.team1816.lib.Infrastructure;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
 import com.team1816.season.states.RobotState;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.photonvision.*;
+import java.util.ArrayList;
 import org.photonvision.targeting.*;
 
 @Singleton
@@ -101,19 +103,25 @@ public class Camera extends Subsystem {
         if (RobotBase.isSimulation()) {
             return;
         }
+    }
+
+    public ArrayList<Point> getPoints() {
+        ArrayList<Point> list = new ArrayList<Point>();
         var result = cam.getLatestResult();
         if (!result.hasTargets()) {
-            return;
+            return list;
         }
-        robotState.visionPoint.clear();
+        
         for (PhotonTrackedTarget target : result.targets) {
             var p = new Point();
+            var camToTarget = new Pose3d();
+            camToTarget.plus(target.getCameraToTarget());
             p.id = target.getFiducialId();
-            p.x = (int) target.getPitch();
-            p.y = (int) target.getYaw();
-            p.z = (int) target.getSkew();
-            robotState.visionPoint.add(p);
+            p.x = (int) camToTarget.getX();
+            p.y = (int) camToTarget.getY();
+            list.add(p);
         }
+        return list;
     }
 
     public boolean checkSystem() { // this doesn't actually do anything because there's no read calls
