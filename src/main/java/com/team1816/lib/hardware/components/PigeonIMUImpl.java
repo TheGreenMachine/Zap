@@ -17,8 +17,7 @@ public class PigeonIMUImpl extends PigeonIMU implements IPigeonIMU {
 
     public double[] getAcceleration() {
         short[] accel = new short[3];
-        long handle = 0l;
-        PigeonImuJNI.JNI_GetBiasedAccelerometer(handle, accel);
+        getBiasedAccelerometer(accel);
         return new double[] { accel[0], accel[1], accel[2] };
     }
 
