@@ -133,7 +133,7 @@ public class RobotState {
     }
 
     // Camera state
-    public class Point {
+    public static class Point {
 
         public double id; // -1 if not detected
 
