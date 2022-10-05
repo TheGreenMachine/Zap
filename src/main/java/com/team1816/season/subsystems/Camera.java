@@ -13,8 +13,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import org.photonvision.*;
 import java.util.ArrayList;
+import org.photonvision.*;
 import org.photonvision.targeting.*;
 
 @Singleton
@@ -111,7 +111,7 @@ public class Camera extends Subsystem {
         if (!result.hasTargets()) {
             return list;
         }
-        
+
         for (PhotonTrackedTarget target : result.targets) {
             var p = new Point();
             var camToTarget = new Pose2d();

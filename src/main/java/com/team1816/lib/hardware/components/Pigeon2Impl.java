@@ -2,7 +2,6 @@ package com.team1816.lib.hardware.components;
 
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.sensors.Pigeon2;
-import com.ctre.phoenix.sensors.PigeonImuJNI;
 
 public class Pigeon2Impl extends Pigeon2 implements IPigeonIMU {
 
@@ -20,7 +19,7 @@ public class Pigeon2Impl extends Pigeon2 implements IPigeonIMU {
     public double[] getAcceleration() {
         short[] accel = new short[3];
         getBiasedAccelerometer(accel);
-        return new double[] {accel[0], accel[1], accel[2]};
+        return new double[] { accel[0], accel[1], accel[2] };
     }
 
     @Override
