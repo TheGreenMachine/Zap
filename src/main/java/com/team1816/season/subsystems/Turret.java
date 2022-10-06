@@ -441,26 +441,6 @@ public class Turret extends Subsystem implements PidProvider {
         return passed;
     }
 
-    @Override
-    public void createLogs() {
-        createBadLogValue("Turret PID", this.pidToString());
-        createBadLogTopic(
-            "Turret/ActPos",
-            "NativeUnits",
-            this::getActualPosTicks,
-            "hide",
-            "join:Turret/Positions"
-        );
-        createBadLogTopic(
-            "Turret/TargetPos",
-            "NativeUnits",
-            this::getDesiredPosTicks,
-            "hide",
-            "join:Turret/Positions"
-        );
-        createBadLogTopic("Turret/ErrorPos", "NativeUnits", this::getPosError);
-    }
-
     public enum ControlMode {
         CAMERA_FOLLOWING,
         FIELD_FOLLOWING,
