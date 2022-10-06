@@ -182,11 +182,11 @@ public class Robot extends TimedRobot {
                 new ActionManager(
                     createHoldAction(
                         () -> controlBoard.getAsBool("toggleCollector"),
-                        pressed -> superstructure.setCollecting(pressed, true)
+                        pressed -> superstructure.setCollecting(pressed, false)
                     ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("toggleCollectorReverse"),
-                        pressed -> superstructure.setCollecting(pressed, false)
+                        pressed -> superstructure.setCollecting(pressed, true)
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("unlockClimber"),
