@@ -61,6 +61,22 @@ public class Infrastructure {
         return pigeon.getYaw();
     }
 
+    public double[] getAcceleration() {
+        return pigeon.getAcceleration();
+    }
+
+    public double getXAcceleration() {
+        return getAcceleration()[0];
+    }
+
+    public double getYAcceleration() {
+        return getAcceleration()[1];
+    }
+
+    public double getZAcceleration() {
+        return getAcceleration()[2];
+    }
+
     public PowerDistribution getPd() {
         return pd;
     }
@@ -68,6 +84,10 @@ public class Infrastructure {
     public void createLogs() {
         if (RobotBase.isReal() && Constants.kIsBadlogEnabled) {
             BadLog.createTopic("PDP/Current", "Amps", this.getPd()::getTotalCurrent);
+
+            BadLog.createTopic("Pigeon/AccelerationX", "G", this::getXAcceleration);
+            BadLog.createTopic("Pigeon/AccelerationY", "G", this::getYAcceleration);
+            BadLog.createTopic("Pigeon/AccelerationX", "G", this::getZAcceleration);
         }
     }
 

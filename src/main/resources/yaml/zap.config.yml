@@ -202,7 +202,7 @@ subsystems:
                 kF: 0.0001
                 allowableError: 10
         constants:
-            maxVelTicks100MS: 10000
+            maxVelTicks100ms: 10000
             isVelocity: 0
             revving: 0 #.05
             collecting: -.5 #-3600
