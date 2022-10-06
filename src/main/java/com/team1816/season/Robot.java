@@ -149,7 +149,7 @@ public class Robot extends TimedRobot {
                 BadLog.createTopic(
                     "Timings/Looper",
                     "ms",
-                    this::getLastLooperLoop,
+                    this::getLastEnabledLoop,
                     "hide",
                     "join:Timings"
                 );
