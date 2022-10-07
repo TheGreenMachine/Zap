@@ -15,7 +15,7 @@ subsystems:
                 kD: 15 # 3.6
                 kF: 0.538
         invertMotor:
-            - rightMain
+            - leftMain
         constants:
             maxVelTicks100ms: 12275.7
             openLoopRampRate: 0.8
