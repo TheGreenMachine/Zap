@@ -99,7 +99,7 @@ public class RobotState {
                 ) -
                 Constants.kTargetRadius
             );
-        System.out.println("estimated distance = " + distInches);
+        // System.out.println("estimated distance = " + distInches);
         return distInches;
     }
 

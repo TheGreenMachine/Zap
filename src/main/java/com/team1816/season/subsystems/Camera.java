@@ -67,11 +67,13 @@ public class Camera extends Subsystem {
         if (!result.hasTargets()) {
             return -1.0;
         }
-        return PhotonUtils.calculateDistanceToTargetMeters(
-            CAMERA_HEIGHT_METERS,
-            TARGET_HEIGHT_METERS,
-            CAMERA_PITCH_RADIANS,
-            Units.degreesToRadians(result.getBestTarget().getPitch())
+        return Units.metersToInches(
+            PhotonUtils.calculateDistanceToTargetMeters(
+                CAMERA_HEIGHT_METERS,
+                TARGET_HEIGHT_METERS,
+                CAMERA_PITCH_RADIANS,
+                Units.degreesToRadians(result.getBestTarget().getPitch())
+            )
         );
     }
 
@@ -115,7 +117,7 @@ public class Camera extends Subsystem {
         }
         return true;
     }
-    
+
     public double simulateDeltaX() {
         double opposite =
             Constants.fieldCenterY - robotState.getFieldToTurretPos().getY();
