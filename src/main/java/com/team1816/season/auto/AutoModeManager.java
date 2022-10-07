@@ -113,7 +113,6 @@ public class AutoModeManager {
         DRIVE_STRAIGHT,
 
         // 2022
-        DRIVE_STRAIGHT_SHOOT,
         TWO_BALL_A,
         TWO_BALL_B,
         FOUR_BALL_B,
@@ -131,8 +130,6 @@ public class AutoModeManager {
 
     private AutoMode generateAutoMode(DesiredAuto mode) {
         switch (mode) {
-            case DRIVE_STRAIGHT_SHOOT:
-                return new DriveStraightShootMode();
             case DO_NOTHING:
                 return new DoNothingMode();
             case TUNE_DRIVETRAIN:
