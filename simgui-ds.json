@@ -1,9 +1,4 @@
 {
-  "FMS": {
-    "window": {
-      "visible": false
-    }
-  },
   "Keyboard 0 Settings": {
     "window": {
       "visible": true
@@ -19,14 +14,14 @@
         },
         {
           "decKey": 87,
-          "decayRate": 0.009999999776482582,
+          "decayRate": 0.004999999888241291,
           "incKey": 83,
           "keyRate": 0.009999999776482582
         },
         {
-          "decKey": 82,
-          "decayRate": 0.009999999776482582,
-          "incKey": 69,
+          "decKey": 69,
+          "decayRate": 0.004999999888241291,
+          "incKey": 82,
           "keyRate": 0.009999999776482582
         }
       ],
@@ -135,7 +130,7 @@
       "guid": "Keyboard0"
     },
     {
-      "guid": "78696e70757401000000000000000000"
+      "guid": "030000006d04000016c2000000000000"
     }
   ]
 }

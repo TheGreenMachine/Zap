@@ -12,6 +12,7 @@ import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.SubsystemManager;
 import com.team1816.lib.subsystems.drive.Drive;
+import com.team1816.lib.subsystems.drive.DrivetrainLogger;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.controlboard.ActionManager;
 import com.team1816.season.states.RobotState;
@@ -65,7 +66,7 @@ public class Robot extends TimedRobot {
 
     // hack variables
     private final Turret.ControlMode defaultTurretControlMode =
-        Turret.ControlMode.CENTER_FOLLOWING;
+        Turret.ControlMode.POSITION;
     private boolean faulted;
     private boolean useManualShoot = false;
 
@@ -109,7 +110,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         try {
-            /** register all subsystems */
+            // register all subsystems
             controlBoard = Injector.get(IControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
 
@@ -167,8 +168,69 @@ public class Robot extends TimedRobot {
                     "xaxis",
                     "hide"
                 );
-                subsystemManager.createLogs();
-                infrastructure.createLogs();
+                BadLog.createTopic("Vision/DeltaXAngle", "Degrees", camera::getDeltaX);
+                BadLog.createTopic("Vision/Distance", "inches", camera::getDistance);
+                BadLog.createValue("Drivetrain PID", drive.pidToString());
+                DrivetrainLogger.init(drive);
+                BadLog.createValue("Shooter PID", shooter.pidToString());
+                BadLog.createTopic(
+                    "Shooter/ActVel",
+                    "NativeUnits",
+                    shooter::getActualVelocity,
+                    "hide",
+                    "join:Shooter/Velocities"
+                );
+                BadLog.createTopic(
+                    "Shooter/TargetVel",
+                    "NativeUnits",
+                    shooter::getTargetVelocity,
+                    "hide",
+                    "join:Shooter/Velocities"
+                );
+                BadLog.createTopic(
+                    "Shooter/Error",
+                    "NativeUnits",
+                    shooter::getError,
+                    "hide",
+                    "join:Shooter/Velocities"
+                );
+                BadLog.createValue("Turret PID", turret.pidToString());
+                BadLog.createTopic(
+                    "Turret/ActPos",
+                    "NativeUnits",
+                    turret::getActualPosTicks,
+                    "hide",
+                    "join:Turret/Positions"
+                );
+                BadLog.createTopic(
+                    "Turret/TargetPos",
+                    "NativeUnits",
+                    turret::getDesiredPosTicks,
+                    "hide",
+                    "join:Turret/Positions"
+                );
+                BadLog.createTopic("Turret/ErrorPos", "NativeUnits", turret::getPosError);
+                BadLog.createTopic(
+                    "PDP/Current",
+                    "Amps",
+                    infrastructure.getPd()::getTotalCurrent
+                );
+
+                BadLog.createTopic(
+                    "Pigeon/AccelerationX",
+                    "G",
+                    infrastructure::getXAcceleration
+                );
+                BadLog.createTopic(
+                    "Pigeon/AccelerationY",
+                    "G",
+                    infrastructure::getYAcceleration
+                );
+                BadLog.createTopic(
+                    "Pigeon/AccelerationZ",
+                    "G",
+                    infrastructure::getZAcceleration
+                );
                 logger.finishInitialization();
             }
             subsystemManager.registerEnabledLoops(enabledLoop);

@@ -69,29 +69,20 @@ public class Infrastructure {
         };
     }
 
-    public double getXAccel() {
+    public double getXAcceleration() {
         return getAcceleration()[0];
     }
 
-    public double getYAccel() {
+    public double getYAcceleration() {
         return getAcceleration()[1];
     }
 
-    public double getZAccel() {
+    public double getZAcceleration() {
         return getAcceleration()[2];
     }
 
     public PowerDistribution getPd() {
         return pd;
-    }
-
-    public void createLogs() {
-        if (RobotBase.isReal() && Constants.kIsBadlogEnabled) {
-            BadLog.createTopic("PDP/Current", "Amps", this.getPd()::getTotalCurrent);
-            BadLog.createTopic("Pigeon/Accel/X", "m/s^2", this::getXAccel);
-            BadLog.createTopic("Pigeon/Accel/Y", "m/s^2", this::getYAccel);
-            BadLog.createTopic("Pigeon/Accel/Z", "m/s^2", this::getZAccel);
-        }
     }
 
     public void simulateGyro(double radianOffsetPerLoop, double gyroDrift) {
