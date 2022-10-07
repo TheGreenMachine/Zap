@@ -56,8 +56,6 @@ public abstract class Subsystem implements Sendable {
 
     public abstract boolean checkSystem();
 
-    public void createCommands() {}
-
     public void createLogs() {}
 
     public void createBadLogTopic(

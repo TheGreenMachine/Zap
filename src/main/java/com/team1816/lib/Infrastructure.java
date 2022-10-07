@@ -1,15 +1,12 @@
 package com.team1816.lib;
 
-import badlog.lib.BadLog;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.components.IPigeonIMU;
 import com.team1816.lib.hardware.components.pcm.ICompressor;
 import com.team1816.lib.hardware.factory.RobotFactory;
-import com.team1816.season.Constants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.RobotBase;
 
 /**
  * Subsystem housing compressor and pigeon - should we add pcm/pdh here?
@@ -32,7 +29,6 @@ public class Infrastructure {
         pigeon = factory.getPigeon();
         pd = factory.getPd();
         compressorEnabled = factory.isCompressorEnabled();
-        createLogs();
     }
 
     public void startCompressor() { // not used because compressor currently turns on by default once robot is enabled
@@ -62,14 +58,24 @@ public class Infrastructure {
         return pigeon.getYaw();
     }
 
-    public PowerDistribution getPd() {
-        return pd;
+    public double[] getAcceleration() {
+        return pigeon.getAcceleration();
     }
 
-    public void createLogs() {
-        if (RobotBase.isReal() && Constants.kIsBadlogEnabled) {
-            BadLog.createTopic("PDP/Current", "Amps", this.getPd()::getTotalCurrent);
-        }
+    public double getXAcceleration() {
+        return getAcceleration()[0];
+    }
+
+    public double getYAcceleration() {
+        return getAcceleration()[1];
+    }
+
+    public double getZAcceleration() {
+        return getAcceleration()[2];
+    }
+
+    public PowerDistribution getPd() {
+        return pd;
     }
 
     public void simulateGyro(double radianOffsetPerLoop, double gyroDrift) {

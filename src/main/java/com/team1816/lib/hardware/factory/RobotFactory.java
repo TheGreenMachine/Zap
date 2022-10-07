@@ -399,7 +399,7 @@ public class RobotFactory {
     }
 
     public Double getConstant(String name) {
-        return getConstant(name, null);
+        return getConstant(name, 0);
     }
 
     public Map<String, Double> getConstants() {

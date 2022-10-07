@@ -20,6 +20,11 @@ public class GhostPigeonIMU implements IPigeonIMU {
     }
 
     @Override
+    public double[] getAcceleration() {
+        return new double[0];
+    }
+
+    @Override
     public ErrorCode setYaw(double angleDeg) {
         dummyYaw = angleDeg;
         return ErrorCode.OK;

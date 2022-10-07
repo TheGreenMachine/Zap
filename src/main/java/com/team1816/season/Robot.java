@@ -3,7 +3,7 @@ package com.team1816.season;
 import static com.team1816.season.controlboard.ControlUtils.createAction;
 import static com.team1816.season.controlboard.ControlUtils.createHoldAction;
 
-import com.team1816.lib.BadLogger;
+import badlog.lib.BadLog;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
 import com.team1816.lib.controlboard.Controller;
@@ -12,6 +12,7 @@ import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.Looper;
 import com.team1816.lib.subsystems.SubsystemManager;
 import com.team1816.lib.subsystems.drive.Drive;
+import com.team1816.lib.subsystems.drive.DrivetrainLogger;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.controlboard.ActionManager;
 import com.team1816.season.states.RobotState;
@@ -19,11 +20,17 @@ import com.team1816.season.states.Superstructure;
 import com.team1816.season.subsystems.*;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Robot extends TimedRobot {
 
     private final Looper enabledLoop;
     private final Looper disabledLoop;
+
+    private static BadLog logger;
 
     // controls
     private IControlBoard controlBoard;
@@ -96,16 +103,120 @@ public class Robot extends TimedRobot {
         return (Timer.getFPGATimestamp() - loopStart) * 1000;
     }
 
-    public Double getLastEnabledLoop() {
-        return enabledLoop.getLastLoop();
-    }
-
     @Override
     public void robotInit() {
         try {
             // register all subsystems
             controlBoard = Injector.get(IControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
+
+            // register badlogs
+            Constants.kIsBadlogEnabled = factory.getConstant("badLogEnabled") > 0;
+            if (Constants.kIsBadlogEnabled) {
+                var logFile = new SimpleDateFormat("MMdd_HH-mm").format(new Date());
+                var robotName = System.getenv("ROBOT_NAME");
+                if (robotName == null) robotName = "default";
+                var logFileDir = "/home/lvuser/";
+                // if there is a USB drive use it
+                if (Files.exists(Path.of("/media/sda1"))) {
+                    logFileDir = "/media/sda1/";
+                }
+                if (RobotBase.isSimulation()) {
+                    if (System.getProperty("os.name").toLowerCase().contains("win")) {
+                        logFileDir = System.getenv("temp") + "\\";
+                    } else {
+                        logFileDir = System.getProperty("user.dir") + "/";
+                    }
+                }
+                var filePath = logFileDir + robotName + "_" + logFile + ".bag";
+                logger = BadLog.init(filePath);
+
+                BadLog.createTopic(
+                    "Timings/Looper",
+                    "ms",
+                    enabledLoop::getLastLoop,
+                    "hide",
+                    "join:Timings"
+                );
+                BadLog.createTopic(
+                    "Timings/RobotLoop",
+                    "ms",
+                    this::getLastRobotLoop,
+                    "hide",
+                    "join:Timings"
+                );
+                BadLog.createTopic(
+                    "Timings/Timestamp",
+                    "s",
+                    Timer::getFPGATimestamp,
+                    "xaxis",
+                    "hide"
+                );
+                BadLog.createTopic("Vision/DeltaXAngle", "Degrees", camera::getDeltaX);
+                BadLog.createTopic("Vision/Distance", "inches", camera::getDistance);
+                BadLog.createValue("Drivetrain PID", drive.pidToString());
+                DrivetrainLogger.init(drive);
+                BadLog.createValue("Shooter PID", shooter.pidToString());
+                BadLog.createTopic(
+                    "Shooter/ActVel",
+                    "NativeUnits",
+                    shooter::getActualVelocity,
+                    "hide",
+                    "join:Shooter/Velocities"
+                );
+                BadLog.createTopic(
+                    "Shooter/TargetVel",
+                    "NativeUnits",
+                    shooter::getTargetVelocity,
+                    "hide",
+                    "join:Shooter/Velocities"
+                );
+                BadLog.createTopic(
+                    "Shooter/Error",
+                    "NativeUnits",
+                    shooter::getError,
+                    "hide",
+                    "join:Shooter/Velocities"
+                );
+                BadLog.createValue("Turret PID", turret.pidToString());
+                BadLog.createTopic(
+                    "Turret/ActPos",
+                    "NativeUnits",
+                    turret::getActualPosTicks,
+                    "hide",
+                    "join:Turret/Positions"
+                );
+                BadLog.createTopic(
+                    "Turret/TargetPos",
+                    "NativeUnits",
+                    turret::getDesiredPosTicks,
+                    "hide",
+                    "join:Turret/Positions"
+                );
+                BadLog.createTopic("Turret/ErrorPos", "NativeUnits", turret::getPosError);
+                BadLog.createTopic(
+                    "PDP/Current",
+                    "Amps",
+                    infrastructure.getPd()::getTotalCurrent
+                );
+
+                BadLog.createTopic(
+                    "Pigeon/AccelerationX",
+                    "G",
+                    infrastructure::getXAcceleration
+                );
+                BadLog.createTopic(
+                    "Pigeon/AccelerationY",
+                    "G",
+                    infrastructure::getYAcceleration
+                );
+                BadLog.createTopic(
+                    "Pigeon/AccelerationZ",
+                    "G",
+                    infrastructure::getZAcceleration
+                );
+                logger.finishInitialization();
+            }
 
             subsystemManager.setSubsystems(
                 drive,
@@ -123,12 +234,6 @@ public class Robot extends TimedRobot {
             subsystemManager.registerDisabledLoops(disabledLoop);
             subsystemManager.zeroSensors();
 
-            // register badlogs
-            if (Constants.kIsBadlogEnabled) {
-                BadLogger.setupLogs(this);
-                subsystemManager.createLogs();
-            }
-
             // register controllers
             controlBoard = Injector.get(IControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
@@ -136,11 +241,11 @@ public class Robot extends TimedRobot {
                 new ActionManager(
                     createHoldAction(
                         () -> controlBoard.getAsBool("toggleCollector"),
-                        pressed -> superstructure.setCollecting(pressed, true)
+                        pressed -> superstructure.setCollecting(pressed, false)
                     ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("toggleCollectorReverse"),
-                        pressed -> superstructure.setCollecting(pressed, false)
+                        pressed -> superstructure.setCollecting(pressed, true)
                     ),
                     createAction(
                         () -> controlBoard.getAsBool("unlockClimber"),
@@ -446,7 +551,8 @@ public class Robot extends TimedRobot {
             .setTrajectory(autoModeManager.getSelectedAuto().getCurrentTrajectory());
 
         if (Constants.kIsLoggingAutonomous) {
-            BadLogger.update();
+            logger.updateTopics();
+            logger.log();
         }
     }
 
@@ -461,7 +567,8 @@ public class Robot extends TimedRobot {
             throw t;
         }
         if (Constants.kIsLoggingTeleOp) {
-            BadLogger.update();
+            logger.updateTopics();
+            logger.log();
         }
     }
 
