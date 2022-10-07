@@ -103,10 +103,6 @@ public class Robot extends TimedRobot {
         return (Timer.getFPGATimestamp() - loopStart) * 1000;
     }
 
-    public Double getLastEnabledLoop() {
-        return enabledLoop.getLastLoop();
-    }
-
     @Override
     public void robotInit() {
         try {
@@ -115,6 +111,7 @@ public class Robot extends TimedRobot {
             DriverStation.silenceJoystickConnectionWarning(true);
 
             // register badlogs
+            Constants.kIsBadlogEnabled = factory.getConstant("badLogEnabled") > 0;
             if (Constants.kIsBadlogEnabled) {
                 var logFile = new SimpleDateFormat("MMdd_HH-mm").format(new Date());
                 var robotName = System.getenv("ROBOT_NAME");
@@ -137,7 +134,7 @@ public class Robot extends TimedRobot {
                 BadLog.createTopic(
                     "Timings/Looper",
                     "ms",
-                    this::getLastEnabledLoop,
+                    enabledLoop::getLastLoop,
                     "hide",
                     "join:Timings"
                 );
@@ -214,7 +211,7 @@ public class Robot extends TimedRobot {
                     infrastructure::getYAcceleration
                 );
                 BadLog.createTopic(
-                    "Pigeon/AccelerationX",
+                    "Pigeon/AccelerationZ",
                     "G",
                     infrastructure::getZAcceleration
                 );

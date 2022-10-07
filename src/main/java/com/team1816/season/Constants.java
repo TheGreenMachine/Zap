@@ -39,12 +39,11 @@ public class Constants {
     );
 
     //Badlog
-    public static final boolean kIsBadlogEnabled =
-        factory.getConstant("badLogEnabled") > 0;
-    public static final boolean kIsLoggingTeleOp = factory.getConstant("logTeleOp") > 0;
-    public static final boolean kIsLoggingAutonomous = factory.getConstant("logAuto") > 0;
+    public static boolean kIsBadlogEnabled = factory.getConstant("badLogEnabled") > 0;
+    public static boolean kIsLoggingTeleOp = factory.getConstant("logTeleOp") > 0;
+    public static boolean kIsLoggingAutonomous = factory.getConstant("logAuto") > 0;
 
-    public static final boolean kUsePoseTrack =
+    public final boolean kUsePoseTrack =
         factory.getConstant("shooter", "usingPoseForSpeed", 0) > 0;
     public static final boolean kUseVision = factory.getSubsystem("camera").implemented;
     //    public static final boolean kEnableBucketTuning =
