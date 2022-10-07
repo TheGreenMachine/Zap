@@ -115,13 +115,7 @@ public class Camera extends Subsystem {
         }
         return true;
     }
-
-    @Override
-    public void createLogs() {
-        createBadLogTopic("Vision/DeltaXAngle", "Degrees", this::getDeltaX);
-        createBadLogTopic("Vision/Distance", "inches", this::getDistance);
-    }
-
+    
     public double simulateDeltaX() {
         double opposite =
             Constants.fieldCenterY - robotState.getFieldToTurretPos().getY();
