@@ -215,6 +215,18 @@ public class Robot extends TimedRobot {
                     "G",
                     infrastructure::getZAcceleration
                 );
+                   
+                BadLog.createTopic(
+                    "Vision/DeltaXAngle",
+                    "Degrees",
+                    camera::getDeltaX
+                );
+                BadLog.createTopic(
+                    "Vision/Distance",
+                    "Meters",
+                    camera::getDistance
+                );
+                
                 logger.finishInitialization();
             }
 
