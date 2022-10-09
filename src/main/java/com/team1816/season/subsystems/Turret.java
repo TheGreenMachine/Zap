@@ -59,7 +59,7 @@ public class Turret extends Subsystem implements PidProvider {
     private double turretRotationalAcceleration = 0d;
     private double turretCentripetalAcceleration = 0d;
     private boolean outputsChanged = true;
-    private Pose2d target;
+    private Pose2d target = Constants.targetPos;
     private ControlMode controlMode;
 
     @Inject
@@ -200,7 +200,7 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     public void setTarget(Pose2d target) {
-        if(this.target != target) {
+        if (this.target != target) {
             this.target = target;
         }
     }
@@ -341,10 +341,8 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     private int targetFollowingOffset() {
-        double opposite =
-            target.getY() - robotState.getFieldToTurretPos().getY();
-        double adjacent =
-            target.getX() - robotState.getFieldToTurretPos().getX();
+        double opposite = target.getY() - robotState.getFieldToTurretPos().getY();
+        double adjacent = target.getX() - robotState.getFieldToTurretPos().getX();
         double turretAngle = Math.atan(opposite / adjacent);
         if (adjacent < 0) turretAngle += Math.PI;
         return convertTurretDegreesToTicks(Units.radiansToDegrees(turretAngle));
