@@ -1,6 +1,5 @@
 package com.team1816.season.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -12,6 +11,7 @@ import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
 import com.team1816.season.states.RobotState;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
@@ -59,6 +59,7 @@ public class Turret extends Subsystem implements PidProvider {
     private double turretRotationalAcceleration = 0d;
     private double turretCentripetalAcceleration = 0d;
     private boolean outputsChanged = true;
+    private Pose2d target;
     private ControlMode controlMode;
 
     @Inject
@@ -198,6 +199,12 @@ public class Turret extends Subsystem implements PidProvider {
         setDesiredPos(convertTurretDegreesToTicks(angle));
     }
 
+    public void setTarget(Pose2d target) {
+        if(this.target != target) {
+            this.target = target;
+        }
+    }
+
     public synchronized void snap() {
         setControlMode(ControlMode.CENTER_FOLLOWING);
     }
@@ -274,7 +281,8 @@ public class Turret extends Subsystem implements PidProvider {
                 positionControl(followingPos);
                 break;
             case CENTER_FOLLOWING:
-                trackCenter();
+                setTarget(Constants.fieldCenterPose);
+                trackTarget();
                 positionControl(followingPos);
                 break;
             case ABSOLUTE_FOLLOWING:
@@ -334,9 +342,9 @@ public class Turret extends Subsystem implements PidProvider {
 
     private int targetFollowingOffset() {
         double opposite =
-            Constants.fieldCenterY - robotState.getFieldToTurretPos().getY();
+            target.getY() - robotState.getFieldToTurretPos().getY();
         double adjacent =
-            Constants.fieldCenterX - robotState.getFieldToTurretPos().getX();
+            target.getX() - robotState.getFieldToTurretPos().getX();
         double turretAngle = Math.atan(opposite / adjacent);
         if (adjacent < 0) turretAngle += Math.PI;
         return convertTurretDegreesToTicks(Units.radiansToDegrees(turretAngle));
@@ -362,7 +370,7 @@ public class Turret extends Subsystem implements PidProvider {
         }
     }
 
-    private void trackCenter() {
+    private void trackTarget() {
         int fieldTickOffset = fieldFollowingOffset();
         int targetOffset = targetFollowingOffset();
 
