@@ -122,7 +122,7 @@ subsystems:
         constants:
             useLinearPiecewise: 0
             useCubicSpline: 0
-            ballEjectionDuration: 0.5
+            ballEjectionDuration: 0.5 #TODO: NICO TUNE THIS
             usingPoseForSpeed: 0
             maxVelTicks100ms: 20700
             nearVel: 4500
