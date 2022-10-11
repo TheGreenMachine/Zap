@@ -193,7 +193,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     @Override
     public void updateRobotState() {
         robotState.fieldToVehicle = swerveOdometry.getPoseMeters();
-        robotState.estimatedFieldToVehicle =
+        robotState.extrapolatedFieldToVehicle =
             robotState.fieldToVehicle.plus(
                 new Transform2d(
                     new Translation2d(

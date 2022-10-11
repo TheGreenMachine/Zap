@@ -17,7 +17,7 @@ public class RobotState {
 
     public final Field2d field = new Field2d();
     public Pose2d fieldToVehicle = Constants.EmptyPose;
-    public Pose2d estimatedFieldToVehicle = Constants.EmptyPose;
+    public Pose2d extrapolatedFieldToVehicle = Constants.EmptyPose;
     public Rotation2d vehicleToTurret = Constants.EmptyRotation;
     public ChassisSpeeds deltaVehicle = new ChassisSpeeds();
     public ChassisSpeeds normalizedDeltaChassisSpeeds = new ChassisSpeeds();
@@ -95,7 +95,7 @@ public class RobotState {
 
     public synchronized Pose2d getEstimatedFieldToTurretPos() {
         return new Pose2d(
-            estimatedFieldToVehicle
+            extrapolatedFieldToVehicle
                 .transformBy(
                     new Transform2d(new Translation2d(-.1, .1), Constants.EmptyRotation)
                 )
@@ -128,7 +128,7 @@ public class RobotState {
     public synchronized void outputToSmartDashboard() {
         //shuffleboard periodic updates should be here
         field.setRobotPose(fieldToVehicle);
-        field.getObject("EstimatedRobot").setPose(estimatedFieldToVehicle);
+        field.getObject("EstimatedRobot").setPose(extrapolatedFieldToVehicle);
         field.getObject(Turret.NAME).setPose(getFieldToTurretPos());
     }
 

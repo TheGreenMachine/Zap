@@ -196,7 +196,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     @Override
     public void updateRobotState() {
         robotState.fieldToVehicle = tankOdometry.getPoseMeters();
-        robotState.estimatedFieldToVehicle =
+        robotState.extrapolatedFieldToVehicle =
             robotState.fieldToVehicle.plus(
                 new Transform2d(
                     new Translation2d(

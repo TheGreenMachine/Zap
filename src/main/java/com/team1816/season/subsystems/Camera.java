@@ -116,10 +116,10 @@ public class Camera extends Subsystem {
             var p = new Point();
             var camToTarget = new Pose2d();
             camToTarget.plus(target.getCameraToTarget());
-//            p.id = target.getFiducialId();
-//            p.x = (int) camToTarget.getX();
-//            p.y = (int) camToTarget.getY();
-//            p.z = (int) camToTarget.getZ();
+            p.id = target.getFiducialId();
+            p.x = (int) camToTarget.getX();
+            p.y = (int) camToTarget.getY();
+            p.z = (int) camToTarget.getZ();
             list.add(p);
         }
         return list;
