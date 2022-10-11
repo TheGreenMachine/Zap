@@ -48,7 +48,7 @@ public class Constants {
     public static final HashMap<Integer, Double[]> fieldTargets = new HashMap<>() {
         {
             put(
-                0,
+                -1,
                 new Double[] {
                     fieldCenterX,
                     fieldCenterY,
