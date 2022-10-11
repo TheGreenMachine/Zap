@@ -66,7 +66,7 @@ public class Camera extends Subsystem {
 
     public double getDistance() {
         if (RobotBase.isSimulation()) {
-            return robotState.getEstimatedDistanceToGoal();
+            return robotState.getDistanceToGoal();
         }
         var result = cam.getLatestResult();
         if (!result.hasTargets()) {

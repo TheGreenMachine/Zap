@@ -108,8 +108,8 @@ public class RobotState {
         return normalizedDeltaChassisSpeeds;
     }
 
-    public double getEstimatedDistanceToGoal() {
-        double estimatedDistanceToGoalMeters = extrapolatedFieldToVehicle
+    public double getDistanceToGoal() {
+        double estimatedDistanceToGoalMeters = fieldToVehicle
             .getTranslation()
             .getDistance(Constants.targetPos.getTranslation());
         //        double distInches =
@@ -123,6 +123,13 @@ public class RobotState {
         //            );
         System.out.println("estimated distance = " + estimatedDistanceToGoalMeters);
         return estimatedDistanceToGoalMeters;
+    }
+
+    public double getExtrapolatedDistanceToGoal() {
+        double extrapolatedDistanceToGoalMeters = extrapolatedFieldToVehicle
+            .getTranslation()
+            .getDistance(Constants.targetPos.getTranslation());
+        return extrapolatedDistanceToGoalMeters;
     }
 
     public synchronized void outputToSmartDashboard() {

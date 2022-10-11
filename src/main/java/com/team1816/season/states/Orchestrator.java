@@ -163,14 +163,16 @@ public class Orchestrator {
         ) {
             turret.setControlMode(Turret.ControlMode.ABSOLUTE_FOLLOWING);
         }
-        double distance = robotState.getEstimatedDistanceToGoal();
+        double distance = robotState.getExtrapolatedDistanceToGoal();
         shooter.setVelocity(
             distanceManager.getOutput(distance, DistanceManager.SUBSYSTEM.SHOOTER)
         );
     }
 
     public void littleMan() {
-        shooter.setVelocity(getOutput(DistanceManager.SUBSYSTEM.SHOOTER));
+        shooter.setVelocity(
+            getOutput(DistanceManager.SUBSYSTEM.SHOOTER)
+        );
     }
 
     /** update subsystem state */
@@ -214,9 +216,9 @@ public class Orchestrator {
 
     public double getOutput(DistanceManager.SUBSYSTEM subsystem) {
         if (useVision) {
-            double camDis = camera.getDistance();
-            System.out.println("tracked camera distance is . . . " + camDis);
-            return distanceManager.getOutput(camDis, subsystem);
+            double dist = robotState.getDistanceToGoal();
+            System.out.println("tracked distance to goal is . . . " + dist);
+            return distanceManager.getOutput(dist, subsystem);
         } else {
             System.out.println("using neither poseTracking nor vision ! - not intended");
             return -1;
