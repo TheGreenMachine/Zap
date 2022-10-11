@@ -18,6 +18,11 @@ public class Infrastructure {
     // Components
     private static ICompressor compressor;
     private static IPigeonIMU pigeon;
+
+    private double xAccel;
+    private double yAccel;
+    private double zAccel;
+    public double yaw;
     private static PowerDistribution pd;
 
     private static boolean compressorEnabled;
@@ -55,23 +60,27 @@ public class Infrastructure {
     }
 
     public double getYaw() {
-        return pigeon.getYaw();
+        return yaw;
     }
 
-    public double[] getAcceleration() {
-        return pigeon.getAcceleration();
+    public void updatePigeon() {
+        double[] accel = pigeon.getAcceleration();
+        xAccel = accel[0];
+        yAccel = accel[1];
+        zAccel = accel[2];
+        yaw = pigeon.getYaw();
     }
 
     public double getXAcceleration() {
-        return getAcceleration()[0];
+        return xAccel;
     }
 
     public double getYAcceleration() {
-        return getAcceleration()[1];
+        return yAccel;
     }
 
     public double getZAcceleration() {
-        return getAcceleration()[2];
+        return zAccel;
     }
 
     public PowerDistribution getPd() {

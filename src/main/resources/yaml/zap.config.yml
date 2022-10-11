@@ -205,8 +205,8 @@ subsystems:
             maxVelTicks100ms: 10000
             isVelocity: 0
             revving: 0 #.05
-            collecting: -.5 #-3600
-            flush: 0.5 #.35
+            collecting: 0.5 #-3600
+            flush: -0.5 #.35
     camera:
         implemented: true
         constants:
@@ -236,14 +236,6 @@ infrastructure:
 controlboard: example
 constants:
     # drivetrain dimensions and movement
-    maxRotVel: 14
-    trackWidth: 21 #inches
-    wheelbaseLength: 21.5 #inches
-    wheelDiameter: 4
-    kTrackScrubFactor: 1.0
-    maxVelOpenLoop: 3 # meters/s
-    maxVelPathFollowing: 3 # meters/s (2.2)
-    maxAccel: 2.54 # meters/s^ 2
     maxAllowablePoseError: 0.1
     ## Logging ##
     logTeleOp: 1 # 0 or 1

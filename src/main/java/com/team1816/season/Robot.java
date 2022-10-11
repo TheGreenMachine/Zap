@@ -498,6 +498,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         try {
+            infrastructure.updatePigeon();
             // update shuffleboard for subsystem values
             subsystemManager.outputToSmartDashboard();
             // update robot state on field for Field2D widget
