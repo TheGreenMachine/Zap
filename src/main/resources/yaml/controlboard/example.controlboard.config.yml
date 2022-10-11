@@ -33,7 +33,7 @@ operator:
         x: toggleCamera
         y: autoClimb
         a: toggleTurretMode
-        b: toggleTurretMode
+        b: eject
     axes:
         leftTrigger: yeetShot
         rightTrigger: shoot

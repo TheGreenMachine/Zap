@@ -2,23 +2,23 @@ package com.team1816.season.auto.actions;
 
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.actions.Action;
-import com.team1816.season.states.Superstructure;
+import com.team1816.season.states.Orchestrator;
 
 public class StopAction implements Action {
 
     public boolean notRevving;
 
-    private static Superstructure superstructure;
+    private static Orchestrator orchestrator;
 
     public StopAction(boolean notRevving) {
         this.notRevving = notRevving;
-        superstructure = Injector.get(Superstructure.class);
+        orchestrator = Injector.get(Orchestrator.class);
     }
 
     @Override
     public void start() {
         System.out.println("stopping action : - - - -");
-        superstructure.setStopped(notRevving);
+        orchestrator.setStopped(notRevving);
         //        drive.stop();
     }
 

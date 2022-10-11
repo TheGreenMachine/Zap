@@ -3,24 +3,24 @@ package com.team1816.season.subsystems;
 import com.team1816.TestUtil;
 import com.team1816.lib.Injector;
 import com.team1816.season.states.RobotState;
-import com.team1816.season.states.Superstructure;
+import com.team1816.season.states.Orchestrator;
 import junit.framework.TestCase;
 import org.junit.Before;
 
-public class SuperstructureTest extends TestCase {
+public class OrchestratorTest extends TestCase {
 
     private final RobotState state;
 
-    private Superstructure mSuperstructure;
+    private Orchestrator mOrchestrator;
 
-    public SuperstructureTest() {
+    public OrchestratorTest() {
         TestUtil.SetupMockRobotFactory(null);
         state = Injector.get(RobotState.class);
     }
 
     @Before
     public void setUp() {
-        mSuperstructure = Injector.get(Superstructure.class);
+        mOrchestrator = Injector.get(Orchestrator.class);
         state.resetPosition();
     }
 

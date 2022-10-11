@@ -2,23 +2,23 @@ package com.team1816.season.auto.actions;
 
 import com.team1816.lib.Injector;
 import com.team1816.lib.auto.actions.Action;
-import com.team1816.season.states.Superstructure;
+import com.team1816.season.states.Orchestrator;
 
 public class CollectAction implements Action {
 
     private final boolean isCollecting;
 
-    private static Superstructure superstructure;
+    private static Orchestrator orchestrator;
 
     public CollectAction(boolean isCollecting) {
         this.isCollecting = isCollecting;
-        superstructure = Injector.get(Superstructure.class);
+        orchestrator = Injector.get(Orchestrator.class);
     }
 
     @Override
     public void start() {
         System.out.println("Modifying collector!");
-        superstructure.setCollecting(isCollecting, true); // hard coded false because we shouldn't ever backSpin
+        orchestrator.setCollecting(isCollecting, true); // hard coded false because we shouldn't ever backSpin
     }
 
     @Override

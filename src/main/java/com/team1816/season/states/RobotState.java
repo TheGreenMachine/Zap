@@ -25,7 +25,7 @@ public class RobotState {
     public boolean isPoseUpdated = true;
 
     // Superstructure ACTUAL states
-    public Superstructure.STATE superstructureState = Superstructure.STATE.LITTLE_MAN;
+    public Orchestrator.STATE superstructureState = Orchestrator.STATE.LITTLE_MAN;
     public List<Point> visionPoint = new ArrayList<>();
     public Collector.STATE collectorState = Collector.STATE.STOP;
     public Shooter.STATE shooterState = Shooter.STATE.STOP;
@@ -59,7 +59,7 @@ public class RobotState {
     }
 
     public synchronized void resetAllStates() {
-        superstructureState = Superstructure.STATE.LITTLE_MAN;
+        superstructureState = Orchestrator.STATE.LITTLE_MAN;
         collectorState = Collector.STATE.STOP;
         spinState = Spindexer.STATE.STOP;
         elevatorState = Elevator.STATE.STOP;
@@ -109,7 +109,7 @@ public class RobotState {
     }
 
     public double getEstimatedDistanceToGoal() {
-        double estimatedDistanceToGoalMeters = fieldToVehicle
+        double estimatedDistanceToGoalMeters = extrapolatedFieldToVehicle
             .getTranslation()
             .getDistance(Constants.targetPos.getTranslation());
         //        double distInches =

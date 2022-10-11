@@ -19,7 +19,7 @@ import java.util.List;
 /** The class responsible for organizing the collector, spindexer, elevator, and shooter into runnable actions - manages the robot's DESIRED states */
 
 @Singleton
-public class Superstructure {
+public class Orchestrator {
 
     /** subsystems */
     private static Drive drive;
@@ -45,7 +45,7 @@ public class Superstructure {
     );
 
     @Inject
-    public Superstructure(
+    public Orchestrator(
         DistanceManager dm,
         Camera cam,
         Drive.Factory df,
