@@ -350,9 +350,9 @@ public class Turret extends Subsystem implements PidProvider {
 
     private int estimatedTargetFollowingOffset() {
         double opposite =
-            Constants.fieldCenterY - robotState.getEstimatedFieldToTurretPos().getY();
+            target.getY() - robotState.getEstimatedFieldToTurretPos().getY();
         double adjacent =
-            Constants.fieldCenterX - robotState.getEstimatedFieldToTurretPos().getX();
+            target.getX() - robotState.getEstimatedFieldToTurretPos().getX();
         double turretAngle = Math.atan(opposite / adjacent);
         if (adjacent < 0) turretAngle += Math.PI;
         return convertTurretDegreesToTicks(Units.radiansToDegrees(turretAngle));
