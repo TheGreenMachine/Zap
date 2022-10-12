@@ -61,9 +61,9 @@ public class Infrastructure {
 
     public Double[] getAcceleration() {
         return new Double[] {
-            pigeon.getAcceleration()[0] * Constants.gravitationalAccelerationConstant,
-            pigeon.getAcceleration()[1] * Constants.gravitationalAccelerationConstant,
-            pigeon.getAcceleration()[2] * Constants.gravitationalAccelerationConstant,
+            pigeon.getAcceleration()[0] * Constants.gravitationalAccelerationConstant / 16384,
+            pigeon.getAcceleration()[1] * Constants.gravitationalAccelerationConstant / 16384,
+            pigeon.getAcceleration()[2] * Constants.gravitationalAccelerationConstant / 16384
         };
     }
 
