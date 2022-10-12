@@ -193,11 +193,7 @@ public class Robot extends TimedRobot {
                     "join:Turret/Positions"
                 );
                 BadLog.createTopic("Turret/ErrorPos", "NativeUnits", turret::getPosError);
-                BadLog.createTopic(
-                    "PDP/Current",
-                    "Amps",
-                    infrastructure.getPd()::getTotalCurrent
-                );
+                BadLog.createTopic("PDP/Current", "Amps", infrastructure::getCurrent);
 
                 BadLog.createTopic(
                     "Pigeon/AccelerationX",
@@ -498,7 +494,6 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         try {
-            infrastructure.updatePigeon();
             // update shuffleboard for subsystem values
             subsystemManager.outputToSmartDashboard();
             // update robot state on field for Field2D widget

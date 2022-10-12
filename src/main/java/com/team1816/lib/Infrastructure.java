@@ -22,8 +22,12 @@ public class Infrastructure {
     private double xAccel;
     private double yAccel;
     private double zAccel;
-    public double yaw;
+    private double yaw;
+    private double loopCount;
+
     private static PowerDistribution pd;
+
+    private double current;
 
     private static boolean compressorEnabled;
     private static boolean compressorIsOn = false;
@@ -34,6 +38,12 @@ public class Infrastructure {
         pigeon = factory.getPigeon();
         pd = factory.getPd();
         compressorEnabled = factory.isCompressorEnabled();
+        xAccel = 0;
+        yAccel = 0;
+        zAccel = 0;
+        yaw = 0;
+        current = 0;
+        loopCount = 0;
     }
 
     public void startCompressor() { // not used because compressor currently turns on by default once robot is enabled
@@ -63,12 +73,18 @@ public class Infrastructure {
         return yaw;
     }
 
-    public void updatePigeon() {
-        double[] accel = pigeon.getAcceleration();
-        xAccel = accel[0];
-        yAccel = accel[1];
-        zAccel = accel[2];
-        yaw = pigeon.getYaw();
+    public void update() {
+        if (loopCount > 10) {
+            loopCount = 0;
+            double[] accel = pigeon.getAcceleration();
+            xAccel = accel[0];
+            yAccel = accel[1];
+            zAccel = accel[2];
+            yaw = pigeon.getYaw();
+            current = pd.getTotalCurrent();
+        } else {
+            loopCount++;
+        }
     }
 
     public double getXAcceleration() {
@@ -85,6 +101,10 @@ public class Infrastructure {
 
     public PowerDistribution getPd() {
         return pd;
+    }
+
+    public double getCurrent() {
+        return current;
     }
 
     public void simulateGyro(double radianOffsetPerLoop, double gyroDrift) {
