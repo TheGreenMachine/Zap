@@ -594,6 +594,10 @@ public class Robot extends TimedRobot {
 
         try {
             manualControl(); // controls drivetrain and turret joystick control mode
+//            if (orchestrator.needsVisionUpdate() || !robotState.isPoseUpdated) { //TODO Future function, uncomment later
+//                robotState.isPoseUpdated = false;
+//                orchestrator.calculatePoseFromCamera();
+//            }
         } catch (Throwable t) {
             faulted = true;
             throw t;

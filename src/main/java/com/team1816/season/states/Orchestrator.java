@@ -225,7 +225,7 @@ public class Orchestrator {
         }
     }
 
-    public boolean needsVisionUpdate() {
+    public boolean needsVisionUpdate() { // true means that the pose needs to be updated
         if (!robotState.isPoseUpdated) {
             return true;
         }
@@ -279,6 +279,7 @@ public class Orchestrator {
                 sY / cameraPoint.size(),
                 robotState.fieldToVehicle.getRotation()
             );
+            robotState.isPoseUpdated = true;
             return pose;
         }
         return robotState.fieldToVehicle;
