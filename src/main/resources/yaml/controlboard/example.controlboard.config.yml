@@ -13,8 +13,8 @@ driver:
         leftTrigger: brakeMode
         rightTrigger: slowMode
     buttons:
-        leftBumper: toggleCollector
-        rightBumper: toggleCollectorReverse
+        leftBumper: toggleCollectorReverse
+        rightBumper: toggleCollector
         start: zeroPose
 operator:
     rumble: false
@@ -39,6 +39,5 @@ operator:
         rightTrigger: shoot
     buttons:
         leftBumper: autoAim
-        rightBumper: autoAim
         start: toggleTopClamp
         back: toggleBottomClamp

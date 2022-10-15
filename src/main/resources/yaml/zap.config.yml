@@ -93,8 +93,8 @@ subsystems:
         pidConfig:
             slot0:
                 kP: 1.25
-                kI: 0.0003
-                kD: 40.5
+                kI: 0
+                kD: 25.5
                 kF: 0 # Should be 0 for position control
                 allowableError: 40
         talons:
@@ -103,7 +103,7 @@ subsystems:
             deltaXScalar: 150 #value worked best at 150 in sim
             revLimit: -5580 # adjusted for zero-offset
             fwdLimit: 29600 # adjusted for zero-offset
-            absPosTicksSouth: 200 # absolute
+            absPosTicksSouth: 0 # absolute
             absPPR: 4096
             turretPPR: 53248 # 4096 * 13
     shooter:
@@ -125,7 +125,7 @@ subsystems:
             usingPoseForSpeed: 0
             maxVelTicks100ms: 20700
             nearVel: 4500
-            midVel: 8450
+            midVel: 8250
             tarmacTapeVel: 8425
             launchpadVel: 10100
             maxVel: 16500
@@ -192,8 +192,6 @@ subsystems:
             intake: 23 # maxVelTicks100ms 10617
         solenoids:
             arm: 2
-        invertMotor:
-            - intake
         pidConfig:
             slot0:
                 kP: 0.1
@@ -208,11 +206,9 @@ subsystems:
             collecting: 0.5 #-3600
             flush: -0.5 #.35
     camera:
-        implemented: true
+        implemented: false
         constants:
             debug: 0
-            maxDist: 400
-            maxDeltaX: 1200
             allowableDistanceError: 50
     cooler:
         implemented: true
@@ -220,7 +216,7 @@ subsystems:
             lock: 1
             dump: 3
         constants:
-            heatThreshold: 65 # degrees Celsius
+            heatThreshold: 95 # degrees Celsius
 infrastructure:
     canivoreBusName: highSpeed
     # power distribution

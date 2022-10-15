@@ -90,16 +90,8 @@ public class Turret extends Subsystem implements PidProvider {
                 : 0;
 
         // define limits + when turret should wrap around
-        kRevLimit =
-            //            Math.min(
-            //                (int) factory.getConstant(NAME, "fwdLimit"),
-            ((int) factory.getConstant(NAME, "revLimit"));
-        //            );
-        kFwdLimit =
-            //            Math.max(
-            (int) factory.getConstant(NAME, "fwdLimit");
-        //                ((int) factory.getConstant(NAME, "revLimit"))
-        //            );
+        kRevLimit = ((int) factory.getConstant(NAME, "revLimit"));
+        kFwdLimit = (int) factory.getConstant(NAME, "fwdLimit");
         int MASK = 0;
         if (Math.abs(kRevLimit - kFwdLimit) > kTurretPPR) {
             MASK = Math.abs((kRevLimit + kTurretPPR) - (kFwdLimit)) / 2; // this value is truncated

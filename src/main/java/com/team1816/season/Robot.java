@@ -66,7 +66,7 @@ public class Robot extends TimedRobot {
 
     // hack variables
     private final Turret.ControlMode defaultTurretControlMode =
-        Turret.ControlMode.POSITION;
+        Turret.ControlMode.FIELD_FOLLOWING;
     private boolean faulted;
     private boolean useManualShoot = false;
 
@@ -288,13 +288,7 @@ public class Robot extends TimedRobot {
                                 superstructure.autoAim();
                                 turret.snapWithCamera();
                             } else {
-                                superstructure.updatePoseWithCamera();
-                                if (
-                                    defaultTurretControlMode ==
-                                    Turret.ControlMode.CENTER_FOLLOWING
-                                ) {
-                                    turret.setFollowingAngle(Turret.kSouth);
-                                }
+                                // superstructure.updatePoseWithCamera(); // not for now -- if camera gives bad value fieldtovehicle will be off
                                 turret.setControlMode(defaultTurretControlMode);
                             }
                         }

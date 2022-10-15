@@ -74,7 +74,7 @@ public class Infrastructure {
     }
 
     public void update() {
-        if (loopCount > 10) {
+        if (loopCount > 5) {
             loopCount = 0;
             double[] accel = pigeon.getAcceleration();
             xAccel = accel[0];

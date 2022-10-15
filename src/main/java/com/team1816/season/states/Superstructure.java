@@ -125,7 +125,6 @@ public class Superstructure {
         if (Constants.kUseVision) {
             ledManager.setCameraLed(true);
             camera.setCameraEnabled(true);
-            turret.setControlMode(Turret.ControlMode.CAMERA_SNAP);
             ledManager.setDefaultStatus(LedManager.RobotStatus.SEEN_TARGET);
         } else {
             System.out.println("can't auto aim b/c camera not on");

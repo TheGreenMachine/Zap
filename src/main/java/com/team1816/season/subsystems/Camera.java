@@ -18,7 +18,7 @@ public class Camera extends Subsystem {
     // Components
     static LedManager led;
 
-    private final PhotonCamera cam = new PhotonCamera("zed");
+    private final PhotonCamera cam;
     // Constants
     private static final String NAME = "camera";
     private static final double CAMERA_FOCAL_LENGTH = 700; // px
@@ -26,8 +26,8 @@ public class Camera extends Subsystem {
     private static final double VIDEO_HEIGHT = 720; // px
     private static final double CAMERA_HFOV = 85;
     public static final double CAMERA_VFOV = 54; // 2 * Math.atan((VIDEO_WIDTH / 2) / CAMERA_FOCAL_LENGTH); // deg
-    private final double MAX_DIST = factory.getConstant(NAME, "maxDist", 260);
-    private final double MAX_DELTA_X = factory.getConstant(NAME, "maxDeltaX", 1200);
+    private final double MAX_DIST = Constants.fieldCenterX; // distance of half-field
+    private final double MAX_DELTA_X = 90; // degrees
 
     private final double CAMERA_HEIGHT_METERS = Units.inchesToMeters(
         Constants.kCameraMountingHeight
@@ -45,6 +45,7 @@ public class Camera extends Subsystem {
     public Camera(LedManager ledManager, Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
         led = ledManager;
+        cam = new PhotonCamera("zed");
         SmartDashboard.putNumber("Camera/cy", 0);
     }
 
@@ -53,10 +54,10 @@ public class Camera extends Subsystem {
             return simulateDeltaX();
         }
         var result = cam.getLatestResult();
-        if (!result.hasTargets()) {
-            return -1.0;
+        if (!result.hasTargets() || getDistance() <= -1) {
+            return 0;
         }
-        return result.getBestTarget().getPitch();
+        return result.getBestTarget().getYaw();
     }
 
     public double getDistance() {
@@ -67,13 +68,17 @@ public class Camera extends Subsystem {
         if (!result.hasTargets()) {
             return -1.0;
         }
+        double distMeters = PhotonUtils.calculateDistanceToTargetMeters(
+            CAMERA_HEIGHT_METERS,
+            TARGET_HEIGHT_METERS,
+            CAMERA_PITCH_RADIANS,
+            Units.degreesToRadians(result.getBestTarget().getPitch())
+        );
+        if(distMeters > MAX_DIST){
+            return -1;
+        }
         return Units.metersToInches(
-            PhotonUtils.calculateDistanceToTargetMeters(
-                CAMERA_HEIGHT_METERS,
-                TARGET_HEIGHT_METERS,
-                CAMERA_PITCH_RADIANS,
-                Units.degreesToRadians(result.getBestTarget().getPitch())
-            )
+            distMeters
         );
     }
 
@@ -96,25 +101,9 @@ public class Camera extends Subsystem {
 
     public void stop() {}
 
-    public void readFromHardware() {
-        if (RobotBase.isSimulation()) {
-            return;
-        }
-    }
+    public void readFromHardware() {}
 
     public boolean checkSystem() { // this doesn't actually do anything because there's no read calls
-        if (this.isImplemented()) {
-            setCameraEnabled(true);
-            Timer.delay(2);
-            if (getDistance() < 0 || getDistance() > MAX_DIST) {
-                System.out.println("getDistance failed test!");
-                return false;
-            } else if (getDeltaX() > MAX_DELTA_X) {
-                System.out.println("getDeltaX failed test!");
-                return false;
-            }
-            setCameraEnabled(false);
-        }
         return true;
     }
 

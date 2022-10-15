@@ -18,7 +18,7 @@ public class CollectAction implements Action {
     @Override
     public void start() {
         System.out.println("Modifying collector!");
-        superstructure.setCollecting(isCollecting, true); // hard coded false because we shouldn't ever backSpin
+        superstructure.setCollecting(isCollecting, false); // hard coded false because we shouldn't ever backSpin
     }
 
     @Override
