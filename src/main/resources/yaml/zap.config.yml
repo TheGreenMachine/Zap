@@ -100,7 +100,7 @@ subsystems:
         talons:
             turretMotor: 33
         constants:
-            deltaXScalar: 150 #value worked best at 150 in sim
+            deltaXScalar: 10 #value worked best at 150 in sim
             revLimit: -5580 # adjusted for zero-offset
             fwdLimit: 29600 # adjusted for zero-offset
             absPosTicksSouth: 0 # absolute
