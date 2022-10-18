@@ -65,7 +65,7 @@ public class Constants {
 
     // Drivetrain characterization
     public static final double gravitationalAccelerationConstant = 9.8d;
-    public static double kMaxAccelDiffThreshold = 1d;
+    public static double kMaxAccelDiffThreshold = 2d; // m/s^2
 
     //Badlog
     public static boolean kIsBadlogEnabled = factory.getConstant("badLogEnabled") > 0;
