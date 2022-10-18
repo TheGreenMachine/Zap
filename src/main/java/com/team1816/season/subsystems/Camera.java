@@ -8,7 +8,6 @@ import com.team1816.lib.Infrastructure;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
 import com.team1816.season.states.RobotState;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
@@ -61,7 +60,12 @@ public class Camera extends Subsystem {
         if (!result.hasTargets()) {
             return -1.0;
         }
-        return result.getBestTarget().getPitch();
+        PhotonTrackedTarget best = result.getBestTarget();
+        double[] tagData = tagPositions.get(best.getFiducialId());
+        if (tagData[3] != 1.0) {
+            return -1.0;
+        }
+        return best.getPitch();
     }
 
     public double getDistance() {
@@ -72,11 +76,16 @@ public class Camera extends Subsystem {
         if (!result.hasTargets()) {
             return -1.0;
         }
+        PhotonTrackedTarget best = result.getBestTarget();
+        double[] tagData = tagPositions.get(best.getFiducialId());
+        if (tagData[3] != 1.0) {
+            return -1.0;
+        }
         return PhotonUtils.calculateDistanceToTargetMeters(
             CAMERA_HEIGHT_METERS,
             TARGET_HEIGHT_METERS,
             CAMERA_PITCH_RADIANS,
-            Units.degreesToRadians(result.getBestTarget().getPitch())
+            Units.degreesToRadians(best.getYaw())
         );
     }
 
@@ -104,6 +113,7 @@ public class Camera extends Subsystem {
             return;
         }
     }
+
     // double[] { x meters, y meters, z meters, isHubTarget ? 1 : 0}
     public HashMap<Integer, double[]> tagPositions = new HashMap<>() {
         {
@@ -113,7 +123,7 @@ public class Camera extends Subsystem {
                     Constants.fieldCenterX,
                     Constants.fieldCenterY,
                     Units.inchesToMeters(Constants.kTargetHeight),
-                    0.0,
+                    1.0,
                 }
             ); // retro-reflective tape
 
