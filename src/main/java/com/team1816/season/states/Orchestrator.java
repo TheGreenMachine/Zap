@@ -252,10 +252,10 @@ public class Orchestrator {
     }
 
     public Pose2d calculatePoseFromCamera() {
-        var cameraPoint = robotState.visionPoint; // flat distance in meters
+        var cameraPoints = camera.getPoints(); // flat distance in meters
         List<Pose2d> poses = new ArrayList<>();
         double sX = 0, sY = 0;
-        for (RobotState.Point point : cameraPoint) {
+        for (RobotState.Point point : cameraPoints) {
             Pose2d targetPos = new Pose2d(
                 Constants.fieldTargets.get(point.id)[0],
                 Constants.fieldTargets.get(point.id)[1],
@@ -273,10 +273,10 @@ public class Orchestrator {
             sY += p.getY();
             poses.add(p);
         }
-        if (cameraPoint.size() > 0) {
+        if (cameraPoints.size() > 0) {
             Pose2d pose = new Pose2d(
-                sX / cameraPoint.size(),
-                sY / cameraPoint.size(),
+                sX / cameraPoints.size(),
+                sY / cameraPoints.size(),
                 robotState.fieldToVehicle.getRotation()
             );
             robotState.isPoseUpdated = true;
