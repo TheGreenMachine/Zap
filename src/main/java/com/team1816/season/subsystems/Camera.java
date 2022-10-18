@@ -8,7 +8,6 @@ import com.team1816.season.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.photonvision.*;
 
@@ -74,12 +73,10 @@ public class Camera extends Subsystem {
             CAMERA_PITCH_RADIANS,
             Units.degreesToRadians(result.getBestTarget().getPitch())
         );
-        if(distMeters > MAX_DIST){
+        if (distMeters > MAX_DIST) {
             return -1;
         }
-        return Units.metersToInches(
-            distMeters
-        );
+        return Units.metersToInches(distMeters);
     }
 
     public void setCameraEnabled(boolean cameraEnabled) {

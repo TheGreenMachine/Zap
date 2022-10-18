@@ -5,6 +5,7 @@ import com.google.inject.Singleton;
 import com.team1816.lib.hardware.components.IPigeonIMU;
 import com.team1816.lib.hardware.components.pcm.ICompressor;
 import com.team1816.lib.hardware.factory.RobotFactory;
+import com.team1816.season.Constants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.PowerDistribution;
 
@@ -77,9 +78,9 @@ public class Infrastructure {
         if (loopCount > 5) {
             loopCount = 0;
             double[] accel = pigeon.getAcceleration();
-            xAccel = accel[0];
-            yAccel = accel[1];
-            zAccel = accel[2];
+            xAccel = accel[0] * Constants.gravitationalAccelerationConstant / 16384;
+            yAccel = accel[1] * Constants.gravitationalAccelerationConstant / 16384;
+            zAccel = -accel[2] * Constants.gravitationalAccelerationConstant / 16384;
             yaw = pigeon.getYaw();
             current = pd.getTotalCurrent();
         } else {

@@ -14,6 +14,8 @@ public class Constants {
     public static final Rotation2d EmptyRotation = new Rotation2d();
     public static final double kLooperDt = factory.getConstant("kLooperDt", .020);
 
+    public static final double gravitationalAccelerationConstant = 9.8d;
+
     // CAN Timeouts
     public static final int kCANTimeoutMs = 10; // use for important on the fly updates
     public static final int kLongCANTimeoutMs = 100; // use for constructors
