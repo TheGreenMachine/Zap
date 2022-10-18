@@ -13,7 +13,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import java.util.ArrayList;
+import java.util.*;
 import org.photonvision.*;
 import org.photonvision.targeting.*;
 
@@ -104,6 +104,33 @@ public class Camera extends Subsystem {
             return;
         }
     }
+    // double[] { x meters, y meters, z meters, isHubTarget ? 1 : 0}
+    public HashMap<Integer, double[]> tagPositions = new HashMap<>() {
+        {
+            put(
+                -1,
+                new double[] {
+                    Constants.fieldCenterX,
+                    Constants.fieldCenterY,
+                    Units.inchesToMeters(Constants.kTargetHeight),
+                    0.0,
+                }
+            ); // retro-reflective tape
+
+            // 50-53 are hub targets
+            put(50, new double[] { 7.684, 4.330, 2.408, 1.0 });
+
+            put(51, new double[] { 8.02, 3.576, 2.408, 1.0 });
+
+            put(52, new double[] { 8.775, 3.912, 2.408, 1.0 });
+
+            put(53, new double[] { 8.439, 4.667, 2.408, 1.0 });
+
+            put(03, new double[] { 3.219, 5.493, 1.725, 0.0 });
+
+            put(11, new double[] { 13.240, 2.75, 1.725, 0.0 });
+        }
+    };
 
     public ArrayList<Point> getPoints() {
         ArrayList<Point> list = new ArrayList<Point>();
@@ -114,12 +141,11 @@ public class Camera extends Subsystem {
 
         for (PhotonTrackedTarget target : result.targets) {
             var p = new Point();
-            var camToTarget = new Pose2d();
-            camToTarget.plus(target.getCameraToTarget());
-            p.id = target.getFiducialId();
-            p.x = (int) camToTarget.getX();
-            p.y = (int) camToTarget.getY();
-            p.z = (int) camToTarget.getZ();
+            double[] pointData = tagPositions.get(target.getFiducialId());
+            if (pointData == null) continue;
+            p.x = pointData[0];
+            p.y = pointData[1];
+            p.z = pointData[2];
             list.add(p);
         }
         return list;
