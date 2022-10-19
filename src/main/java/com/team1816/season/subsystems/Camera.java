@@ -63,12 +63,11 @@ public class Camera extends Subsystem {
         if (!result.hasTargets()) {
             return -1.0;
         }
-        PhotonTrackedTarget best = result.getBestTarget();
-        double[] tagData = tagPositions.get(best.getFiducialId());
-        if (tagData[3] != 1.0) {
+        PhotonTrackedTarget best = getHubTag(result);
+        if (best == null) {
             return -1.0;
         }
-        return best.getPitch();
+        return best.getYaw();
     }
 
     public double getDistance() {
@@ -79,17 +78,28 @@ public class Camera extends Subsystem {
         if (!result.hasTargets()) {
             return -1.0;
         }
-        PhotonTrackedTarget best = result.getBestTarget();
-        double[] tagData = tagPositions.get(best.getFiducialId());
-        if (tagData[3] != 1.0) {
+        PhotonTrackedTarget best = getHubTag(result);
+        if (best == null) {
             return -1.0;
         }
         return PhotonUtils.calculateDistanceToTargetMeters(
             CAMERA_HEIGHT_METERS,
             TARGET_HEIGHT_METERS,
             CAMERA_PITCH_RADIANS,
-            Units.degreesToRadians(best.getYaw())
+            Units.degreesToRadians(best.getPitch())
         );
+    }
+
+    private PhotonTrackedTarget getHubTag(PhotonPipelineResult result) {
+        PhotonTrackedTarget out = null;
+        for (PhotonTrackedTarget cur : result.targets) {
+            double[] tagData = tagPositions.get(cur.getFiducialId());
+            if (tagData[3] != 1.0) {
+                continue;
+            }
+            return out;
+        }
+        return out;
     }
 
     public void setCameraEnabled(boolean cameraEnabled) {
