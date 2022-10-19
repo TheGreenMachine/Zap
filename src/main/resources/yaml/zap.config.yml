@@ -122,7 +122,7 @@ subsystems:
         constants:
             useLinearPiecewise: 0
             useCubicSpline: 0
-            ballEjectionDuration: 0.5 #TODO: NICO TUNE THIS
+            ballEjectionDuration: 1
             usingPoseForSpeed: 0
             maxVelTicks100ms: 20700
             nearVel: 4500
@@ -173,7 +173,7 @@ subsystems:
             isVelocity: 1
             maxVelTicks100ms: 20000
             ballSensor: 0
-            firePow: 0.35
+            firePow: 0.7
             flushPow: -0.3
             intakePow: 0.3
     spindexer:
@@ -186,7 +186,7 @@ subsystems:
             indexPow: -0.5
             flushPow: -1
             coastPow: 0.25
-            firePow: 0.85
+            firePow: 0.80
     collector:
         implemented: true
         talons:

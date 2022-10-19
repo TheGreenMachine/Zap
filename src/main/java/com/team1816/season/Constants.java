@@ -47,14 +47,32 @@ public class Constants {
     );
     public static final HashMap<Integer, Double[]> fieldTargets = new HashMap<>() {
         {
+            /**
+             * retroreflective tape targets
+             * */
             put(
                 -1,
                 new Double[] {
-                    fieldCenterX,
-                    fieldCenterY,
-                    Units.inchesToMeters(kTargetHeight),
+                    Constants.fieldCenterX,
+                    Constants.fieldCenterY,
+                    Units.inchesToMeters(Constants.kTargetHeight),
+                    1.0,
                 }
-            ); // retro-reflective tape
+            ); // center hub
+            /**
+             * April Tags
+             */
+            put(03, new Double[] { 3.219, 5.493, 1.725, 0.0 });
+
+            put(11, new Double[] { 13.240, 2.75, 1.725, 0.0 });
+
+            put(50, new Double[] { 7.684, 4.330, 2.408, 1.0 });
+
+            put(51, new Double[] { 8.02, 3.576, 2.408, 1.0 });
+
+            put(52, new Double[] { 8.775, 3.912, 2.408, 1.0 });
+
+            put(53, new Double[] { 8.439, 4.667, 2.408, 1.0 });
         }
     };
     public static final Pose2d kDefaultZeroingPose = new Pose2d(
@@ -77,7 +95,7 @@ public class Constants {
     public static final double kBallEjectionDuration = factory.getConstant(
         "shooter",
         "ballEjectionDuration",
-        0.5
+        1d
     );
     public static final boolean kUseVision = factory.getSubsystem("camera").implemented;
     //    public static final boolean kEnableBucketTuning =

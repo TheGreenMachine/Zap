@@ -170,9 +170,7 @@ public class Orchestrator {
     }
 
     public void littleMan() {
-        shooter.setVelocity(
-            getOutput(DistanceManager.SUBSYSTEM.SHOOTER)
-        );
+        shooter.setVelocity(getOutput(DistanceManager.SUBSYSTEM.SHOOTER));
     }
 
     /** update subsystem state */
@@ -252,7 +250,7 @@ public class Orchestrator {
     }
 
     public Pose2d calculatePoseFromCamera() {
-        var cameraPoints = camera.getPoints(); // flat distance in meters
+        var cameraPoints = robotState.visibleTargets;
         List<Pose2d> poses = new ArrayList<>();
         double sX = 0, sY = 0;
         for (RobotState.Point point : cameraPoints) {

@@ -30,8 +30,7 @@ public class Camera extends Subsystem {
     private static final double VIDEO_HEIGHT = 720; // px
     private static final double CAMERA_HFOV = 85;
     public static final double CAMERA_VFOV = 54; // 2 * Math.atan((VIDEO_WIDTH / 2) / CAMERA_FOCAL_LENGTH); // deg
-    private final double MAX_DIST = factory.getConstant(NAME, "maxDist", 260);
-    private final double MAX_DELTA_X = factory.getConstant(NAME, "maxDeltaX", 1200);
+    private final double MAX_DIST = factory.getConstant(NAME, "maxDist", 20);
 
     private final double CAMERA_HEIGHT_METERS = Units.inchesToMeters(
         Constants.kCameraMountingHeight
@@ -44,6 +43,7 @@ public class Camera extends Subsystem {
     );
     // state
     private boolean cameraEnabled;
+    private PhotonTrackedTarget bestTrackedTarget;
 
     @Inject
     public Camera(LedManager ledManager, Infrastructure inf, RobotState rs) {
@@ -53,53 +53,6 @@ public class Camera extends Subsystem {
         PhotonCamera.setVersionCheckEnabled(false);
         cam = new PhotonCamera("zed");
         SmartDashboard.putNumber("Camera/cy", 0);
-    }
-
-    public double getDeltaX() {
-        if (RobotBase.isSimulation()) { //simulate feedback loop
-            return simulateDeltaX();
-        }
-        var result = cam.getLatestResult();
-        if (!result.hasTargets()) {
-            return -1.0;
-        }
-        PhotonTrackedTarget best = getHubTag(result);
-        if (best == null) {
-            return -1.0;
-        }
-        return best.getYaw();
-    }
-
-    public double getDistance() {
-        if (RobotBase.isSimulation()) {
-            return robotState.getDistanceToGoal();
-        }
-        var result = cam.getLatestResult();
-        if (!result.hasTargets()) {
-            return -1.0;
-        }
-        PhotonTrackedTarget best = getHubTag(result);
-        if (best == null) {
-            return -1.0;
-        }
-        return PhotonUtils.calculateDistanceToTargetMeters(
-            CAMERA_HEIGHT_METERS,
-            TARGET_HEIGHT_METERS,
-            CAMERA_PITCH_RADIANS,
-            Units.degreesToRadians(best.getPitch())
-        );
-    }
-
-    private PhotonTrackedTarget getHubTag(PhotonPipelineResult result) {
-        PhotonTrackedTarget out = null;
-        for (PhotonTrackedTarget cur : result.targets) {
-            double[] tagData = tagPositions.get(cur.getFiducialId());
-            if (tagData[3] != 1.0) {
-                continue;
-            }
-            return out;
-        }
-        return out;
     }
 
     public void setCameraEnabled(boolean cameraEnabled) {
@@ -125,53 +78,49 @@ public class Camera extends Subsystem {
         if (RobotBase.isSimulation()) {
             return;
         }
+        getPoints();
     }
 
-    // double[] { x meters, y meters, z meters, isHubTarget ? 1 : 0}
-    public HashMap<Integer, double[]> tagPositions = new HashMap<>() {
-        {
-            put(
-                -1,
-                new double[] {
-                    Constants.fieldCenterX,
-                    Constants.fieldCenterY,
-                    Units.inchesToMeters(Constants.kTargetHeight),
-                    1.0,
-                }
-            ); // retro-reflective tape
-
-            // 50-53 are hub targets
-            put(50, new double[] { 7.684, 4.330, 2.408, 1.0 });
-
-            put(51, new double[] { 8.02, 3.576, 2.408, 1.0 });
-
-            put(52, new double[] { 8.775, 3.912, 2.408, 1.0 });
-
-            put(53, new double[] { 8.439, 4.667, 2.408, 1.0 });
-
-            put(03, new double[] { 3.219, 5.493, 1.725, 0.0 });
-
-            put(11, new double[] { 13.240, 2.75, 1.725, 0.0 });
-        }
-    };
-
     public ArrayList<Point> getPoints() {
-        ArrayList<Point> list = new ArrayList<Point>();
+        ArrayList<Point> targets = new ArrayList<>();
         var result = cam.getLatestResult();
         if (!result.hasTargets()) {
-            return list;
+            return targets;
         }
-
+        double min = 2 ^ 15;
+        var RANSAC = new PhotonTrackedTarget();
         for (PhotonTrackedTarget target : result.targets) {
             var p = new Point();
-            double[] pointData = tagPositions.get(target.getFiducialId());
-            if (pointData == null) continue;
-            p.x = pointData[0];
-            p.y = pointData[1];
-            p.z = pointData[2];
-            list.add(p);
+            if (target.getCameraToTarget() != null) {
+                var t = target.getCameraToTarget();
+                p.id = target.getFiducialId();
+                p.x = t.getX();
+                p.y = t.getY();
+                p.z = t.getZ();
+                targets.add(p);
+                if (min > t.getTranslation().getNorm()) {
+                    min = t.getTranslation().getNorm();
+                    RANSAC = target;
+                }
+            }
         }
-        return list;
+        bestTrackedTarget = RANSAC;
+        robotState.visibleTargets = targets;
+        return targets;
+    }
+
+    public double getDistance() {
+        return robotState.getDistanceToGoal();
+    }
+
+    public double getDeltaX() {
+        if (RobotBase.isSimulation()) { //simulate feedback loop
+            return simulateDeltaX();
+        }
+        if (bestTrackedTarget == null) {
+            getPoints();
+        }
+        return bestTrackedTarget.getYaw();
     }
 
     public boolean checkSystem() { // this doesn't actually do anything because there's no read calls
@@ -181,7 +130,9 @@ public class Camera extends Subsystem {
             if (getDistance() < 0 || getDistance() > MAX_DIST) {
                 System.out.println("getDistance failed test!");
                 return false;
-            } else if (getDeltaX() > MAX_DELTA_X) {
+            } else if (
+                getDeltaX() < -CAMERA_HFOV / 2d || getDeltaX() > CAMERA_HFOV / 2d
+            ) {
                 System.out.println("getDeltaX failed test!");
                 return false;
             }
@@ -207,6 +158,6 @@ public class Camera extends Subsystem {
         if (currentTurretAngle < 0 && adjacent < 0) {
             currentTurretAngle += 360;
         }
-        return ((currentTurretAngle - targetTurretAngle)); //scaling for the feedback loop
+        return ((currentTurretAngle - targetTurretAngle)); // scaling for the feedback loop
     }
 }

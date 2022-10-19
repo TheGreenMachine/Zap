@@ -26,7 +26,7 @@ public class RobotState {
 
     // Superstructure ACTUAL states
     public Orchestrator.STATE superstructureState = Orchestrator.STATE.LITTLE_MAN;
-    public List<Point> visionPoint = new ArrayList<>();
+    public List<Point> visibleTargets = new ArrayList<>();
     public Collector.STATE collectorState = Collector.STATE.STOP;
     public Shooter.STATE shooterState = Shooter.STATE.STOP;
     public Spindexer.STATE spinState = Spindexer.STATE.STOP;
@@ -69,7 +69,7 @@ public class RobotState {
         normalizedDeltaChassisSpeeds = new ChassisSpeeds();
         triAxialAcceleration = new Double[] { 0d, 0d, 0d };
         isPoseUpdated = true;
-        visionPoint.clear();
+        visibleTargets.clear();
         drivetrainTemp = 0;
     }
 
@@ -112,15 +112,6 @@ public class RobotState {
         double estimatedDistanceToGoalMeters = fieldToVehicle
             .getTranslation()
             .getDistance(Constants.targetPos.getTranslation());
-        //        double distInches =
-        //            (
-        //                Math.sqrt(
-        //                    Units.metersToInches(estimatedDistanceToGoalMeters) *
-        //                    Units.metersToInches(estimatedDistanceToGoalMeters) +
-        //                    (Constants.kHeightFromCamToHub * Constants.kHeightFromCamToHub)
-        //                ) -
-        //                Constants.kTargetRadius
-        //            );
         System.out.println("estimated distance = " + estimatedDistanceToGoalMeters);
         return estimatedDistanceToGoalMeters;
     }

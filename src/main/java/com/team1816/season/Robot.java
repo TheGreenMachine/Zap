@@ -15,8 +15,8 @@ import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.DrivetrainLogger;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.controlboard.ActionManager;
-import com.team1816.season.states.RobotState;
 import com.team1816.season.states.Orchestrator;
+import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.*;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.*;
@@ -168,8 +168,11 @@ public class Robot extends TimedRobot {
                     "xaxis",
                     "hide"
                 );
-                BadLog.createTopic("Vision/DeltaXAngle", "Degrees", camera::getDeltaX);
-                BadLog.createTopic("Vision/Distance", "inches", camera::getDistance);
+                BadLog.createTopic(
+                    "Vision/Distance",
+                    "inches",
+                    robotState::getDistanceToGoal
+                );
                 BadLog.createValue("Drivetrain PID", drive.pidToString());
                 DrivetrainLogger.init(drive);
                 BadLog.createValue("Shooter PID", shooter.pidToString());
@@ -594,10 +597,10 @@ public class Robot extends TimedRobot {
 
         try {
             manualControl(); // controls drivetrain and turret joystick control mode
-//            if (orchestrator.needsVisionUpdate() || !robotState.isPoseUpdated) { //TODO Future function, uncomment later
-//                robotState.isPoseUpdated = false;
-//                orchestrator.calculatePoseFromCamera();
-//            }
+            //            if (orchestrator.needsVisionUpdate() || !robotState.isPoseUpdated) { //TODO Future function, uncomment later
+            //                robotState.isPoseUpdated = false;
+            //                orchestrator.calculatePoseFromCamera();
+            //            }
         } catch (Throwable t) {
             faulted = true;
             throw t;
