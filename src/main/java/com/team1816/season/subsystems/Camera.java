@@ -22,7 +22,7 @@ public class Camera extends Subsystem {
     // Components
     static LedManager led;
 
-    private final PhotonCamera cam = new PhotonCamera("zed");
+    private PhotonCamera cam;
     // Constants
     private static final String NAME = "camera";
     private static final double CAMERA_FOCAL_LENGTH = 700; // px
@@ -49,6 +49,9 @@ public class Camera extends Subsystem {
     public Camera(LedManager ledManager, Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
         led = ledManager;
+        // 2023 dep on 2022 server
+        PhotonCamera.setVersionCheckEnabled(false);
+        cam = new PhotonCamera("zed");
         SmartDashboard.putNumber("Camera/cy", 0);
     }
 
