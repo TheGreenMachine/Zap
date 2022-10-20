@@ -135,6 +135,7 @@ public class RobotState {
 
     /** Camera state */
     public static class Point {
+
         public int id; // -2 if not detected
 
         public double x;

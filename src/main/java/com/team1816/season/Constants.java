@@ -14,6 +14,7 @@ import java.util.HashMap;
  */
 @Singleton
 public class Constants {
+
     /** Factory & Stem */
     private static final RobotFactory factory = Robot.getFactory();
 
@@ -102,5 +103,4 @@ public class Constants {
         1d
     );
     public static final boolean kUseVision = factory.getSubsystem("camera").implemented;
-
 }
