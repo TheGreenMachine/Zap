@@ -87,8 +87,10 @@ public class Camera extends Subsystem {
         if (!result.hasTargets()) {
             return targets;
         }
-        double min = 2 ^ 15;
-        var RANSAC = new PhotonTrackedTarget();
+
+        double m = 0xFFFFFF;
+        var principal_RANSAC = new PhotonTrackedTarget();
+
         for (PhotonTrackedTarget target : result.targets) {
             var p = new Point();
             if (target.getCameraToTarget() != null) {
@@ -98,14 +100,17 @@ public class Camera extends Subsystem {
                 p.y = t.getY();
                 p.z = t.getZ();
                 targets.add(p);
-                if (min > t.getTranslation().getNorm()) {
-                    min = t.getTranslation().getNorm();
-                    RANSAC = target;
+
+                if (m > t.getTranslation().getNorm()) {
+                    m = t.getTranslation().getNorm();
+                    principal_RANSAC = target;
                 }
             }
         }
-        bestTrackedTarget = RANSAC;
+
+        bestTrackedTarget = principal_RANSAC;
         robotState.visibleTargets = targets;
+
         return targets;
     }
 

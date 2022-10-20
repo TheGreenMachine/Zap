@@ -133,17 +133,20 @@ public class RobotState {
     // Camera state
     public static class Point {
 
-        public double id; // -1 if not detected
+        public int id; // -1 if not detected
 
         public double x;
         public double y;
         public double z;
+
+        public double weight;
 
         public Point() {
             id = 0;
             x = 0;
             y = 0;
             z = 0;
+            weight = 0;
         }
     }
 }
