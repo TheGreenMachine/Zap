@@ -24,11 +24,13 @@ import java.util.List;
 @Singleton
 public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider {
 
-    // azimuth position
+    /** Constants */
+
+    /** Module Characterization */
     private static final double moduleDeltaX = kDriveWheelbaseLengthMeters / 2.0;
     private static final double moduleDeltaY = kDriveWheelTrackWidthMeters / 2.0;
 
-    // Module Indicies
+    // module indices
     public static final int kFrontLeft = 0;
     public static final int kFrontRight = 1;
     public static final int kBackLeft = 2;
@@ -66,19 +68,18 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         kBackRightModulePosition
     );
 
-    // Components
+    /** Components */
     public SwerveModule[] swerveModules;
 
-    // Trajectory
+    /** Trajectory */
     protected List<Rotation2d> headingsList;
     protected int trajectoryIndex = 0;
 
-    // Odometry variables
+    /** Odometry variables */
     private final SwerveDriveOdometry swerveOdometry;
     private final SwerveDriveHelper swerveDriveHelper = new SwerveDriveHelper();
 
-    // States
-
+    /** States */
     public SwerveModuleState[] desiredModuleStates = new SwerveModuleState[4];
     SwerveModuleState[] actualModuleStates = new SwerveModuleState[4];
     public double[] motorTemperatures = new double[4];
@@ -167,7 +168,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         return heading;
     }
 
-    // autonomous (trajectory following)
+    // trajectory following
     @Override
     public void startTrajectory(Trajectory trajectory, List<Rotation2d> headings) {
         super.startTrajectory(trajectory, headings);
@@ -272,7 +273,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
     }
 
-    // general getters
+    /** general getters */
     @Override
     public SwerveModule[] getSwerveModules() {
         return swerveModules;
@@ -335,7 +336,6 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         return modulesPassed;
     }
 
-    // getters
     @Override
     public PIDSlotConfiguration getPIDConfig() {
         PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();

@@ -10,11 +10,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 import java.util.List;
 
-/* class responsible with logging the robot's ACTUAL states - robot position (predicted) and superstructure subsystem actual states */
+/**
+ *  This class is responsible for logging the robot's actual states and estimated states.
+ *  Including superstructure and subsystem states.
+ */
 
 @Singleton
 public class RobotState {
 
+    /** Odometry and field characterization */
     public final Field2d field = new Field2d();
     public Pose2d fieldToVehicle = Constants.EmptyPose;
     public Pose2d extrapolatedFieldToVehicle = Constants.EmptyPose;
@@ -24,7 +28,7 @@ public class RobotState {
     public Double[] triAxialAcceleration = new Double[] { 0d, 0d, 0d };
     public boolean isPoseUpdated = true;
 
-    // Superstructure ACTUAL states
+    /** Orchestrator states */
     public Orchestrator.STATE superstructureState = Orchestrator.STATE.LITTLE_MAN;
     public List<Point> visibleTargets = new ArrayList<>();
     public Collector.STATE collectorState = Collector.STATE.STOP;
@@ -39,9 +43,7 @@ public class RobotState {
         resetPosition();
     }
 
-    /**
-     * Resets the field to robot transform (robot's position on the field)
-     */
+    /** Resetting state */
     public synchronized void resetPosition(
         Pose2d initial_field_to_vehicle,
         Rotation2d initial_vehicle_to_turret
@@ -73,8 +75,8 @@ public class RobotState {
         drivetrainTemp = 0;
     }
 
+    /** Base State getters */
     public synchronized Pose2d getLatestFieldToVehicle() {
-        // CCW rotation increases degrees
         return fieldToVehicle;
     }
 
@@ -108,6 +110,7 @@ public class RobotState {
         return normalizedDeltaChassisSpeeds;
     }
 
+    /** Distance calculation */
     public double getDistanceToGoal() {
         double estimatedDistanceToGoalMeters = fieldToVehicle
             .getTranslation()
@@ -123,17 +126,16 @@ public class RobotState {
         return extrapolatedDistanceToGoalMeters;
     }
 
+    /** Shuffleboard real-time telemetry data */
     public synchronized void outputToSmartDashboard() {
-        //shuffleboard periodic updates should be here
         field.setRobotPose(fieldToVehicle);
         field.getObject("EstimatedRobot").setPose(extrapolatedFieldToVehicle);
         field.getObject(Turret.NAME).setPose(getFieldToTurretPos());
     }
 
-    // Camera state
+    /** Camera state */
     public static class Point {
-
-        public int id; // -1 if not detected
+        public int id; // -2 if not detected
 
         public double x;
         public double y;
