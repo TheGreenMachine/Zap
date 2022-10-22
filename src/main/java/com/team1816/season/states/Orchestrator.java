@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import java.util.ArrayList;
 import java.util.List;
@@ -259,6 +260,13 @@ public class Orchestrator {
                 Constants.fieldTargets.get(point.id)[1],
                 new Rotation2d()
             );
+            if (point.id == -1) { // adding hub radius target offset
+                double x, y;
+                x = Units.inchesToMeters(Constants.kTargetRadius)*point.x/(Math.sqrt(point.x*point.x+point.y*point.y));
+                y = Units.inchesToMeters(Constants.kTargetRadius)*point.y/(Math.sqrt(point.x*point.x+point.y*point.y));
+                point.x += x;
+                point.y += y;
+            }
             Pose2d p = targetPos.plus(
                 new Transform2d(
                     new Translation2d(point.x, point.y),
