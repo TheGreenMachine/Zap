@@ -172,19 +172,19 @@ subsystems:
             isVelocity: 1
             maxVelTicks100ms: 20000
             ballSensor: 0
-            firePow: 0.35
+            firePow: 0.40
             flushPow: -0.3
             intakePow: 0.3
     spindexer:
-        implemented: true
+        implemented: false
         talons:
             spindexer: 31
         constants:
             maxVelTicks100ms: 1
             collectPow: 0.5
-            indexPow: -0.5
+            indexPow: -0.15
             flushPow: -1
-            coastPow: 0.25
+            coastPow: 0.5
             firePow: 0.85
     collector:
         implemented: true
@@ -206,7 +206,7 @@ subsystems:
             collecting: 0.5 #-3600
             flush: -0.5 #.35
     camera:
-        implemented: false
+        implemented: true
         constants:
             debug: 0
             allowableDistanceError: 50

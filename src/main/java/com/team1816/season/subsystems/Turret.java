@@ -42,7 +42,9 @@ public class Turret extends Subsystem implements PidProvider {
     private final AsyncTimer snapTimer = new AsyncTimer(
         .25,
         () -> {
-            followingPos = (int) (getActualPosTicks() + cameraFollowingOffset());
+            double cameraoffset = cameraFollowingOffset();
+            System.out.println("camera offset = " + cameraFollowingOffset());
+            followingPos = (int) (getActualPosTicks() + cameraoffset);
             System.out.println("done aiming!");
             outputsChanged = true;
         }
