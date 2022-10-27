@@ -214,6 +214,7 @@ subsystems:
             debug: 0
             maxDist: 400
             maxDeltaX: 1200
+            maxLoopCount: 3
             allowableDistanceError: 50
     cooler:
         implemented: true

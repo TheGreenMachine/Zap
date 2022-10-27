@@ -2,8 +2,8 @@ package com.team1816.season.subsystems;
 
 import com.team1816.TestUtil;
 import com.team1816.lib.Injector;
-import com.team1816.season.states.RobotState;
 import com.team1816.season.states.Orchestrator;
+import com.team1816.season.states.RobotState;
 import junit.framework.TestCase;
 import org.junit.Before;
 

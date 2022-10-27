@@ -170,9 +170,7 @@ public class Orchestrator {
     }
 
     public void littleMan() {
-        shooter.setVelocity(
-            getOutput(DistanceManager.SUBSYSTEM.SHOOTER)
-        );
+        shooter.setVelocity(getOutput(DistanceManager.SUBSYSTEM.SHOOTER));
     }
 
     /** update subsystem state */
@@ -253,34 +251,36 @@ public class Orchestrator {
 
     public Pose2d calculatePoseFromCamera() {
         var cameraPoint = robotState.visionPoint; // flat distance in meters
-        List<Pose2d> poses = new ArrayList<>();
-        double sX = 0, sY = 0;
-        for (RobotState.Point point : cameraPoint) {
-            Pose2d targetPos = new Pose2d(
-                Constants.fieldTargets.get(point.id)[0],
-                Constants.fieldTargets.get(point.id)[1],
-                new Rotation2d()
-            );
-            Pose2d p = targetPos.plus(
-                new Transform2d(
-                    new Translation2d(point.x, point.y),
-                    robotState
-                        .getLatestFieldToTurret()
-                        .rotateBy(Rotation2d.fromDegrees(180))
-                )
-            ); // inverse turret angle
-            sX += p.getX();
-            sY += p.getY();
-            poses.add(p);
-        }
-        if (cameraPoint.size() > 0) {
-            Pose2d pose = new Pose2d(
-                sX / cameraPoint.size(),
-                sY / cameraPoint.size(),
-                robotState.fieldToVehicle.getRotation()
-            );
-            robotState.isPoseUpdated = true;
-            return pose;
+        if (!cameraPoint.isEmpty()) {
+            List<Pose2d> poses = new ArrayList<>();
+            double sX = 0, sY = 0;
+            for (RobotState.Point point : cameraPoint) {
+                Pose2d targetPos = new Pose2d(
+                    Constants.fieldTargets.get(point.id)[0],
+                    Constants.fieldTargets.get(point.id)[1],
+                    new Rotation2d()
+                );
+                Pose2d p = targetPos.plus(
+                    new Transform2d(
+                        new Translation2d(point.x, point.y),
+                        robotState
+                            .getLatestFieldToTurret()
+                            .rotateBy(Rotation2d.fromDegrees(180))
+                    )
+                ); // inverse turret angle
+                sX += p.getX();
+                sY += p.getY();
+                poses.add(p);
+            }
+            if (cameraPoint.size() > 0) {
+                Pose2d pose = new Pose2d(
+                    sX / cameraPoint.size(),
+                    sY / cameraPoint.size(),
+                    robotState.fieldToVehicle.getRotation()
+                );
+                robotState.isPoseUpdated = true;
+                return pose;
+            }
         }
         return robotState.fieldToVehicle;
     }
