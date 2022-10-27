@@ -32,17 +32,17 @@ public abstract class Drive
 
     public static final String NAME = "drivetrain";
 
-    // Demo Mode
+    /** Demo Mode */
     protected double demoModeMultiplier;
     protected SendableChooser<DemoMode> demoModeChooser;
     protected DemoMode desiredMode;
     protected static final boolean isDemoMode =
         factory.getConstant(NAME, "isDemoMode", 0) > 0;
 
-    // Components
+    /** Components */
     protected static LedManager ledManager;
 
-    // states
+    /** Localized state */
     protected ControlState controlState = ControlState.OPEN_LOOP;
     protected Rotation2d actualHeading = Constants.EmptyRotation;
     protected Rotation2d desiredHeading = new Rotation2d(); // only updated in trajectory following
@@ -52,18 +52,18 @@ public abstract class Drive
     protected boolean isBraking;
     protected boolean isSlowMode;
 
-    // Trajectory
+    /** Trajectory */
     protected double trajectoryStartTime = 0;
 
     protected Pose2d startingPose = Constants.kDefaultZeroingPose;
     protected Trajectory trajectory;
     protected static double timestamp;
 
-    // Simulator
+    /** Simulator */
     protected double gyroDrift;
     protected final double tickRatioPerLoop = Constants.kLooperDt / .01d;
 
-    // Constants
+    /** Constants */
     public static final double maxVelTicks100ms = factory.getConstant(
         NAME,
         "maxVelTicks100ms"
@@ -196,7 +196,7 @@ public abstract class Drive
     }
 
     /** base methods */
-    // autonomous (trajectory following)
+    // trajectory following
     public void startTrajectory(Trajectory trajectory, List<Rotation2d> headings) {
         controlState = ControlState.TRAJECTORY_FOLLOWING;
         trajectoryStartTime = 0;

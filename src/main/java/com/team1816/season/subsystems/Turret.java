@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 @Singleton
 public class Turret extends Subsystem implements PidProvider {
 
-    // Constants
+    /** constants */
     public static final String NAME = "turret";
     public static final double kJogSpeed = 0.5;
     public static final double kSouth = 0; // deg - relative to vehicle NOT FIELD
@@ -41,14 +41,14 @@ public class Turret extends Subsystem implements PidProvider {
     private static final int kPrimaryCloseLoop = 0;
     private final PIDSlotConfiguration pidConfig;
 
-    // Components
+    /** components */
     private final IGreenMotor turretMotor;
 
     private static Camera camera;
 
     private static LedManager led;
 
-    // State
+    /** state */
     private int desiredPos = 0;
     private int followingPos = 0;
     private boolean lostEncPos = false;

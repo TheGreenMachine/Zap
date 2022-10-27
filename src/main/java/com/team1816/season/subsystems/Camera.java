@@ -1,18 +1,18 @@
 package com.team1816.season.subsystems;
 
+import static com.team1816.season.states.RobotState.Point;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
 import com.team1816.season.states.RobotState;
-import com.team1816.season.states.RobotState.Point;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import java.util.ArrayList;
+import java.util.*;
 import org.photonvision.*;
 import org.photonvision.targeting.*;
 
@@ -22,7 +22,7 @@ public class Camera extends Subsystem {
     // Components
     static LedManager led;
 
-    private final PhotonCamera cam = new PhotonCamera("zed");
+    private PhotonCamera cam;
     // Constants
     private static final String NAME = "camera";
     private static final double CAMERA_FOCAL_LENGTH = 700; // px
@@ -30,10 +30,7 @@ public class Camera extends Subsystem {
     private static final double VIDEO_HEIGHT = 720; // px
     private static final double CAMERA_HFOV = 85;
     public static final double CAMERA_VFOV = 54; // 2 * Math.atan((VIDEO_WIDTH / 2) / CAMERA_FOCAL_LENGTH); // deg
-    private final double kMaxDist = factory.getConstant(NAME, "maxDist", 260);
-    private final double kMaxDeltaX = factory.getConstant(NAME, "maxDeltaX", 1200);
-
-    private final int kMaxLoopCount = (int) factory.getConstant(NAME, "maxLoopCount", 0);
+    private final double MAX_DIST = factory.getConstant(NAME, "maxDist", 20);
 
     private final double CAMERA_HEIGHT_METERS = Units.inchesToMeters(
         Constants.kCameraMountingHeight
@@ -46,29 +43,20 @@ public class Camera extends Subsystem {
     );
     // state
     private boolean cameraEnabled;
-    private double checkedDist;
-    private double checkedDeltaX;
-    // used to make sure that if the camera intermittently sees the target (detection drop)
-    // we won't get spasms between -1 and the actual values
-    private int loop;
+    private PhotonTrackedTarget bestTrackedTarget;
 
     @Inject
     public Camera(LedManager ledManager, Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
         led = ledManager;
+        // 2023 dep on 2022 server
+        PhotonCamera.setVersionCheckEnabled(false);
+        cam = new PhotonCamera("zed");
         SmartDashboard.putNumber("Camera/cy", 0);
     }
 
-    public double getDeltaX() {
-        return checkedDeltaX;
-    }
-
-    public double getDistance() {
-        return checkedDist;
-    }
-
     public void setCameraEnabled(boolean cameraEnabled) {
-        if (isImplemented()) {
+        if (this.isImplemented()) {
             this.cameraEnabled = cameraEnabled;
             led.setCameraLed(cameraEnabled);
         } else {
@@ -87,59 +75,68 @@ public class Camera extends Subsystem {
     public void stop() {}
 
     public void readFromHardware() {
-        if (cameraEnabled) {
-            if (RobotBase.isSimulation()) { //simulate feedback loop
-                checkedDeltaX = simulateDeltaX();
-                checkedDist = robotState.getDistanceToGoal();
-            } else {
-                var result = cam.getLatestResult();
-                if (!result.hasTargets()) {
-                    loop++;
-                    if (loop > kMaxLoopCount) {
-                        checkedDeltaX = -1.0;
-                        checkedDist = -1.0;
-                        robotState.visionPoint = new ArrayList<Point>();
-                    }
-                } else {
-                    loop = 0;
-                    checkedDeltaX = result.getBestTarget().getYaw();
-                    checkedDist =
-                        PhotonUtils.calculateDistanceToTargetMeters(
-                            CAMERA_HEIGHT_METERS,
-                            TARGET_HEIGHT_METERS,
-                            CAMERA_PITCH_RADIANS,
-                            Units.degreesToRadians(result.getBestTarget().getPitch())
-                        );
-                }
-                robotState.visionPoint = getPoints(result);
-            }
+        if(cameraEnabled){
+            getPoints();
         }
     }
 
-    public ArrayList<RobotState.Point> getPoints(PhotonPipelineResult result) {
-        var list = new ArrayList<Point>();
+    public ArrayList<Point> getPoints() {
+        ArrayList<Point> targets = new ArrayList<>();
+        var result = cam.getLatestResult();
+        if (!result.hasTargets()) {
+            return targets;
+        }
+
+        double m = 0xFFFFFF; // 16 ^ 6 (just a rly big number)
+        var principal_RANSAC = new PhotonTrackedTarget();
+
         for (PhotonTrackedTarget target : result.targets) {
             var p = new Point();
-            var camToTarget = new Pose2d();
-            camToTarget.plus(target.getCameraToTarget());
-            System.out.println("need to fix getPoints method");
-            //            p.id = target.getFiducialId();
-            p.x = (int) camToTarget.getX();
-            p.y = (int) camToTarget.getY();
-            //            p.z = (int) camToTarget.getZ();
-            list.add(p);
+            if (target.getCameraToTarget() != null) {
+                var t = target.getCameraToTarget();
+                p.id = target.getFiducialId();
+                p.x = t.getX();
+                p.y = t.getY();
+                p.z = t.getZ();
+                targets.add(p);
+
+                if (m > t.getTranslation().getNorm()) {
+                    m = t.getTranslation().getNorm();
+                    principal_RANSAC = target;
+                }
+            }
         }
-        return list;
+
+        bestTrackedTarget = principal_RANSAC;
+        robotState.visibleTargets = targets;
+
+        return targets;
+    }
+
+    public double getDistance() {
+        return robotState.getDistanceToGoal();
+    }
+
+    public double getDeltaX() {
+        if (RobotBase.isSimulation()) { //simulate feedback loop
+            return simulateDeltaX();
+        }
+        if (bestTrackedTarget == null) {
+            getPoints();
+        }
+        return bestTrackedTarget.getYaw();
     }
 
     public boolean checkSystem() { // this doesn't actually do anything because there's no read calls
         if (this.isImplemented()) {
             setCameraEnabled(true);
             Timer.delay(2);
-            if (getDistance() < 0 || getDistance() > kMaxDist) {
+            if (getDistance() < 0 || getDistance() > MAX_DIST) {
                 System.out.println("getDistance failed test!");
                 return false;
-            } else if (getDeltaX() > kMaxDeltaX) {
+            } else if (
+                getDeltaX() < -CAMERA_HFOV / 2d || getDeltaX() > CAMERA_HFOV / 2d
+            ) {
                 System.out.println("getDeltaX failed test!");
                 return false;
             }
@@ -165,6 +162,6 @@ public class Camera extends Subsystem {
         if (currentTurretAngle < 0 && adjacent < 0) {
             currentTurretAngle += 360;
         }
-        return ((currentTurretAngle - targetTurretAngle)); //scaling for the feedback loop
+        return ((currentTurretAngle - targetTurretAngle)); // scaling for the feedback loop
     }
 }

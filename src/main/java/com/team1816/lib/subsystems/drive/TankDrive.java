@@ -27,13 +27,11 @@ import edu.wpi.first.wpilibj.RobotBase;
 @Singleton
 public class TankDrive extends Drive implements DifferentialDrivetrain {
 
-    private static final String NAME = "drivetrain";
-
-    // Components
+    /** Components */
     private final IGreenMotor leftMain, rightMain;
     private final IGreenMotor leftFollowerA, rightFollowerA, leftFollowerB, rightFollowerB;
 
-    // Odometry
+    /** Odometry */
     private DifferentialDriveOdometry tankOdometry;
     private static final DifferentialDriveKinematics tankKinematics = new DifferentialDriveKinematics(
         kDriveWheelTrackWidthMeters
@@ -41,7 +39,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     private final CheesyDriveHelper driveHelper = new CheesyDriveHelper();
     private final double tickRatioPerLoop = Constants.kLooperDt / .1d; // Convert Ticks/100MS into Ticks/Robot Loop
 
-    // States
+    /** States */
     public double leftPowerDemand, rightPowerDemand; // % Output (-1 to 1) - used in OPEN_LOOP
     public double leftVelDemand, rightVelDemand; // Velocity (Ticks/100MS) - used in TRAJECTORY_FOLLOWING
 

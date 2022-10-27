@@ -168,8 +168,11 @@ public class Robot extends TimedRobot {
                     "xaxis",
                     "hide"
                 );
-                BadLog.createTopic("Vision/DeltaXAngle", "Degrees", camera::getDeltaX);
-                BadLog.createTopic("Vision/Distance", "inches", camera::getDistance);
+                BadLog.createTopic(
+                    "Vision/Distance",
+                    "inches",
+                    robotState::getDistanceToGoal
+                );
                 BadLog.createValue("Drivetrain PID", drive.pidToString());
                 DrivetrainLogger.init(drive);
                 BadLog.createValue("Shooter PID", shooter.pidToString());

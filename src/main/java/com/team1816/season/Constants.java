@@ -8,20 +8,25 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
 import java.util.HashMap;
 
+/**
+ * This class contains all constants pertinent to robot-specific aspects.
+ * Only fields that are necessary and generalizable across systems belong in this class.
+ */
 @Singleton
 public class Constants {
 
+    /** Factory & Stem */
     private static final RobotFactory factory = Robot.getFactory();
 
     public static final Pose2d EmptyPose = new Pose2d();
     public static final Rotation2d EmptyRotation = new Rotation2d();
     public static final double kLooperDt = factory.getConstant("kLooperDt", .020);
 
-    // CAN Timeouts
+    /** CAN Timeouts */
     public static final int kCANTimeoutMs = 10; // use for important on the fly updates
     public static final int kLongCANTimeoutMs = 100; // use for constructors
 
-    // Field characterization
+    /** Field characterization */
     public static final double kTargetHeight = 104; // inches
     public static final double kTargetRadius = 26.56; // inches
     public static final double kCameraMountingHeight = 29.5; // inches
@@ -47,15 +52,32 @@ public class Constants {
     );
     public static final HashMap<Integer, Double[]> fieldTargets = new HashMap<>() {
         {
+            /**
+             * retro-reflective tape targets
+             * */
             put(
                 -1,
                 new Double[] {
-                    fieldCenterX,
-                    fieldCenterY,
-                    Units.inchesToMeters(kTargetHeight),
+                    Constants.fieldCenterX,
+                    Constants.fieldCenterY,
+                    Units.inchesToMeters(Constants.kTargetHeight),
+                    1.0,
                 }
-            ); // retro-reflective tape
+            ); // center hub
+            /**
+             * April Tags
+             */
+            put(03, new Double[] { 3.219, 5.493, 1.725, 0.0 });
 
+            put(11, new Double[] { 13.240, 2.75, 1.725, 0.0 });
+
+            put(50, new Double[] { 7.684, 4.330, 2.408, 1.0 });
+
+            put(51, new Double[] { 8.02, 3.576, 2.408, 1.0 });
+
+            put(52, new Double[] { 8.775, 3.912, 2.408, 1.0 });
+
+            put(53, new Double[] { 8.439, 4.667, 2.408, 1.0 });
         }
     };
     public static final Pose2d kDefaultZeroingPose = new Pose2d(
@@ -64,11 +86,11 @@ public class Constants {
         EmptyRotation
     );
 
-    // Drivetrain characterization
+    /** Drivetrain characterization */
     public static final double gravitationalAccelerationConstant = 9.8d;
     public static double kMaxAccelDiffThreshold = 2d; // m/s^2
 
-    //Badlog
+    /** Badlog */
     public static boolean kIsBadlogEnabled = factory.getConstant("badLogEnabled") > 0;
     public static boolean kIsLoggingTeleOp = factory.getConstant("logTeleOp") > 0;
     public static boolean kIsLoggingAutonomous = factory.getConstant("logAuto") > 0;
@@ -78,18 +100,7 @@ public class Constants {
     public static final double kBallEjectionDuration = factory.getConstant(
         "shooter",
         "ballEjectionDuration",
-        0.5
+        1d
     );
     public static final boolean kUseVision = factory.getSubsystem("camera").implemented;
-    //    public static final boolean kEnableBucketTuning =
-    //        factory.getConstant("enableBucketTuning", 0) > 0;
-    // Do not change anything after this line unless you rewire the robot and
-    // update the spreadsheet!
-    // Port assignments should match up with the spreadsheet here:
-    // https://docs.google.com/spreadsheets/d/179YszqnEWPWInuHUrYJnYL48LUL7LUhZrnvmNu1kujE/edit#gid=0
-
-    /* I/O */
-    // (Note that if multiple talons are dedicated to a mechanism, any sensors
-    // are attached to the master)
-
 }

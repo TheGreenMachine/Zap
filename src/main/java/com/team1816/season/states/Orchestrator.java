@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import java.util.ArrayList;
 import java.util.List;
@@ -250,37 +251,42 @@ public class Orchestrator {
     }
 
     public Pose2d calculatePoseFromCamera() {
-        var cameraPoint = robotState.visionPoint; // flat distance in meters
-        if (!cameraPoint.isEmpty()) {
-            List<Pose2d> poses = new ArrayList<>();
-            double sX = 0, sY = 0;
-            for (RobotState.Point point : cameraPoint) {
-                Pose2d targetPos = new Pose2d(
-                    Constants.fieldTargets.get(point.id)[0],
-                    Constants.fieldTargets.get(point.id)[1],
-                    new Rotation2d()
-                );
-                Pose2d p = targetPos.plus(
-                    new Transform2d(
-                        new Translation2d(point.x, point.y),
-                        robotState
-                            .getLatestFieldToTurret()
-                            .rotateBy(Rotation2d.fromDegrees(180))
-                    )
-                ); // inverse turret angle
-                sX += p.getX();
-                sY += p.getY();
-                poses.add(p);
+        var cameraPoints = robotState.visibleTargets;
+        List<Pose2d> poses = new ArrayList<>();
+        double sX = 0, sY = 0;
+        for (RobotState.Point point : cameraPoints) {
+            Pose2d targetPos = new Pose2d(
+                Constants.fieldTargets.get(point.id)[0],
+                Constants.fieldTargets.get(point.id)[1],
+                new Rotation2d()
+            );
+            if (point.id == -1) { // adding hub radius target offset - this is for retro-reflective tape only
+                double x, y;
+                x = Units.inchesToMeters(Constants.kTargetRadius)*point.x/(Math.sqrt(point.x*point.x+point.y*point.y));
+                y = Units.inchesToMeters(Constants.kTargetRadius)*point.y/(Math.sqrt(point.x*point.x+point.y*point.y));
+                point.x += x;
+                point.y += y;
             }
-            if (cameraPoint.size() > 0) {
-                Pose2d pose = new Pose2d(
-                    sX / cameraPoint.size(),
-                    sY / cameraPoint.size(),
-                    robotState.fieldToVehicle.getRotation()
-                );
-                robotState.isPoseUpdated = true;
-                return pose;
-            }
+            Pose2d p = targetPos.plus(
+                new Transform2d(
+                    new Translation2d(point.x, point.y),
+                    robotState
+                        .getLatestFieldToTurret()
+                        .rotateBy(Rotation2d.fromDegrees(180))
+                )
+            ); // inverse turret angle
+            sX += p.getX();
+            sY += p.getY();
+            poses.add(p);
+        }
+        if (cameraPoints.size() > 0) {
+            Pose2d pose = new Pose2d(
+                sX / cameraPoints.size(),
+                sY / cameraPoints.size(),
+                robotState.fieldToVehicle.getRotation()
+            );
+            robotState.isPoseUpdated = true;
+            return pose;
         }
         return robotState.fieldToVehicle;
     }
