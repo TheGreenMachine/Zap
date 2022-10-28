@@ -67,6 +67,8 @@ public class Constants {
             /**
              * April Tags
              */
+
+            // CRUCIAL DO NOT TOUCH - mia
             put(03, new Double[] { 3.219, 5.493, 1.725, 0.0 });
 
             put(11, new Double[] { 13.240, 2.75, 1.725, 0.0 });
@@ -78,6 +80,44 @@ public class Constants {
             put(52, new Double[] { 8.775, 3.912, 2.408, 1.0 });
 
             put(53, new Double[] { 8.439, 4.667, 2.408, 1.0 });
+
+            // all others go under here
+
+            put(00, new Double[] {0.0, 7.51, 0.886, 0.0});
+
+            put(01, new Double[] {3.27, 5.588, 1.725, 0.0});
+
+            put(02, new Double[] {3.072, 5.249, 1.376, 0.0});
+
+            put(04, new Double[] {0.008, 2.938, 1.376, 0.0}); //y-val for this may be off
+
+            put(05, new Double[] {0.125, 0.829, 0.891, 0.0});
+
+            put(06, new Double[] {0.877, 0.879, 0.891, 0.0});
+
+            put(07, new Double[] {1.619, 0.095, 0.891, 0.0});
+
+            put(10, new Double[] {16.467, 0.589, 0.886, 0.0});
+
+            put(12, new Double[] {13.395, 2.838, 1.376, 0.0});
+
+            put(13, new Double[] {16.459, 3.114, 0.806, 0.0});
+
+            put(14, new Double[] {16.459, 4.655, 0.806, 0.0});
+
+            put(15, new Double[] {16.339, 6.453, 0.894, 0.0});
+
+            put(16, new Double[] {15.594, 7.231, 0.891, 0.0});
+
+            put(17, new Double[] {14.851, 8.007, 0.891, 0.0});
+
+            put(40, new Double[] {7.878, 4.851, 0.703, 0.0});
+
+            put(41, new Double[] {7.435, 3.697, 0.703, 0.0});
+
+            put(42, new Double[] {8.589, 3.254, 0.703, 0.0});
+
+            put(43, new Double[] {9.032, 4.408, 0.703, 0.0});
         }
     };
     public static final Pose2d kDefaultZeroingPose = new Pose2d(
@@ -102,5 +142,5 @@ public class Constants {
         "ballEjectionDuration",
         1d
     );
-    public static final boolean kUseVision = factory.getSubsystem("camera").implemented;
+   public static final boolean kUseVision = factory.getSubsystem("camera").implemented;
 }
