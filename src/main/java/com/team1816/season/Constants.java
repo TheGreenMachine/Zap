@@ -74,9 +74,6 @@ public class Constants {
             /**
              * April Tags
              */
-            put(01, new Double[]{3.219, 5.493, 1.725});
-
-            put(11, new Double[]{13.240, 2.75, 1.725});
 
             // blue alliance side
             put(00, new Double[] {0.000, 7.510, 0.886});
