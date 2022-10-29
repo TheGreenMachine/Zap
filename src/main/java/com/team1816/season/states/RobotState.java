@@ -42,10 +42,6 @@ public class RobotState {
     public RobotState() {
         SmartDashboard.putData("Field", field);
         resetPosition();
-
-        if(RobotBase.isSimulation()) {
-
-        }
     }
 
     /** Resetting state */
