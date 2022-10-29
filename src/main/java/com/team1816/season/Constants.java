@@ -47,10 +47,6 @@ public class Constants {
         fieldCenterY,
         EmptyRotation
     );
-    public static final Transform2d fieldCenterTransform = new Transform2d(
-        new Pose2d(),
-        fieldCenterPose
-    );
     public static final Pose2d targetPos = new Pose2d(
         fieldCenterX,
         fieldCenterY,
