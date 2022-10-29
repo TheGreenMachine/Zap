@@ -86,14 +86,14 @@ public class Constants {
             put(04, new Double[] { 0.008, 3.575, 1.376 });
 
             // blue human player station
-            put(05, new Double[] { 0.125, 0.829, 0.891 });
+            put(05, new Double[] { 0.125, 1.656, 0.891 });
 
             put(06, new Double[] { 0.877, 0.879, 0.891 });
 
             put(07, new Double[] { 1.619, 0.095, 0.891 });
 
             // red alliance side
-            put(10, new Double[] { 16.467, 0.589, 0.886 });
+            put(10, new Double[] { 16.460, 0.589, 0.886 });
 
             put(11, new Double[] { 13.240, 2.750, 1.725 }); // upper hangar target
 
