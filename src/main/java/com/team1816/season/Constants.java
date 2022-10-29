@@ -87,7 +87,7 @@ public class Constants {
             put(04, new Double[] {0.008, 3.575, 1.376});
 
             // blue human player station
-            put(05, new Double[] {0.125, 0.829, 0.891});
+            put(05, new Double[] {0.125, 1.656, 0.891});
 
             put(06, new Double[] {0.877, 0.879, 0.891});
 
