@@ -8,6 +8,8 @@ import com.team1816.lib.Infrastructure;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
 import com.team1816.season.states.RobotState;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
@@ -23,12 +25,14 @@ public class Camera extends Subsystem {
     static LedManager led;
 
     private PhotonCamera cam;
+    private SimVisionSystem simCam;
     // Constants
     private static final String NAME = "camera";
     private static final double CAMERA_FOCAL_LENGTH = 700; // px
     private static final double VIDEO_WIDTH = 1280; // px
     private static final double VIDEO_HEIGHT = 720; // px
     private static final double CAMERA_HFOV = 85;
+    private static final double CAMERA_DFOV = 110; // degrees
     public static final double CAMERA_VFOV = 54; // 2 * Math.atan((VIDEO_WIDTH / 2) / CAMERA_FOCAL_LENGTH); // deg
     private final double MAX_DIST = factory.getConstant(NAME, "maxDist", 20);
 
@@ -50,8 +54,26 @@ public class Camera extends Subsystem {
         super(NAME, inf, rs);
         led = ledManager;
         // 2023 dep on 2022 server
-        PhotonCamera.setVersionCheckEnabled(false);
-        cam = new PhotonCamera("zed");
+
+
+        if (RobotBase.isSimulation()){
+            simCam = new SimVisionSystem(
+                "zed",
+                CAMERA_DFOV,
+                26,
+                new Transform2d(new Translation2d(-.1, .1), Constants.EmptyRotation), //TODO update this value
+                CAMERA_HEIGHT_METERS,
+                20,
+                4416,
+                1242,
+                0.092
+                );
+        }
+        else {
+            PhotonCamera.setVersionCheckEnabled(false);
+            cam = new PhotonCamera("zed");
+        }
+
         SmartDashboard.putNumber("Camera/cy", 0);
     }
 

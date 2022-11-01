@@ -65,6 +65,87 @@ public class Constants {
                     1.0,
                 }
             ); // center hub
+            put(
+                0,
+                new Double[] {
+                    -0.004,
+                    7.579,
+                    0.886,
+                    1.0,
+                }
+            ); // Blue Hangar Panel
+            put(
+                1,
+                new Double[] {
+                    3.233,
+                    5.487,
+                    1.725,
+                    1.0,
+                }
+            ); // Blue Hangar Truss - Hub
+            put(
+                2,
+                new Double[] {
+                    3.068,
+                    5.331,
+                    1.376,
+                    1.0,
+                }
+            ); // Blue Hangar Truss - Side
+            put(
+                3,
+                new Double[] {
+                    0.004,
+                    5.059,
+                    0.806,
+                    1.0,
+                }
+            ); // Blue Station 2 Wall
+            put(
+                4,
+                new Double[] {
+                    0.004,
+                    0.004,
+                    0.004,
+                    1.0,
+                }
+            ); // Blue Station 3 Wall
+            put(
+                5,
+                new Double[] {
+                    0.121,
+                    1.718,
+                    0.891,
+                    1.0,
+                }
+            ); // Blue Terminal Near Station
+            put(
+                6,
+                new Double[] {
+                    0.873,
+                    0.941,
+                    0.891,
+                    1.0,
+                }
+            ); // Blue Mid Terminal
+            put(
+                7,
+                new Double[] {
+                    1.615,
+                    0.157,
+                    0.891,
+                    1.0,
+                }
+            ); // Blue End Terminal
+            put(
+                8,
+                new Double[] {
+                    16.463,
+                    0.651,
+                    0.886,
+                    1.0,
+                }
+            ); // Blue Hangar Panels
             /**
              * April Tags
              */
