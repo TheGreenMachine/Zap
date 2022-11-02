@@ -8,6 +8,8 @@ import com.team1816.lib.Infrastructure;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
 import com.team1816.season.states.RobotState;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
@@ -55,21 +57,40 @@ public class Camera extends Subsystem {
         led = ledManager;
         // 2023 dep on 2022 server
 
-
-        if (RobotBase.isSimulation()){
-            simCam = new SimVisionSystem(
-                "zed",
-                CAMERA_DFOV,
-                26,
-                new Transform2d(new Translation2d(-.1, .1), Constants.EmptyRotation), //TODO update this value
-                CAMERA_HEIGHT_METERS,
-                20,
-                44161,
-                1242,
-                0.092
+        if (RobotBase.isSimulation()) {
+            simCam =
+                new SimVisionSystem(
+                    "zed",
+                    CAMERA_DFOV,
+                    26,
+                    new Transform2d(
+                        new Translation2d(-.12065, .13335),
+                        Constants.EmptyRotation
+                    ), //TODO update this value
+                    CAMERA_HEIGHT_METERS,
+                    20,
+                    4416,
+                    1242,
+                    0.092
                 );
-        }
-        else {
+            for (int i = 0; i <= 53; i++) {
+                if (Constants.fieldTargets.get(i) == null) {
+                    continue;
+                }
+                simCam.addSimVisionTarget(
+                    new SimVisionTarget(
+                        new Pose2d(
+                            Constants.fieldTargets.get(i)[0],
+                            Constants.fieldTargets.get(i)[1],
+                            new Rotation2d(0.0)
+                        ),
+                        Constants.fieldTargets.get(i)[2],
+                        .1651, // Estimated width & height of the Apriltag
+                        .1651
+                    )
+                );
+            }
+        } else {
             PhotonCamera.setVersionCheckEnabled(false);
             cam = new PhotonCamera("zed");
         }
@@ -98,9 +119,10 @@ public class Camera extends Subsystem {
 
     public void readFromHardware() {
         if (RobotBase.isSimulation()) {
-            return;
+            simCam.processFrame(robotState.fieldToVehicle);
+        } else {
+            getPoints();
         }
-        getPoints();
     }
 
     public ArrayList<Point> getPoints() {
