@@ -4,6 +4,7 @@ import com.google.inject.Singleton;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
 import java.util.HashMap;
 
@@ -65,27 +66,108 @@ public class Constants {
                     1.0,
                 }
             ); // center hub
+            put(
+                0,
+                new Double[] {
+                    -0.004,
+                    7.579,
+                    0.886,
+                    1.0,
+                }
+            ); // Blue Hangar Panel
+            put(
+                1,
+                new Double[] {
+                    3.233,
+                    5.487,
+                    1.725,
+                    1.0,
+                }
+            ); // Blue Hangar Truss - Hub
+            put(
+                2,
+                new Double[] {
+                    3.068,
+                    5.331,
+                    1.376,
+                    1.0,
+                }
+            ); // Blue Hangar Truss - Side
+            put(
+                3,
+                new Double[] {
+                    0.004,
+                    5.059,
+                    0.806,
+                    1.0,
+                }
+            ); // Blue Station 2 Wall
+            put(
+                4,
+                new Double[] {
+                    0.004,
+                    0.004,
+                    0.004,
+                    1.0,
+                }
+            ); // Blue Station 3 Wall
+            put(
+                5,
+                new Double[] {
+                    0.121,
+                    1.718,
+                    0.891,
+                    1.0,
+                }
+            ); // Blue Terminal Near Station
+            put(
+                6,
+                new Double[] {
+                    0.873,
+                    0.941,
+                    0.891,
+                    1.0,
+                }
+            ); // Blue Mid Terminal
+            put(
+                7,
+                new Double[] {
+                    1.615,
+                    0.157,
+                    0.891,
+                    1.0,
+                }
+            ); // Blue End Terminal
+            put(
+                8,
+                new Double[] {
+                    16.463,
+                    0.651,
+                    0.886,
+                    1.0,
+                }
+            ); // Blue Hangar Panels
             /**
              * April Tags
              */
 
             // blue alliance side
-            put(0, new Double[] { 0.000, 7.510, 0.886 });
+            put(00, new Double[] { 0.000, 7.510, 0.886 });
 
-            put(1, new Double[] { 3.320, 5.588, 1.725 }); // upper hangar target
+            put(01, new Double[] { 3.320, 5.588, 1.725 }); // upper hangar target
 
-            put(2, new Double[] { 3.072, 5.249, 1.376 }); // lower hangar target
+            put(02, new Double[] { 3.072, 5.249, 1.376 }); // lower hangar target
 
-            put(3, new Double[] { 0.008, 5.966, 1.376 });
+            put(03, new Double[] { 0.008, 5.966, 1.376 });
 
-            put(4, new Double[] { 0.008, 3.575, 1.376 });
+            put(04, new Double[] { 0.008, 3.575, 1.376 });
 
             // blue human player station
-            put(5, new Double[] { 0.125, 1.656, 0.891 });
+            put(05, new Double[] { 0.125, 1.656, 0.891 });
 
-            put(6, new Double[] { 0.877, 0.879, 0.891 });
+            put(06, new Double[] { 0.877, 0.879, 0.891 });
 
-            put(7, new Double[] { 1.619, 0.095, 0.891 });
+            put(07, new Double[] { 1.619, 0.095, 0.891 });
 
             // red alliance side
             put(10, new Double[] { 16.460, 0.589, 0.886 });
