@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 import com.team1816.TestUtil;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.Injector;
-import com.team1816.lib.hardware.components.IPigeonIMU;
+import com.team1816.lib.hardware.components.gyro.IPigeonIMU;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.SwerveDrive;

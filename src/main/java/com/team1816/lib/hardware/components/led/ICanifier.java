@@ -1,4 +1,4 @@
-package com.team1816.lib.hardware.components;
+package com.team1816.lib.hardware.components.led;
 
 import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifierStatusFrame;

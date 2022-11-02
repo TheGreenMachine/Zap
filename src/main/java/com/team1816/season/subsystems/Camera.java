@@ -6,6 +6,8 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.subsystems.Subsystem;
+import com.team1816.lib.util.visionUtil.PhotonSimVisionSystem;
+import com.team1816.lib.util.visionUtil.PhotonSimVisionTarget;
 import com.team1816.season.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -27,7 +29,7 @@ public class Camera extends Subsystem {
     static LedManager led;
 
     private PhotonCamera cam;
-    private SimVisionSystem simCam;
+    private PhotonSimVisionSystem simCam;
     // Constants
     private static final String NAME = "camera";
     private static final double CAMERA_FOCAL_LENGTH = 700; // px
@@ -59,7 +61,7 @@ public class Camera extends Subsystem {
 
         if (RobotBase.isSimulation()) {
             simCam =
-                new SimVisionSystem(
+                new PhotonSimVisionSystem(
                     "zed",
                     CAMERA_DFOV,
                     26,
@@ -71,25 +73,37 @@ public class Camera extends Subsystem {
                     20,
                     4416,
                     1242,
-                    0.092
+                    0
                 );
+            List<Pose2d> aprilTagPoses = new ArrayList<>();
             for (int i = 0; i <= 53; i++) {
                 if (Constants.fieldTargets.get(i) == null) {
+                    aprilTagPoses.add(i, new Pose2d());
                     continue;
                 }
+                aprilTagPoses.add(
+                    i, // if we want ids to be marked on each pose, we'll prob need to adjust the Field2DObject class (make our own?)
+                    new Pose2d(
+                        Constants.fieldTargets.get(i)[0],
+                        Constants.fieldTargets.get(i)[1],
+                        Constants.EmptyRotation
+                    )
+                );
                 simCam.addSimVisionTarget(
-                    new SimVisionTarget(
+                    new PhotonSimVisionTarget(
                         new Pose2d(
                             Constants.fieldTargets.get(i)[0],
                             Constants.fieldTargets.get(i)[1],
                             new Rotation2d(0.0)
                         ),
                         Constants.fieldTargets.get(i)[2],
-                        .1651, // Estimated width & height of the Apriltag
-                        .1651
+                        .1651, // Estimated width & height of the AprilTag
+                        .1651,
+                        i
                     )
                 );
             }
+            robotState.field.getObject("April Tags").setPoses(aprilTagPoses);
         } else {
             PhotonCamera.setVersionCheckEnabled(false);
             cam = new PhotonCamera("zed");

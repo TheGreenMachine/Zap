@@ -93,6 +93,19 @@
         }
       },
       "/SmartDashboard/Field": {
+        "April Tags": {
+          "arrows": false,
+          "color": [
+            0.03236663341522217,
+            0.4261603355407715,
+            0.0,
+            255.0
+          ],
+          "image": "C:\\Users\\nicho\\Downloads\\tag_36h11.png",
+          "length": 0.25,
+          "weight": 0.0,
+          "width": 0.25
+        },
         "EstimatedRobot": {
           "arrowColor": [
             0.5980392098426819,
@@ -157,6 +170,12 @@
         "open": true
       },
       "open": true
+    },
+    "photonvision": {
+      "open": true,
+      "zed": {
+        "open": true
+      }
     }
   },
   "NetworkTables View": {

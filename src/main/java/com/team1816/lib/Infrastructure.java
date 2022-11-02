@@ -2,7 +2,7 @@ package com.team1816.lib;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.team1816.lib.hardware.components.IPigeonIMU;
+import com.team1816.lib.hardware.components.gyro.IPigeonIMU;
 import com.team1816.lib.hardware.components.pcm.ICompressor;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.season.Constants;

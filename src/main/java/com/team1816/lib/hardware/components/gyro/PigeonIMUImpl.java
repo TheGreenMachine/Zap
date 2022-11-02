@@ -1,4 +1,4 @@
-package com.team1816.lib.hardware.components;
+package com.team1816.lib.hardware.components.gyro;
 
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.sensors.PigeonIMU;
