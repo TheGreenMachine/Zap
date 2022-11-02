@@ -8,6 +8,10 @@ import com.team1816.lib.Infrastructure;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.Constants;
 import com.team1816.season.states.RobotState;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
@@ -23,12 +27,14 @@ public class Camera extends Subsystem {
     static LedManager led;
 
     private PhotonCamera cam;
+    private SimVisionSystem simCam;
     // Constants
     private static final String NAME = "camera";
     private static final double CAMERA_FOCAL_LENGTH = 700; // px
     private static final double VIDEO_WIDTH = 1280; // px
     private static final double VIDEO_HEIGHT = 720; // px
     private static final double CAMERA_HFOV = 85;
+    private static final double CAMERA_DFOV = 110; // degrees
     public static final double CAMERA_VFOV = 54; // 2 * Math.atan((VIDEO_WIDTH / 2) / CAMERA_FOCAL_LENGTH); // deg
     private final double MAX_DIST = factory.getConstant(NAME, "maxDist", 20);
 
@@ -50,8 +56,45 @@ public class Camera extends Subsystem {
         super(NAME, inf, rs);
         led = ledManager;
         // 2023 dep on 2022 server
-        PhotonCamera.setVersionCheckEnabled(false);
-        cam = new PhotonCamera("zed");
+
+        if (RobotBase.isSimulation()) {
+            simCam =
+                new SimVisionSystem(
+                    "zed",
+                    CAMERA_DFOV,
+                    26,
+                    new Transform2d(
+                        new Translation2d(-.12065, .13335),
+                        Constants.EmptyRotation
+                    ), //TODO update this value
+                    CAMERA_HEIGHT_METERS,
+                    20,
+                    4416,
+                    1242,
+                    0.092
+                );
+            for (int i = 0; i <= 53; i++) {
+                if (Constants.fieldTargets.get(i) == null) {
+                    continue;
+                }
+                simCam.addSimVisionTarget(
+                    new SimVisionTarget(
+                        new Pose2d(
+                            Constants.fieldTargets.get(i)[0],
+                            Constants.fieldTargets.get(i)[1],
+                            new Rotation2d(0.0)
+                        ),
+                        Constants.fieldTargets.get(i)[2],
+                        .1651, // Estimated width & height of the Apriltag
+                        .1651
+                    )
+                );
+            }
+        } else {
+            PhotonCamera.setVersionCheckEnabled(false);
+            cam = new PhotonCamera("zed");
+        }
+
         SmartDashboard.putNumber("Camera/cy", 0);
     }
 
@@ -75,7 +118,9 @@ public class Camera extends Subsystem {
     public void stop() {}
 
     public void readFromHardware() {
-        if(cameraEnabled){
+        if (RobotBase.isSimulation()) {
+            simCam.processFrame(robotState.fieldToVehicle);
+        } else {
             getPoints();
         }
     }
@@ -87,7 +132,7 @@ public class Camera extends Subsystem {
             return targets;
         }
 
-        double m = 0xFFFFFF; // 16 ^ 6 (just a rly big number)
+        double m = 0xFFFFFF;
         var principal_RANSAC = new PhotonTrackedTarget();
 
         for (PhotonTrackedTarget target : result.targets) {

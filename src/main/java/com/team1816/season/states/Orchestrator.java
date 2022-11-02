@@ -262,8 +262,14 @@ public class Orchestrator {
             );
             if (point.id == -1) { // adding hub radius target offset - this is for retro-reflective tape only
                 double x, y;
-                x = Units.inchesToMeters(Constants.kTargetRadius)*point.x/(Math.sqrt(point.x*point.x+point.y*point.y));
-                y = Units.inchesToMeters(Constants.kTargetRadius)*point.y/(Math.sqrt(point.x*point.x+point.y*point.y));
+                x =
+                    Units.inchesToMeters(Constants.kTargetRadius) *
+                    point.x /
+                    (Math.sqrt(point.x * point.x + point.y * point.y));
+                y =
+                    Units.inchesToMeters(Constants.kTargetRadius) *
+                    point.y /
+                    (Math.sqrt(point.x * point.x + point.y * point.y));
                 point.x += x;
                 point.y += y;
             }
