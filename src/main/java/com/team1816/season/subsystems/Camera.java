@@ -64,7 +64,7 @@ public class Camera extends Subsystem {
                 new Transform2d(new Translation2d(-.1, .1), Constants.EmptyRotation), //TODO update this value
                 CAMERA_HEIGHT_METERS,
                 20,
-                4416,
+                44161,
                 1242,
                 0.092
                 );
