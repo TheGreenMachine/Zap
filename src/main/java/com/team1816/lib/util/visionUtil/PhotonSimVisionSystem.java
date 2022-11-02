@@ -45,7 +45,7 @@ public class PhotonSimVisionSystem {
     double minTargetArea;
     Transform2d cameraToRobot;
 
-    ArrayList<PhotonSimVisionTarget> tgtList;
+    ArrayList<PhotonSimVisionTarget> targetList;
 
     /**
      * Create a simulated vision system involving a camera and coprocessor mounted on a mobile robot
@@ -95,7 +95,7 @@ public class PhotonSimVisionSystem {
         this.camVertFOVDegrees = camDiagFOVDegrees * cameraResHeight / hypotPixels;
 
         cam = new PhotonSimPhotonCamera(camName);
-        tgtList = new ArrayList<>();
+        targetList = new ArrayList<>();
     }
 
     /**
@@ -106,7 +106,7 @@ public class PhotonSimVisionSystem {
      * @param target Target to add to the simulated field
      */
     public void addSimVisionTarget(PhotonSimVisionTarget target) {
-        tgtList.add(target);
+        targetList.add(target);
     }
 
     /**
@@ -137,17 +137,28 @@ public class PhotonSimVisionSystem {
      */
     public void processFrame(Pose2d robotPoseMeters) {
         Pose2d cameraPos = robotPoseMeters.transformBy(cameraToRobot.inverse());
+        //        System.out.println(
+        //            "cam rot = " +
+        //            cameraPos.getRotation().getDegrees() +
+        //            " cam pos = " +
+        //            cameraPos.toString()
+        //        );
+        ArrayList<PhotonTrackedTarget> visibleTgtList = new ArrayList<>(
+            targetList.size()
+        );
 
-        ArrayList<PhotonTrackedTarget> visibleTgtList = new ArrayList<>(tgtList.size());
-
-        tgtList.forEach(
+        targetList.forEach(
             tgt -> {
-                var camToTargetTrans = new Transform3d(
+                var camToTargetTransform = new Transform3d(
                     new Pose3d(
                         cameraPos.getX(),
                         cameraPos.getY(),
                         cameraHeightOffGroundMeters,
-                        new Rotation3d()
+                        new Rotation3d(
+                            0,
+                            Units.degreesToRadians(camPitchDegrees),
+                            cameraPos.getRotation().getRadians()
+                        )
                     ),
                     new Pose3d(
                         tgt.targetPos.getX(),
@@ -156,7 +167,7 @@ public class PhotonSimVisionSystem {
                         new Rotation3d()
                     )
                 );
-                double distAlongGroundMeters = camToTargetTrans
+                double distAlongGroundMeters = camToTargetTransform
                     .getTranslation()
                     .getNorm();
                 double distVerticalMeters =
@@ -172,8 +183,8 @@ public class PhotonSimVisionSystem {
                     -1.0 *
                     Units.radiansToDegrees(
                         Math.atan2(
-                            camToTargetTrans.getTranslation().getY(),
-                            camToTargetTrans.getTranslation().getX()
+                            camToTargetTransform.getTranslation().getY(),
+                            camToTargetTransform.getTranslation().getX()
                         )
                     );
                 double pitchDegrees =
@@ -192,8 +203,8 @@ public class PhotonSimVisionSystem {
                             tgt.fiducialID,
                             new Transform3d(
                                 new Translation3d(
-                                    camToTargetTrans.getX(),
-                                    camToTargetTrans.getY(),
+                                    camToTargetTransform.getX(),
+                                    camToTargetTransform.getY(),
                                     distVerticalMeters
                                 ),
                                 new Rotation3d()

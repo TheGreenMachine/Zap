@@ -88,7 +88,10 @@ public class RobotState {
         return new Pose2d(
             fieldToVehicle
                 .transformBy(
-                    new Transform2d(new Translation2d(-.1, .1), Constants.EmptyRotation)
+                    new Transform2d(
+                        Constants.kTurretMountingOffset,
+                        Constants.EmptyRotation
+                    )
                 )
                 .getTranslation(),
             getLatestFieldToTurret()
@@ -99,7 +102,10 @@ public class RobotState {
         return new Pose2d(
             extrapolatedFieldToVehicle
                 .transformBy(
-                    new Transform2d(new Translation2d(-.1, .1), Constants.EmptyRotation)
+                    new Transform2d(
+                        Constants.kTurretMountingOffset,
+                        Constants.EmptyRotation
+                    )
                 )
                 .getTranslation(),
             getLatestFieldToTurret()
@@ -115,7 +121,7 @@ public class RobotState {
         double estimatedDistanceToGoalMeters = fieldToVehicle
             .getTranslation()
             .getDistance(Constants.targetPos.getTranslation());
-        System.out.println("estimated distance = " + estimatedDistanceToGoalMeters);
+        //        System.out.println("estimated distance = " + estimatedDistanceToGoalMeters);
         return estimatedDistanceToGoalMeters;
     }
 

@@ -26,6 +26,8 @@ package com.team1816.lib.util.visionUtil;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.photonvision.PhotonCamera;
@@ -44,7 +46,7 @@ public class PhotonSimPhotonCamera extends PhotonCamera {
     private final NetworkTableEntry targetYawEntry;
     private final NetworkTableEntry targetAreaEntry;
     private final NetworkTableEntry targetSkewEntry;
-    private final NetworkTableEntry targetPoseEntry;
+    private final NetworkTableEntry targetPoseEntries;
     private final NetworkTableEntry targetFiducialIDEntry;
     private final NetworkTableEntry versionEntry;
 
@@ -64,7 +66,7 @@ public class PhotonSimPhotonCamera extends PhotonCamera {
         targetYawEntry = rootTable.getEntry("targetYawEntry");
         targetAreaEntry = rootTable.getEntry("targetAreaEntry");
         targetSkewEntry = rootTable.getEntry("targetSkewEntry");
-        targetPoseEntry = rootTable.getEntry("targetPoseEntry");
+        targetPoseEntries = rootTable.getEntry("targetPoseEntry");
         targetFiducialIDEntry = rootTable.getEntry("targetFiducialIDEntry");
         versionEntry = rootTable.getEntry("versionEntry");
 
@@ -154,10 +156,11 @@ public class PhotonSimPhotonCamera extends PhotonCamera {
             targetPitchEntry.setDouble(0.0);
             targetYawEntry.setDouble(0.0);
             targetAreaEntry.setDouble(0.0);
-            targetPoseEntry.setDoubleArray(new double[] { 0.0, 0.0, 0.0, 0.0 });
+            targetPoseEntries.setValue(new ArrayList<>());
             targetFiducialIDEntry.setDouble(-1.0);
             targetSkewEntry.setDouble(0.0);
         } else {
+            List<Double[]> targets = new ArrayList<>();
             var bestTarget = newResult.getBestTarget();
 
             targetPitchEntry.setDouble(bestTarget.getPitch());
@@ -172,7 +175,7 @@ public class PhotonSimPhotonCamera extends PhotonCamera {
                 transform.getZ(),
                 transform.getRotation().toRotation2d().getDegrees(),
             };
-            targetPoseEntry.setDoubleArray(poseData);
+            targetPoseEntries.setValue(poseData);
             targetFiducialIDEntry.setDouble(bestTarget.getFiducialId());
         }
     }

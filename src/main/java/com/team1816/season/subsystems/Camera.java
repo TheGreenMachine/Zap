@@ -64,7 +64,7 @@ public class Camera extends Subsystem {
                 new PhotonSimVisionSystem(
                     "zed",
                     CAMERA_DFOV,
-                    26,
+                    Constants.kCameraMountingAngleY,
                     new Transform2d(
                         new Translation2d(-.12065, .13335),
                         Constants.EmptyRotation
@@ -75,6 +75,7 @@ public class Camera extends Subsystem {
                     1242,
                     0
                 );
+            // TODO move this stuff into a static "field setup util" class
             List<Pose2d> aprilTagPoses = new ArrayList<>();
             for (int i = 0; i <= 53; i++) {
                 if (Constants.fieldTargets.get(i) == null) {
@@ -133,6 +134,14 @@ public class Camera extends Subsystem {
 
     public void readFromHardware() {
         if (RobotBase.isSimulation()) {
+            simCam.moveCamera(
+                new Transform2d(
+                    Constants.kTurretMountingOffset.unaryMinus(),
+                    robotState.getFieldToTurretPos().getRotation().times(-1)
+                ),
+                CAMERA_HEIGHT_METERS,
+                Constants.kCameraMountingAngleY
+            );
             simCam.processFrame(robotState.fieldToVehicle);
         } else {
             getPoints();
