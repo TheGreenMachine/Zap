@@ -38,15 +38,10 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 @SuppressWarnings("unused")
 public class PhotonSimPhotonCamera extends PhotonCamera {
 
+    public NetworkTableEntry targetsListEntry;
+    private final NetworkTableEntry versionEntry;
     private final NetworkTableEntry latencyMillisEntry;
     private final NetworkTableEntry hasTargetEntry;
-    private final NetworkTableEntry targetPitchEntry;
-    private final NetworkTableEntry targetYawEntry;
-    private final NetworkTableEntry targetAreaEntry;
-    private final NetworkTableEntry targetSkewEntry;
-    private final NetworkTableEntry targetPoseEntry;
-    private final NetworkTableEntry targetFiducialIDEntry;
-    private final NetworkTableEntry versionEntry;
 
     /**
      * Constructs a Simulated PhotonCamera from a root table.
@@ -60,14 +55,10 @@ public class PhotonSimPhotonCamera extends PhotonCamera {
         super(instance, cameraName);
         latencyMillisEntry = rootTable.getEntry("latencyMillis");
         hasTargetEntry = rootTable.getEntry("hasTargetEntry");
-        targetPitchEntry = rootTable.getEntry("targetPitchEntry");
-        targetYawEntry = rootTable.getEntry("targetYawEntry");
-        targetAreaEntry = rootTable.getEntry("targetAreaEntry");
-        targetSkewEntry = rootTable.getEntry("targetSkewEntry");
-        targetPoseEntry = rootTable.getEntry("targetPoseEntry");
-        targetFiducialIDEntry = rootTable.getEntry("targetFiducialIDEntry");
-        versionEntry = rootTable.getEntry("versionEntry");
 
+        targetsListEntry = rootTable.getEntry("targetsListEntry");
+
+        versionEntry = rootTable.getEntry("versionEntry");
         // Sets the version string so that it will always match the current version
         versionEntry.setString(PhotonVersion.versionString);
     }
@@ -146,34 +137,29 @@ public class PhotonSimPhotonCamera extends PhotonCamera {
         );
         var newPacket = new Packet(newResult.getPacketSize());
         newResult.populatePacket(newPacket);
-        //        rawBytesEntry.setRaw(newPacket.getData()); not necessary and throws errors
 
         boolean hasTargets = newResult.hasTargets();
         hasTargetEntry.setBoolean(hasTargets);
         if (!hasTargets) {
-            targetPitchEntry.setDouble(0.0);
-            targetYawEntry.setDouble(0.0);
-            targetAreaEntry.setDouble(0.0);
-            targetPoseEntry.setDoubleArray(new double[] { 0.0, 0.0, 0.0, 0.0 });
-            targetFiducialIDEntry.setDouble(-1.0);
-            targetSkewEntry.setDouble(0.0);
+            rootTable.getSubTables().clear();
         } else {
-            var bestTarget = newResult.getBestTarget();
+            var targets = newResult.getTargets();
+            double[] ids = new double[53];
+            for (int i = 0; i < targets.size(); i++) {
+                ids[i] = targets.get(i).getFiducialId();
+            }
 
-            targetPitchEntry.setDouble(bestTarget.getPitch());
-            targetYawEntry.setDouble(bestTarget.getYaw());
-            targetAreaEntry.setDouble(bestTarget.getArea());
-            targetSkewEntry.setDouble(bestTarget.getSkew());
-
-            var transform = bestTarget.getCameraToTarget();
-            double[] poseData = {
-                transform.getX(),
-                transform.getY(),
-                transform.getZ(),
-                transform.getRotation().toRotation2d().getDegrees(),
-            };
-            targetPoseEntry.setDoubleArray(poseData);
-            targetFiducialIDEntry.setDouble(bestTarget.getFiducialId());
+            targetsListEntry.setDoubleArray(ids);
         }
+    }
+
+    public static class target {
+
+        public NetworkTableEntry targetPitchEntry;
+        public NetworkTableEntry targetYawEntry;
+        public NetworkTableEntry targetAreaEntry;
+        public NetworkTableEntry targetSkewEntry;
+        public NetworkTableEntry targetPoseEntry;
+        public NetworkTableEntry targetFiducialIDEntry;
     }
 }

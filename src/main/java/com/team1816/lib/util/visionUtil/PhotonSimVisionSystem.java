@@ -28,6 +28,8 @@ import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.photonvision.PhotonTargetSortMode;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
 
@@ -222,7 +224,7 @@ public class PhotonSimVisionSystem {
             }
         );
 
-        cam.submitProcessedFrame(0.0, visibleTgtList);
+        cam.submitProcessedFrame(0.0, PhotonTargetSortMode.Largest, visibleTgtList);
     }
 
     double getM2PerPx(double dist) {
