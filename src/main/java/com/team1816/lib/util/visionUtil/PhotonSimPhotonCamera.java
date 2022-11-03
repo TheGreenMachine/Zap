@@ -26,6 +26,7 @@ package com.team1816.lib.util.visionUtil;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.photonvision.PhotonCamera;
@@ -38,7 +39,18 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 @SuppressWarnings("unused")
 public class PhotonSimPhotonCamera extends PhotonCamera {
 
-    public NetworkTableEntry targetsListEntry;
+    public List<NetworkTableEntry> targetList = new ArrayList<NetworkTableEntry>();
+
+    public NetworkTableEntry targetListEntry1; //pain
+    public NetworkTableEntry targetListEntry2;
+    public NetworkTableEntry targetListEntry3;
+    public NetworkTableEntry targetListEntry4;
+    public NetworkTableEntry targetListEntry5;
+    public NetworkTableEntry targetListEntry6;
+    public NetworkTableEntry targetListEntry7;
+    public NetworkTableEntry targetListEntry8;
+    public NetworkTableEntry targetListEntry9;
+
     private final NetworkTableEntry versionEntry;
     private final NetworkTableEntry latencyMillisEntry;
     private final NetworkTableEntry hasTargetEntry;
@@ -56,7 +68,25 @@ public class PhotonSimPhotonCamera extends PhotonCamera {
         latencyMillisEntry = rootTable.getEntry("latencyMillis");
         hasTargetEntry = rootTable.getEntry("hasTargetEntry");
 
-        targetsListEntry = rootTable.getEntry("targetsListEntry");
+        targetListEntry1 = rootTable.getEntry("targetListEntry1");
+        targetListEntry2 = rootTable.getEntry("targetListEntry2");
+        targetListEntry3 = rootTable.getEntry("targetListEntry3");
+        targetListEntry4 = rootTable.getEntry("targetListEntry4");
+        targetListEntry5 = rootTable.getEntry("targetListEntry5");
+        targetListEntry6 = rootTable.getEntry("targetListEntry6");
+        targetListEntry7 = rootTable.getEntry("targetListEntry7");
+        targetListEntry8 = rootTable.getEntry("targetListEntry8");
+        targetListEntry9 = rootTable.getEntry("targetListEntry9");
+
+        targetList.add(targetListEntry1);
+        targetList.add(targetListEntry2);
+        targetList.add(targetListEntry3);
+        targetList.add(targetListEntry4);
+        targetList.add(targetListEntry5);
+        targetList.add(targetListEntry6);
+        targetList.add(targetListEntry7);
+        targetList.add(targetListEntry8);
+        targetList.add(targetListEntry9);
 
         versionEntry = rootTable.getEntry("versionEntry");
         // Sets the version string so that it will always match the current version
@@ -118,22 +148,22 @@ public class PhotonSimPhotonCamera extends PhotonCamera {
      *
      * @param latencyMillis Latency of the provided frame
      * @param sortMode Order in which to sort targets
-     * @param targetList List of targets detected
+     * @param submittedTargetList List of targets detected
      */
     public void submitProcessedFrame(
         double latencyMillis,
         PhotonTargetSortMode sortMode,
-        List<PhotonTrackedTarget> targetList
+        List<PhotonTrackedTarget> submittedTargetList
     ) {
         latencyMillisEntry.setDouble(latencyMillis);
 
         if (sortMode != null) {
-            targetList.sort(sortMode.getComparator());
+            submittedTargetList.sort(sortMode.getComparator());
         }
 
         PhotonPipelineResult newResult = new PhotonPipelineResult(
             latencyMillis,
-            targetList
+            submittedTargetList
         );
         var newPacket = new Packet(newResult.getPacketSize());
         newResult.populatePacket(newPacket);
@@ -141,25 +171,41 @@ public class PhotonSimPhotonCamera extends PhotonCamera {
         boolean hasTargets = newResult.hasTargets();
         hasTargetEntry.setBoolean(hasTargets);
         if (!hasTargets) {
-            rootTable.getSubTables().clear();
+            for (int i = 0; i < targetList.size(); i++) {
+                targetList.get(i).setString("None");
+            }
         } else {
             var targets = newResult.getTargets();
-            double[] ids = new double[53];
-            for (int i = 0; i < targets.size(); i++) {
-                ids[i] = targets.get(i).getFiducialId();
-            }
 
-            targetsListEntry.setDoubleArray(ids);
+            for (int i = 0; i < 9; i++) {
+                if (i >= targets.size() - 1) {
+                    targetList.get(i).setString("None");
+                } else {
+                    targetList
+                        .get(i)
+                        .setString(PhotonTrackTargetToString(targets.get(i)));
+                }
+            }
         }
     }
 
-    public static class target {
+    private static String PhotonTrackTargetToString(PhotonTrackedTarget t) {
+        return (
+            "Id= " +
+            (int) t.getFiducialId() +
+            /*"; yaw= " +
+            (int) t.getYaw() + // If yaw seems weird that's because it's an int */
+            "; X= " +
+            roundAvoid(t.getCameraToTarget().getX(), 3) +
+            "; Y= " +
+            roundAvoid(t.getCameraToTarget().getY(), 3) +
+            "; Z= " +
+            roundAvoid(t.getCameraToTarget().getZ(), 3)
+        );
+    }
 
-        public NetworkTableEntry targetPitchEntry;
-        public NetworkTableEntry targetYawEntry;
-        public NetworkTableEntry targetAreaEntry;
-        public NetworkTableEntry targetSkewEntry;
-        public NetworkTableEntry targetPoseEntry;
-        public NetworkTableEntry targetFiducialIDEntry;
+    public static double roundAvoid(double value, int places) {
+        double scale = Math.pow(10, places);
+        return Math.round(value * scale) / scale;
     }
 }
