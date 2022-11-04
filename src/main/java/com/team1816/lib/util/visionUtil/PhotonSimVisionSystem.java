@@ -28,7 +28,6 @@ import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.photonvision.PhotonTargetSortMode;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
