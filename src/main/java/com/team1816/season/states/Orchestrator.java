@@ -256,8 +256,8 @@ public class Orchestrator {
         double sX = 0, sY = 0;
         for (RobotState.Point point : cameraPoints) {
             Pose2d targetPos = new Pose2d(
-                Constants.fieldTargets.get(point.id)[0],
-                Constants.fieldTargets.get(point.id)[1],
+                Constants.fieldTargets.get(point.id).getX(),
+                Constants.fieldTargets.get(point.id).getY(),
                 new Rotation2d()
             );
             if (point.id == -1) { // adding hub radius target offset - this is for retro-reflective tape only

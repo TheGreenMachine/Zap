@@ -191,15 +191,15 @@ public class PhotonSimPhotonCamera extends PhotonCamera {
 
     private static String PhotonTrackTargetToString(PhotonTrackedTarget t) {
         return (
-            "Id= " +
-            (int) t.getFiducialId() +
-            /*"; yaw= " +
-            (int) t.getYaw() + // If yaw seems weird that's because it's an int */
-            "; X= " +
+            "Id: " +
+            t.getFiducialId() +
+            //            "; yaw= " +
+            //            (int) t.getYaw() + // If yaw seems weird that's because it's an int
+            "; X: " +
             roundAvoid(t.getCameraToTarget().getX(), 3) +
-            "; Y= " +
+            "; Y: " +
             roundAvoid(t.getCameraToTarget().getY(), 3) +
-            "; Z= " +
+            "; Z: " +
             roundAvoid(t.getCameraToTarget().getZ(), 3)
         );
     }

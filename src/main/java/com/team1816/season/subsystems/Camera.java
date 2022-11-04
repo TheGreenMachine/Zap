@@ -79,25 +79,28 @@ public class Camera extends Subsystem {
             List<Pose2d> aprilTagPoses = new ArrayList<>();
             for (int i = 0; i <= 53; i++) {
                 if (Constants.fieldTargets.get(i) == null) {
-                    aprilTagPoses.add(i, new Pose2d());
+                    aprilTagPoses.add(
+                        i,
+                        new Pose2d(new Translation2d(-1, -1), new Rotation2d())
+                    );
                     continue;
                 }
                 aprilTagPoses.add(
                     i, // if we want ids to be marked on each pose, we'll prob need to adjust the Field2DObject class (make our own?)
                     new Pose2d(
-                        Constants.fieldTargets.get(i)[0],
-                        Constants.fieldTargets.get(i)[1],
-                        Constants.EmptyRotation
+                        Constants.fieldTargets.get(i).getX(),
+                        Constants.fieldTargets.get(i).getY(),
+                        Constants.fieldTargets.get(i).getRotation().toRotation2d()
                     )
                 );
                 simCam.addSimVisionTarget(
                     new PhotonSimVisionTarget(
                         new Pose2d(
-                            Constants.fieldTargets.get(i)[0],
-                            Constants.fieldTargets.get(i)[1],
-                            new Rotation2d(0.0)
+                            Constants.fieldTargets.get(i).getX(),
+                            Constants.fieldTargets.get(i).getY(),
+                            Constants.fieldTargets.get(i).getRotation().toRotation2d()
                         ),
-                        Constants.fieldTargets.get(i)[2],
+                        Constants.fieldTargets.get(i).getZ(),
                         .1651, // Estimated width & height of the AprilTag
                         .1651,
                         i
