@@ -50,7 +50,7 @@ public class Climber extends Subsystem {
     public Climber(Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
         climberMain = factory.getMotor(NAME, "climberMain");
-        climberFollower = factory.getMotor(NAME, "climberFollower", climberMain);
+        climberFollower = factory.getFollowerMotor(NAME, "climberFollower", climberMain);
         climberFollower.setInverted(!climberMain.getInverted());
         topClamp = factory.getSolenoid(NAME, "topClamp");
         bottomClamp = factory.getSolenoid(NAME, "bottomClamp");

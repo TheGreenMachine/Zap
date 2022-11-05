@@ -20,7 +20,6 @@ public class MotorFactory {
     private static final int kTimeoutMs = RobotBase.isSimulation() ? 0 : 100;
     private static final int kTimeoutMsLONG = RobotBase.isSimulation() ? 0 : 200;
 
-
     // Factory default motor configs.
 
     public static NeutralMode NEUTRAL_MODE = NeutralMode.Coast;
@@ -34,7 +33,6 @@ public class MotorFactory {
     public static int VELOCITY_MEASUREMENT_ROLLING_AVERAGE_WINDOW = 1;
     public static double OPEN_LOOP_RAMP_RATE = 0.0;
     public static double CLOSED_LOOP_RAMP_RATE = 0.0;
-
 
     // Create a CANTalon with the default (out of the box) configuration.
     public static IGreenMotor createDefaultTalon(
@@ -94,14 +92,7 @@ public class MotorFactory {
         IGreenMotor talon = isFalcon
             ? new LazyTalonFX(id, name, canBus)
             : new LazyTalonSRX(id, name);
-        configMotor(
-            talon,
-            name,
-            isFalcon,
-            subsystem,
-            pidConfigList,
-            remoteSensorId
-        );
+        configMotor(talon, name, subsystem, pidConfigList, remoteSensorId);
 
         return talon;
     }
@@ -111,7 +102,7 @@ public class MotorFactory {
         int absInitOffset,
         String name,
         SubsystemConfig subsystem
-        ) {
+    ) {
         IGreenMotor motor = new GhostMotor(maxVelTicks100ms, absInitOffset, name);
         configMotor(motor, name, subsystem, null, -1);
         return motor;
@@ -145,6 +136,7 @@ public class MotorFactory {
         );
         return victor;
     }
+
     public static IGreenMotor createSpark(
         int id,
         String name,
@@ -178,15 +170,14 @@ public class MotorFactory {
         Map<String, PIDSlotConfiguration> pidConfigList,
         int remoteSensorId
     ) {
-        BaseTalonConfiguration talonConfiguration;
+        // note this is not necessarily a talon! we're faking out CTRE to be able to "configure" spark/ghost motors
+        BaseTalonConfiguration motorConfig;
 
         // type of configuration (based on motor type)
         if (motor instanceof TalonFX) {
-            talonConfiguration = new TalonFXConfiguration();
-        } else if (motor instanceof TalonSRX) {
-            talonConfiguration = new TalonSRXConfiguration();
+            motorConfig = new TalonFXConfiguration();
         } else {
-            return;
+            motorConfig = new TalonSRXConfiguration();
         }
 
         // setting pid
@@ -195,16 +186,16 @@ public class MotorFactory {
                 (slot, slotConfig) -> {
                     switch (slot.toLowerCase()) {
                         case "slot0":
-                            talonConfiguration.slot0 = toSlotConfiguration(slotConfig);
+                            motorConfig.slot0 = toSlotConfiguration(slotConfig);
                             break;
                         case "slot1":
-                            talonConfiguration.slot1 = toSlotConfiguration(slotConfig);
+                            motorConfig.slot1 = toSlotConfiguration(slotConfig);
                             break;
                         case "slot2":
-                            talonConfiguration.slot2 = toSlotConfiguration(slotConfig);
+                            motorConfig.slot2 = toSlotConfiguration(slotConfig);
                             break;
                         case "slot3":
-                            talonConfiguration.slot3 = toSlotConfiguration(slotConfig);
+                            motorConfig.slot3 = toSlotConfiguration(slotConfig);
                             break;
                     }
                 }
@@ -214,13 +205,11 @@ public class MotorFactory {
 
         // binding remote sensors to respective motors
         if (remoteSensorId >= 0) {
-            talonConfiguration.primaryPID.selectedFeedbackSensor =
-                FeedbackDevice.RemoteSensor0;
-            talonConfiguration.remoteFilter0.remoteSensorDeviceID = remoteSensorId;
-            talonConfiguration.remoteFilter0.remoteSensorSource =
-                RemoteSensorSource.CANCoder;
+            motorConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.RemoteSensor0;
+            motorConfig.remoteFilter0.remoteSensorDeviceID = remoteSensorId;
+            motorConfig.remoteFilter0.remoteSensorSource = RemoteSensorSource.CANCoder;
         } else {
-            talonConfiguration.primaryPID.selectedFeedbackSensor =
+            motorConfig.primaryPID.selectedFeedbackSensor =
                 (motor instanceof TalonFX)
                     ? FeedbackDevice.IntegratedSensor
                     : FeedbackDevice.CTRE_MagEncoder_Relative;
@@ -230,41 +219,36 @@ public class MotorFactory {
         if (factory.getConstant("resetFactoryDefaults", 0) > 0) {
             System.out.println("Resetting motor factory defaults");
             motor.configFactoryDefault(kTimeoutMs);
-            talonConfiguration.forwardSoftLimitThreshold = FORWARD_SOFT_LIMIT;
-            talonConfiguration.forwardSoftLimitEnable = ENABLE_SOFT_LIMIT;
+            motorConfig.forwardSoftLimitThreshold = FORWARD_SOFT_LIMIT;
+            motorConfig.forwardSoftLimitEnable = ENABLE_SOFT_LIMIT;
 
-            talonConfiguration.reverseSoftLimitThreshold = REVERSE_SOFT_LIMIT;
-            talonConfiguration.reverseSoftLimitEnable = ENABLE_SOFT_LIMIT;
-            talonConfiguration.nominalOutputForward = 0;
-            talonConfiguration.nominalOutputReverse = 0;
-            talonConfiguration.neutralDeadband = NEUTRAL_DEADBAND;
+            motorConfig.reverseSoftLimitThreshold = REVERSE_SOFT_LIMIT;
+            motorConfig.reverseSoftLimitEnable = ENABLE_SOFT_LIMIT;
+            motorConfig.nominalOutputForward = 0;
+            motorConfig.nominalOutputReverse = 0;
+            motorConfig.neutralDeadband = NEUTRAL_DEADBAND;
 
-            talonConfiguration.peakOutputForward = 1.0;
-            talonConfiguration.peakOutputReverse = -1.0;
+            motorConfig.peakOutputForward = 1.0;
+            motorConfig.peakOutputReverse = -1.0;
 
-            talonConfiguration.velocityMeasurementWindow =
+            motorConfig.velocityMeasurementWindow =
                 VELOCITY_MEASUREMENT_ROLLING_AVERAGE_WINDOW;
 
-            talonConfiguration.openloopRamp = OPEN_LOOP_RAMP_RATE;
-            talonConfiguration.closedloopRamp = CLOSED_LOOP_RAMP_RATE;
-            if (talonConfiguration instanceof TalonFXConfiguration) {
-                ((TalonFXConfiguration) talonConfiguration).supplyCurrLimit =
-                    new SupplyCurrentLimitConfiguration(
-                        ENABLE_CURRENT_LIMIT,
-                        40,
-                        80,
-                        1
-                    );
+            motorConfig.openloopRamp = OPEN_LOOP_RAMP_RATE;
+            motorConfig.closedloopRamp = CLOSED_LOOP_RAMP_RATE;
+            if (motorConfig instanceof TalonFXConfiguration) {
+                ((TalonFXConfiguration) motorConfig).supplyCurrLimit =
+                    new SupplyCurrentLimitConfiguration(ENABLE_CURRENT_LIMIT, 40, 80, 1);
             } else {
-                ((TalonSRXConfiguration) talonConfiguration).peakCurrentLimit = 80;
-                ((TalonSRXConfiguration) talonConfiguration).peakCurrentDuration = 1;
-                ((TalonSRXConfiguration) talonConfiguration).continuousCurrentLimit = 40;
+                ((TalonSRXConfiguration) motorConfig).peakCurrentLimit = 80;
+                ((TalonSRXConfiguration) motorConfig).peakCurrentDuration = 1;
+                ((TalonSRXConfiguration) motorConfig).continuousCurrentLimit = 40;
             }
 
-            talonConfiguration.clearPositionOnLimitF = false;
-            talonConfiguration.clearPositionOnLimitR = false;
+            motorConfig.clearPositionOnLimitF = false;
+            motorConfig.clearPositionOnLimitR = false;
 
-            talonConfiguration.enableOptimizations = true;
+            motorConfig.enableOptimizations = true;
 
             motor.overrideLimitSwitchesEnable(ENABLE_LIMIT_SWITCH);
 
@@ -277,7 +261,7 @@ public class MotorFactory {
         }
 
         // applying configs to motor
-        motor.configAllSettings(talonConfiguration, kTimeoutMs);
+        motor.configAllSettings(motorConfig, kTimeoutMs);
 
         // inverting
         motor.setInverted(subsystem.invertMotor.contains(name));
@@ -316,6 +300,6 @@ public class MotorFactory {
         TalonSRX,
         Falcon,
         SparkMax,
-        Ghost
+        Ghost,
     }
 }

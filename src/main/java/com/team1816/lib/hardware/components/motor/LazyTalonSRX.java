@@ -12,9 +12,7 @@ import edu.wpi.first.wpilibj.DriverStation;
  * This class is a thin wrapper around the CANTalon that reduces CAN bus / CPU overhead by skipping duplicate set
  * commands. (By default the Talon flushes the Tx buffer on every set call).
  */
-public class LazyTalonSRX
-    extends TalonSRX
-    implements IGreenMotor, IMotorSensor {
+public class LazyTalonSRX extends TalonSRX implements IGreenMotor, IMotorSensor {
 
     protected double lastSet = Double.NaN;
     protected String name = "";
@@ -25,11 +23,6 @@ public class LazyTalonSRX
         super(deviceNumber);
         sensors = super.getSensorCollection();
         name = motorName;
-    }
-
-    @Override
-    public double getLastSet() {
-        return lastSet;
     }
 
     @Override

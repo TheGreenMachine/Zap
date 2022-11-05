@@ -17,7 +17,6 @@ import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.hardware.components.motor.LazySparkMax;
 import com.team1816.lib.hardware.components.pcm.*;
 import com.team1816.lib.subsystems.drive.SwerveModule;
-import com.team1816.season.Constants;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -81,9 +80,7 @@ public class RobotFactory {
                         remoteSensorId,
                         config.infrastructure.canivoreBusName
                     );
-            } else if (
-                isHardwareValid(subsystem.falcons, name)
-            ) {
+            } else if (isHardwareValid(subsystem.falcons, name)) {
                 motor =
                     MotorFactory.createDefaultTalon(
                         subsystem.falcons.get(name),
@@ -94,9 +91,7 @@ public class RobotFactory {
                         remoteSensorId,
                         config.infrastructure.canivoreBusName
                     );
-            } else if (
-                isHardwareValid(subsystem.sparkmaxes, name)
-            ) {
+            } else if (isHardwareValid(subsystem.sparkmaxes, name)) {
                 motor =
                     MotorFactory.createSpark(
                         subsystem.sparkmaxes.get(name),
@@ -149,7 +144,11 @@ public class RobotFactory {
         return getMotor(subsystemName, name, getSubsystem(subsystemName).pidConfig, -1); // not implemented for tank need to fix this
     }
 
-    public IGreenMotor getFollowerMotor(String subsystemName, String name, IGreenMotor main) {
+    public IGreenMotor getFollowerMotor(
+        String subsystemName,
+        String name,
+        IGreenMotor main
+    ) {
         IGreenMotor followerMotor = null;
         var subsystem = getSubsystem(subsystemName);
         if (subsystem.implemented && main != null) {
@@ -165,9 +164,7 @@ public class RobotFactory {
                         subsystem.pidConfig,
                         config.infrastructure.canivoreBusName
                     );
-            } else if (
-                isHardwareValid(subsystem.falcons, name)
-            ) {
+            } else if (isHardwareValid(subsystem.falcons, name)) {
                 followerMotor =
                     MotorFactory.createFollowerTalon(
                         subsystem.falcons.get(name),
@@ -178,16 +175,19 @@ public class RobotFactory {
                         subsystem.pidConfig,
                         config.infrastructure.canivoreBusName
                     );
-            } else if (
-                isHardwareValid(subsystem.sparkmaxes, name)
-            ) {
+            } else if (isHardwareValid(subsystem.sparkmaxes, name)) {
                 followerMotor =
-                    MotorFactory.createSpark(subsystem.sparkmaxes.get(name), name, subsystem);
-                ((LazySparkMax) followerMotor).follow(main, subsystem.invertMotor.contains(name));
+                    MotorFactory.createSpark(
+                        subsystem.sparkmaxes.get(name),
+                        name,
+                        subsystem
+                    );
+                ((LazySparkMax) followerMotor).follow(
+                        main,
+                        subsystem.invertMotor.contains(name)
+                    );
                 followerMotor.setInverted(main.getInverted());
-            } else if (
-                isHardwareValid(subsystem.victors, name)
-            ) {
+            } else if (isHardwareValid(subsystem.victors, name)) {
                 // Victors can follow Talons or another Victor.
                 followerMotor =
                     MotorFactory.createFollowerVictor(
@@ -214,7 +214,7 @@ public class RobotFactory {
     }
 
     private boolean isHardwareValid(Map<String, Integer> map, String name) {
-        if(map != null) {
+        if (map != null) {
             Integer hardwareId = map.get(name);
             return hardwareId != null && hardwareId > -1 && RobotBase.isReal();
         }

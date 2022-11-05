@@ -18,11 +18,6 @@ public class LazyTalonFX extends TalonFX implements IGreenMotor {
     }
 
     @Override
-    public double getLastSet() {
-        return lastSet;
-    }
-
-    @Override
     public String getName() {
         return name;
     }

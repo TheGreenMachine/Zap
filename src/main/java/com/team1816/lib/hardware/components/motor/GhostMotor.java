@@ -26,8 +26,6 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
     private final double[] actualOutput = new double[] { 0, 0, 0 }; // 0: %out, 1: vel, 2: pos
     protected double lastPos = 0;
 
-
-
     public GhostMotor(int maxTickVel, int absInitOffset, String motorName) {
         this.absInitOffset = absInitOffset;
         maxVelTicks100ms = maxTickVel;
@@ -51,7 +49,7 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     private void processSet(ControlMode Mode, double demand) {
         // setting desired demand
-        if(Mode == ControlMode.PercentOutput){
+        if (Mode == ControlMode.PercentOutput) {
             this.desiredDemand[0] = demand;
             this.desiredDemand[1] = demand * maxVelTicks100ms;
             this.desiredDemand[2] = lastPos + demand * maxVelTicks100ms;
@@ -70,22 +68,22 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
         controlMode = Mode;
 
         // setting actual output
-        if(usingLimit){
-            if(desiredDemand[2] > fwdLimit){
+        if (usingLimit) {
+            if (desiredDemand[2] > fwdLimit) {
                 actualOutput[0] = 0;
                 actualOutput[1] = 0;
                 actualOutput[2] = fwdLimit;
-            } else if (desiredDemand[2] < revLimit){
+            } else if (desiredDemand[2] < revLimit) {
                 actualOutput[0] = 0;
                 actualOutput[1] = 0;
                 actualOutput[2] = revLimit;
             } else {
-                for(int i = 0; i < 3; i++){
+                for (int i = 0; i < 3; i++) {
                     actualOutput[i] = desiredDemand[i];
                 }
             }
         } else {
-            for(int i = 0; i < 3; i++){
+            for (int i = 0; i < 3; i++) {
                 actualOutput[i] = desiredDemand[i];
             }
         }
@@ -266,7 +264,8 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
                 System.out.println(
                     "Motor " +
                     name +
-                    "'s % output should be between -1.0 to 1.0 value:" + actualOutput[0]
+                    "'s % output should be between -1.0 to 1.0 value:" +
+                    actualOutput[0]
                 );
             }
             return actualOutput[0] * maxVelTicks100ms;
@@ -689,7 +688,7 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     @Override
     public int getPulseWidthPosition() {
-        return (int)(absInitOffset + actualOutput[2]) % absMotorPPR;
+        return (int) (absInitOffset + actualOutput[2]) % absMotorPPR;
     }
 
     @Override

@@ -70,7 +70,7 @@ public class Camera extends Subsystem {
                         Constants.EmptyRotation
                     ), //TODO update this value
                     CAMERA_HEIGHT_METERS,
-                    20,
+                    MAX_DIST,
                     4416,
                     1242,
                     0
