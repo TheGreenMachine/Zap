@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.DriverStation;
  */
 public class LazyTalonSRX
     extends TalonSRX
-    implements IConfigurableMotorController, IMotorSensor {
+    implements IGreenMotor, IMotorSensor {
 
     protected double lastSet = Double.NaN;
     protected String name = "";

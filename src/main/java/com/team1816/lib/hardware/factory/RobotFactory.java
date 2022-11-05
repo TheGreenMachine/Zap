@@ -17,6 +17,7 @@ import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.hardware.components.motor.LazySparkMax;
 import com.team1816.lib.hardware.components.pcm.*;
 import com.team1816.lib.subsystems.drive.SwerveModule;
+import com.team1816.season.Constants;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -69,9 +70,9 @@ public class RobotFactory {
 
         // Motor creation
         if (subsystem.implemented) {
-            if (subsystem.talons != null && isHardwareValid(subsystem.talons.get(name))) {
+            if (isHardwareValid(subsystem.talons, name)) {
                 motor =
-                    CtreMotorFactory.createDefaultTalon(
+                    MotorFactory.createDefaultTalon(
                         subsystem.talons.get(name),
                         name,
                         false,
@@ -81,10 +82,10 @@ public class RobotFactory {
                         config.infrastructure.canivoreBusName
                     );
             } else if (
-                subsystem.falcons != null && isHardwareValid(subsystem.falcons.get(name))
+                isHardwareValid(subsystem.falcons, name)
             ) {
                 motor =
-                    CtreMotorFactory.createDefaultTalon(
+                    MotorFactory.createDefaultTalon(
                         subsystem.falcons.get(name),
                         name,
                         true,
@@ -94,16 +95,14 @@ public class RobotFactory {
                         config.infrastructure.canivoreBusName
                     );
             } else if (
-                subsystem.sparkmaxes != null &&
-                isHardwareValid(subsystem.sparkmaxes.get(name))
+                isHardwareValid(subsystem.sparkmaxes, name)
             ) {
                 motor =
-                    RevMotorFactory.createDefaultSpark(
+                    MotorFactory.createSpark(
                         subsystem.sparkmaxes.get(name),
                         name,
                         subsystem,
-                        pidConfigs,
-                        remoteSensorId
+                        pidConfigs
                     );
             }
             // Never make the victor a main
@@ -111,10 +110,11 @@ public class RobotFactory {
         if (motor == null) {
             reportGhostWarning("Motor", subsystemName, name);
             motor =
-                CtreMotorFactory.createGhostMotor(
+                MotorFactory.createGhostMotor(
                     (int) (getConstant(subsystemName, "maxVelTicks100ms", 1, false)),
                     0,
-                    name
+                    name,
+                    subsystem
                 );
         } else {
             System.out.println(
@@ -149,14 +149,14 @@ public class RobotFactory {
         return getMotor(subsystemName, name, getSubsystem(subsystemName).pidConfig, -1); // not implemented for tank need to fix this
     }
 
-    public IGreenMotor getMotor(String subsystemName, String name, IGreenMotor main) { // TODO: optimize this method
+    public IGreenMotor getFollowerMotor(String subsystemName, String name, IGreenMotor main) {
         IGreenMotor followerMotor = null;
         var subsystem = getSubsystem(subsystemName);
         if (subsystem.implemented && main != null) {
-            if (subsystem.talons != null && isHardwareValid(subsystem.talons.get(name))) {
+            if (isHardwareValid(subsystem.talons, name)) {
                 // Talons must be following another Talon, cannot follow a Victor.
                 followerMotor =
-                    CtreMotorFactory.createFollowerTalon(
+                    MotorFactory.createFollowerTalon(
                         subsystem.talons.get(name),
                         name,
                         false,
@@ -166,10 +166,10 @@ public class RobotFactory {
                         config.infrastructure.canivoreBusName
                     );
             } else if (
-                subsystem.falcons != null && isHardwareValid(subsystem.falcons.get(name))
+                isHardwareValid(subsystem.falcons, name)
             ) {
                 followerMotor =
-                    CtreMotorFactory.createFollowerTalon(
+                    MotorFactory.createFollowerTalon(
                         subsystem.falcons.get(name),
                         name,
                         true,
@@ -179,31 +179,32 @@ public class RobotFactory {
                         config.infrastructure.canivoreBusName
                     );
             } else if (
-                subsystem.victors != null && isHardwareValid(subsystem.victors.get(name))
+                isHardwareValid(subsystem.sparkmaxes, name)
+            ) {
+                followerMotor =
+                    MotorFactory.createSpark(subsystem.sparkmaxes.get(name), name, subsystem);
+                ((LazySparkMax) followerMotor).follow(main, subsystem.invertMotor.contains(name));
+                followerMotor.setInverted(main.getInverted());
+            } else if (
+                isHardwareValid(subsystem.victors, name)
             ) {
                 // Victors can follow Talons or another Victor.
                 followerMotor =
-                    CtreMotorFactory.createFollowerVictor(
+                    MotorFactory.createFollowerVictor(
                         subsystem.victors.get(name),
                         name,
                         main
                     );
-            } else if (
-                subsystem.sparkmaxes != null &&
-                isHardwareValid(subsystem.sparkmaxes.get(name))
-            ) {
-                followerMotor =
-                    RevMotorFactory.createSpark(subsystem.sparkmaxes.get(name), name);
-                followerMotor.follow(main);
             }
         }
         if (followerMotor == null) {
             if (subsystem.implemented) reportGhostWarning("Motor", subsystemName, name);
             followerMotor =
-                CtreMotorFactory.createGhostMotor(
+                MotorFactory.createGhostMotor(
                     (int) getConstant(subsystemName, "maxVelTicks100ms"),
                     0,
-                    name
+                    name,
+                    subsystem
                 );
         }
         if (main != null) {
@@ -212,35 +213,12 @@ public class RobotFactory {
         return followerMotor;
     }
 
-    public IGreenMotor getMotor( // a hack to circumnavigate sparkMax follower methods
-        String subsystemName,
-        String name,
-        IGreenMotor main,
-        boolean invert
-    ) { // TODO: optimize this method
-        IGreenMotor followerMotor = null;
-        var subsystem = getSubsystem(subsystemName);
-        if (
-            subsystem.sparkmaxes != null &&
-            isHardwareValid(subsystem.sparkmaxes.get(name))
-        ) {
-            followerMotor =
-                RevMotorFactory.createSpark(subsystem.sparkmaxes.get(name), name);
-            ((LazySparkMax) followerMotor).follow(main, invert);
+    private boolean isHardwareValid(Map<String, Integer> map, String name) {
+        if(map != null) {
+            Integer hardwareId = map.get(name);
+            return hardwareId != null && hardwareId > -1 && RobotBase.isReal();
         }
-        if (followerMotor == null) {
-            if (subsystem.implemented) reportGhostWarning("Motor", subsystemName, name);
-            followerMotor =
-                CtreMotorFactory.createGhostMotor(
-                    (int) getConstant(subsystemName, "maxVelTicks100ms"),
-                    0,
-                    name
-                );
-        }
-        if (main != null) {
-            followerMotor.setInverted(main.getInverted());
-        }
-        return followerMotor;
+        return false;
     }
 
     private boolean isHardwareValid(Integer hardwareId) {
@@ -291,11 +269,11 @@ public class RobotFactory {
             subsystem.canCoders.get(module.canCoder) >= 0
         ) {
             canCoder =
-                CtreMotorFactory.createCanCoder(
+                MotorFactory.createCanCoder(
                     subsystem.canCoders.get(module.canCoder),
                     subsystem.canCoders.get(subsystem.invertCanCoder) != null &&
                     subsystem.invertCanCoder.contains(module.canCoder)
-                ); //TODO: For now placeholder true is placed
+                );
             if (getConstant("configStatusFrames") == 1) {
                 setStatusFrame(canCoder); // make canCoder send one signal per second - FOR DEBUGGING!
             }
@@ -309,21 +287,17 @@ public class RobotFactory {
     @Nonnull
     public ISolenoid getSolenoid(String subsystemName, String name) {
         var subsystem = getSubsystem(subsystemName);
-        if (subsystem.solenoids != null) {
-            Integer solenoidId = subsystem.solenoids.get(name);
-            if (subsystem.implemented && isHardwareValid(solenoidId) && isPcmEnabled()) {
+        if (subsystem.implemented) {
+            if (isHardwareValid(subsystem.solenoids, name) && isPcmEnabled()) {
                 return new SolenoidImpl(
                     config.infrastructure.pcmId,
                     config.infrastructure.pcmIsRev
                         ? PneumaticsModuleType.REVPH
                         : PneumaticsModuleType.CTREPCM,
-                    solenoidId
+                    subsystem.solenoids.get(name)
                 );
             }
-            if (subsystem.implemented) {
-                reportGhostWarning("Solenoid", subsystemName, name);
-            }
-            return new GhostSolenoid();
+            reportGhostWarning("Solenoid", subsystemName, name);
         }
         return new GhostSolenoid();
     }
@@ -338,7 +312,7 @@ public class RobotFactory {
                 subsystem.implemented &&
                 solenoidConfig != null &&
                 isHardwareValid(solenoidConfig.forward) &&
-                isHardwareValid(solenoidConfig.forward) &&
+                isHardwareValid(solenoidConfig.reverse) &&
                 isPcmEnabled()
             ) {
                 return new DoubleSolenoidImpl(
