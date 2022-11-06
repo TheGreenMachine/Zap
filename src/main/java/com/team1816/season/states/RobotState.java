@@ -6,7 +6,6 @@ import com.team1816.season.subsystems.*;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,8 +38,8 @@ public class RobotState {
     public double drivetrainTemp = 0;
 
     public RobotState() {
-        SmartDashboard.putData("Field", field);
         resetPosition();
+        FieldConfig.setupField(field);
     }
 
     /** Resetting state */
@@ -76,10 +75,6 @@ public class RobotState {
     }
 
     /** Base State getters */
-    public synchronized Pose2d getLatestFieldToVehicle() {
-        return fieldToVehicle;
-    }
-
     public Rotation2d getLatestFieldToTurret() {
         return fieldToVehicle.getRotation().plus(vehicleToTurret);
     }

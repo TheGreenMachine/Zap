@@ -27,7 +27,7 @@ public class WaitUntilInsideRegion implements Action {
 
     @Override
     public boolean isFinished() {
-        Pose2d position = mRobotState.getLatestFieldToVehicle();
+        Pose2d position = mRobotState.fieldToVehicle;
         var x = Units.metersToInches(position.getX());
         var y = Units.metersToInches(position.getY());
         return (

@@ -9,9 +9,9 @@ import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.util.visionUtil.PhotonSimVisionSystem;
 import com.team1816.lib.util.visionUtil.PhotonSimVisionTarget;
 import com.team1816.season.Constants;
+import com.team1816.season.states.FieldConfig;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
@@ -78,36 +78,23 @@ public class Camera extends Subsystem {
             // TODO move this stuff into a static "field setup util" class
             List<Pose2d> aprilTagPoses = new ArrayList<>();
             for (int i = 0; i <= 53; i++) {
-                if (Constants.fieldTargets.get(i) == null) {
-                    aprilTagPoses.add(
-                        i,
-                        new Pose2d(new Translation2d(-1, -1), new Rotation2d())
-                    );
+                if (FieldConfig.aprilTags.get(i) == null) {
                     continue;
                 }
-                aprilTagPoses.add(
-                    i, // if we want ids to be marked on each pose, we'll prob need to adjust the Field2DObject class (make our own?)
-                    new Pose2d(
-                        Constants.fieldTargets.get(i).getX(),
-                        Constants.fieldTargets.get(i).getY(),
-                        Constants.fieldTargets.get(i).getRotation().toRotation2d()
-                    )
-                );
                 simCam.addSimVisionTarget(
                     new PhotonSimVisionTarget(
                         new Pose2d(
-                            Constants.fieldTargets.get(i).getX(),
-                            Constants.fieldTargets.get(i).getY(),
-                            Constants.fieldTargets.get(i).getRotation().toRotation2d()
+                            FieldConfig.aprilTags.get(i).getX(),
+                            FieldConfig.aprilTags.get(i).getY(),
+                            FieldConfig.aprilTags.get(i).getRotation().toRotation2d()
                         ),
-                        Constants.fieldTargets.get(i).getZ(),
+                        FieldConfig.aprilTags.get(i).getZ(),
                         .1651, // Estimated width & height of the AprilTag
                         .1651,
                         i
                     )
                 );
             }
-            robotState.field.getObject("April Tags").setPoses(aprilTagPoses);
         } else {
             PhotonCamera.setVersionCheckEnabled(false);
             cam = new PhotonCamera("zed");
