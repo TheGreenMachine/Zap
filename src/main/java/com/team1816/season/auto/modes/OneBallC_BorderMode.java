@@ -6,7 +6,6 @@ import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.season.auto.actions.*;
 import com.team1816.season.auto.paths.OneBallAutoC_BorderPath;
 import com.team1816.season.subsystems.Shooter;
-import com.team1816.season.subsystems.Turret;
 import java.util.List;
 
 public class OneBallC_BorderMode extends AutoMode {
@@ -22,7 +21,8 @@ public class OneBallC_BorderMode extends AutoMode {
         runAction(
             new SeriesAction(
                 new ParallelAction(
-                    new TurretAction(Turret.kNorth - 4), // to be changed
+                    //new TurretAction(Turret.kNorth - 4), // to be changed
+                    new AbsoluteTurretAction(),
                     new RampUpShooterAction(Shooter.MID_VELOCITY)
                 ),
                 new WaitAction(6),
