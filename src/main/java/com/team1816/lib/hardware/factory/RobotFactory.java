@@ -306,7 +306,7 @@ public class RobotFactory {
                     );
             }
             if (ledManager != null) {
-                if (factory.getConstant("resetFactoryDefaults") > 0) {
+                if (getConstant("resetFactoryDefaults") > 0) {
                     ledManager.configFactoryDefault();
                     ledManager.configStatusLedState(true);
                     ledManager.configLOSBehavior(true);
@@ -473,9 +473,11 @@ public class RobotFactory {
             System.out.println("Using old Pigeon for id: " + id);
             pigeon = new PigeonIMUImpl(id);
         }
-        pigeon.configFactoryDefault();
-        pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_1_General, 200);
-        pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_6_Accel, 1000);
+        if(getConstant("resetFactoryDefaults") > 0){
+            pigeon.configFactoryDefault();
+            pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_1_General, 100);
+            pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_6_Accel, 100);
+        }
         return pigeon;
     }
 
