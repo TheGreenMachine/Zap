@@ -1,7 +1,5 @@
 package com.team1816.lib.hardware.factory;
 
-import static com.team1816.lib.subsystems.Subsystem.factory;
-
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.sensors.*;
 import com.google.inject.Singleton;
@@ -473,7 +471,7 @@ public class RobotFactory {
             System.out.println("Using old Pigeon for id: " + id);
             pigeon = new PigeonIMUImpl(id);
         }
-        if(getConstant("resetFactoryDefaults") > 0){
+        if (getConstant("resetFactoryDefaults") > 0) {
             pigeon.configFactoryDefault();
             pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_1_General, 100);
             pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_6_Accel, 100);

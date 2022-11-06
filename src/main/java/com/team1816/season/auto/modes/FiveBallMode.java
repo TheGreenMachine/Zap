@@ -5,7 +5,6 @@ import com.team1816.lib.auto.actions.*;
 import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.season.auto.actions.*;
 import com.team1816.season.auto.paths.*;
-import com.team1816.season.subsystems.Turret;
 import edu.wpi.first.math.geometry.Translation2d;
 import java.util.List;
 
@@ -31,7 +30,8 @@ public class FiveBallMode extends AutoMode {
                 new ParallelAction(
                     new CollectAction(true),
                     new RampUpShooterAction(13000), // make actual shooting vel
-                    new TurretAction(Turret.kWest + 15), // setting this doesn't seem to work right in simulator - magically relative to field and not the robot
+                    //new TurretAction(Turret.kWest + 15), // setting this doesn't seem to work right in simulator - magically relative to field and not the robot
+                    new AbsoluteTurretAction(),
                     trajectoryActions.get(0)
                 ),
                 new ParallelAction(
@@ -55,7 +55,8 @@ public class FiveBallMode extends AutoMode {
                             new Translation2d(306, 47),
                             "4th, ally ball"
                         ),
-                        new TurretAction(Turret.kWest - 10)
+                        //new TurretAction(Turret.kWest - 10),
+                        new AbsoluteTurretAction()
                     )
                 ),
                 new WaitAction(1),
@@ -64,7 +65,8 @@ public class FiveBallMode extends AutoMode {
                 new WaitAction(1),
                 new ParallelAction(
                     new RampUpShooterAction(14000),
-                    new TurretAction(Turret.kSouth),
+                    //new TurretAction(Turret.kSouth),
+                    new AbsoluteTurretAction(),
                     trajectoryActions.get(3)
                 ),
                 new ShootAction(true, true),

@@ -20,6 +20,8 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
     private int revLimit;
     private boolean usingLimit = false;
     private final int absMotorPPR = 4096;
+    private double peakOutputForward = 1;
+    private double peakOutputReverse = -1;
     // State
     private ControlMode controlMode;
     private final double[] desiredDemand = new double[] { 0, 0, 0 }; // 0: %out, 1: vel, 2: pos
@@ -57,7 +59,7 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
             this.desiredDemand[0] = demand / maxVelTicks100ms;
             this.desiredDemand[1] = demand;
             this.desiredDemand[2] = lastPos + demand;
-        } else if (Mode == ControlMode.Position) {
+        } else if (Mode == ControlMode.Position) { // TODO: implement PID Controller
             this.desiredDemand[0] = demand / (demand - lastPos);
             this.desiredDemand[1] = demand - lastPos;
             this.desiredDemand[2] = demand;
@@ -72,16 +74,17 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
             if (desiredDemand[2] > fwdLimit) {
                 actualOutput[0] = 0;
                 actualOutput[1] = 0;
-                actualOutput[2] = fwdLimit;
+                actualOutput[2] = fwdLimit; // TODO: implement PID Controller
             } else if (desiredDemand[2] < revLimit) {
                 actualOutput[0] = 0;
                 actualOutput[1] = 0;
-                actualOutput[2] = revLimit;
+                actualOutput[2] = revLimit; // TODO: implement PID Controller
             } else {
                 for (int i = 0; i < 3; i++) {
                     actualOutput[i] = desiredDemand[i];
                 }
             }
+            System.out.println(actualOutput[2]);
         } else {
             for (int i = 0; i < 3; i++) {
                 actualOutput[i] = desiredDemand[i];
@@ -124,11 +127,13 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     @Override
     public ErrorCode configPeakOutputForward(double percentOut, int timeoutMs) {
+        peakOutputForward = percentOut;
         return ErrorCode.OK;
     }
 
     @Override
     public ErrorCode configPeakOutputReverse(double percentOut, int timeoutMs) {
+        peakOutputReverse = percentOut;
         return ErrorCode.OK;
     }
 

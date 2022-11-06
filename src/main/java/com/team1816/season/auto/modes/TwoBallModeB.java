@@ -6,7 +6,6 @@ import com.team1816.lib.auto.modes.AutoMode;
 import com.team1816.season.auto.actions.*;
 import com.team1816.season.auto.paths.TwoBallPathB;
 import com.team1816.season.subsystems.Shooter;
-import com.team1816.season.subsystems.Turret;
 import java.util.List;
 
 public class TwoBallModeB extends AutoMode {
@@ -22,7 +21,8 @@ public class TwoBallModeB extends AutoMode {
         runAction(
             new SeriesAction(
                 new ParallelAction(
-                    new TurretAction(Turret.kNorth), // to be changed
+                    //new TurretAction(Turret.kNorth), // to be changed
+                    new AbsoluteTurretAction(),
                     new CollectAction(true),
                     new RampUpShooterAction(Shooter.MID_VELOCITY)
                 ),
