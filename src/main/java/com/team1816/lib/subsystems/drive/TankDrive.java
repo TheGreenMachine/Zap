@@ -143,6 +143,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         if (RobotBase.isSimulation()) {
             simulateGyroOffset();
         }
+        infrastructure.update();
         actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
 
         // send updated information to robotState and odometry calculator
