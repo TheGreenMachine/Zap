@@ -138,12 +138,6 @@ public class PhotonSimVisionSystem {
      */
     public void processFrame(Pose2d robotPoseMeters) {
         Pose2d cameraPos = robotPoseMeters.transformBy(cameraToRobot.inverse());
-        //        System.out.println(
-        //            "cam rot = " +
-        //            cameraPos.getRotation().getDegrees() +
-        //            " cam pos = " +
-        //            cameraPos.toString()
-        //        );
         ArrayList<PhotonTrackedTarget> visibleTgtList = new ArrayList<>(
             targetList.size()
         );
@@ -177,9 +171,10 @@ public class PhotonSimVisionSystem {
 
                 double area = tgt.tgtAreaMeters2 / getM2PerPx(distAlongGroundMeters);
 
+                // A note on orientation
                 // 2D yaw mode considers the target as a point, and should ignore target rotation.
-                // Photon reports it in the correct robot reference frame.
-                // IE: targets to the left of the image should report negative yaw.
+                // PhotonVision reports it in the correct robot reference frame.
+                // IE: targets to the left of the center should report negative yaw.
                 double yawDegrees =
                     -1.0 *
                     Units.radiansToDegrees(

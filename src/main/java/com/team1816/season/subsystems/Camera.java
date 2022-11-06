@@ -68,7 +68,7 @@ public class Camera extends Subsystem {
                     new Transform2d(
                         new Translation2d(-.12065, .13335),
                         Constants.EmptyRotation
-                    ), //TODO update this value
+                    ), // TODO update this value
                     CAMERA_HEIGHT_METERS,
                     20,
                     4416,
@@ -83,7 +83,7 @@ public class Camera extends Subsystem {
                     continue;
                 }
                 aprilTagPoses.add(
-                    i, // if we want ids to be marked on each pose, we'll prob need to adjust the Field2DObject class (make our own?)
+                    i, // TODO: create our own field visualization with object mapping
                     new Pose2d(
                         Constants.fieldTargets.get(i)[0],
                         Constants.fieldTargets.get(i)[1],
@@ -98,7 +98,7 @@ public class Camera extends Subsystem {
                             new Rotation2d(0.0)
                         ),
                         Constants.fieldTargets.get(i)[2],
-                        .1651, // Estimated width & height of the AprilTag
+                        .1651, // height and width of the AprilTag
                         .1651,
                         i
                     )
@@ -186,7 +186,7 @@ public class Camera extends Subsystem {
     }
 
     public double getDeltaX() {
-        if (RobotBase.isSimulation()) { //simulate feedback loop
+        if (RobotBase.isSimulation()) { // simulate feedback loop
             return simulateDeltaX();
         }
         if (bestTrackedTarget == null) {
@@ -195,7 +195,7 @@ public class Camera extends Subsystem {
         return bestTrackedTarget.getYaw();
     }
 
-    public boolean checkSystem() { // this doesn't actually do anything because there's no read calls
+    public boolean checkSystem() { // this will do nothing as there are no read calls
         if (this.isImplemented()) {
             setCameraEnabled(true);
             Timer.delay(2);
