@@ -1,4 +1,4 @@
-package com.team1816.lib.hardware.components.led;
+package com.team1816.lib.hardware.components.ledManager;
 
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.led.Animation;

@@ -1,10 +1,8 @@
 package com.team1816.lib.hardware.factory;
 
-import com.ctre.phoenix.CANifier;
-import com.ctre.phoenix.CANifierStatusFrame;
+import static com.team1816.lib.subsystems.Subsystem.factory;
+
 import com.ctre.phoenix.led.CANdle;
-import com.ctre.phoenix.led.CANdleStatusFrame;
-import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.sensors.*;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.*;
@@ -12,7 +10,7 @@ import com.team1816.lib.hardware.components.gyro.GhostPigeonIMU;
 import com.team1816.lib.hardware.components.gyro.IPigeonIMU;
 import com.team1816.lib.hardware.components.gyro.Pigeon2Impl;
 import com.team1816.lib.hardware.components.gyro.PigeonIMUImpl;
-import com.team1816.lib.hardware.components.led.*;
+import com.team1816.lib.hardware.components.ledManager.*;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.hardware.components.motor.LazySparkMax;
 import com.team1816.lib.hardware.components.pcm.*;
@@ -29,12 +27,6 @@ import javax.annotation.Nonnull;
 public class RobotFactory {
 
     private RobotConfiguration config;
-
-    private enum PIDConfig {
-        Azimuth,
-        Drive,
-        Generic,
-    }
 
     public RobotFactory() {
         var robotName = System.getenv("ROBOT_NAME");
@@ -67,7 +59,7 @@ public class RobotFactory {
         IGreenMotor motor = null;
         var subsystem = getSubsystem(subsystemName);
 
-        // Motor creation
+        // Identifying motor type
         if (subsystem.implemented) {
             if (isHardwareValid(subsystem.talons, name)) {
                 motor =
@@ -102,6 +94,8 @@ public class RobotFactory {
             }
             // Never make the victor a main
         }
+
+        // report creation of motor
         if (motor == null) {
             reportGhostWarning("Motor", subsystemName, name);
             motor =
@@ -120,28 +114,11 @@ public class RobotFactory {
             );
         }
 
-        var motorId = motor.getDeviceID();
-
-        //no need to invert of print if ghosted - this is done in both here and CTREMotorFactory - why?
-        // Motor configuration
-        if (subsystem.implemented && subsystem.invertMotor.contains(name)) {
-            System.out.println("        Inverting " + name + " with ID " + motorId);
-            motor.setInverted(true);
-        }
-        if (subsystem.implemented && subsystem.invertSensorPhase.contains(name)) {
-            System.out.println(
-                "       Inverting sensor phase of " + name + " with ID " + motorId
-            );
-            motor.setSensorPhase(true);
-        }
-        if (getConstant("configStatusFrames", 0) > 0) {
-            setStatusFrame(motor); // make motor send one signal per second - FOR DEBUGGING!
-        }
         return motor;
     }
 
     public IGreenMotor getMotor(String subsystemName, String name) {
-        return getMotor(subsystemName, name, getSubsystem(subsystemName).pidConfig, -1); // not implemented for tank need to fix this
+        return getMotor(subsystemName, name, getSubsystem(subsystemName).pidConfig, -1);
     }
 
     public IGreenMotor getFollowerMotor(
@@ -238,7 +215,7 @@ public class RobotFactory {
 
         var moduleConfig = new SwerveModule.ModuleConfig();
         moduleConfig.moduleName = name;
-        moduleConfig.azimuthMotorName = module.azimuth; //getAzimuth and drive give ID i think - not the module name (ex: leftRear)
+        moduleConfig.azimuthMotorName = module.azimuth; // getAzimuth and drive give ID I think - not the module name (ex: leftRear)
         moduleConfig.azimuthPid =
             getPidSlotConfig(subsystemName, "slot0", PIDConfig.Azimuth);
         moduleConfig.driveMotorName = module.drive;
@@ -250,22 +227,13 @@ public class RobotFactory {
         return new SwerveModule(subsystemName, moduleConfig, canCoder);
     }
 
-    public boolean hasCanCoder(String subsystemName, String name) {
-        if (
-            getSubsystem(subsystemName).swerveModules.modules.get(name) != null &&
-            getSubsystem(subsystemName).swerveModules.modules.get(name).canCoder != null
-        ) {
-            return true;
-        }
-        return false;
-    }
-
     public CANCoder getCanCoder(String subsystemName, String name) {
         var subsystem = getSubsystem(subsystemName);
         var module = subsystem.swerveModules.modules.get(name);
         CANCoder canCoder = null;
         if (
-            hasCanCoder(subsystemName, name) &&
+            module != null &&
+            module.canCoder != null &&
             subsystem.canCoders.get(module.canCoder) >= 0
         ) {
             canCoder =
@@ -274,13 +242,9 @@ public class RobotFactory {
                     subsystem.canCoders.get(subsystem.invertCanCoder) != null &&
                     subsystem.invertCanCoder.contains(module.canCoder)
                 );
-            if (getConstant("configStatusFrames") == 1) {
-                setStatusFrame(canCoder); // make canCoder send one signal per second - FOR DEBUGGING!
-            }
-        } else {
-            // ghost. potentially implement this in the future
         }
 
+        // purposefully return null so that swerve modules default to quad encoders
         return canCoder;
     }
 
@@ -327,49 +291,42 @@ public class RobotFactory {
         return new GhostDoubleSolenoid();
     }
 
-    @Nonnull
-    public ICanifier getCanifier(String subsystemName) {
+    public ILEDManager getLEDManager(String subsystemName) {
         var subsystem = getSubsystem(subsystemName);
-        ICanifier canifier;
-        if (subsystem.implemented && isHardwareValid(subsystem.canifier)) {
-            canifier = new CanifierImpl(subsystem.canifier);
-            if (getConstant("configStatusFrames") == 1) {
-                setStatusFrame((CANifier) canifier); // make signal time of 1 sec
+        ILEDManager ledManager = null;
+        if (subsystem.implemented) {
+            if (isHardwareValid(subsystem.canifier)) {
+                ledManager = new CanifierImpl(subsystem.canifier);
+            } else if (isHardwareValid(subsystem.candle)) {
+                // TODO make candle able to act on rio canbus
+                ledManager =
+                    new CANdleImpl(
+                        subsystem.candle,
+                        config.infrastructure.canivoreBusName
+                    );
             }
-            return canifier;
-        }
-        reportGhostWarning("CANifier", subsystemName, "canifier");
-
-        return new GhostCanifier();
-    }
-
-    public ICANdle getCandle(String subsystemName) {
-        ICANdle candle;
-        var subsystem = getSubsystem(subsystemName);
-        if (subsystem.implemented && isHardwareValid((subsystem.candle))) {
-            candle =
-                new CANdleImpl(subsystem.candle, config.infrastructure.canivoreBusName);
-            candle.configFactoryDefault();
-            candle.configStatusLedState(true);
-            candle.configLOSBehavior(true);
-            candle.configLEDType(CANdle.LEDStripType.BRG);
-            candle.configBrightnessScalar(1);
-            if (getConstant("configStatusFrames") == 1) {
-                setStatusFrame(candle);
+            if (ledManager != null) {
+                if (factory.getConstant("resetFactoryDefaults") > 0) {
+                    ledManager.configFactoryDefault();
+                    ledManager.configStatusLedState(true);
+                    ledManager.configLOSBehavior(true);
+                    ledManager.configLEDType(CANdle.LEDStripType.BRG);
+                    ledManager.configBrightnessScalar(1);
+                }
+                return ledManager;
             }
-            return candle;
+            reportGhostWarning("LEDManager", subsystemName, "");
         }
-        reportGhostWarning(CANdle.class.getSimpleName(), subsystemName, "candle");
-        return new GhostCANdle();
+
+        return new GhostLEDManager();
     }
 
     public ICompressor getCompressor() {
         if (isPcmEnabled()) {
-            if (config.infrastructure.pcmIsRev) {
-                return new CompressorImpl(getPcmId(), PneumaticsModuleType.REVPH);
-            } else {
-                return new CompressorImpl(getPcmId(), PneumaticsModuleType.CTREPCM);
-            }
+            PneumaticsModuleType pcmType = config.infrastructure.pcmIsRev
+                ? PneumaticsModuleType.REVPH
+                : PneumaticsModuleType.CTREPCM;
+            return new CompressorImpl(getPcmId(), pcmType);
         }
         reportGhostWarning("Compressor", "ROOT", "on PCM ID " + getPcmId()); // root?
         return new GhostCompressor();
@@ -551,122 +508,9 @@ public class RobotFactory {
         );
     }
 
-    private final int canMaxStatus = 100;
-
-    private void setStatusFrame(IGreenMotor device) {
-        device.setStatusFramePeriod(StatusFrame.Status_1_General, canMaxStatus, 100);
-        device.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, canMaxStatus, 100);
-        device.setStatusFramePeriod(StatusFrame.Status_4_AinTempVbat, canMaxStatus, 100);
-        device.setStatusFramePeriod(StatusFrame.Status_6_Misc, canMaxStatus, 100);
-        device.setStatusFramePeriod(StatusFrame.Status_7_CommStatus, canMaxStatus, 100);
-        device.setStatusFramePeriod(
-            StatusFrame.Status_9_MotProfBuffer,
-            canMaxStatus,
-            100
-        );
-        device.setStatusFramePeriod(StatusFrame.Status_10_Targets, canMaxStatus, 100);
-        device.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, canMaxStatus, 100);
-        device.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, canMaxStatus, 100);
-        device.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, canMaxStatus, 100);
-        device.setStatusFramePeriod(
-            StatusFrame.Status_15_FirmwareApiStatus,
-            canMaxStatus,
-            100
-        );
-        device.setStatusFramePeriod(StatusFrame.Status_17_Targets1, canMaxStatus, 100);
-    }
-
-    private void setStatusFrame(BasePigeon device) {
-        device.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_1_General, 100);
-        device.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_2_Gyro, 100);
-        device.setStatusFramePeriod(
-            PigeonIMU_StatusFrame.CondStatus_2_GeneralCompass,
-            100
-        );
-        device.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_3_GeneralAccel, 100);
-        device.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_4_Mag, 100);
-        device.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_6_Accel, 100);
-        device.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_6_SensorFusion, 100);
-        device.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR, 100);
-        device.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_10_SixDeg_Quat, 100);
-        device.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_11_GyroAccum, 100);
-        device.setStatusFramePeriod(PigeonIMU_StatusFrame.RawStatus_4_Mag, 100);
-    }
-
-    private void setStatusFrame(CANCoder device) {
-        //        device.setStatusFramePeriod(CANCoderStatusFrame.SensorData, canMaxStatus, 100);
-        device.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, canMaxStatus, 100);
-    }
-
-    private void setStatusFrame(CANifier device) {
-        device.setStatusFramePeriod(
-            CANifierStatusFrame.Status_1_General,
-            canMaxStatus,
-            100
-        );
-        device.setStatusFramePeriod(
-            CANifierStatusFrame.Status_2_General,
-            canMaxStatus,
-            100
-        );
-        device.setStatusFramePeriod(
-            CANifierStatusFrame.Status_3_PwmInputs0,
-            canMaxStatus,
-            100
-        );
-        device.setStatusFramePeriod(
-            CANifierStatusFrame.Status_4_PwmInputs1,
-            canMaxStatus,
-            100
-        );
-        device.setStatusFramePeriod(
-            CANifierStatusFrame.Status_5_PwmInputs2,
-            canMaxStatus,
-            100
-        );
-        device.setStatusFramePeriod(
-            CANifierStatusFrame.Status_6_PwmInputs3,
-            canMaxStatus,
-            100
-        );
-        device.setStatusFramePeriod(CANifierStatusFrame.Status_8_Misc, canMaxStatus, 100);
-    }
-
-    private void setStatusFrame(ICANdle device) {
-        device.setStatusFramePeriod(
-            CANdleStatusFrame.CANdleStatusFrame_Status_1_General,
-            canMaxStatus,
-            100
-        );
-        device.setStatusFramePeriod(
-            CANdleStatusFrame.CANdleStatusFrame_Status_2_Startup,
-            canMaxStatus,
-            100
-        );
-        device.setStatusFramePeriod(
-            CANdleStatusFrame.CANdleStatusFrame_Status_3_FirmwareApiStatus,
-            canMaxStatus,
-            100
-        );
-        device.setStatusFramePeriod(
-            CANdleStatusFrame.CANdleStatusFrame_Status_4_ControlTelem,
-            canMaxStatus,
-            100
-        );
-        device.setStatusFramePeriod(
-            CANdleStatusFrame.CANdleStatusFrame_Status_5_PixelPulseTrain,
-            canMaxStatus,
-            100
-        );
-        device.setStatusFramePeriod(
-            CANdleStatusFrame.CANdleStatusFrame_Status_6_BottomPixels,
-            canMaxStatus,
-            100
-        );
-        device.setStatusFramePeriod(
-            CANdleStatusFrame.CANdleStatusFrame_Status_7_TopPixels,
-            canMaxStatus,
-            100
-        );
+    private enum PIDConfig {
+        Azimuth,
+        Drive,
+        Generic,
     }
 }

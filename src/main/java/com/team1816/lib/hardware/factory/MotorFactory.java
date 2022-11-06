@@ -143,6 +143,7 @@ public class MotorFactory {
         SubsystemConfig subsystem,
         Map<String, PIDSlotConfiguration> pidConfigList
     ) {
+        // TODO add sparkMax config pid based on pidConfigList thru configAllSettings?
         return new LazySparkMax(id, name);
     }
 
@@ -177,6 +178,7 @@ public class MotorFactory {
         if (motor instanceof TalonFX) {
             motorConfig = new TalonFXConfiguration();
         } else {
+            // note: spark and ghost motors won't do anything with the motorConfig
             motorConfig = new TalonSRXConfiguration();
         }
 
@@ -263,9 +265,22 @@ public class MotorFactory {
         // applying configs to motor
         motor.configAllSettings(motorConfig, kTimeoutMs);
 
-        // inverting
-        motor.setInverted(subsystem.invertMotor.contains(name));
-        motor.setSensorPhase(subsystem.invertSensorPhase.contains(name));
+        // inversion
+        int id = motor.getDeviceID();
+
+        boolean invertMotor = subsystem.invertMotor.contains(name);
+        if (invertMotor) {
+            System.out.println("        Inverting " + name + " with ID " + id);
+        }
+        motor.setInverted(invertMotor);
+
+        boolean invertSensorPhase = subsystem.invertSensorPhase.contains(name);
+        if (invertSensorPhase) {
+            System.out.println(
+                "       Inverting sensor phase of " + name + " with ID " + id
+            );
+        }
+        motor.setSensorPhase(invertSensorPhase);
     }
 
     private static CANCoderConfiguration configureCanCoder(boolean invertCanCoder) {

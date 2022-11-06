@@ -1,20 +1,11 @@
-package com.team1816.lib.hardware.components.led;
+package com.team1816.lib.hardware.components.ledManager;
 
+import com.ctre.phoenix.CANifierStatusFrame;
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
-import com.ctre.phoenix.led.CANdleStatusFrame;
 
-public class GhostCANdle implements ICANdle {
-
-    @Override
-    public ErrorCode setStatusFramePeriod(
-        CANdleStatusFrame caNdleStatusFrame_status_4_controlTelem,
-        int canMaxStatus,
-        int i
-    ) {
-        return ErrorCode.OK;
-    }
+public class GhostCANdle implements ILEDManager {
 
     @Override
     public ErrorCode configFactoryDefault() {
@@ -49,5 +40,14 @@ public class GhostCANdle implements ICANdle {
     @Override
     public ErrorCode animate(Animation animation) {
         return ErrorCode.OK;
+    }
+
+    @Override
+    public ErrorCode setStatusFramePeriod(
+        CANifierStatusFrame statusFrame,
+        int periodMs,
+        int timeoutMs
+    ) {
+        return null;
     }
 }
