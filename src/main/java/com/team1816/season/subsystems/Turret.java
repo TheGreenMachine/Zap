@@ -13,6 +13,7 @@ import com.team1816.season.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -264,6 +265,18 @@ public class Turret extends Subsystem implements PidProvider {
         }
 
         robotState.vehicleToTurret = Rotation2d.fromDegrees(getActualPosDegrees());
+        robotState.fieldToTurret =
+            new Pose2d(
+                robotState.fieldToVehicle
+                    .transformBy(
+                        new Transform2d(
+                            Constants.kTurretMountingOffset,
+                            Constants.EmptyRotation
+                        )
+                    )
+                    .getTranslation(),
+                robotState.fieldToVehicle.getRotation().plus(robotState.vehicleToTurret)
+            );
     }
 
     @Override

@@ -13,7 +13,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.RobotBase;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -228,7 +227,6 @@ public class Orchestrator {
         if (!robotState.isPoseUpdated) {
             return true;
         }
-        if (RobotBase.isSimulation() || RobotBase.isReal()) return false; // simulation requires too much effort, reality can't happen right now
         boolean needsVisionUpdate =
             (
                 Math.abs(
@@ -241,7 +239,10 @@ public class Orchestrator {
                     robotState.triAxialAcceleration[1]
                 ) >
                 Constants.kMaxAccelDiffThreshold ||
-                Math.abs(-9.8d - robotState.triAxialAcceleration[2]) >
+                Math.abs(
+                    -Constants.gravitationalAccelerationConstant -
+                    robotState.triAxialAcceleration[2]
+                ) >
                 Constants.kMaxAccelDiffThreshold
             );
         if (needsVisionUpdate) {
@@ -254,7 +255,7 @@ public class Orchestrator {
         var cameraPoints = robotState.visibleTargets;
         List<Pose2d> poses = new ArrayList<>();
         double sX = 0, sY = 0;
-        for (RobotState.Point point : cameraPoints) {
+        for (Camera.Point point : cameraPoints) {
             Pose2d targetPos = new Pose2d(
                 FieldConfig.aprilTags.get(point.id).getX(),
                 FieldConfig.aprilTags.get(point.id).getY(),

@@ -211,7 +211,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             chassisSpeed.vyMetersPerSecond,
             chassisSpeed.omegaRadiansPerSecond
         );
-        robotState.normalizedDeltaChassisSpeeds =
+        robotState.calculatedVehicleAccel =
             new ChassisSpeeds(
                 (cs.vxMetersPerSecond - robotState.deltaVehicle.vxMetersPerSecond) /
                 Constants.kLooperDt,

@@ -1,7 +1,5 @@
 package com.team1816.season.subsystems;
 
-import static com.team1816.season.states.RobotState.Point;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
@@ -17,7 +15,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.*;
 import org.photonvision.*;
 import org.photonvision.targeting.*;
@@ -32,17 +29,20 @@ public class Camera extends Subsystem {
     private PhotonSimVisionSystem simCam;
     // Constants
     private static final String NAME = "camera";
+
+    // TODO find accurate values for below vars
     private static final double CAMERA_FOCAL_LENGTH = 700; // px
     private static final double VIDEO_WIDTH = 1280; // px
     private static final double VIDEO_HEIGHT = 720; // px
-    private static final double CAMERA_HFOV = 85;
-    private static final double CAMERA_DFOV = 110; // degrees
-    public static final double CAMERA_VFOV = 54; // 2 * Math.atan((VIDEO_WIDTH / 2) / CAMERA_FOCAL_LENGTH); // deg
-    private final double MAX_DIST = factory.getConstant(NAME, "maxDist", 20);
 
-    private final double CAMERA_HEIGHT_METERS = Units.inchesToMeters(
-        Constants.kCameraMountingHeight
-    );
+    // zed dfov - checked for accuracy
+    private static final double CAMERA_DFOV = 110; // degrees
+
+    // for debugging rn
+    private final double MAX_DIST = factory.getConstant(NAME, "maxDist", 20);
+    private static final double CAMERA_HFOV = 85;
+
+    private final double CAMERA_HEIGHT_METERS = 0.7493; // meters
     private final double TARGET_HEIGHT_METERS = Units.inchesToMeters(
         Constants.kTargetHeight
     );
@@ -70,13 +70,11 @@ public class Camera extends Subsystem {
                         Constants.EmptyRotation
                     ), //TODO update this value
                     CAMERA_HEIGHT_METERS,
-                    MAX_DIST,
+                    9000,
                     4416,
                     1242,
                     0
                 );
-            // TODO move this stuff into a static "field setup util" class
-            List<Pose2d> aprilTagPoses = new ArrayList<>();
             for (int i = 0; i <= 53; i++) {
                 if (FieldConfig.aprilTags.get(i) == null) {
                     continue;
@@ -99,8 +97,6 @@ public class Camera extends Subsystem {
             PhotonCamera.setVersionCheckEnabled(false);
             cam = new PhotonCamera("zed");
         }
-
-        SmartDashboard.putNumber("Camera/cy", 0);
     }
 
     public void setCameraEnabled(boolean cameraEnabled) {
@@ -134,7 +130,12 @@ public class Camera extends Subsystem {
             );
             simCam.processFrame(robotState.fieldToVehicle);
         } else {
-            getPoints();
+            //
+            //            if(needsPoseUpdate){
+            //
+            //            }
+            robotState.visibleTargets = getPoints();
+            //            PhotonUtils.estimateFieldToRobot()
         }
     }
 
@@ -145,7 +146,7 @@ public class Camera extends Subsystem {
             return targets;
         }
 
-        double m = 0xFFFFFF;
+        double m = 0xFFFFFF; // big number
         var principal_RANSAC = new PhotonTrackedTarget();
 
         for (PhotonTrackedTarget target : result.targets) {
@@ -166,7 +167,6 @@ public class Camera extends Subsystem {
         }
 
         bestTrackedTarget = principal_RANSAC;
-        robotState.visibleTargets = targets;
 
         return targets;
     }
@@ -185,7 +185,7 @@ public class Camera extends Subsystem {
         return bestTrackedTarget.getYaw();
     }
 
-    public boolean checkSystem() { // this doesn't actually do anything because there's no read calls
+    public boolean checkSystem() {
         if (this.isImplemented()) {
             setCameraEnabled(true);
             Timer.delay(2);
@@ -221,5 +221,25 @@ public class Camera extends Subsystem {
             currentTurretAngle += 360;
         }
         return ((currentTurretAngle - targetTurretAngle)); // scaling for the feedback loop
+    }
+
+    /** Camera state */
+    public static class Point {
+
+        public int id; // -2 if not detected
+
+        public double x;
+        public double y;
+        public double z;
+
+        public double weight;
+
+        public Point() {
+            id = 0;
+            x = 0;
+            y = 0;
+            z = 0;
+            weight = 0;
+        }
     }
 }

@@ -22,14 +22,15 @@ public class RobotState {
     public Pose2d fieldToVehicle = Constants.EmptyPose;
     public Pose2d extrapolatedFieldToVehicle = Constants.EmptyPose;
     public Rotation2d vehicleToTurret = Constants.EmptyRotation;
-    public ChassisSpeeds deltaVehicle = new ChassisSpeeds();
-    public ChassisSpeeds normalizedDeltaChassisSpeeds = new ChassisSpeeds();
+    public Pose2d fieldToTurret = Constants.EmptyPose;
+    public ChassisSpeeds deltaVehicle = new ChassisSpeeds(); // velocities of vehicle
+    public ChassisSpeeds calculatedVehicleAccel = new ChassisSpeeds(); // accel values calculated by watching drivetrain encoders
     public Double[] triAxialAcceleration = new Double[] { 0d, 0d, 0d };
     public boolean isPoseUpdated = true;
 
     /** Orchestrator states */
     public Orchestrator.STATE superstructureState = Orchestrator.STATE.LITTLE_MAN;
-    public List<Point> visibleTargets = new ArrayList<>();
+    public List<Camera.Point> visibleTargets = new ArrayList<>();
     public Collector.STATE collectorState = Collector.STATE.STOP;
     public Shooter.STATE shooterState = Shooter.STATE.STOP;
     public Spindexer.STATE spinState = Spindexer.STATE.STOP;
@@ -67,7 +68,7 @@ public class RobotState {
         shooterState = Shooter.STATE.STOP;
         coolState = Cooler.STATE.WAIT;
         deltaVehicle = new ChassisSpeeds();
-        normalizedDeltaChassisSpeeds = new ChassisSpeeds();
+        calculatedVehicleAccel = new ChassisSpeeds();
         triAxialAcceleration = new Double[] { 0d, 0d, 0d };
         isPoseUpdated = true;
         visibleTargets.clear();
@@ -76,21 +77,11 @@ public class RobotState {
 
     /** Base State getters */
     public Rotation2d getLatestFieldToTurret() {
-        return fieldToVehicle.getRotation().plus(vehicleToTurret);
+        return fieldToTurret.getRotation();
     }
 
     public synchronized Pose2d getFieldToTurretPos() {
-        return new Pose2d(
-            fieldToVehicle
-                .transformBy(
-                    new Transform2d(
-                        Constants.kTurretMountingOffset,
-                        Constants.EmptyRotation
-                    )
-                )
-                .getTranslation(),
-            getLatestFieldToTurret()
-        );
+        return fieldToTurret;
     }
 
     public synchronized Pose2d getEstimatedFieldToTurretPos() {
@@ -108,7 +99,7 @@ public class RobotState {
     }
 
     public synchronized ChassisSpeeds getCalculatedAccel() {
-        return normalizedDeltaChassisSpeeds;
+        return calculatedVehicleAccel;
     }
 
     /** Distance calculation */
@@ -132,25 +123,5 @@ public class RobotState {
         field.setRobotPose(fieldToVehicle);
         field.getObject("EstimatedRobot").setPose(extrapolatedFieldToVehicle);
         field.getObject(Turret.NAME).setPose(getFieldToTurretPos());
-    }
-
-    /** Camera state */
-    public static class Point {
-
-        public int id; // -2 if not detected
-
-        public double x;
-        public double y;
-        public double z;
-
-        public double weight;
-
-        public Point() {
-            id = 0;
-            x = 0;
-            y = 0;
-            z = 0;
-            weight = 0;
-        }
     }
 }

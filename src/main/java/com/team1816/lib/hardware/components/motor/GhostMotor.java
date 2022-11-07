@@ -84,7 +84,6 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
                     actualOutput[i] = desiredDemand[i];
                 }
             }
-            System.out.println(actualOutput[2]);
         } else {
             for (int i = 0; i < 3; i++) {
                 actualOutput[i] = desiredDemand[i];
@@ -192,6 +191,15 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
     @Override
     public ErrorCode configVelocityMeasurementPeriod(
         SensorVelocityMeasPeriod period,
+        int timeoutMs
+    ) {
+        return null;
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public ErrorCode configVelocityMeasurementPeriod(
+        VelocityMeasPeriod period,
         int timeoutMs
     ) {
         return null;
@@ -653,14 +661,6 @@ public class GhostMotor implements IGreenMotor, IMotorSensor {
     @Override
     public int getStatusFramePeriod(StatusFrameEnhanced frame, int timeoutMs) {
         return 0;
-    }
-
-    @Override
-    public ErrorCode configVelocityMeasurementPeriod(
-        VelocityMeasPeriod period,
-        int timeoutMs
-    ) {
-        return ErrorCode.OK;
     }
 
     @Override

@@ -27,9 +27,9 @@ public class FieldConfig {
 
             put(2, new Pose3d(new Translation3d(3.072, 5.249, 1.376), new Rotation3d())); // target - Blue Hangar Truss - Side
 
-            put(3, new Pose3d(new Translation3d(0.008, 5.966, 1.376), new Rotation3d())); // Blue Station 2 Wall
+            put(3, new Pose3d(new Translation3d(0.008, 5.059, 0.806), new Rotation3d())); // Blue Station 2 Wall
 
-            put(4, new Pose3d(new Translation3d(0.008, 3.575, 1.376), new Rotation3d())); // Blue Station 3 Wall
+            put(4, new Pose3d(new Translation3d(0.008, 3.575, 0.806), new Rotation3d())); // Blue Station 3 Wall
 
             // blue human player station
             put(5, new Pose3d(new Translation3d(0.125, 1.656, 0.891), new Rotation3d())); // Blue Terminal Near Station
@@ -57,12 +57,12 @@ public class FieldConfig {
             put(
                 13,
                 new Pose3d(new Translation3d(16.459, 3.114, 0.806), new Rotation3d())
-            );
+            ); // red Station 2 Wall
 
             put(
                 14,
                 new Pose3d(new Translation3d(16.459, 4.655, 0.806), new Rotation3d())
-            );
+            ); // red Station 3 Wall
 
             // red human player station
             put(

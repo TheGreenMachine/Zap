@@ -151,9 +151,6 @@
     }
   },
   "NetworkTables": {
-    "FMSInfo": {
-      "open": true
-    },
     "LiveWindow": {
       "drivetrain": {
         "open": true
@@ -168,8 +165,7 @@
       },
       "Starting Position": {
         "open": true
-      },
-      "open": true
+      }
     },
     "photonvision": {
       "open": true,

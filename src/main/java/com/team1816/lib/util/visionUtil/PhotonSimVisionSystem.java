@@ -138,12 +138,6 @@ public class PhotonSimVisionSystem {
      */
     public void processFrame(Pose2d robotPoseMeters) {
         Pose2d cameraPos = robotPoseMeters.transformBy(cameraToRobot.inverse());
-        //        System.out.println(
-        //            "cam rot = " +
-        //            cameraPos.getRotation().getDegrees() +
-        //            " cam pos = " +
-        //            cameraPos.toString()
-        //        );
         ArrayList<PhotonTrackedTarget> visibleTgtList = new ArrayList<>(
             targetList.size()
         );
