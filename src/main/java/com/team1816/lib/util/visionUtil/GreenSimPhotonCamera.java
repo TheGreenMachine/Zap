@@ -29,7 +29,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonTargetSortMode;
 import org.photonvision.PhotonVersion;
 import org.photonvision.common.dataflow.structures.Packet;
@@ -37,7 +36,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 @SuppressWarnings("unused")
-public class PhotonSimPhotonCamera extends PhotonCamera {
+public class GreenSimPhotonCamera extends GreenPhotonCamera {
 
     public List<NetworkTableEntry> targetList = new ArrayList<NetworkTableEntry>();
 
@@ -63,7 +62,7 @@ public class PhotonSimPhotonCamera extends PhotonCamera {
      *     NetworkTableInstance::getDefault
      * @param cameraName The name of the camera, as seen in the UI.
      */
-    public PhotonSimPhotonCamera(NetworkTableInstance instance, String cameraName) {
+    public GreenSimPhotonCamera(NetworkTableInstance instance, String cameraName) {
         super(instance, cameraName);
         latencyMillisEntry = rootTable.getEntry("latencyMillis");
         hasTargetEntry = rootTable.getEntry("hasTargetEntry");
@@ -98,7 +97,7 @@ public class PhotonSimPhotonCamera extends PhotonCamera {
      *
      * @param cameraName The nickname of the camera (found in the PhotonVision UI).
      */
-    public PhotonSimPhotonCamera(String cameraName) {
+    public GreenSimPhotonCamera(String cameraName) {
         this(NetworkTableInstance.getDefault(), cameraName);
     }
 
@@ -167,6 +166,7 @@ public class PhotonSimPhotonCamera extends PhotonCamera {
         );
         var newPacket = new Packet(newResult.getPacketSize());
         newResult.populatePacket(newPacket);
+        rawBytesEntry.setRaw(newPacket.getData());
 
         boolean hasTargets = newResult.hasTargets();
         hasTargetEntry.setBoolean(hasTargets);

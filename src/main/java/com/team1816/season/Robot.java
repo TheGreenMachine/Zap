@@ -291,7 +291,7 @@ public class Robot extends TimedRobot {
                         () -> distanceManager.incrementBucket(-100)
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("autoAim"),
+                        () -> controlBoard.getAsBool("eject"),
                         aim -> {
                             if (aim) {
                                 orchestrator.autoAim();
@@ -394,7 +394,7 @@ public class Robot extends TimedRobot {
                         turret::revolve
                     ),
                     createHoldAction(
-                        () -> controlBoard.getAsBool("eject"),
+                        () -> controlBoard.getAsBool("autoAim"),
                         eject -> {
                             if (
                                 eject &&

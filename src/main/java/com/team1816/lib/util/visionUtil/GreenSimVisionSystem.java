@@ -32,9 +32,9 @@ import org.photonvision.PhotonTargetSortMode;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
 
-public class PhotonSimVisionSystem {
+public class GreenSimVisionSystem {
 
-    PhotonSimPhotonCamera cam;
+    GreenSimPhotonCamera cam;
 
     double camHorizFOVDegrees;
     double camVertFOVDegrees;
@@ -46,7 +46,7 @@ public class PhotonSimVisionSystem {
     double minTargetArea;
     Transform2d cameraToRobot;
 
-    ArrayList<PhotonSimVisionTarget> targetList;
+    ArrayList<GreenSimVisionTarget> targetList;
 
     /**
      * Create a simulated vision system involving a camera and coprocessor mounted on a mobile robot
@@ -55,9 +55,12 @@ public class PhotonSimVisionSystem {
      *
      * @param camName Name of the PhotonVision camera to create. Align it with the settings you use in
      *     the PhotonVision GUI.
-     * @param camDiagFOVDegrees Diagonal Field of View of the camera used. Align it with the
+     * @param camVertFOVDegrees Vertical Field of View of the camera used. Align it with the
      *     manufacturer specifications, and/or whatever is configured in the PhotonVision Setting
      *     page.
+     * @param camHorizFOVDegrees Horizontal Field of View of the camera used. Align it with the
+     * manufacturer specifications, and/or whatever is configured in the PhotonVision Setting
+     * page.
      * @param camPitchDegrees pitch of the camera's view axis back from horizontal. Make this the same
      *     as whatever is configured in the PhotonVision Setting page.
      * @param cameraToRobot Pose Transform to move from the camera's mount position to the robot's
@@ -71,9 +74,10 @@ public class PhotonSimVisionSystem {
      *     target by the camera. Match this with your contour filtering settings in the PhotonVision
      *     GUI.
      */
-    public PhotonSimVisionSystem(
+    public GreenSimVisionSystem( // not using diag FOV to calculate horiz/vert FOV b/c calculated numbers don't match official camera properties
         String camName,
-        double camDiagFOVDegrees,
+        double camHorizFOVDegrees,
+        double camVertFOVDegrees,
         double camPitchDegrees,
         Transform2d cameraToRobot,
         double cameraHeightOffGroundMeters,
@@ -92,10 +96,10 @@ public class PhotonSimVisionSystem {
 
         // Calculate horizontal/vertical FOV by similar triangles
         double hypotPixels = Math.hypot(cameraResWidth, cameraResHeight);
-        this.camHorizFOVDegrees = camDiagFOVDegrees * cameraResWidth / hypotPixels;
-        this.camVertFOVDegrees = camDiagFOVDegrees * cameraResHeight / hypotPixels;
+        this.camHorizFOVDegrees = camHorizFOVDegrees;
+        this.camVertFOVDegrees = camVertFOVDegrees;
 
-        cam = new PhotonSimPhotonCamera(camName);
+        cam = new GreenSimPhotonCamera(camName);
         targetList = new ArrayList<>();
     }
 
@@ -106,7 +110,7 @@ public class PhotonSimVisionSystem {
      *
      * @param target Target to add to the simulated field
      */
-    public void addSimVisionTarget(PhotonSimVisionTarget target) {
+    public void addSimVisionTarget(GreenSimVisionTarget target) {
         targetList.add(target);
     }
 

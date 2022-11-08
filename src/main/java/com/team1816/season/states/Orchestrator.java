@@ -9,12 +9,10 @@ import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.season.Constants;
 import com.team1816.season.subsystems.*;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 import java.util.ArrayList;
 import java.util.List;
+import org.photonvision.PhotonUtils;
 
 /** The class responsible for organizing the collector, spindexer, elevator, and shooter into runnable actions - manages the robot's DESIRED states */
 
@@ -39,7 +37,7 @@ public class Orchestrator {
     private boolean revving;
     private boolean firing;
     private final boolean useVision;
-    private final double maxAllowablePoseError = factory.getConstant(
+    private final double kMaxAllowablePoseError = factory.getConstant(
         "maxAllowablePoseError",
         0.2
     );
@@ -253,35 +251,22 @@ public class Orchestrator {
 
     public Pose2d calculatePoseFromCamera() {
         var cameraPoints = robotState.visibleTargets;
-        List<Pose2d> poses = new ArrayList<>();
+        List<Pose2d> poses = new ArrayList<>(); // for logging?
         double sX = 0, sY = 0;
         for (Camera.Point point : cameraPoints) {
-            Pose2d targetPos = new Pose2d(
-                FieldConfig.aprilTags.get(point.id).getX(),
-                FieldConfig.aprilTags.get(point.id).getY(),
-                new Rotation2d()
-            );
             if (point.id == -1) { // adding hub radius target offset - this is for retro-reflective tape only
-                double x, y;
-                x =
-                    Units.inchesToMeters(Constants.kTargetRadius) *
-                    point.x /
-                    (Math.sqrt(point.x * point.x + point.y * point.y));
-                y =
-                    Units.inchesToMeters(Constants.kTargetRadius) *
-                    point.y /
-                    (Math.sqrt(point.x * point.x + point.y * point.y));
-                point.x += x;
-                point.y += y;
+                System.out.println(
+                    "shit ur pants, cardioid, I'm not your average reflecting man"
+                );
             }
-            Pose2d p = targetPos.plus(
-                new Transform2d(
-                    new Translation2d(point.x, point.y),
-                    robotState
-                        .getLatestFieldToTurret()
-                        .rotateBy(Rotation2d.fromDegrees(180))
-                )
-            ); // inverse turret angle
+            Pose2d fieldToTarget = FieldConfig.aprilTags.get(point.id).toPose2d();
+            Pose2d camPose = robotState.fieldToTurret; // TODO make a robotState getter for actual cam pos
+            Pose2d p = PhotonUtils.estimateFieldToRobot(
+                new Transform2d(camPose, fieldToTarget),
+                fieldToTarget,
+                new Transform2d(camPose, robotState.fieldToVehicle)
+            );
+
             sX += p.getX();
             sY += p.getY();
             poses.add(p);
@@ -295,10 +280,12 @@ public class Orchestrator {
             robotState.isPoseUpdated = true;
             return pose;
         }
+        System.out.println("cameraPoints is empty - returning fieldToVehicle");
         return robotState.fieldToVehicle;
     }
 
     public void updatePoseWithCamera() {
+        System.out.println("updating pose with camera!");
         Pose2d newRobotPose = calculatePoseFromCamera();
         if (
             Math.abs(
@@ -306,8 +293,8 @@ public class Orchestrator {
                     robotState.fieldToVehicle.getX() - newRobotPose.getX(),
                     robotState.fieldToVehicle.getY() - newRobotPose.getY()
                 )
-            ) >
-            maxAllowablePoseError
+            ) <
+            kMaxAllowablePoseError // todo remove this value and check if it's within the field boundaries
         ) {
             System.out.println(newRobotPose + " = new robot pose");
             drive.resetOdometry(newRobotPose);

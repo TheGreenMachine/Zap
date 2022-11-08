@@ -4,14 +4,13 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.subsystems.Subsystem;
-import com.team1816.lib.util.visionUtil.PhotonSimVisionSystem;
-import com.team1816.lib.util.visionUtil.PhotonSimVisionTarget;
+import com.team1816.lib.util.visionUtil.GreenPhotonCamera;
+import com.team1816.lib.util.visionUtil.GreenSimVisionSystem;
+import com.team1816.lib.util.visionUtil.GreenSimVisionTarget;
 import com.team1816.season.Constants;
 import com.team1816.season.states.FieldConfig;
 import com.team1816.season.states.RobotState;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
@@ -25,8 +24,8 @@ public class Camera extends Subsystem {
     // Components
     static LedManager led;
 
-    private PhotonCamera cam;
-    private PhotonSimVisionSystem simCam;
+    private GreenPhotonCamera cam;
+    private GreenSimVisionSystem simVisionSystem;
     // Constants
     private static final String NAME = "camera";
 
@@ -36,7 +35,7 @@ public class Camera extends Subsystem {
     private static final double VIDEO_HEIGHT = 720; // px
 
     // zed dfov - checked for accuracy
-    private static final double CAMERA_DFOV = 110; // degrees
+    private static final double CAMERA_DFOV = 100; // degrees - officially 110 degrees?
 
     // for debugging rn
     private final double MAX_DIST = factory.getConstant(NAME, "maxDist", 20);
@@ -60,10 +59,11 @@ public class Camera extends Subsystem {
         // 2023 dep on 2022 server
 
         if (RobotBase.isSimulation()) {
-            simCam =
-                new PhotonSimVisionSystem(
+            simVisionSystem =
+                new GreenSimVisionSystem(
                     "zed",
-                    CAMERA_DFOV,
+                    90,
+                    60,
                     Constants.kCameraMountingAngleY,
                     new Transform2d(
                         new Translation2d(-.12065, .13335),
@@ -71,16 +71,16 @@ public class Camera extends Subsystem {
                     ), //TODO update this value
                     CAMERA_HEIGHT_METERS,
                     9000,
-                    4416,
-                    1242,
+                    3840,
+                    1080,
                     0
                 );
             for (int i = 0; i <= 53; i++) {
                 if (FieldConfig.aprilTags.get(i) == null) {
                     continue;
                 }
-                simCam.addSimVisionTarget(
-                    new PhotonSimVisionTarget(
+                simVisionSystem.addSimVisionTarget(
+                    new GreenSimVisionTarget(
                         new Pose2d(
                             FieldConfig.aprilTags.get(i).getX(),
                             FieldConfig.aprilTags.get(i).getY(),
@@ -93,10 +93,9 @@ public class Camera extends Subsystem {
                     )
                 );
             }
-        } else {
-            PhotonCamera.setVersionCheckEnabled(false);
-            cam = new PhotonCamera("zed");
         }
+        GreenPhotonCamera.setVersionCheckEnabled(false);
+        cam = new GreenPhotonCamera("zed");
     }
 
     public void setCameraEnabled(boolean cameraEnabled) {
@@ -120,23 +119,27 @@ public class Camera extends Subsystem {
 
     public void readFromHardware() {
         if (RobotBase.isSimulation()) {
-            simCam.moveCamera(
+            simVisionSystem.moveCamera(
                 new Transform2d(
-                    Constants.kTurretMountingOffset.unaryMinus(),
-                    robotState.getFieldToTurretPos().getRotation().times(-1)
-                ),
+                    robotState.getFieldToTurretPos(),
+                    robotState.fieldToVehicle
+                ), // sim vision inverts this Transform when calculating robotPose
                 CAMERA_HEIGHT_METERS,
                 Constants.kCameraMountingAngleY
             );
-            simCam.processFrame(robotState.fieldToVehicle);
-        } else {
-            //
-            //            if(needsPoseUpdate){
-            //
-            //            }
-            robotState.visibleTargets = getPoints();
-            //            PhotonUtils.estimateFieldToRobot()
+            simVisionSystem.processFrame(robotState.fieldToVehicle);
+            robotState.field
+                .getObject("camera")
+                .setPose(
+                    robotState.fieldToVehicle.transformBy(
+                        new Transform2d(
+                            robotState.fieldToVehicle,
+                            robotState.getFieldToTurretPos()
+                        )
+                    )
+                );
         }
+        robotState.visibleTargets = getPoints();
     }
 
     public ArrayList<Point> getPoints() {
@@ -152,15 +155,12 @@ public class Camera extends Subsystem {
         for (PhotonTrackedTarget target : result.targets) {
             var p = new Point();
             if (target.getCameraToTarget() != null) {
-                var t = target.getCameraToTarget();
+                p.cameraToTarget = target.getCameraToTarget();
                 p.id = target.getFiducialId();
-                p.x = t.getX();
-                p.y = t.getY();
-                p.z = t.getZ();
                 targets.add(p);
 
-                if (m > t.getTranslation().getNorm()) {
-                    m = t.getTranslation().getNorm();
+                if (m > p.cameraToTarget.getTranslation().getNorm()) {
+                    m = p.cameraToTarget.getTranslation().getNorm();
                     principal_RANSAC = target;
                 }
             }
@@ -227,18 +227,12 @@ public class Camera extends Subsystem {
     public static class Point {
 
         public int id; // -2 if not detected
-
-        public double x;
-        public double y;
-        public double z;
-
+        public Transform3d cameraToTarget;
         public double weight;
 
         public Point() {
             id = 0;
-            x = 0;
-            y = 0;
-            z = 0;
+            cameraToTarget = new Transform3d();
             weight = 0;
         }
     }

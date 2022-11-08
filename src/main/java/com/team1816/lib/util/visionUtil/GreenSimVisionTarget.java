@@ -26,7 +26,7 @@ package com.team1816.lib.util.visionUtil;
 
 import edu.wpi.first.math.geometry.Pose2d;
 
-public class PhotonSimVisionTarget {
+public class GreenSimVisionTarget {
 
     Pose2d targetPos;
     double targetWidthMeters;
@@ -45,7 +45,7 @@ public class PhotonSimVisionTarget {
      * @param targetWidthMeters Width of the outer bounding box of the target in meters.
      * @param targetHeightMeters Pair Height of the outer bounding box of the target in meters.
      */
-    public PhotonSimVisionTarget(
+    public GreenSimVisionTarget(
         Pose2d targetPos,
         double targetHeightAboveGroundMeters,
         double targetWidthMeters,
