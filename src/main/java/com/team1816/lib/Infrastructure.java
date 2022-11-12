@@ -76,9 +76,8 @@ public class Infrastructure {
         }
     }
 
-
     public Double[] getAcceleration() {
-        return new Double[] {xAccel, yAccel, zAccel};
+        return new Double[] { xAccel, yAccel, zAccel };
     }
 
     public double getXAcceleration() {

@@ -95,7 +95,7 @@ public class Camera extends Subsystem {
             }
         }
         GreenPhotonCamera.setVersionCheckEnabled(false);
-        cam = new PhotonCamera("ZED-M");
+        cam = new PhotonCamera("Microsoft_LifeCam_HD-3000");
     }
 
     public void setCameraEnabled(boolean cameraEnabled) {
