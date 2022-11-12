@@ -148,6 +148,7 @@ public class Camera extends Subsystem {
         if (!result.hasTargets()) {
             return targets;
         }
+        System.out.println(targets); //TODO remove
 
         double m = 0xFFFFFF; // big number
         var principal_RANSAC = new PhotonTrackedTarget();
@@ -165,6 +166,7 @@ public class Camera extends Subsystem {
                 }
             }
         }
+        System.out.println(targets); //TODO Remove
 
         bestTrackedTarget = principal_RANSAC;
 
