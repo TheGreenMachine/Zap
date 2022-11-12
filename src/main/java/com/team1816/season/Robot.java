@@ -390,23 +390,20 @@ public class Robot extends TimedRobot {
                             climber.incrementClimberStage();
                         }
                     ),
-                    createAction(
+                    createHoldAction(
                         () -> controlBoard.getAsBool("toggleTurretMode"),
-                        turret::revolve
+                        toggle -> {
+                            if (toggle) {
+                                turret.setControlMode(
+                                    Turret.ControlMode.ABSOLUTE_FOLLOWING
+                                );
+                            }
+                        }
                     ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("autoAim"),
                         eject -> {
-                            if (eject) {
-                                if (!robotState.visibleTargets.isEmpty()) {
-                                    System.out.println(
-                                        robotState.visibleTargets.get(0).toString()
-                                    );
-                                    orchestrator.updatePoseWithCamera();
-                                } else {
-                                    System.out.println("did not see anything!");
-                                }
-                            }
+                            orchestrator.updatePoseWithCamera();
                         }
                     ),
                     createAction(
