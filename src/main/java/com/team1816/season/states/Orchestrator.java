@@ -9,9 +9,12 @@ import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.season.Constants;
 import com.team1816.season.subsystems.*;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import java.util.ArrayList;
 import java.util.List;
+
+import edu.wpi.first.math.geometry.Translation2d;
 import org.photonvision.PhotonUtils;
 
 /** The class responsible for organizing the collector, spindexer, elevator, and shooter into runnable actions - manages the robot's DESIRED states */
@@ -260,7 +263,7 @@ public class Orchestrator {
                 );
             }
             Pose2d fieldToTarget = FieldConfig.aprilTags.get(point.id).toPose2d();
-            Pose2d camPose = robotState.fieldToVehicle; // TODO make a robotState getter for actual cam pos
+            Pose2d camPose = robotState.fieldToVehicle.transformBy(new Transform2d(new Translation2d(6, -3), robotState.fieldToVehicle.getRotation())); // TODO make a robotState getter for actual cam pos
             Pose2d p = PhotonUtils.estimateFieldToRobot(
                 new Transform2d(camPose, fieldToTarget),
                 fieldToTarget,
