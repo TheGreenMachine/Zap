@@ -292,7 +292,6 @@ public class Orchestrator {
 
     public void updatePoseWithCamera() {
         System.out.println("updating pose with camera!");
-        robotState.visibleTargets = camera.getPoints();
         Pose2d newRobotPose = calculatePoseFromCamera();
         if (
             Math.abs(
@@ -307,6 +306,8 @@ public class Orchestrator {
             drive.resetOdometry(newRobotPose);
             robotState.fieldToVehicle = newRobotPose;
             robotState.isPoseUpdated = true;
+        } else {
+            System.out.println("Measurable error too large");
         }
     }
 

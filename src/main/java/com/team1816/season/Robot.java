@@ -402,6 +402,7 @@ public class Robot extends TimedRobot {
                                     System.out.println(
                                         robotState.visibleTargets.get(0).toString()
                                     );
+                                    orchestrator.updatePoseWithCamera();
                                 } else {
                                     System.out.println("did not see anything!");
                                 }

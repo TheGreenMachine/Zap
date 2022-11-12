@@ -101,7 +101,7 @@ public class Turret extends Subsystem implements PidProvider {
         kRevWrapAroundPos = kRevLimit - MASK;
 
         // Position Control
-        double peakOutput = 0.5;
+        double peakOutput = 0.75;
         pidConfig = factory.getPidSlotConfig(NAME);
         turretMotor.configPeakOutputForward(peakOutput, Constants.kCANTimeoutMs);
         turretMotor.configNominalOutputForward(0, Constants.kCANTimeoutMs);

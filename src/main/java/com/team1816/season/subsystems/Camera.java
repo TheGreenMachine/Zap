@@ -147,7 +147,6 @@ public class Camera extends Subsystem {
         Point p = new Point();
         var result = cam.getLatestResult();
         if (!result.hasTargets()) {
-            System.out.println("I'm blind");
             return targets;
         }
         var bestTarget = result.getBestTarget();

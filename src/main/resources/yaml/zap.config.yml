@@ -91,9 +91,9 @@ subsystems:
         implemented: true
         pidConfig:
             slot0:
-                kP: 1.25
+                kP: 2.0
                 kI: 0.0003
-                kD: 40.5
+                kD: 30.5
                 kF: 0 # Should be 0 for position control
                 allowableError: 40
         talons:
@@ -121,7 +121,7 @@ subsystems:
         constants:
             useLinearPiecewise: 0
             useCubicSpline: 0
-            ballEjectionDuration: 0.8
+            ballEjectionDuration: 0.9
             usingPoseForSpeed: 0
             maxVelTicks100ms: 20700
             nearVel: 4500
