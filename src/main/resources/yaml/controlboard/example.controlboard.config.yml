@@ -38,6 +38,6 @@ operator:
         leftTrigger: yeetShot
         rightTrigger: shoot
     buttons:
-         start: toggleTopClamp
+        start: toggleTopClamp
         back: toggleBottomClamp
 demoMode: false

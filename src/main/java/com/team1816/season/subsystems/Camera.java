@@ -159,11 +159,10 @@ public class Camera extends Subsystem {
             return targets;
         }
 
-
         double m = 0xFFFFFF; // big number
         var principal_RANSAC = new PhotonTrackedTarget();
 
-        for (PhotonTrackedTarget target : List.of(result.getBestTarget())) { //TODO reimplement result.targets instead
+        for (PhotonTrackedTarget target : result.targets) {
             var p = new Point();
             if (target.getCameraToTarget() != null) {
                 p.cameraToTarget = target.getCameraToTarget();

@@ -270,6 +270,7 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("zeroPose"),
                         () -> {
                             turret.setTurretAngle(Turret.kSouth);
+                            turret.setControlMode(Turret.ControlMode.ABSOLUTE_FOLLOWING);
                             drive.zeroSensors(Constants.kDefaultZeroingPose);
                         }
                     ),
