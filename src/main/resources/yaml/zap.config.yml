@@ -106,7 +106,7 @@ subsystems:
             absPPR: 4096
             turretPPR: 53248 # 4096 * 13
     shooter:
-        implemented: false
+        implemented: true
         falcons:
             shooterMain: 21
         invertMotor:
@@ -125,7 +125,7 @@ subsystems:
             usingPoseForSpeed: 0
             maxVelTicks100ms: 20700
             nearVel: 4500
-            midVel: 8450
+            midVel: 8650
             tarmacTapeVel: 8425
             launchpadVel: 10100
             maxVel: 16500
@@ -156,7 +156,7 @@ subsystems:
             secondToLastRungPos: -342000
             lastPos: -370000
     elevator:
-        implemented: false
+        implemented: true
         talons:
             elevator: 32
         pidConfig:
@@ -176,7 +176,7 @@ subsystems:
             flushPow: -0.3
             intakePow: 0.3
     spindexer:
-        implemented: false
+        implemented: true
         talons:
             spindexer: 31
         constants:

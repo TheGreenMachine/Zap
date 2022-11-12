@@ -10,8 +10,8 @@ public class TwoBallPathA extends AutoPath {
     @Override
     public List<Pose2d> getWaypoints() {
         return List.of(
-            new Pose2d(235, 207, Rotation2d.fromDegrees(135)),
-            new Pose2d(198, 243, Rotation2d.fromDegrees(135))
+            new Pose2d(245, 202, Rotation2d.fromDegrees(135)),
+            new Pose2d(209, 236, Rotation2d.fromDegrees(135))
         );
     }
 
