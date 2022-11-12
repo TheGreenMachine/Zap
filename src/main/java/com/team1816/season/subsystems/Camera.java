@@ -144,40 +144,43 @@ public class Camera extends Subsystem {
 
     public ArrayList<Point> getPoints() {
         ArrayList<Point> targets = new ArrayList<>();
+        Point p = new Point();
         var result = cam.getLatestResult();
-
         if (!result.hasTargets()) {
-            if (result == null) {
-                System.out.println("Pipeline null");
-                if (result.targets == null) {
-                    System.out.println("Pipeline targets null");
-                    if (result.targets.size() == 0) {
-                        System.out.println("Pipeline Empty");
-                    }
-                }
-            }
+            System.out.println("I'm blind");
             return targets;
         }
-
-        double m = 0xFFFFFF; // big number
-        var principal_RANSAC = new PhotonTrackedTarget();
-
-        for (PhotonTrackedTarget target : result.targets) {
-            var p = new Point();
-            if (target.getCameraToTarget() != null) {
-                p.cameraToTarget = target.getCameraToTarget();
-                p.id = target.getFiducialId();
-                targets.add(p);
-
-                if (m > p.cameraToTarget.getTranslation().getNorm()) {
-                    m = p.cameraToTarget.getTranslation().getNorm();
-                    principal_RANSAC = target;
-                }
-            }
-        }
-        bestTrackedTarget = principal_RANSAC;
-
+        var bestTarget = result.getBestTarget();
+        p.id = bestTarget.getFiducialId();
+        p.cameraToTarget = bestTarget.getCameraToTarget();
+        targets.add(p);
         return targets;
+        //        var result = cam.getLatestResult();
+        //        if (!result.hasTargets()) {
+        //            return targets;
+        //        }
+        //
+        //        double m = 0xFFFFFF; // big number
+        //        var principal_RANSAC = new PhotonTrackedTarget();
+        //
+        //        for (PhotonTrackedTarget target : result.targets) {
+        //            var p = new Point();
+        //            if (target.getCameraToTarget() != null) {
+        //                p.cameraToTarget = target.getCameraToTarget();
+        //                p.id = target.getFiducialId();
+        //                targets.add(p);
+        //
+        //                if (m > p.cameraToTarget.getTranslation().getNorm()) {
+        //                    m = p.cameraToTarget.getTranslation().getNorm();
+        //                    principal_RANSAC = target;
+        //                }
+        //            }
+        //        }
+        //        System.out.println(targets.get(0).cameraToTarget.toString()); //TODO Remove
+        //
+        //        bestTrackedTarget = principal_RANSAC;
+        //
+        //        return targets;
     }
 
     public double getDistance() {
