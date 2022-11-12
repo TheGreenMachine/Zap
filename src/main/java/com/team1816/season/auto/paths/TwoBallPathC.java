@@ -11,7 +11,7 @@ public class TwoBallPathC extends AutoPath {
     public List<Pose2d> getWaypoints() {
         return List.of(
             new Pose2d(299, 74, Rotation2d.fromDegrees(-90)),
-            new Pose2d(299, 38, Rotation2d.fromDegrees(-90))
+            new Pose2d(299, 28, Rotation2d.fromDegrees(-90))
         );
     }
 
