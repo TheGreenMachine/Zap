@@ -146,24 +146,24 @@ public class Camera extends Subsystem {
         ArrayList<Point> targets = new ArrayList<>();
         var result = cam.getLatestResult();
 
-        if (result == null) {
-            System.out.println();
-            if (result.targets == null) {
-                System.out.println("Pipeline targets null");
-                if (result.targets.size() == 0) {
-                    System.out.println("Pipeline Empty");
+        if (!result.hasTargets()) {
+            if (result == null) {
+                System.out.println("Pipeline null");
+                if (result.targets == null) {
+                    System.out.println("Pipeline targets null");
+                    if (result.targets.size() == 0) {
+                        System.out.println("Pipeline Empty");
+                    }
                 }
             }
-        }
-
-        if (!result.hasTargets()) {
             return targets;
         }
+
 
         double m = 0xFFFFFF; // big number
         var principal_RANSAC = new PhotonTrackedTarget();
 
-        for (PhotonTrackedTarget target : result.targets) {
+        for (PhotonTrackedTarget target : List.of(result.getBestTarget())) { //TODO reimplement result.targets instead
             var p = new Point();
             if (target.getCameraToTarget() != null) {
                 p.cameraToTarget = target.getCameraToTarget();
@@ -176,8 +176,6 @@ public class Camera extends Subsystem {
                 }
             }
         }
-        System.out.println(targets.get(0).cameraToTarget.toString()); //TODO Remove
-
         bestTrackedTarget = principal_RANSAC;
 
         return targets;
