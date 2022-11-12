@@ -14,12 +14,6 @@ public class PigeonIMUImpl extends PigeonIMU implements IPigeonIMU {
         return super.getYaw();
     }
 
-    public double[] getAcceleration() {
-        short[] accel = new short[3];
-        getBiasedAccelerometer(accel);
-        return new double[] { accel[0], accel[1], accel[2] };
-    }
-
     @Override
     public ErrorCode setYaw(double angleDeg) {
         return super.setYaw(angleDeg);

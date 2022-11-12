@@ -195,22 +195,6 @@ public class Robot extends TimedRobot {
                 BadLog.createTopic("Turret/ErrorPos", "NativeUnits", turret::getPosError);
                 BadLog.createTopic("PDP/Current", "Amps", infrastructure::getCurrent);
 
-                BadLog.createTopic(
-                    "Pigeon/AccelerationX",
-                    "G",
-                    infrastructure::getXAcceleration
-                );
-                BadLog.createTopic(
-                    "Pigeon/AccelerationY",
-                    "G",
-                    infrastructure::getYAcceleration
-                );
-                BadLog.createTopic(
-                    "Pigeon/AccelerationZ",
-                    "G",
-                    infrastructure::getZAcceleration
-                );
-
                 BadLog.createTopic("Vision/DeltaXAngle", "Degrees", camera::getDeltaX);
                 BadLog.createTopic("Vision/Distance", "inches", camera::getDistance);
 
