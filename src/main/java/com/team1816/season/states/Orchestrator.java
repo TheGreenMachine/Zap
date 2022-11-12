@@ -260,7 +260,7 @@ public class Orchestrator {
                 );
             }
             Pose2d fieldToTarget = FieldConfig.aprilTags.get(point.id).toPose2d();
-            Pose2d camPose = robotState.fieldToTurret; // TODO make a robotState getter for actual cam pos
+            Pose2d camPose = robotState.fieldToVehicle; // TODO make a robotState getter for actual cam pos
             Pose2d p = PhotonUtils.estimateFieldToRobot(
                 new Transform2d(camPose, fieldToTarget),
                 fieldToTarget,
