@@ -292,6 +292,7 @@ public class Orchestrator {
 
     public void updatePoseWithCamera() {
         System.out.println("updating pose with camera!");
+        robotState.visibleTargets = camera.getPoints();
         Pose2d newRobotPose = calculatePoseFromCamera();
         if (
             Math.abs(

@@ -121,7 +121,7 @@ subsystems:
         constants:
             useLinearPiecewise: 0
             useCubicSpline: 0
-            ballEjectionDuration: 1
+            ballEjectionDuration: 0.8
             usingPoseForSpeed: 0
             maxVelTicks100ms: 20700
             nearVel: 4500
