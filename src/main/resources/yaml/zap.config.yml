@@ -125,7 +125,7 @@ subsystems:
             usingPoseForSpeed: 0
             maxVelTicks100ms: 20700
             nearVel: 4500
-            midVel: 8450
+            midVel: 8650
             tarmacTapeVel: 8425
             launchpadVel: 10100
             maxVel: 16500
