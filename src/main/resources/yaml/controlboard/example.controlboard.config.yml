@@ -39,7 +39,6 @@ operator:
         rightTrigger: shoot
     buttons:
         leftBumper: autoAim #TODO Decide
-        rightBumper: autoAim #TODO Decide
         start: toggleTopClamp
         back: toggleBottomClamp
 demoMode: false

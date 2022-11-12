@@ -24,7 +24,7 @@ public class Camera extends Subsystem {
     // Components
     static LedManager led;
 
-    private GreenPhotonCamera cam;
+    private PhotonCamera cam;
     private GreenSimVisionSystem simVisionSystem;
     // Constants
     private static final String NAME = "camera";
@@ -61,7 +61,7 @@ public class Camera extends Subsystem {
         if (RobotBase.isSimulation()) {
             simVisionSystem =
                 new GreenSimVisionSystem(
-                    "zed",
+                    "ZED-M",
                     90,
                     60,
                     Constants.kCameraMountingAngleY,
@@ -95,7 +95,7 @@ public class Camera extends Subsystem {
             }
         }
         GreenPhotonCamera.setVersionCheckEnabled(false);
-        cam = new GreenPhotonCamera("zed");
+        cam = new PhotonCamera("ZED-M");
     }
 
     public void setCameraEnabled(boolean cameraEnabled) {
@@ -234,6 +234,10 @@ public class Camera extends Subsystem {
             id = 0;
             cameraToTarget = new Transform3d();
             weight = 0;
+        }
+
+        public String toString() {
+            return "id: " + id + " camToTar: " + cameraToTarget;
         }
     }
 }

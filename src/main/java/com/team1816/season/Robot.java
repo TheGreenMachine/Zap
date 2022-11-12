@@ -396,13 +396,14 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("autoAim"),
                         eject -> {
-                            if (
-                                eject &&
-                                !turret.getControlMode().equals(Turret.ControlMode.EJECT)
-                            ) {
-                                turret.setControlMode(Turret.ControlMode.EJECT);
-                            } else {
-                                turret.revolve();
+                            if (eject) {
+                                if (!robotState.visibleTargets.isEmpty()) {
+                                    System.out.println(
+                                        robotState.visibleTargets.get(0).toString()
+                                    );
+                                } else {
+                                    System.out.println("did not see anything!");
+                                }
                             }
                         }
                     ),
