@@ -95,7 +95,7 @@ public class Camera extends Subsystem {
             }
         }
         GreenPhotonCamera.setVersionCheckEnabled(false);
-        cam = new PhotonCamera("Microsoft_LifeCam_HD-3000");
+        cam = new PhotonCamera("microsoft");
     }
 
     public void setCameraEnabled(boolean cameraEnabled) {
@@ -144,16 +144,16 @@ public class Camera extends Subsystem {
 
     public ArrayList<Point> getPoints() {
         ArrayList<Point> targets = new ArrayList<>();
-        var result = cam.getLatestResult().getBestTarget();
         Point p = new Point();
-        if (result == null) {
+        var result = cam.getLatestResult();
+        if (!result.hasTargets()) {
             System.out.println("I'm blind");
             return targets;
         }
-        p.id = result.getFiducialId();
-        p.cameraToTarget = result.getCameraToTarget();
+        var bestTarget = result.getBestTarget();
+        p.id = bestTarget.getFiducialId();
+        p.cameraToTarget = bestTarget.getCameraToTarget();
         targets.add(p);
-        System.out.println(targets);
         return targets;
         //        var result = cam.getLatestResult();
         //        if (!result.hasTargets()) {
