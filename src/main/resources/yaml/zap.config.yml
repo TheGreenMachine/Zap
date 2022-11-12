@@ -80,7 +80,7 @@ subsystems:
             maxAccel: 2.54 # meters/s^ 2
             isDemoMode: 0
     ledmanager:
-        implemented: true
+        implemented: false
         canifier: -1
         candle: -1
         constants:
@@ -92,7 +92,7 @@ subsystems:
         implemented: true
         pidConfig:
             slot0:
-                kP: 1.25
+                kP: 2
                 kI: 0
                 kD: 25.5
                 kF: 0 # Should be 0 for position control
@@ -125,7 +125,7 @@ subsystems:
             usingPoseForSpeed: 0
             maxVelTicks100ms: 20700
             nearVel: 4500
-            midVel: 8250
+            midVel: 8450
             tarmacTapeVel: 8425
             launchpadVel: 10100
             maxVel: 16500
@@ -176,7 +176,7 @@ subsystems:
             flushPow: -0.3
             intakePow: 0.3
     spindexer:
-        implemented: false
+        implemented: true
         talons:
             spindexer: 31
         constants:
@@ -206,7 +206,7 @@ subsystems:
             collecting: 0.5 #-3600
             flush: -0.5 #.35
     camera:
-        implemented: true
+        implemented: false
         constants:
             debug: 0
             allowableDistanceError: 50
