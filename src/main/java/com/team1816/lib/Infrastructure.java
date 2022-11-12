@@ -21,6 +21,9 @@ public class Infrastructure {
     private static IPigeonIMU pigeon;
     private static PowerDistribution pd;
 
+    private double xAccel, yAccel, zAccel;
+    private double loopCount;
+
     private static boolean compressorEnabled;
     private static boolean compressorIsOn = false;
 
@@ -30,6 +33,8 @@ public class Infrastructure {
         pigeon = factory.getPigeon();
         pd = factory.getPd();
         compressorEnabled = factory.isCompressorEnabled();
+
+        xAccel = yAccel = zAccel = loopCount = 0;
     }
 
     public void startCompressor() { // not used because compressor currently turns on by default once robot is enabled
@@ -59,18 +64,21 @@ public class Infrastructure {
         return pigeon.getYaw();
     }
 
+    public void update() {
+        if (loopCount > 5) {
+            loopCount = 0;
+            double[] accel = pigeon.getAcceleration();
+            xAccel = accel[0] * Constants.gravitationalAccelerationConstant / 16384;
+            yAccel = accel[1] * Constants.gravitationalAccelerationConstant / 16384;
+            zAccel = -accel[2] * Constants.gravitationalAccelerationConstant / 16384;
+        } else {
+            loopCount++;
+        }
+    }
+
+
     public Double[] getAcceleration() {
-        return new Double[] {
-            pigeon.getAcceleration()[0] *
-            Constants.gravitationalAccelerationConstant /
-            16384,
-            pigeon.getAcceleration()[1] *
-            Constants.gravitationalAccelerationConstant /
-            16384,
-            pigeon.getAcceleration()[2] *
-            Constants.gravitationalAccelerationConstant /
-            16384,
-        };
+        return new Double[] {xAccel, yAccel, zAccel};
     }
 
     public double getXAcceleration() {
