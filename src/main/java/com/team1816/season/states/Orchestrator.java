@@ -11,10 +11,9 @@ import com.team1816.season.subsystems.*;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import java.util.ArrayList;
 import java.util.List;
-
-import edu.wpi.first.math.util.Units;
 import org.photonvision.PhotonUtils;
 
 /** The class responsible for organizing the collector, spindexer, elevator, and shooter into runnable actions - manages the robot's DESIRED states */
@@ -66,7 +65,7 @@ public class Orchestrator {
         elevator = elev;
         shooter = shoot;
         ledManager = led;
-        superstructureState = STATE.FAT_BOY;
+        superstructureState = STATE.LITTLE_MAN;
         collecting = false;
         revving = false;
         firing = false;
@@ -111,7 +110,7 @@ public class Orchestrator {
         if (revving) {
             shooter.setDesiredState(Shooter.STATE.REVVING);
             if (turret.getControlMode() == Turret.ControlMode.ABSOLUTE_FOLLOWING) {
-                setSuperstructureState(STATE.FAT_BOY);
+                //setSuperstructureState(STATE.FAT_BOY);
             } else {
                 setSuperstructureState(STATE.LITTLE_MAN);
             }

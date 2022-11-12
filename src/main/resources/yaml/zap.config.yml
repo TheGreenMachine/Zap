@@ -80,7 +80,7 @@ subsystems:
             maxAccel: 2.54 # meters/s^ 2
             isDemoMode: 0
     ledmanager:
-        implemented: true
+        implemented: false
         canifier: -1
         constants:
             raveEnabled: 0
@@ -208,7 +208,7 @@ subsystems:
             collecting: -.5 #-3600
             flush: 0.5 #.35
     camera:
-        implemented: true
+        implemented: false
         constants:
             debug: 0
             maxDist: 400
@@ -256,4 +256,3 @@ constants:
     teleopFieldCentric: 1 # 0 or 1
     kLooperDt: .035 # seconds
     resetFactoryDefaults: 0 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret
-
