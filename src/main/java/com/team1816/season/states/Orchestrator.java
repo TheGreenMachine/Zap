@@ -306,6 +306,8 @@ public class Orchestrator {
             drive.resetOdometry(newRobotPose);
             robotState.fieldToVehicle = newRobotPose;
             robotState.isPoseUpdated = true;
+        } else {
+            System.out.println("difference is too big... not updating");
         }
     }
 

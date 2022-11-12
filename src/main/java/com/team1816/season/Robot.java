@@ -290,18 +290,6 @@ public class Robot extends TimedRobot {
                         () -> controlBoard.getAsBool("lowerBucket"),
                         () -> distanceManager.incrementBucket(-100)
                     ),
-                    createHoldAction(
-                        () -> controlBoard.getAsBool("eject"),
-                        aim -> {
-                            if (aim) {
-                                orchestrator.autoAim();
-                                turret.snap();
-                            } else {
-                                orchestrator.updatePoseWithCamera();
-                                turret.setControlMode(defaultTurretControlMode);
-                            }
-                        }
-                    ),
                     createAction(
                         () -> controlBoard.getAsBool("toggleCamera"),
                         () -> {
@@ -389,22 +377,20 @@ public class Robot extends TimedRobot {
                             climber.incrementClimberStage();
                         }
                     ),
-                    createAction(
+                    createHoldAction(
                         () -> controlBoard.getAsBool("toggleTurretMode"),
-                        turret::revolve
+                        toggle -> {
+                            if (toggle) {
+                                turret.setControlMode(
+                                    Turret.ControlMode.ABSOLUTE_FOLLOWING
+                                );
+                            }
+                        }
                     ),
                     createHoldAction(
                         () -> controlBoard.getAsBool("autoAim"),
                         eject -> {
-                            if (eject) {
-                                if (!robotState.visibleTargets.isEmpty()) {
-                                    System.out.println(
-                                        robotState.visibleTargets.get(0).toString()
-                                    );
-                                } else {
-                                    System.out.println("did not see anything!");
-                                }
-                            }
+                            orchestrator.updatePoseWithCamera();
                         }
                     ),
                     createAction(
