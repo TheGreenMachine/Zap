@@ -321,6 +321,7 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("shoot"),
                         shooting -> {
+                            System.out.println("shooting button pressed");
                             superstructure.setRevving(
                                 shooting,
                                 Shooter.LAUNCHPAD_VEL,
