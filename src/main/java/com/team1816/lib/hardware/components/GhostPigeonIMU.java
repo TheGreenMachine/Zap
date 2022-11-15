@@ -7,11 +7,9 @@ import com.team1816.lib.hardware.components.motor.IGreenMotor;
 public class GhostPigeonIMU implements IPigeonIMU {
 
     double dummyYaw;
-    double[] dummyAccel;
 
     public GhostPigeonIMU(int id) {
         dummyYaw = 0;
-        dummyAccel = new double[] { 0d, 0d, -1d };
     }
 
     public GhostPigeonIMU(IGreenMotor motor) {}
@@ -19,11 +17,6 @@ public class GhostPigeonIMU implements IPigeonIMU {
     @Override
     public double getYaw() {
         return dummyYaw;
-    }
-
-    @Override
-    public double[] getAcceleration() {
-        return dummyAccel;
     }
 
     @Override
