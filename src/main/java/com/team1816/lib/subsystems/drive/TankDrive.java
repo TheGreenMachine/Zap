@@ -186,6 +186,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     @Override
     public void resetOdometry(Pose2d pose) {
+        actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
         tankOdometry.resetPosition(pose, getActualHeading());
         tankOdometry.update(actualHeading, leftActualDistance, rightActualDistance);
         updateRobotState();
