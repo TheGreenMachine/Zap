@@ -104,7 +104,13 @@ public class Camera extends Subsystem {
 
     public void readFromHardware() {}
 
-    public boolean checkSystem() { // this doesn't actually do anything because there's no read calls
+    @Override
+    public void writeToHardware() {}
+
+    @Override
+    public void zeroSensors() {}
+
+    public boolean testSubsystem() { // this doesn't actually do anything because there's no read calls
         return true;
     }
 

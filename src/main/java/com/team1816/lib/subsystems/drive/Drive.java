@@ -304,7 +304,7 @@ public abstract class Drive
 
     // other
     @Override
-    public abstract boolean checkSystem();
+    public abstract boolean testSubsystem();
 
     @Override
     public void initSendable(SendableBuilder builder) {

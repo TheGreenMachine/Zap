@@ -128,6 +128,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
             simulateGyroOffset();
         }
 
+        infrastructure.update();
         actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
 
         swerveOdometry.update(actualHeading, actualModuleStates);
@@ -301,7 +302,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     // other
     @Override
-    public boolean checkSystem() {
+    public boolean testSubsystem() {
         boolean modulesPassed = true;
         for (SwerveModule swerveModule : swerveModules) {
             if (!swerveModule.checkSystem()) {

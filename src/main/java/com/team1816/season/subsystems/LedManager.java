@@ -135,6 +135,9 @@ public class LedManager extends Subsystem {
     }
 
     @Override
+    public void readFromHardware() {}
+
+    @Override
     public void writeToHardware() {
         if (outputsChanged) {
             outputsChanged = false;
@@ -175,10 +178,13 @@ public class LedManager extends Subsystem {
     }
 
     @Override
+    public void zeroSensors() {}
+
+    @Override
     public void stop() {}
 
     @Override
-    public boolean checkSystem() {
+    public boolean testSubsystem() {
         System.out.println("Checking LED systems");
         controlState = LedControlState.STANDARD;
         setLedColor(MAX, 0, 0); // set red

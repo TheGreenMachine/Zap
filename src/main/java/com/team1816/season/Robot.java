@@ -10,7 +10,7 @@ import com.team1816.lib.controlboard.Controller;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.Looper;
-import com.team1816.lib.subsystems.SubsystemManager;
+import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.DrivetrainLogger;
 import com.team1816.season.auto.AutoModeManager;
@@ -37,7 +37,7 @@ public class Robot extends TimedRobot {
     private ActionManager actionManager;
 
     private final Infrastructure infrastructure;
-    private final SubsystemManager subsystemManager;
+    private final SubsystemLooper subsystemLooper;
 
     //State managers
     private final Superstructure superstructure;
@@ -90,7 +90,7 @@ public class Robot extends TimedRobot {
         robotState = Injector.get(RobotState.class);
         distanceManager = Injector.get(DistanceManager.class);
         ledManager = Injector.get(LedManager.class);
-        subsystemManager = Injector.get(SubsystemManager.class);
+        subsystemLooper = Injector.get(SubsystemLooper.class);
         autoModeManager = Injector.get(AutoModeManager.class);
     }
 
@@ -201,7 +201,7 @@ public class Robot extends TimedRobot {
                 logger.finishInitialization();
             }
 
-            subsystemManager.setSubsystems(
+            subsystemLooper.setSubsystems(
                 drive,
                 elevator,
                 spindexer,
@@ -213,9 +213,9 @@ public class Robot extends TimedRobot {
                 ledManager,
                 cooler
             );
-            subsystemManager.registerEnabledLoops(enabledLoop);
-            subsystemManager.registerDisabledLoops(disabledLoop);
-            subsystemManager.zeroSensors();
+            subsystemLooper.registerEnabledLoops(enabledLoop);
+            subsystemLooper.registerDisabledLoops(disabledLoop);
+            subsystemLooper.zeroSensors();
 
             // register controllers
             controlBoard = Injector.get(IControlBoard.class);
@@ -387,7 +387,7 @@ public class Robot extends TimedRobot {
             }
 
             superstructure.setStopped(true);
-            subsystemManager.stop();
+            subsystemLooper.stop();
 
             robotState.resetAllStates();
             cooler.zeroSensors();
@@ -457,7 +457,7 @@ public class Robot extends TimedRobot {
 
             ledManager.blinkStatus(LedManager.RobotStatus.DISABLED);
 
-            if (subsystemManager.checkSubsystems()) {
+            if (subsystemLooper.checkSubsystems()) {
                 System.out.println("ALL SYSTEMS PASSED");
                 ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
             } else {
@@ -474,7 +474,7 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         try {
             // update shuffleboard for subsystem values
-            subsystemManager.outputToSmartDashboard();
+            subsystemLooper.outputToSmartDashboard();
             // update robot state on field for Field2D widget
             robotState.outputToSmartDashboard();
             // update shuffleboard selected auto mode

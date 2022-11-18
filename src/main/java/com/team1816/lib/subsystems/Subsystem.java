@@ -43,18 +43,18 @@ public abstract class Subsystem implements Sendable {
     }
 
     // Optional design pattern for caching periodic reads to avoid hammering the HAL/CAN.
-    public void readFromHardware() {}
+    public abstract void readFromHardware();
 
     // Optional design pattern for caching periodic writes to avoid hammering the HAL/CAN.
-    public void writeToHardware() {}
+    public abstract void writeToHardware();
 
     public void registerEnabledLoops(ILooper mEnabledLooper) {}
 
-    public void zeroSensors() {}
+    public abstract void zeroSensors();
 
     public abstract void stop();
 
-    public abstract boolean checkSystem();
+    public abstract boolean testSubsystem();
 
     public void createLogs() {}
 
