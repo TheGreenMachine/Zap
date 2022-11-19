@@ -34,7 +34,7 @@ public class ExampleSubsystem extends Subsystem {
      */
     // Components
     private final IGreenMotor launchMotor;
-    private final ISolenoid gigaSuperVacuumPumpingPiston; // plz don't make var names this long - it's painful to look @
+    private final ISolenoid superGigaSuperVacuumPumpingPiston; // plz don't make var names this long - it's painful to look @
 
     /**
      * A STATE is an enum representing the state of your subsystem - you need to create it yourself
@@ -78,7 +78,7 @@ public class ExampleSubsystem extends Subsystem {
         isBrakeMode = factory.getConstant(NAME, "isBrakeMode") > 0; // since yml constants are doubles by default, convert to bool
 
         launchMotor = factory.getMotor(NAME, "launchMotor");
-        gigaSuperVacuumPumpingPiston = factory.getSolenoid(NAME, "brad"); // yml name doesn't match class name - try to avoid!
+        superGigaSuperVacuumPumpingPiston = factory.getSolenoid(NAME, "brad"); // yml name doesn't match class name - try to avoid!
 
         desiredState = STATE.STOP;
         actualState = STATE.STOP;
