@@ -5,7 +5,7 @@ import static com.team1816.lib.subsystems.drive.SwerveDrive.*;
 import com.team1816.lib.Injector;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.util.team254.SwerveDriveSignal;
-import com.team1816.season.Constants;
+import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import java.util.ArrayList;

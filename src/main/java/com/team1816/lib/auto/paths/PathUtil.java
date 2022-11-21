@@ -3,7 +3,7 @@ package com.team1816.lib.auto.paths;
 import static com.team1816.lib.subsystems.drive.Drive.kPathFollowingMaxAccelMeters;
 import static com.team1816.lib.subsystems.drive.Drive.kPathFollowingMaxVelMeters;
 
-import com.team1816.season.Constants;
+import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;

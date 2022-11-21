@@ -11,7 +11,7 @@ import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.util.EnhancedMotorChecker;
-import com.team1816.season.Constants;
+import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.util.sendable.SendableBuilder;
 

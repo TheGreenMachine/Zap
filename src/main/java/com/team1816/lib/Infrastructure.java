@@ -5,7 +5,7 @@ import com.google.inject.Singleton;
 import com.team1816.lib.hardware.components.gyro.IPigeonIMU;
 import com.team1816.lib.hardware.components.pcm.ICompressor;
 import com.team1816.lib.hardware.factory.RobotFactory;
-import com.team1816.season.Constants;
+import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.PowerDistribution;
 

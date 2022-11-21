@@ -12,7 +12,7 @@ import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.math.DriveConversions;
 import com.team1816.lib.math.SwerveKinematics;
-import com.team1816.season.Constants;
+import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;

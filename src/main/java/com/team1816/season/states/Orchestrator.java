@@ -6,15 +6,19 @@ import static com.team1816.lib.subsystems.Subsystem.robotState;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.subsystems.drive.Drive;
-import com.team1816.season.Constants;
+import com.team1816.season.configuration.Constants;
+import com.team1816.season.configuration.FieldConfig;
 import com.team1816.season.subsystems.*;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotBase;
+
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import org.photonvision.PhotonUtils;
 
 /** The class responsible for organizing the collector, spindexer, elevator, and shooter into runnable actions - manages the robot's DESIRED states */
 
@@ -39,9 +43,13 @@ public class Orchestrator {
     private boolean revving;
     private boolean firing;
     private final boolean useVision;
-    private final double kMaxAllowablePoseError = factory.getConstant(
+    private final double maxAllowablePoseError = factory.getConstant(
         "maxAllowablePoseError",
-        0.2
+        4
+    );
+    private final double minAllowablePoseError = factory.getConstant(
+        "minAllowablePoseError",
+        0.15
     );
 
     @Inject
@@ -65,7 +73,7 @@ public class Orchestrator {
         elevator = elev;
         shooter = shoot;
         ledManager = led;
-        superstructureState = STATE.LITTLE_MAN;
+        superstructureState = STATE.FAT_BOY;
         collecting = false;
         revving = false;
         firing = false;
@@ -110,7 +118,7 @@ public class Orchestrator {
         if (revving) {
             shooter.setDesiredState(Shooter.STATE.REVVING);
             if (turret.getControlMode() == Turret.ControlMode.ABSOLUTE_FOLLOWING) {
-                //setSuperstructureState(STATE.FAT_BOY);
+                setSuperstructureState(STATE.FAT_BOY);
             } else {
                 setSuperstructureState(STATE.LITTLE_MAN);
             }
@@ -159,7 +167,7 @@ public class Orchestrator {
     public void fatBoy() {
         if (
             turret.getControlMode() != Turret.ControlMode.EJECT &&
-            turret.getControlMode() != Turret.ControlMode.ABSOLUTE_FOLLOWING
+                turret.getControlMode() != Turret.ControlMode.ABSOLUTE_FOLLOWING
         ) {
             turret.setControlMode(Turret.ControlMode.ABSOLUTE_FOLLOWING);
         }
@@ -227,23 +235,21 @@ public class Orchestrator {
         if (!robotState.isPoseUpdated) {
             return true;
         }
+        if (RobotBase.isSimulation() || RobotBase.isReal()) return false; // simulation requires too much effort, reality can't happen right now
         boolean needsVisionUpdate =
             (
                 Math.abs(
                     robotState.getCalculatedAccel().vxMetersPerSecond -
-                    robotState.triAxialAcceleration[0]
+                        robotState.triAxialAcceleration[0]
                 ) >
-                Constants.kMaxAccelDiffThreshold ||
-                Math.abs(
-                    robotState.getCalculatedAccel().vyMetersPerSecond -
-                    robotState.triAxialAcceleration[1]
-                ) >
-                Constants.kMaxAccelDiffThreshold ||
-                Math.abs(
-                    -Constants.gravitationalAccelerationConstant -
-                    robotState.triAxialAcceleration[2]
-                ) >
-                Constants.kMaxAccelDiffThreshold
+                    Constants.kMaxAccelDiffThreshold ||
+                    Math.abs(
+                        robotState.getCalculatedAccel().vyMetersPerSecond -
+                            robotState.triAxialAcceleration[1]
+                    ) >
+                        Constants.kMaxAccelDiffThreshold ||
+                    Math.abs(-9.8d - robotState.triAxialAcceleration[2]) >
+                        Constants.kMaxAccelDiffThreshold
             );
         if (needsVisionUpdate) {
             robotState.isPoseUpdated = false;
@@ -251,29 +257,42 @@ public class Orchestrator {
         return needsVisionUpdate; // placeHolder
     }
 
+    public Pose2d calculateSingleTargetTranslation(VisionPoint target) {
+        Pose2d targetPos = new Pose2d(
+            FieldConfig.fieldTargets.get(target.id).getX(),
+            FieldConfig.fieldTargets.get(target.id).getY(),
+            new Rotation2d()
+        );
+        if (target.id == -1) { // adding hub radius target offset - this is for retro-reflective tape only
+            double x, y;
+            x =
+                Units.inchesToMeters(Constants.kTargetRadius) *
+                    target.x /
+                    (Math.sqrt(target.x * target.x + target.y * target.y));
+            y =
+                Units.inchesToMeters(Constants.kTargetRadius) *
+                    target.y /
+                    (Math.sqrt(target.x * target.x + target.y * target.y));
+            target.x += x;
+            target.y += y;
+        }
+        Pose2d p = targetPos.plus(
+            new Transform2d(
+                new Translation2d(target.x, target.y),
+                robotState
+                    .getLatestFieldToTurret()
+                    .rotateBy(Rotation2d.fromDegrees(180))
+            )
+        ); // inverse axis angle
+        return p;
+    }
+
     public Pose2d calculatePoseFromCamera() {
         var cameraPoints = robotState.visibleTargets;
-        List<Pose2d> poses = new ArrayList<>(); // for logging?
+        List<Pose2d> poses = new ArrayList<>();
         double sX = 0, sY = 0;
-        for (Camera.Point point : cameraPoints) {
-            if (point.id == -1) { // adding hub radius target offset - this is for retro-reflective tape only
-                System.out.println(
-                    "shit ur pants, cardioid, I'm not your average reflecting man"
-                );
-            }
-            Pose2d fieldToTarget = FieldConfig.aprilTags.get(point.id).toPose2d();
-            Pose2d camPose = robotState.fieldToVehicle.transformBy(
-                new Transform2d(
-                    new Translation2d(Units.inchesToMeters(6), Units.inchesToMeters(-3)),
-                    robotState.fieldToVehicle.getRotation()
-                )
-            ); // TODO make a robotState getter for actual cam pos
-            Pose2d p = PhotonUtils.estimateFieldToRobot(
-                new Transform2d(camPose, fieldToTarget),
-                fieldToTarget,
-                new Transform2d(camPose, robotState.fieldToVehicle)
-            );
-
+        for (VisionPoint point : cameraPoints) {
+            var p = calculateSingleTargetTranslation(point);
             sX += p.getX();
             sY += p.getY();
             poses.add(p);
@@ -287,12 +306,10 @@ public class Orchestrator {
             robotState.isPoseUpdated = true;
             return pose;
         }
-        System.out.println("cameraPoints is empty - returning fieldToVehicle");
         return robotState.fieldToVehicle;
     }
 
     public void updatePoseWithCamera() {
-        System.out.println("updating pose with camera!");
         Pose2d newRobotPose = calculatePoseFromCamera();
         if (
             Math.abs(
@@ -301,14 +318,19 @@ public class Orchestrator {
                     robotState.fieldToVehicle.getY() - newRobotPose.getY()
                 )
             ) <
-            kMaxAllowablePoseError // todo remove this value and check if it's within the field boundaries
+                maxAllowablePoseError && Math.abs(
+                Math.hypot(
+                    robotState.fieldToVehicle.getX() - newRobotPose.getX(),
+                    robotState.fieldToVehicle.getY() - newRobotPose.getY()
+                )
+            ) >
+                minAllowablePoseError
+
         ) {
             System.out.println(newRobotPose + " = new robot pose");
             drive.resetOdometry(newRobotPose);
             robotState.fieldToVehicle = newRobotPose;
             robotState.isPoseUpdated = true;
-        } else {
-            System.out.println("Measurable error too large");
         }
     }
 

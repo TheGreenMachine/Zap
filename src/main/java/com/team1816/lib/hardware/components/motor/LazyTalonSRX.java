@@ -5,7 +5,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.BaseTalonConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.team1816.season.Constants;
+import com.team1816.season.configuration.Constants;
 import edu.wpi.first.wpilibj.DriverStation;
 
 /**

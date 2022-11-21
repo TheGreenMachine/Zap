@@ -8,7 +8,7 @@ import com.team1816.lib.loops.Loop;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.util.team254.DriveSignal;
-import com.team1816.season.Constants;
+import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.LedManager;
 import edu.wpi.first.math.geometry.Pose2d;

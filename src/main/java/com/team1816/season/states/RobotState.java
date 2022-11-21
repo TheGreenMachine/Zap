@@ -1,7 +1,8 @@
 package com.team1816.season.states;
 
 import com.google.inject.Singleton;
-import com.team1816.season.Constants;
+import com.team1816.season.configuration.Constants;
+import com.team1816.season.configuration.FieldConfig;
 import com.team1816.season.subsystems.*;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -30,7 +31,7 @@ public class RobotState {
 
     /** Orchestrator states */
     public Orchestrator.STATE superstructureState = Orchestrator.STATE.LITTLE_MAN;
-    public List<Camera.Point> visibleTargets = new ArrayList<>();
+    public List<VisionPoint> visibleTargets = new ArrayList<>();
     public Collector.STATE collectorState = Collector.STATE.STOP;
     public Shooter.STATE shooterState = Shooter.STATE.STOP;
     public Spindexer.STATE spinState = Spindexer.STATE.STOP;

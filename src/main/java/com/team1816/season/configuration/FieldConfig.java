@@ -1,4 +1,4 @@
-package com.team1816.season.states;
+package com.team1816.season.configuration;
 
 import com.google.inject.Singleton;
 import edu.wpi.first.math.geometry.*;
@@ -13,14 +13,18 @@ import java.util.List;
 public class FieldConfig {
 
     public static Field2d field;
-    public static final HashMap<Integer, Pose3d> aprilTags = new HashMap<>() {
+    public static final HashMap<Integer, Pose3d> fieldTargets = new HashMap<>() {
         {
-            put(-1, new Pose3d()); // return if vision sees nothing
             /**
-             * April Tags
+             * Retro-reflective Tape Targets
+             */
+            put(-1, new Pose3d(new Translation3d(8.230, 4.115, 2.434), new Rotation3d()));
+
+            /**
+             * April Tag Targets
              */
 
-            // blue alliance side
+            /** blue alliance side */
             put(0, new Pose3d(new Translation3d(0.000, 7.510, 0.886), new Rotation3d())); // Blue Hangar Panel
 
             put(1, new Pose3d(new Translation3d(3.320, 5.588, 1.725), new Rotation3d())); // upper hangar target - Blue Hangar Truss - Hub
@@ -31,14 +35,14 @@ public class FieldConfig {
 
             put(4, new Pose3d(new Translation3d(0.008, 3.575, 0.806), new Rotation3d())); // Blue Station 3 Wall
 
-            // blue human player station
+            /** blue human player station */
             put(5, new Pose3d(new Translation3d(0.125, 1.656, 0.891), new Rotation3d())); // Blue Terminal Near Station
 
             put(6, new Pose3d(new Translation3d(0.877, 0.879, 0.891), new Rotation3d())); // Blue Mid Terminal
 
             put(7, new Pose3d(new Translation3d(1.619, 0.095, 0.891), new Rotation3d())); // Blue End Terminal
 
-            // red alliance side
+            /** red alliance side */
             put(
                 10,
                 new Pose3d(new Translation3d(16.460, 0.589, 0.886), new Rotation3d())
@@ -113,7 +117,7 @@ public class FieldConfig {
             // set up april tags
             List<Pose2d> aprilTagPoses = new ArrayList<>();
             for (int i = 0; i <= 53; i++) {
-                if (aprilTags.get(i) == null) {
+                if (fieldTargets.get(i) == null) {
                     aprilTagPoses.add(
                         i,
                         new Pose2d(new Translation2d(-1, -1), new Rotation2d())
@@ -123,9 +127,9 @@ public class FieldConfig {
                 aprilTagPoses.add(
                     i, // if we want ids to be marked on each pose, we'll prob need to adjust the Field2DObject class (make our own?)
                     new Pose2d(
-                        aprilTags.get(i).getX(),
-                        aprilTags.get(i).getY(),
-                        aprilTags.get(i).getRotation().toRotation2d()
+                        fieldTargets.get(i).getX(),
+                        fieldTargets.get(i).getY(),
+                        fieldTargets.get(i).getRotation().toRotation2d()
                     )
                 );
             }

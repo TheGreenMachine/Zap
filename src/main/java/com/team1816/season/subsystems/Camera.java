@@ -7,8 +7,8 @@ import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.util.visionUtil.GreenPhotonCamera;
 import com.team1816.lib.util.visionUtil.GreenSimVisionSystem;
 import com.team1816.lib.util.visionUtil.GreenSimVisionTarget;
-import com.team1816.season.Constants;
-import com.team1816.season.states.FieldConfig;
+import com.team1816.season.configuration.Constants;
+import com.team1816.season.configuration.FieldConfig;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
@@ -76,17 +76,17 @@ public class Camera extends Subsystem {
                     0
                 );
             for (int i = 0; i <= 53; i++) {
-                if (FieldConfig.aprilTags.get(i) == null) {
+                if (FieldConfig.fieldTargets.get(i) == null) {
                     continue;
                 }
                 simVisionSystem.addSimVisionTarget(
                     new GreenSimVisionTarget(
                         new Pose2d(
-                            FieldConfig.aprilTags.get(i).getX(),
-                            FieldConfig.aprilTags.get(i).getY(),
-                            FieldConfig.aprilTags.get(i).getRotation().toRotation2d()
+                            FieldConfig.fieldTargets.get(i).getX(),
+                            FieldConfig.fieldTargets.get(i).getY(),
+                            FieldConfig.fieldTargets.get(i).getRotation().toRotation2d()
                         ),
-                        FieldConfig.aprilTags.get(i).getZ(),
+                        FieldConfig.fieldTargets.get(i).getZ(),
                         .1651, // Estimated width & height of the AprilTag
                         .1651,
                         i
@@ -142,9 +142,9 @@ public class Camera extends Subsystem {
         robotState.visibleTargets = getPoints();
     }
 
-    public ArrayList<Point> getPoints() {
-        ArrayList<Point> targets = new ArrayList<>();
-        Point p = new Point();
+    public ArrayList<VisionPoint> getPoints() {
+        ArrayList<VisionPoint> targets = new ArrayList<>();
+        VisionPoint p = new VisionPoint();
         var result = cam.getLatestResult();
         if (!result.hasTargets()) {
             return targets;
@@ -175,7 +175,6 @@ public class Camera extends Subsystem {
         //                }
         //            }
         //        }
-        //        System.out.println(targets.get(0).cameraToTarget.toString()); //TODO Remove
         //
         //        bestTrackedTarget = principal_RANSAC;
         //
@@ -232,23 +231,5 @@ public class Camera extends Subsystem {
             currentTurretAngle += 360;
         }
         return ((currentTurretAngle - targetTurretAngle)); // scaling for the feedback loop
-    }
-
-    /** Camera state */
-    public static class Point {
-
-        public int id; // -2 if not detected
-        public Transform3d cameraToTarget;
-        public double weight;
-
-        public Point() {
-            id = 0;
-            cameraToTarget = new Transform3d();
-            weight = 0;
-        }
-
-        public String toString() {
-            return "id: " + id + " camToTar: " + cameraToTarget;
-        }
     }
 }

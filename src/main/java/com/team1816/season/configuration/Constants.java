@@ -1,7 +1,8 @@
-package com.team1816.season;
+package com.team1816.season.configuration;
 
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.factory.RobotFactory;
+import com.team1816.season.Robot;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
 
