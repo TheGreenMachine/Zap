@@ -6,6 +6,7 @@ import com.ctre.phoenix.motion.MotionProfileStatus;
 import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
+import com.ctre.phoenix.motorcontrol.can.BaseTalonConfiguration;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 import com.revrobotics.CANSparkMax;
@@ -665,12 +666,21 @@ public class LazySparkMax implements IGreenMotor {
     public void valueUpdated() {}
 
     @Override
-    public double getLastSet() {
-        return lastSet;
+    public String getName() {
+        return name;
     }
 
     @Override
-    public String getName() {
-        return name;
+    public ErrorCode configAllSettings(BaseTalonConfiguration allConfigs, int timeoutMs) {
+        System.out.println("WARNING: configAllSettings not working for sparkMax motors!");
+        return ErrorCode.OK;
+    }
+
+    @Override
+    public ErrorCode configFactoryDefault(int timeoutMs) {
+        System.out.println(
+            "WARNING: configFactoryDefault not working for sparkMax motors!"
+        );
+        return ErrorCode.OK;
     }
 }

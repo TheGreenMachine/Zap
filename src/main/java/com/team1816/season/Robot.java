@@ -76,7 +76,7 @@ public class Robot extends TimedRobot {
         Injector.registerModule(new SeasonModule());
         enabledLoop = new Looper(this);
         disabledLoop = new Looper(this);
-        drive = (Injector.get(Drive.Factory.class)).getInstance(); //TODO: need to fix this get drive instance should just return the proper one
+        drive = (Injector.get(Drive.Factory.class)).getInstance();
         turret = Injector.get(Turret.class);
         climber = Injector.get(Climber.class);
         collector = Injector.get(Collector.class);
