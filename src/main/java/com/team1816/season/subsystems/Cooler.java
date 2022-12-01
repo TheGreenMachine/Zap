@@ -115,7 +115,7 @@ public class Cooler extends Subsystem {
 
     @Override
     public boolean testSubsystem() {
-        return false;
+        return true;
     }
 
     public enum STATE {
