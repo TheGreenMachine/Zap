@@ -10,7 +10,6 @@ import com.team1816.season.Robot;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.util.sendable.SendableRegistry;
 import java.util.function.Supplier;
 
 /**
@@ -39,7 +38,6 @@ public abstract class Subsystem implements Sendable {
         this.name = name;
         robotState = rs;
         infrastructure = inf;
-        SendableRegistry.addLW(this, name, name);
     }
 
     // Optional design pattern for caching periodic reads to avoid hammering the HAL/CAN.
