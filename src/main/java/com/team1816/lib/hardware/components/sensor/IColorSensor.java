@@ -14,5 +14,4 @@ public interface IColorSensor {
     int getGreen();
 
     int getBlue();
-
 }
