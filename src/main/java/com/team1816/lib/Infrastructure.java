@@ -64,8 +64,17 @@ public class Infrastructure {
     }
 
     public void update() {
+        //        if (loopCount > 0) {
+        //            loopCount = 0;
+        //            double[] accel = pigeon.getAcceleration();
+        //            xAccel = accel[0] * Constants.gravitationalAccelerationConstant / 16384;
+        //            yAccel = accel[1] * Constants.gravitationalAccelerationConstant / 16384;
+        //            zAccel = -accel[2] * Constants.gravitationalAccelerationConstant / 16384;
         yaw = pigeon.getYaw();
         current = pd.getTotalCurrent();
+        //        } else {
+        //            loopCount++;
+        //        }
     }
 
     public PowerDistribution getPd() {

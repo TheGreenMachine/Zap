@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.can.BaseTalonConfiguration;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.DriverStation;
 
@@ -70,16 +71,15 @@ public class LazyVictorSPX extends VictorSPX implements IGreenMotor {
     }
 
     @Override
-    public double getLastSet() {
-        DriverStation.reportWarning(
-            "getLastSet not implemented in LazyVictorSPX - returning 0",
-            false
-        );
-        return 0;
+    public String getName() {
+        return name;
     }
 
     @Override
-    public String getName() {
-        return name;
+    public ErrorCode configAllSettings(BaseTalonConfiguration allConfigs, int timeoutMs) {
+        System.out.println(
+            "WARNING: configAllSettings not implemented in LazyVictorSPX!"
+        );
+        return ErrorCode.OK;
     }
 }

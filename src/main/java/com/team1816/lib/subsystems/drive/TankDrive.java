@@ -55,11 +55,11 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         super(lm, inf, rs);
         // configure motors
         leftMain = factory.getMotor(NAME, "leftMain");
-        leftFollowerA = factory.getMotor(NAME, "leftFollower", leftMain);
-        leftFollowerB = factory.getMotor(NAME, "leftFollowerTwo", leftMain);
+        leftFollowerA = factory.getFollowerMotor(NAME, "leftFollower", leftMain);
+        leftFollowerB = factory.getFollowerMotor(NAME, "leftFollowerTwo", leftMain);
         rightMain = factory.getMotor(NAME, "rightMain");
-        rightFollowerA = factory.getMotor(NAME, "rightFollower", rightMain);
-        rightFollowerB = factory.getMotor(NAME, "rightFollowerTwo", rightMain);
+        rightFollowerA = factory.getFollowerMotor(NAME, "rightFollower", rightMain);
+        rightFollowerB = factory.getFollowerMotor(NAME, "rightFollowerTwo", rightMain);
 
         // configure follower motor currentLimits
         var currentLimitConfig = new SupplyCurrentLimitConfiguration(
@@ -143,6 +143,8 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         if (RobotBase.isSimulation()) {
             simulateGyroOffset();
         }
+
+        infrastructure.update();
         actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
 
         // send updated information to robotState and odometry calculator
@@ -186,6 +188,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     @Override
     public void resetOdometry(Pose2d pose) {
+        actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
         tankOdometry.resetPosition(pose, getActualHeading());
         tankOdometry.update(actualHeading, leftActualDistance, rightActualDistance);
         updateRobotState();
@@ -339,7 +342,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     }
 
     @Override
-    public boolean checkSystem() {
+    public boolean testSubsystem() {
         boolean leftSide = EnhancedMotorChecker.checkMotor(this, leftMain);
         boolean rightSide = EnhancedMotorChecker.checkMotor(this, rightMain);
 
