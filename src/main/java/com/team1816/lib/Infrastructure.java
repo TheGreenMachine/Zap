@@ -36,7 +36,7 @@ public class Infrastructure {
         current = 0;
     }
 
-    public void startCompressor() { // not used because compressor currently turns on by default once robot is enabled
+    public void startCompressor() {
         if (compressorEnabled && !compressorIsOn) {
             compressor.enableDigital();
             compressorIsOn = true;
@@ -64,12 +64,6 @@ public class Infrastructure {
     }
 
     public void update() {
-        //        if (loopCount > 0) {
-        //            loopCount = 0;
-        //            double[] accel = pigeon.getAcceleration();
-        //            xAccel = accel[0] * Constants.gravitationalAccelerationConstant / 16384;
-        //            yAccel = accel[1] * Constants.gravitationalAccelerationConstant / 16384;
-        //            zAccel = -accel[2] * Constants.gravitationalAccelerationConstant / 16384;
         yaw = pigeon.getYaw();
         current = pd.getTotalCurrent();
         //        } else {
