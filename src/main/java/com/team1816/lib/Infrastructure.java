@@ -66,9 +66,6 @@ public class Infrastructure {
     public void update() {
         yaw = pigeon.getYaw();
         current = pd.getTotalCurrent();
-        //        } else {
-        //            loopCount++;
-        //        }
     }
 
     public PowerDistribution getPd() {
