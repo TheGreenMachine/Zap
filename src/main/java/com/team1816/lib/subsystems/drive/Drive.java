@@ -324,9 +324,7 @@ public abstract class Drive
     }
 
     public void simulateGyroOffset() {
-        // simulates rotation by computing the rotational motion per interval
         double simGyroOffset = chassisSpeed.omegaRadiansPerSecond * tickRatioPerLoop;
-        // increment gyro drift
         gyroDrift -= 0;
         infrastructure.simulateGyro(simGyroOffset, gyroDrift);
     }

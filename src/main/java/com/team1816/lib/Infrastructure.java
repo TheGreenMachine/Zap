@@ -9,7 +9,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.PowerDistribution;
 
 /**
- * Subsystem housing compressor, power distribution, and pigeon
+ * Subsystem housing compressor and pigeon - should we add pcm/pdh here?
  */
 
 @Singleton
@@ -61,6 +61,11 @@ public class Infrastructure {
 
     public double getYaw() {
         return yaw;
+    }
+
+    public void update() {
+        yaw = pigeon.getYaw();
+        current = pd.getTotalCurrent();
     }
 
     public PowerDistribution getPd() {
