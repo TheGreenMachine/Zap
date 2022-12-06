@@ -16,22 +16,18 @@ public class GreenSensorFactory {
 
     private int CAN_ID;
 
-    public GreenSensorFactory(String n, String na, int CI){
+    public GreenSensorFactory(String n, String na, int CI) {
         sensorName = n;
         NAME = na;
         CAN_ID = CI;
 
-        if (n == "color"){
+        if (n == "color") {
             colorSensorInput = new DigitalInput(0);
             colorSensorOutput = new DigitalOutput(0);
-        }
-
-        else if (n == "beam break"){
+        } else if (n == "beam break") {
             beamBreakSensorInput = new DigitalInput(0);
             beamBreakSensorOutput = new DigitalOutput(0);
-        }
-
-        else {
+        } else {
             colorSensorInput = null;
             colorSensorOutput = null;
             beamBreakSensorInput = null;
@@ -39,23 +35,19 @@ public class GreenSensorFactory {
         }
     }
 
-    private DigitalInput getColorSensorInput(){
+    private DigitalInput getColorSensorInput() {
         return colorSensorInput;
     }
 
-    private DigitalInput getBeamBreakSensorInput(){
+    private DigitalInput getBeamBreakSensorInput() {
         return beamBreakSensorInput;
     }
 
-    private DigitalOutput getColorSensorOutput(){
+    private DigitalOutput getColorSensorOutput() {
         return colorSensorOutput;
     }
 
-    private DigitalOutput getBeamBreakSensorOutput(){
+    private DigitalOutput getBeamBreakSensorOutput() {
         return beamBreakSensorOutput;
     }
-
-
-
-
 }

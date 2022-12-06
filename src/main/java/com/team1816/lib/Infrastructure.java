@@ -9,7 +9,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.PowerDistribution;
 
 /**
- * Subsystem housing compressor and pigeon - should we add pcm/pdh here?
+ * System housing compressor, pigeon, and power distribution
  */
 
 @Singleton
@@ -36,7 +36,7 @@ public class Infrastructure {
         current = 0;
     }
 
-    public void startCompressor() { // not used because compressor currently turns on by default once robot is enabled
+    public void startCompressor() {
         if (compressorEnabled && !compressorIsOn) {
             compressor.enableDigital();
             compressorIsOn = true;
@@ -64,18 +64,10 @@ public class Infrastructure {
     }
 
     public void update() {
-        //        if (loopCount > 0) {
-        //            loopCount = 0;
-        //            double[] accel = pigeon.getAcceleration();
-        //            xAccel = accel[0] * Constants.gravitationalAccelerationConstant / 16384;
-        //            yAccel = accel[1] * Constants.gravitationalAccelerationConstant / 16384;
-        //            zAccel = -accel[2] * Constants.gravitationalAccelerationConstant / 16384;
         yaw = pigeon.getYaw();
         current = pd.getTotalCurrent();
-        //        } else {
-        //            loopCount++;
-        //        }
     }
+
 
     public PowerDistribution getPd() {
         return pd;
