@@ -9,7 +9,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.PowerDistribution;
 
 /**
- * Subsystem housing compressor and pigeon - should we add pcm/pdh here?
+ * System housing compressor, pigeon, and power distribution
  */
 
 @Singleton
