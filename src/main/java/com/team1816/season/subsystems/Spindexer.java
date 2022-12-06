@@ -103,13 +103,16 @@ public class Spindexer extends Subsystem {
     }
 
     @Override
+    public void zeroSensors() {}
+
+    @Override
     public void initSendable(SendableBuilder builder) {}
 
     @Override
     public void stop() {}
 
     @Override
-    public boolean checkSystem() {
+    public boolean testSubsystem() {
         spindexer.set(ControlMode.PercentOutput, .3);
         Timer.delay(1);
         spindexer.set(ControlMode.PercentOutput, -.3);

@@ -50,7 +50,7 @@ public class Climber extends Subsystem {
     public Climber(Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
         climberMain = factory.getMotor(NAME, "climberMain");
-        climberFollower = factory.getMotor(NAME, "climberFollower", climberMain);
+        climberFollower = factory.getFollowerMotor(NAME, "climberFollower", climberMain);
         climberFollower.setInverted(!climberMain.getInverted());
         topClamp = factory.getSolenoid(NAME, "topClamp");
         bottomClamp = factory.getSolenoid(NAME, "bottomClamp");
@@ -246,7 +246,7 @@ public class Climber extends Subsystem {
     public void stop() {}
 
     @Override
-    public boolean checkSystem() {
+    public boolean testSubsystem() {
         // currently just running the climber in percent output to make sure it can unclamp and spin
         // WARNING - pos/neg values may be inverted!
         climberMain.set(PercentOutput, 0.2);

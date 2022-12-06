@@ -44,12 +44,16 @@ public class Camera extends Subsystem {
     public Camera(LedManager ledManager, Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
         led = ledManager;
-        cam = new PhotonCamera("zed");
+        if (this.isImplemented()) {
+            cam = new PhotonCamera("zed");
+        } else {
+            cam = null;
+        }
         SmartDashboard.putNumber("Camera/cy", 0);
     }
 
     public double getDeltaX() {
-        if (RobotBase.isSimulation()) { //simulate feedback loop
+        if (RobotBase.isSimulation() || !this.isImplemented()) { //simulate feedback loop
             return simulateDeltaX();
         }
         var result = cam.getLatestResult();
@@ -60,7 +64,7 @@ public class Camera extends Subsystem {
     }
 
     public double getDistance() {
-        if (RobotBase.isSimulation()) {
+        if (RobotBase.isSimulation() || !this.isImplemented()) {
             return robotState.getEstimatedDistanceToGoal();
         }
         var result = cam.getLatestResult();
@@ -100,7 +104,13 @@ public class Camera extends Subsystem {
 
     public void readFromHardware() {}
 
-    public boolean checkSystem() { // this doesn't actually do anything because there's no read calls
+    @Override
+    public void writeToHardware() {}
+
+    @Override
+    public void zeroSensors() {}
+
+    public boolean testSubsystem() { // this doesn't actually do anything because there's no read calls
         return true;
     }
 

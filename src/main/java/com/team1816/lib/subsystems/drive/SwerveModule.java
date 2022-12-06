@@ -56,7 +56,7 @@ public class SwerveModule implements ISwerveModule {
         driveMotor =
             factory.getMotor(
                 subsystemName,
-                mModuleConfig.driveMotorName,
+                mModuleConfig.driveMotorID,
                 factory.getSubsystem(subsystemName).swerveModules.drivePID,
                 -1
             );
@@ -65,7 +65,7 @@ public class SwerveModule implements ISwerveModule {
         azimuthMotor =
             factory.getMotor(
                 subsystemName,
-                mModuleConfig.azimuthMotorName,
+                mModuleConfig.azimuthMotorID,
                 factory.getSubsystem(subsystemName).swerveModules.azimuthPID,
                 canCoder == null ? -1 : canCoder.getDeviceID()
             );
@@ -227,11 +227,11 @@ public class SwerveModule implements ISwerveModule {
     public String toString() {
         return (
             "SwerveModule{ " +
-            mModuleConfig.driveMotorName +
+            mModuleConfig.driveMotorID +
             " id: " +
             driveMotor.getDeviceID() +
             "  " +
-            mModuleConfig.azimuthMotorName +
+            mModuleConfig.azimuthMotorID +
             " id: " +
             azimuthMotor.getDeviceID() +
             " offset: " +
@@ -244,8 +244,8 @@ public class SwerveModule implements ISwerveModule {
         public ModuleConfig() {}
 
         public String moduleName = "Name";
-        public String driveMotorName = "";
-        public String azimuthMotorName = "";
+        public String driveMotorID = "";
+        public String azimuthMotorID = "";
 
         public PIDSlotConfiguration azimuthPid;
         public PIDSlotConfiguration drivePid;

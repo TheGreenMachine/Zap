@@ -6,7 +6,7 @@ import com.ctre.phoenix.motorcontrol.can.BaseTalonConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.wpilibj.DriverStation;
 
-public class LazyTalonFX extends TalonFX implements IConfigurableMotorController {
+public class LazyTalonFX extends TalonFX implements IGreenMotor {
 
     protected double lastSet = Double.NaN;
     protected String name = "";
@@ -15,11 +15,6 @@ public class LazyTalonFX extends TalonFX implements IConfigurableMotorController
     public LazyTalonFX(int deviceNumber, String motorName, String canBus) {
         super(deviceNumber, canBus);
         name = motorName;
-    }
-
-    @Override
-    public double getLastSet() {
-        return lastSet;
     }
 
     @Override

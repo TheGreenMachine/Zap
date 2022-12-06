@@ -417,7 +417,8 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     @Override
-    public boolean checkSystem() {
+    public boolean testSubsystem() {
+        // go from one limit to another, checking if the turret is stopping at set limits
         boolean passed;
         turretMotor.set(com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput, .2);
         Timer.delay(2);

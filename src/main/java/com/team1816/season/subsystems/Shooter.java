@@ -145,6 +145,9 @@ public class Shooter extends Subsystem implements PidProvider {
         }
     }
 
+    @Override
+    public void zeroSensors() {}
+
     public double convertShooterTicksToMetersPerSecond(double ticks) {
         return 0.00019527 * ticks; //TODO: verify conversion (roughly accurate based on recorded data)
         // this can be corroborated by looking at the troughs in logs and computing the expected output
@@ -161,7 +164,7 @@ public class Shooter extends Subsystem implements PidProvider {
     public void stop() {}
 
     @Override
-    public boolean checkSystem() {
+    public boolean testSubsystem() {
         boolean checkShooter = EnhancedMotorChecker.checkMotor(this, shooterMain);
 
         return checkShooter;
