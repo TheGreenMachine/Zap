@@ -1,53 +1,39 @@
 package com.team1816.lib.hardware.factory;
 
+import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
+import edu.wpi.first.wpilibj.I2C;
 
 public class GreenSensorFactory {
 
-    private DigitalInput colorSensorInput;
-    private DigitalInput beamBreakSensorInput;
-    private DigitalOutput colorSensorOutput;
-    private DigitalOutput beamBreakSensorOutput;
-
-    private String sensorName;
-
-    private String NAME;
-
-    private int CAN_ID;
-
-    public GreenSensorFactory(String n, String na, int CI) {
-        sensorName = n;
-        NAME = na;
-        CAN_ID = CI;
-
-        if (n == "color") {
-            colorSensorInput = new DigitalInput(0);
-            colorSensorOutput = new DigitalOutput(0);
-        } else if (n == "beam break") {
-            beamBreakSensorInput = new DigitalInput(0);
-            beamBreakSensorOutput = new DigitalOutput(0);
-        } else {
-            colorSensorInput = null;
-            colorSensorOutput = null;
-            beamBreakSensorInput = null;
-            beamBreakSensorOutput = null;
-        }
+    private ColorSensorV3 createColorSensor(I2C.Port id) {
+        var sensor = new ColorSensorV3(id);
+        configureColorSensorV3(sensor);
+        return sensor;
     }
 
-    private DigitalInput getColorSensorInput() {
-        return colorSensorInput;
+    private void configureColorSensorV3(ColorSensorV3 sensor) {
+        configureColorSensorV3(
+            sensor,
+            ColorSensorV3.ColorSensorResolution.kColorSensorRes16bit,
+            ColorSensorV3.ColorSensorMeasurementRate.kColorRate25ms,
+            ColorSensorV3.GainFactor.kGain3x
+        );
     }
 
-    private DigitalInput getBeamBreakSensorInput() {
-        return beamBreakSensorInput;
+    private void configureColorSensorV3(
+        ColorSensorV3 sensor,
+        ColorSensorV3.ColorSensorResolution res,
+        ColorSensorV3.ColorSensorMeasurementRate mr,
+        ColorSensorV3.GainFactor gf
+    ) {
+        sensor.configureColorSensor(res, mr, gf);
     }
 
-    private DigitalOutput getColorSensorOutput() {
-        return colorSensorOutput;
+    private DigitalInput createBeamBreakSensor(int id) {
+        return new DigitalInput(id);
     }
 
-    private DigitalOutput getBeamBreakSensorOutput() {
-        return beamBreakSensorOutput;
-    }
+
 }
