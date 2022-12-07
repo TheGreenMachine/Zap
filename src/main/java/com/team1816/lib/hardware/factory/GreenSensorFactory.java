@@ -2,13 +2,12 @@ package com.team1816.lib.hardware.factory;
 
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.I2C;
 
 public class GreenSensorFactory {
 
-    private ColorSensorV3 createColorSensor(I2C.Port id) {
-        var sensor = new ColorSensorV3(id);
+    public ColorSensorV3 createColorSensor(I2C.Port port) {
+        var sensor = new ColorSensorV3(port);
         configureColorSensorV3(sensor);
         return sensor;
     }
@@ -31,9 +30,10 @@ public class GreenSensorFactory {
         sensor.configureColorSensor(res, mr, gf);
     }
 
-    private DigitalInput createBeamBreakSensor(int id) {
+    public DigitalInput createBeamBreakSensor(int id) {
         return new DigitalInput(id);
     }
+
 
 
 }
