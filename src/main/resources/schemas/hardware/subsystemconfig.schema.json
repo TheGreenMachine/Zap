@@ -31,6 +31,9 @@
         "canCoders": {
             "$ref": "int.map.schema.json"
         },
+        "sensors": {
+            "$ref": "sensorconfig.schema.json"
+        },
         "swerveModules": {
             "$ref": "swervemoduleconfig.schema.json"
         },

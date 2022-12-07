@@ -479,6 +479,11 @@ public class RobotFactory {
         return pigeon;
     }
 
+    // TODO: implement getSensor {getColorSensor, getBeamBreakSensor, getHallEffectSensor} with universal sensor output interface
+    /* Insert code below */
+
+    /* Insert code above */
+
     public int getPcmId() {
         if (config.infrastructure.pcmId == null) return -1;
         return config.infrastructure.pcmId;
