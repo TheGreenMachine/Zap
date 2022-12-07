@@ -8,11 +8,14 @@ public class GhostDigitalInput extends DigitalInput {
     private boolean on;
 
     @Override
-    public boolean get(){return on;}
+    public boolean get() {
+        return on;
+    }
 
     @Override
-    public int getChannel(){return -1;}
-
+    public int getChannel() {
+        return -1;
+    }
 
     public GhostDigitalInput(int channel) {
         super(channel);

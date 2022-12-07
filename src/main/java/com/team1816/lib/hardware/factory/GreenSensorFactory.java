@@ -4,7 +4,6 @@ import com.revrobotics.ColorSensorV3;
 import com.team1816.lib.hardware.components.sensors.GhostColorSensor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.I2C;
-
 import java.awt.*;
 
 public class GreenSensorFactory {

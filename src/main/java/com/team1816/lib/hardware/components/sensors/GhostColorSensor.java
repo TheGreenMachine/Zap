@@ -4,8 +4,7 @@ import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.util.Color;
 
-public class GhostColorSensor extends ColorSensorV3 implements IColorSensor{
-
+public class GhostColorSensor extends ColorSensorV3 implements IColorSensor {
 
     public GhostColorSensor(I2C.Port port) {
         super(port);
@@ -18,7 +17,7 @@ public class GhostColorSensor extends ColorSensorV3 implements IColorSensor{
 
     @Override
     public Color getColor() {
-        return new Color(0,0,0);
+        return new Color(0, 0, 0);
     }
 
     @Override

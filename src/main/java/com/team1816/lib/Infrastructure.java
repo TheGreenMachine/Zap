@@ -68,7 +68,6 @@ public class Infrastructure {
         current = pd.getTotalCurrent();
     }
 
-
     public PowerDistribution getPd() {
         return pd;
     }
