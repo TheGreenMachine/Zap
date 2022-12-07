@@ -36,7 +36,7 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.util.Color;
 
 /** REV Robotics Color Sensor V3 */
-public class ColorSensorV3 {
+public class ColorSensorV3 implements IColorSensor{
   private static final byte kAddress = 0x52;
   private static final byte kPartID = (byte) 0xC2;
 
@@ -307,7 +307,12 @@ public class ColorSensorV3 {
     write8(Register.kLightSensorGain, gain.bVal);
   }
 
-  /**
+    @Override
+    public int getId() {
+        return m_i2c.getPort();
+    }
+
+    /**
    * Get the most likely color. Works best when within 2 inches and perpendicular to surface of
    * interest.
    *
@@ -320,6 +325,11 @@ public class ColorSensorV3 {
     double b = (double) getBlue();
     double mag = r + g + b;
     return new Color(r / mag, g / mag, b / mag);
+  }
+
+  @Override
+  public int[] getRGB() {
+      return new int[] {getRed(), getGreen(), getBlue()};
   }
 
   /**
@@ -380,7 +390,8 @@ public class ColorSensorV3 {
     return read20BitRegister(Register.kDataBlue);
   }
 
-  /**
+
+    /**
    * Get the raw color value from the IR ADC
    *
    * @return IR ADC value

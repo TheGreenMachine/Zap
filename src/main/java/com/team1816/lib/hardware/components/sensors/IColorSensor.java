@@ -6,8 +6,6 @@ public interface IColorSensor {
 
     int getId();
 
-    String getName();
-
     Color getColor();
 
     int getRed();
