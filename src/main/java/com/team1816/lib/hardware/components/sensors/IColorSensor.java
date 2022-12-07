@@ -1,11 +1,12 @@
 package com.team1816.lib.hardware.components.sensors;
+
 import edu.wpi.first.wpilibj.util.Color;
 
 public interface IColorSensor {
 
     int getId();
 
-   String getName();
+    String getName();
 
     Color getColor();
 
@@ -14,4 +15,6 @@ public interface IColorSensor {
     int getGreen();
 
     int getBlue();
+
+    int[] getRGB();
 }
