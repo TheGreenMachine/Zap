@@ -1,15 +1,27 @@
 package com.team1816.lib.hardware.factory;
 
 import com.revrobotics.ColorSensorV3;
+import com.team1816.lib.hardware.components.sensors.GhostColorSensor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.I2C;
 
+import java.awt.*;
+
 public class GreenSensorFactory {
 
+    private ColorSensorV3 createColorSensor(I2C.Port id, boolean ghost) {
+        if (ghost) {
+            var sensor = new GhostColorSensor(id);
+            return sensor;
+        } else {
+            var sensor = new ColorSensorV3(id);
+            configureColorSensorV3(sensor);
+            return sensor;
+        }
+    }
+
     private ColorSensorV3 createColorSensor(I2C.Port id) {
-        var sensor = new ColorSensorV3(id);
-        configureColorSensorV3(sensor);
-        return sensor;
+        return createColorSensor(id, true);
     }
 
     private void configureColorSensorV3(ColorSensorV3 sensor) {
