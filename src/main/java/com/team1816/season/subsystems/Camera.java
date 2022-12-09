@@ -7,6 +7,7 @@ import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.util.visionUtil.GreenPhotonCamera;
 import com.team1816.lib.util.visionUtil.GreenSimVisionSystem;
 import com.team1816.lib.util.visionUtil.GreenSimVisionTarget;
+import com.team1816.lib.util.visionUtil.VisionPoint;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
 import com.team1816.season.states.RobotState;

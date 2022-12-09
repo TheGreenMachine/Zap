@@ -77,6 +77,7 @@
       "/LiveWindow/Ungrouped/PIDController[9]": "PIDController",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/LiveWindow/drivetrain": "Gyro",
+      "/SmartDashboard/Alliance color": "String Chooser",
       "/SmartDashboard/Auto mode": "String Chooser",
       "/SmartDashboard/Demo Mode": "String Chooser",
       "/SmartDashboard/Field": "Field2d",

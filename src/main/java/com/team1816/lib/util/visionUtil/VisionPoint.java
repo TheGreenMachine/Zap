@@ -1,7 +1,11 @@
+package com.team1816.lib.util.visionUtil;
+
 import edu.wpi.first.math.geometry.Transform3d;
+
 /** Fiducial Marker Identification Utility */
 
 public class VisionPoint {
+
     public int id; // -2 if not detected
     public Transform3d cameraToTarget;
     public double weight;
@@ -10,6 +14,18 @@ public class VisionPoint {
         id = 0;
         cameraToTarget = new Transform3d();
         weight = 0;
+    }
+
+    public double getX() {
+        return cameraToTarget.getX();
+    }
+
+    public double getY() {
+        return cameraToTarget.getY();
+    }
+
+    public double getZ() {
+        return cameraToTarget.getZ();
     }
 
     public String toString() {

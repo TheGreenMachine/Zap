@@ -1,6 +1,7 @@
 package com.team1816.season.states;
 
 import com.google.inject.Singleton;
+import com.team1816.lib.util.visionUtil.VisionPoint;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
 import com.team1816.season.subsystems.*;
@@ -78,6 +79,10 @@ public class RobotState {
 
     /** Base State getters */
     public Rotation2d getLatestFieldToTurret() {
+        return fieldToTurret.getRotation();
+    }
+
+    public Rotation2d getLatestFieldToCamera() {
         return fieldToTurret.getRotation();
     }
 

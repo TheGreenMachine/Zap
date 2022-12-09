@@ -6,6 +6,7 @@ import static com.team1816.lib.subsystems.Subsystem.robotState;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.subsystems.drive.Drive;
+import com.team1816.lib.util.visionUtil.VisionPoint;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.configuration.FieldConfig;
 import com.team1816.season.subsystems.*;
@@ -15,8 +16,6 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
-
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -167,7 +166,7 @@ public class Orchestrator {
     public void fatBoy() {
         if (
             turret.getControlMode() != Turret.ControlMode.EJECT &&
-                turret.getControlMode() != Turret.ControlMode.ABSOLUTE_FOLLOWING
+            turret.getControlMode() != Turret.ControlMode.ABSOLUTE_FOLLOWING
         ) {
             turret.setControlMode(Turret.ControlMode.ABSOLUTE_FOLLOWING);
         }
@@ -240,16 +239,16 @@ public class Orchestrator {
             (
                 Math.abs(
                     robotState.getCalculatedAccel().vxMetersPerSecond -
-                        robotState.triAxialAcceleration[0]
+                    robotState.triAxialAcceleration[0]
                 ) >
-                    Constants.kMaxAccelDiffThreshold ||
-                    Math.abs(
-                        robotState.getCalculatedAccel().vyMetersPerSecond -
-                            robotState.triAxialAcceleration[1]
-                    ) >
-                        Constants.kMaxAccelDiffThreshold ||
-                    Math.abs(-9.8d - robotState.triAxialAcceleration[2]) >
-                        Constants.kMaxAccelDiffThreshold
+                Constants.kMaxAccelDiffThreshold ||
+                Math.abs(
+                    robotState.getCalculatedAccel().vyMetersPerSecond -
+                    robotState.triAxialAcceleration[1]
+                ) >
+                Constants.kMaxAccelDiffThreshold ||
+                Math.abs(-9.8d - robotState.triAxialAcceleration[2]) >
+                Constants.kMaxAccelDiffThreshold
             );
         if (needsVisionUpdate) {
             robotState.isPoseUpdated = false;
@@ -263,25 +262,32 @@ public class Orchestrator {
             FieldConfig.fieldTargets.get(target.id).getY(),
             new Rotation2d()
         );
+        double X = target.getX(), Y = target.getY();
         if (target.id == -1) { // adding hub radius target offset - this is for retro-reflective tape only
             double x, y;
             x =
                 Units.inchesToMeters(Constants.kTargetRadius) *
-                    target.x /
-                    (Math.sqrt(target.x * target.x + target.y * target.y));
+                target.getX() /
+                (
+                    Math.sqrt(
+                        target.getX() * target.getX() + target.getY() * target.getY()
+                    )
+                );
             y =
                 Units.inchesToMeters(Constants.kTargetRadius) *
-                    target.y /
-                    (Math.sqrt(target.x * target.x + target.y * target.y));
-            target.x += x;
-            target.y += y;
+                target.getY() /
+                (
+                    Math.sqrt(
+                        target.getX() * target.getX() + target.getY() * target.getY()
+                    )
+                );
+            X += x;
+            Y += y;
         }
         Pose2d p = targetPos.plus(
             new Transform2d(
-                new Translation2d(target.x, target.y),
-                robotState
-                    .getLatestFieldToTurret()
-                    .rotateBy(Rotation2d.fromDegrees(180))
+                new Translation2d(X, Y),
+                robotState.getLatestFieldToCamera().rotateBy(Rotation2d.fromDegrees(180))
             )
         ); // inverse axis angle
         return p;
@@ -318,14 +324,14 @@ public class Orchestrator {
                     robotState.fieldToVehicle.getY() - newRobotPose.getY()
                 )
             ) <
-                maxAllowablePoseError && Math.abs(
+            maxAllowablePoseError &&
+            Math.abs(
                 Math.hypot(
                     robotState.fieldToVehicle.getX() - newRobotPose.getX(),
                     robotState.fieldToVehicle.getY() - newRobotPose.getY()
                 )
             ) >
-                minAllowablePoseError
-
+            minAllowablePoseError
         ) {
             System.out.println(newRobotPose + " = new robot pose");
             drive.resetOdometry(newRobotPose);
