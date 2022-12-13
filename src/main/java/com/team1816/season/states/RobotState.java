@@ -113,7 +113,6 @@ public class RobotState {
         double estimatedDistanceToGoalMeters = fieldToVehicle
             .getTranslation()
             .getDistance(Constants.targetPos.getTranslation());
-        //        System.out.println("estimated distance = " + estimatedDistanceToGoalMeters);
         return estimatedDistanceToGoalMeters;
     }
 
