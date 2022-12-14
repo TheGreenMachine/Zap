@@ -6,6 +6,10 @@ import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.BeanAccess;
 import org.yaml.snakeyaml.representer.Representer;
 
+/**
+ * The yaml parsing integration for a control board.
+ * @see ControlBoardBridge
+ */
 public class ControlBoardYamlConfig {
 
     private static final Yaml FORMATTER = new Yaml();

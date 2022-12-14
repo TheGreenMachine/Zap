@@ -7,7 +7,7 @@ import com.team1816.lib.controlboard.*;
 @Singleton
 public class ControlBoard implements IControlBoard {
 
-    private final ControlBoardBrige controlBoardBridge;
+    private final ControlBoardBridge controlBoardBridge;
 
     // Control Board
     public static final int kDriveGamepadPort = 0;
@@ -17,7 +17,7 @@ public class ControlBoard implements IControlBoard {
     private final Controller operatorController;
 
     @Inject
-    private ControlBoard(ControlBoardBrige bridge, Controller.Factory controller) {
+    private ControlBoard(ControlBoardBridge bridge, Controller.Factory controller) {
         driverController = controller.getControllerInstance(kDriveGamepadPort);
         operatorController = controller.getControllerInstance(kOperatorGamepadPort);
 

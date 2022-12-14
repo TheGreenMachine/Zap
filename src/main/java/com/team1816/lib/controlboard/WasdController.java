@@ -1,5 +1,9 @@
 package com.team1816.lib.controlboard;
 
+/**
+ * A mapping of outputs for a WasdController
+ * @see Controller
+ */
 public class WasdController extends Controller {
 
     public WasdController(int port) {

@@ -1,5 +1,9 @@
 package com.team1816.lib.controlboard;
 
+/**
+ * A mapping of outputs for a LogitechController
+ * @see Controller
+ */
 public class LogitechController extends Controller {
 
     public LogitechController(int port) {
