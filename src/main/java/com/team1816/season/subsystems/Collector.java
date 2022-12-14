@@ -52,6 +52,7 @@ public class Collector extends Subsystem {
         }
     }
 
+    /** actions */
     public void setDesiredState(STATE state) {
         if (desiredState != state) {
             desiredState = state;
@@ -59,6 +60,7 @@ public class Collector extends Subsystem {
         }
     }
 
+    /** periodic */
     @Override
     public void readFromHardware() {}
 
@@ -93,6 +95,7 @@ public class Collector extends Subsystem {
         }
     }
 
+    /** config and tests */
     @Override
     public void zeroSensors() {}
 
@@ -115,6 +118,7 @@ public class Collector extends Subsystem {
         return true;
     }
 
+    /** states */
     public enum STATE {
         STOP,
         COLLECTING,

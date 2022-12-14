@@ -66,7 +66,7 @@ subsystems:
                     allowableError: 5
         constants:
             maxVelTicks100ms: 12275.7 # ticks per 100ms
-            openLoopRampRate: 0.1
+            openLoopRampRate: 0.8
             isSwerve: 1
             encPPR: 14255
             azimuthEncPPR: 4096
@@ -91,18 +91,18 @@ subsystems:
         implemented: true
         pidConfig:
             slot0:
-                kP: 2
-                kI: 0
-                kD: 25.5
+                kP: 2.0
+                kI: 0.0003
+                kD: 30.5
                 kF: 0 # Should be 0 for position control
                 allowableError: 40
         talons:
             turretMotor: 33
         constants:
-            deltaXScalar: 10 #value worked best at 150 in sim
+            deltaXScalar: 150 #value worked best at 150 in sim
             revLimit: -5580 # adjusted for zero-offset
             fwdLimit: 29600 # adjusted for zero-offset
-            absPosTicksSouth: 0 # absolute
+            absPosTicksSouth: 200 # absolute
             absPPR: 4096
             turretPPR: 53248 # 4096 * 13
     shooter:
@@ -121,10 +121,11 @@ subsystems:
         constants:
             useLinearPiecewise: 0
             useCubicSpline: 0
+            ballEjectionDuration: 0.9
             usingPoseForSpeed: 0
             maxVelTicks100ms: 20700
             nearVel: 4500
-            midVel: 8450
+            midVel: 8650
             tarmacTapeVel: 8425
             launchpadVel: 10100
             maxVel: 16500
@@ -171,7 +172,7 @@ subsystems:
             isVelocity: 1
             maxVelTicks100ms: 20000
             ballSensor: 0
-            firePow: 0.40
+            firePow: 0.7
             flushPow: -0.3
             intakePow: 0.3
     spindexer:
@@ -181,16 +182,18 @@ subsystems:
         constants:
             maxVelTicks100ms: 1
             collectPow: 0.5
-            indexPow: -0.15
+            indexPow: -0.5
             flushPow: -1
-            coastPow: 0.5
-            firePow: 0.85
+            coastPow: 0.25
+            firePow: 0.80
     collector:
         implemented: true
         talons:
             intake: 23 # maxVelTicks100ms 10617
         solenoids:
             arm: 2
+        invertMotor:
+            - intake
         pidConfig:
             slot0:
                 kP: 0.1
@@ -202,12 +205,15 @@ subsystems:
             maxVelTicks100ms: 10000
             isVelocity: 0
             revving: 0 #.05
-            collecting: 0.5 #-3600
-            flush: -0.5 #.35
+            collecting: -.5 #-3600
+            flush: 0.5 #.35
     camera:
         implemented: false
         constants:
             debug: 0
+            maxDist: 400
+            maxDeltaX: 1200
+            maxLoopCount: 3
             allowableDistanceError: 50
     cooler:
         implemented: true
@@ -215,7 +221,7 @@ subsystems:
             lock: 1
             dump: 3
         constants:
-            heatThreshold: 95 # degrees Celsius
+            heatThreshold: 65 # degrees Celsius
 infrastructure:
     canivoreBusName: highSpeed
     # power distribution
@@ -231,7 +237,15 @@ infrastructure:
 controlboard: example
 constants:
     # drivetrain dimensions and movement
-    maxAllowablePoseError: 0.1
+    maxRotVel: 14
+    trackWidth: 21 #inches
+    wheelbaseLength: 21.5 #inches
+    wheelDiameter: 4
+    kTrackScrubFactor: 1.0
+    maxVelOpenLoop: 3.2 # meters/s
+    maxVelPathFollowing: 3.2 # meters/s (2.2)
+    maxAccel: 2.54 # meters/s^ 2
+    maxAllowablePoseError: 5
     ## Logging ##
     logTeleOp: 1 # 0 or 1
     logAuto: 1 # 0 or 1
@@ -242,4 +256,3 @@ constants:
     teleopFieldCentric: 1 # 0 or 1
     kLooperDt: .035 # seconds
     resetFactoryDefaults: 0 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret
-

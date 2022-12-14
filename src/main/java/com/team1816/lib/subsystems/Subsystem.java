@@ -5,8 +5,8 @@ import com.google.inject.Inject;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.ILooper;
-import com.team1816.season.Constants;
 import com.team1816.season.Robot;
+import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -40,12 +40,14 @@ public abstract class Subsystem implements Sendable {
         infrastructure = inf;
     }
 
+    /** Read/Write Periodic */
     // Optional design pattern for caching periodic reads to avoid hammering the HAL/CAN.
     public abstract void readFromHardware();
 
     // Optional design pattern for caching periodic writes to avoid hammering the HAL/CAN.
     public abstract void writeToHardware();
 
+    /** Tests, logging, and general functionality */
     public void registerEnabledLoops(ILooper mEnabledLooper) {}
 
     public abstract void zeroSensors();

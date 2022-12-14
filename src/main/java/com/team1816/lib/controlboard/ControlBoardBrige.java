@@ -11,7 +11,6 @@ public class ControlBoardBrige {
 
     public static RobotFactory factory;
     private ControlBoardConfig config;
-    private static ControlBoardBrige bridge;
 
     private HashMap<String, Controller.Button> driverButtonMap = new HashMap<>();
     private HashMap<String, Controller.Axis> driverAxisMap = new HashMap<>();
@@ -22,13 +21,6 @@ public class ControlBoardBrige {
     private HashMap<String, Controller.Axis> operatorAxisMap = new HashMap<>();
     private HashMap<String, Integer> operatorDpadMap = new HashMap<>();
     private boolean operatorRumble = false;
-
-    public static ControlBoardBrige getInstance() {
-        if (bridge == null) {
-            bridge = new ControlBoardBrige();
-        }
-        return bridge;
-    }
 
     @Inject
     public ControlBoardBrige() {

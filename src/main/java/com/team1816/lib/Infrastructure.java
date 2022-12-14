@@ -2,14 +2,15 @@ package com.team1816.lib;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.team1816.lib.hardware.components.IPigeonIMU;
+import com.team1816.lib.hardware.components.gyro.IPigeonIMU;
 import com.team1816.lib.hardware.components.pcm.ICompressor;
 import com.team1816.lib.hardware.factory.RobotFactory;
+import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.PowerDistribution;
 
 /**
- * System housing compressor, pigeon, and power distribution
+ * Subsystem housing compressor and pigeon - should we add pcm/pdh here?
  */
 
 @Singleton
@@ -20,8 +21,8 @@ public class Infrastructure {
     private static IPigeonIMU pigeon;
     private static PowerDistribution pd;
 
-    private double current;
-    private double yaw;
+    private double xAccel, yAccel, zAccel;
+    private double loopCount;
 
     private static boolean compressorEnabled;
     private static boolean compressorIsOn = false;
@@ -32,11 +33,11 @@ public class Infrastructure {
         pigeon = factory.getPigeon();
         pd = factory.getPd();
         compressorEnabled = factory.isCompressorEnabled();
-        yaw = 0;
-        current = 0;
+
+        xAccel = yAccel = zAccel = loopCount = 0;
     }
 
-    public void startCompressor() {
+    public void startCompressor() { // not used because compressor currently turns on by default once robot is enabled
         if (compressorEnabled && !compressorIsOn) {
             compressor.enableDigital();
             compressorIsOn = true;
@@ -60,20 +61,39 @@ public class Infrastructure {
     }
 
     public double getYaw() {
-        return yaw;
+        return pigeon.getYaw();
     }
 
     public void update() {
-        yaw = pigeon.getYaw();
-        current = pd.getTotalCurrent();
+        if (loopCount > 5) {
+            loopCount = 0;
+            double[] accel = pigeon.getAcceleration();
+            xAccel = accel[0] * Constants.gravitationalAccelerationConstant / 16384;
+            yAccel = accel[1] * Constants.gravitationalAccelerationConstant / 16384;
+            zAccel = -accel[2] * Constants.gravitationalAccelerationConstant / 16384;
+        } else {
+            loopCount++;
+        }
+    }
+
+    public Double[] getAcceleration() {
+        return new Double[] { xAccel, yAccel, zAccel };
+    }
+
+    public double getXAcceleration() {
+        return getAcceleration()[0];
+    }
+
+    public double getYAcceleration() {
+        return getAcceleration()[1];
+    }
+
+    public double getZAcceleration() {
+        return getAcceleration()[2];
     }
 
     public PowerDistribution getPd() {
         return pd;
-    }
-
-    public double getCurrent() {
-        return current;
     }
 
     public void simulateGyro(double radianOffsetPerLoop, double gyroDrift) {

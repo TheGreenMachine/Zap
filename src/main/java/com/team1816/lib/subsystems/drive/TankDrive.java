@@ -11,11 +11,13 @@ import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.util.EnhancedMotorChecker;
 import com.team1816.lib.util.team254.CheesyDriveHelper;
 import com.team1816.lib.util.team254.DriveSignal;
-import com.team1816.season.Constants;
+import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.LedManager;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
@@ -25,13 +27,11 @@ import edu.wpi.first.wpilibj.RobotBase;
 @Singleton
 public class TankDrive extends Drive implements DifferentialDrivetrain {
 
-    private static final String NAME = "drivetrain";
-
-    // Components
+    /** Components */
     private final IGreenMotor leftMain, rightMain;
     private final IGreenMotor leftFollowerA, rightFollowerA, leftFollowerB, rightFollowerB;
 
-    // Odometry
+    /** Odometry */
     private DifferentialDriveOdometry tankOdometry;
     private static final DifferentialDriveKinematics tankKinematics = new DifferentialDriveKinematics(
         kDriveWheelTrackWidthMeters
@@ -39,7 +39,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     private final CheesyDriveHelper driveHelper = new CheesyDriveHelper();
     private final double tickRatioPerLoop = Constants.kLooperDt / .1d; // Convert Ticks/100MS into Ticks/Robot Loop
 
-    // States
+    /** States */
     public double leftPowerDemand, rightPowerDemand; // % Output (-1 to 1) - used in OPEN_LOOP
     public double leftVelDemand, rightVelDemand; // Velocity (Ticks/100MS) - used in TRAJECTORY_FOLLOWING
 
@@ -99,7 +99,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     }
 
     /**
-     * Read/Write Periodics
+     * Read/Write Periodic
      */
 
     @Override
@@ -143,7 +143,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         if (RobotBase.isSimulation()) {
             simulateGyroOffset();
         }
-
         infrastructure.update();
         actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
 
@@ -153,7 +152,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     }
 
     /**
-     * Config
+     * config
      */
 
     @Override
@@ -188,7 +187,6 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     @Override
     public void resetOdometry(Pose2d pose) {
-        actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
         tankOdometry.resetPosition(pose, getActualHeading());
         tankOdometry.update(actualHeading, leftActualDistance, rightActualDistance);
         updateRobotState();
@@ -197,12 +195,33 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     @Override
     public void updateRobotState() {
         robotState.fieldToVehicle = tankOdometry.getPoseMeters();
-        robotState.deltaVehicle =
-            new ChassisSpeeds(
-                chassisSpeed.vxMetersPerSecond,
-                chassisSpeed.vyMetersPerSecond,
-                chassisSpeed.omegaRadiansPerSecond
+        robotState.extrapolatedFieldToVehicle =
+            robotState.fieldToVehicle.plus(
+                new Transform2d(
+                    new Translation2d(
+                        chassisSpeed.vxMetersPerSecond,
+                        chassisSpeed.vyMetersPerSecond
+                    )
+                    .times(Constants.kBallEjectionDuration),
+                    new Rotation2d(chassisSpeed.omegaRadiansPerSecond)
+                    .times(Constants.kBallEjectionDuration)
+                )
             );
+        var cs = new ChassisSpeeds(
+            chassisSpeed.vxMetersPerSecond,
+            chassisSpeed.vyMetersPerSecond,
+            chassisSpeed.omegaRadiansPerSecond
+        );
+        robotState.calculatedVehicleAccel =
+            new ChassisSpeeds(
+                (cs.vxMetersPerSecond - robotState.deltaVehicle.vxMetersPerSecond) /
+                Constants.kLooperDt,
+                (cs.vyMetersPerSecond - robotState.deltaVehicle.vyMetersPerSecond) /
+                Constants.kLooperDt,
+                cs.omegaRadiansPerSecond - robotState.deltaVehicle.omegaRadiansPerSecond
+            );
+        robotState.deltaVehicle = cs;
+        robotState.triAxialAcceleration = infrastructure.getAcceleration();
     }
 
     /**
@@ -341,6 +360,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         return rightErrorClosedLoop;
     }
 
+    /** config and tests */
     @Override
     public boolean testSubsystem() {
         boolean leftSide = EnhancedMotorChecker.checkMotor(this, leftMain);

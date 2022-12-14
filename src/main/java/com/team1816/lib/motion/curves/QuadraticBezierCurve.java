@@ -1,6 +1,6 @@
-package com.team1816.lib.math.motion.curves;
+package com.team1816.lib.motion.curves;
 
-import com.team1816.lib.math.motion.splines.NaturalCubicSpline;
+import com.team1816.lib.motion.splines.NaturalCubicSpline;
 import java.util.ArrayList;
 import java.util.Collections;
 

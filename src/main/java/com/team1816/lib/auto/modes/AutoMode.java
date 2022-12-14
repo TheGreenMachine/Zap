@@ -3,7 +3,7 @@ package com.team1816.lib.auto.modes;
 import com.team1816.lib.auto.AutoModeEndedException;
 import com.team1816.lib.auto.actions.Action;
 import com.team1816.lib.auto.actions.TrajectoryAction;
-import com.team1816.season.Constants;
+import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;

@@ -1,17 +1,25 @@
-package com.team1816.lib.hardware.components;
+package com.team1816.lib.hardware.components.gyro;
 
 import com.ctre.phoenix.ErrorCode;
-import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.sensors.Pigeon2;
 
-public class PigeonIMUImpl extends PigeonIMU implements IPigeonIMU {
+public class Pigeon2Impl extends Pigeon2 implements IPigeonIMU {
 
-    public PigeonIMUImpl(int id) {
-        super(id);
+    public Pigeon2Impl(int id, String canBus) {
+        super(id, canBus);
     }
 
+    // set Fused heading doesn't exist in pigeon 2. De we do compass calibration? If not then fused heading is about the same as yaw.
     @Override
     public double getYaw() {
         return super.getYaw();
+    }
+
+    @Override
+    public double[] getAcceleration() {
+        short[] accel = new short[3];
+        getBiasedAccelerometer(accel);
+        return new double[] { accel[0], accel[1], accel[2] };
     }
 
     @Override

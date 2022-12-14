@@ -1,4 +1,4 @@
-package com.team1816.lib.math.motion.profiles;
+package com.team1816.lib.motion.profiles;
 
 /**
  * This class will construct a jerk limited motion profile, by which it will take in parameters of maximum rate of change

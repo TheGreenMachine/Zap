@@ -10,7 +10,7 @@ import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.hardware.components.pcm.ISolenoid;
 import com.team1816.lib.subsystems.Subsystem;
-import com.team1816.season.Constants;
+import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -91,6 +91,7 @@ public class Climber extends Subsystem {
             };
     }
 
+    /** actions */
     public void unlock() {
         System.out.println("unlocking climber !");
         unlocked = true;
@@ -194,6 +195,19 @@ public class Climber extends Subsystem {
         }
     }
 
+    public double getClimberPosition() {
+        return climberPosition;
+    }
+
+    public double getCurrentDraw() {
+        return currentDraw;
+    }
+
+    public int getCurrentStage() {
+        return currentStage;
+    }
+
+    /** periodic */
     @Override
     public void readFromHardware() {
         error = climberMain.getSelectedSensorPosition(0) - stages[currentStage].position;
@@ -216,18 +230,7 @@ public class Climber extends Subsystem {
         }
     }
 
-    public double getClimberPosition() {
-        return climberPosition;
-    }
-
-    public double getCurrentDraw() {
-        return currentDraw;
-    }
-
-    public int getCurrentStage() {
-        return currentStage;
-    }
-
+    /** config and tests */
     @Override
     public void zeroSensors() {
         currentStage = 0;
@@ -260,6 +263,7 @@ public class Climber extends Subsystem {
         return true;
     }
 
+    /** modes and stages */
     public enum ControlMode {
         MANUAL,
         POSITION,

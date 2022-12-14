@@ -4,12 +4,20 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.Infrastructure;
 import com.team1816.lib.subsystems.Subsystem;
-import com.team1816.season.Constants;
+import com.team1816.lib.util.visionUtil.GreenPhotonCamera;
+import com.team1816.lib.util.visionUtil.GreenSimVisionSystem;
+import com.team1816.lib.util.visionUtil.GreenSimVisionTarget;
+import com.team1816.lib.util.visionUtil.VisionPoint;
+import com.team1816.season.configuration.Constants;
+import com.team1816.season.configuration.FieldConfig;
 import com.team1816.season.states.RobotState;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Timer;
+import java.util.*;
 import org.photonvision.*;
+import org.photonvision.targeting.*;
 
 @Singleton
 public class Camera extends Subsystem {
@@ -17,20 +25,24 @@ public class Camera extends Subsystem {
     // Components
     static LedManager led;
 
-    private final PhotonCamera cam;
+    private PhotonCamera cam;
+    private GreenSimVisionSystem simVisionSystem;
     // Constants
     private static final String NAME = "camera";
+
+    // TODO find accurate values for below vars
     private static final double CAMERA_FOCAL_LENGTH = 700; // px
     private static final double VIDEO_WIDTH = 1280; // px
     private static final double VIDEO_HEIGHT = 720; // px
-    private static final double CAMERA_HFOV = 85;
-    public static final double CAMERA_VFOV = 54; // 2 * Math.atan((VIDEO_WIDTH / 2) / CAMERA_FOCAL_LENGTH); // deg
-    private final double MAX_DIST = Constants.fieldCenterX; // distance of half-field
-    private final double MAX_DELTA_X = 90; // degrees
 
-    private final double CAMERA_HEIGHT_METERS = Units.inchesToMeters(
-        Constants.kCameraMountingHeight
-    );
+    // zed dfov - checked for accuracy
+    private static final double CAMERA_DFOV = 100; // degrees - officially 110 degrees?
+
+    // for debugging rn
+    private final double MAX_DIST = factory.getConstant(NAME, "maxDist", 20);
+    private static final double CAMERA_HFOV = 85;
+
+    private final double CAMERA_HEIGHT_METERS = 0.7493; // meters
     private final double TARGET_HEIGHT_METERS = Units.inchesToMeters(
         Constants.kTargetHeight
     );
@@ -39,48 +51,52 @@ public class Camera extends Subsystem {
     );
     // state
     private boolean cameraEnabled;
+    private PhotonTrackedTarget bestTrackedTarget;
 
     @Inject
     public Camera(LedManager ledManager, Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
         led = ledManager;
-        if (this.isImplemented()) {
-            cam = new PhotonCamera("zed");
-        } else {
-            cam = null;
-        }
-        SmartDashboard.putNumber("Camera/cy", 0);
-    }
+        // 2023 dep on 2022 server
 
-    public double getDeltaX() {
-        if (RobotBase.isSimulation() || !this.isImplemented()) { //simulate feedback loop
-            return simulateDeltaX();
+        if (RobotBase.isSimulation()) {
+            simVisionSystem =
+                new GreenSimVisionSystem(
+                    "ZED-M",
+                    90,
+                    60,
+                    Constants.kCameraMountingAngleY,
+                    new Transform2d(
+                        new Translation2d(-.12065, .13335),
+                        Constants.EmptyRotation
+                    ), //TODO update this value
+                    CAMERA_HEIGHT_METERS,
+                    9000,
+                    3840,
+                    1080,
+                    0
+                );
+            for (int i = 0; i <= 53; i++) {
+                if (FieldConfig.fieldTargets.get(i) == null) {
+                    continue;
+                }
+                simVisionSystem.addSimVisionTarget(
+                    new GreenSimVisionTarget(
+                        new Pose2d(
+                            FieldConfig.fieldTargets.get(i).getX(),
+                            FieldConfig.fieldTargets.get(i).getY(),
+                            FieldConfig.fieldTargets.get(i).getRotation().toRotation2d()
+                        ),
+                        FieldConfig.fieldTargets.get(i).getZ(),
+                        .1651, // Estimated width & height of the AprilTag
+                        .1651,
+                        i
+                    )
+                );
+            }
         }
-        var result = cam.getLatestResult();
-        if (!result.hasTargets() || getDistance() <= -1) {
-            return 0;
-        }
-        return result.getBestTarget().getYaw();
-    }
-
-    public double getDistance() {
-        if (RobotBase.isSimulation() || !this.isImplemented()) {
-            return robotState.getEstimatedDistanceToGoal();
-        }
-        var result = cam.getLatestResult();
-        if (!result.hasTargets()) {
-            return -1.0;
-        }
-        double distMeters = PhotonUtils.calculateDistanceToTargetMeters(
-            CAMERA_HEIGHT_METERS,
-            TARGET_HEIGHT_METERS,
-            CAMERA_PITCH_RADIANS,
-            Units.degreesToRadians(result.getBestTarget().getPitch())
-        );
-        if (distMeters > MAX_DIST) {
-            return -1;
-        }
-        return Units.metersToInches(distMeters);
+        GreenPhotonCamera.setVersionCheckEnabled(false);
+        cam = new PhotonCamera("microsoft");
     }
 
     public void setCameraEnabled(boolean cameraEnabled) {
@@ -102,7 +118,35 @@ public class Camera extends Subsystem {
 
     public void stop() {}
 
-    public void readFromHardware() {}
+    @Override
+    public boolean testSubsystem() {
+        return false;
+    }
+
+    public void readFromHardware() {
+        if (RobotBase.isSimulation()) {
+            simVisionSystem.moveCamera(
+                new Transform2d(
+                    robotState.getFieldToTurretPos(),
+                    robotState.fieldToVehicle
+                ), // sim vision inverts this Transform when calculating robotPose
+                CAMERA_HEIGHT_METERS,
+                Constants.kCameraMountingAngleY
+            );
+            simVisionSystem.processFrame(robotState.fieldToVehicle);
+            robotState.field
+                .getObject("camera")
+                .setPose(
+                    robotState.fieldToVehicle.transformBy(
+                        new Transform2d(
+                            robotState.fieldToVehicle,
+                            robotState.getFieldToTurretPos()
+                        )
+                    )
+                );
+        }
+        robotState.visibleTargets = getPoints();
+    }
 
     @Override
     public void writeToHardware() {}
@@ -110,7 +154,74 @@ public class Camera extends Subsystem {
     @Override
     public void zeroSensors() {}
 
-    public boolean testSubsystem() { // this doesn't actually do anything because there's no read calls
+    public ArrayList<VisionPoint> getPoints() {
+        ArrayList<VisionPoint> targets = new ArrayList<>();
+        VisionPoint p = new VisionPoint();
+        var result = cam.getLatestResult();
+        if (!result.hasTargets()) {
+            return targets;
+        }
+        var bestTarget = result.getBestTarget();
+        p.id = bestTarget.getFiducialId();
+        p.cameraToTarget = bestTarget.getCameraToTarget();
+        targets.add(p);
+        return targets;
+        //        var result = cam.getLatestResult();
+        //        if (!result.hasTargets()) {
+        //            return targets;
+        //        }
+        //
+        //        double m = 0xFFFFFF; // big number
+        //        var principal_RANSAC = new PhotonTrackedTarget();
+        //
+        //        for (PhotonTrackedTarget target : result.targets) {
+        //            var p = new Point();
+        //            if (target.getCameraToTarget() != null) {
+        //                p.cameraToTarget = target.getCameraToTarget();
+        //                p.id = target.getFiducialId();
+        //                targets.add(p);
+        //
+        //                if (m > p.cameraToTarget.getTranslation().getNorm()) {
+        //                    m = p.cameraToTarget.getTranslation().getNorm();
+        //                    principal_RANSAC = target;
+        //                }
+        //            }
+        //        }
+        //
+        //        bestTrackedTarget = principal_RANSAC;
+        //
+        //        return targets;
+    }
+
+    public double getDistance() {
+        return robotState.getDistanceToGoal();
+    }
+
+    public double getDeltaX() {
+        if (RobotBase.isSimulation()) { //simulate feedback loop
+            return simulateDeltaX();
+        }
+        if (bestTrackedTarget == null) {
+            getPoints();
+        }
+        return bestTrackedTarget.getYaw();
+    }
+
+    public boolean checkSystem() {
+        if (this.isImplemented()) {
+            setCameraEnabled(true);
+            Timer.delay(2);
+            if (getDistance() < 0 || getDistance() > MAX_DIST) {
+                System.out.println("getDistance failed test!");
+                return false;
+            } else if (
+                getDeltaX() < -CAMERA_HFOV / 2d || getDeltaX() > CAMERA_HFOV / 2d
+            ) {
+                System.out.println("getDeltaX failed test!");
+                return false;
+            }
+            setCameraEnabled(false);
+        }
         return true;
     }
 
@@ -131,6 +242,6 @@ public class Camera extends Subsystem {
         if (currentTurretAngle < 0 && adjacent < 0) {
             currentTurretAngle += 360;
         }
-        return ((currentTurretAngle - targetTurretAngle)); //scaling for the feedback loop
+        return ((currentTurretAngle - targetTurretAngle)); // scaling for the feedback loop
     }
 }

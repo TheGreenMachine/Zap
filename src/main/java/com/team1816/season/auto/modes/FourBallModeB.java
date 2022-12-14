@@ -7,7 +7,6 @@ import com.team1816.season.auto.actions.*;
 import com.team1816.season.auto.paths.FourBallPathB2;
 import com.team1816.season.auto.paths.FourBallPathB3;
 import com.team1816.season.auto.paths.TwoBallPathB;
-import com.team1816.season.subsystems.Turret;
 import java.util.List;
 
 public class FourBallModeB extends AutoMode {
@@ -28,7 +27,8 @@ public class FourBallModeB extends AutoMode {
         runAction(
             new SeriesAction(
                 new ParallelAction(
-                    new TurretAction(Turret.kNorth + 5), // to be changed
+                    //new TurretAction(Turret.kNorth + 5), // to be changed
+                    new AbsoluteTurretAction(),
                     new CollectAction(true)
                 ),
                 new WaitAction(0.5),
@@ -40,7 +40,8 @@ public class FourBallModeB extends AutoMode {
                 new ShootAction(false, true),
                 trajectoryActions.get(1),
                 new WaitAction(1.25),
-                new TurretAction(Turret.kSouth + 45), // 32
+                //new TurretAction(Turret.kSouth + 45), // 32
+                new AbsoluteTurretAction(),
                 trajectoryActions.get(2),
                 new ShootAction(true, true),
                 new WaitAction(3)

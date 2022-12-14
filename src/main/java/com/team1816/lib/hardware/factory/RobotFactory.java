@@ -4,11 +4,11 @@ import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.sensors.*;
 import com.google.inject.Singleton;
 import com.team1816.lib.hardware.*;
-import com.team1816.lib.hardware.components.*;
-import com.team1816.lib.hardware.components.ledManager.CANdleImpl;
-import com.team1816.lib.hardware.components.ledManager.CanifierImpl;
-import com.team1816.lib.hardware.components.ledManager.GhostLEDManager;
-import com.team1816.lib.hardware.components.ledManager.ILEDManager;
+import com.team1816.lib.hardware.components.gyro.GhostPigeonIMU;
+import com.team1816.lib.hardware.components.gyro.IPigeonIMU;
+import com.team1816.lib.hardware.components.gyro.Pigeon2Impl;
+import com.team1816.lib.hardware.components.gyro.PigeonIMUImpl;
+import com.team1816.lib.hardware.components.ledManager.*;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.hardware.components.motor.LazySparkMax;
 import com.team1816.lib.hardware.components.pcm.*;
@@ -188,18 +188,6 @@ public class RobotFactory {
         return followerMotor;
     }
 
-    private boolean isHardwareValid(Map<String, Integer> map, String name) {
-        if (map != null) {
-            Integer hardwareId = map.get(name);
-            return hardwareId != null && hardwareId > -1 && RobotBase.isReal();
-        }
-        return false;
-    }
-
-    private boolean isHardwareValid(Integer hardwareId) {
-        return hardwareId != null && hardwareId > -1 && RobotBase.isReal();
-    }
-
     public SwerveModule getSwerveModule(String subsystemName, String name) {
         var subsystem = getSubsystem(subsystemName);
         ModuleConfiguration module = subsystem.swerveModules.modules.get(name);
@@ -213,10 +201,10 @@ public class RobotFactory {
 
         var moduleConfig = new SwerveModule.ModuleConfig();
         moduleConfig.moduleName = name;
-        moduleConfig.azimuthMotorID = module.azimuth;
+        moduleConfig.azimuthMotorName = module.azimuth; // getAzimuth and drive give ID I think - not the module name (ex: leftRear)
         moduleConfig.azimuthPid =
             getPidSlotConfig(subsystemName, "slot0", PIDConfig.Azimuth);
-        moduleConfig.driveMotorID = module.drive;
+        moduleConfig.driveMotorName = module.drive;
         moduleConfig.drivePid = getPidSlotConfig(subsystemName, "slot0", PIDConfig.Drive);
         moduleConfig.azimuthEncoderHomeOffset = module.constants.get("encoderOffset");
 
@@ -328,6 +316,18 @@ public class RobotFactory {
         }
         reportGhostWarning("Compressor", "ROOT", "on PCM ID " + getPcmId()); // root?
         return new GhostCompressor();
+    }
+
+    private boolean isHardwareValid(Map<String, Integer> map, String name) {
+        if (map != null) {
+            Integer hardwareId = map.get(name);
+            return hardwareId != null && hardwareId > -1 && RobotBase.isReal();
+        }
+        return false;
+    }
+
+    private boolean isHardwareValid(Integer hardwareId) {
+        return hardwareId != null && hardwareId > -1 && RobotBase.isReal();
     }
 
     public Double getConstant(String name) {

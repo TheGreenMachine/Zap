@@ -21,17 +21,18 @@ public class MotorFactory {
     private static final int kTimeoutMsLONG = RobotBase.isSimulation() ? 0 : 200;
 
     // Factory default motor configs.
-    private static final NeutralMode NEUTRAL_MODE = NeutralMode.Coast;
-    private static final double NEUTRAL_DEADBAND = 0.04;
-    private static final boolean ENABLE_CURRENT_LIMIT = false;
-    private static final boolean ENABLE_SOFT_LIMIT = false;
-    private static final boolean ENABLE_LIMIT_SWITCH = false;
-    private static final int FORWARD_SOFT_LIMIT = 0;
-    private static final int REVERSE_SOFT_LIMIT = 0;
-    private static final int CONTROL_FRAME_PERIOD_MS = 5;
-    private static final int VELOCITY_MEASUREMENT_ROLLING_AVERAGE_WINDOW = 1;
-    private static final double OPEN_LOOP_RAMP_RATE = 0.0;
-    private static final double CLOSED_LOOP_RAMP_RATE = 0.0;
+
+    public static NeutralMode NEUTRAL_MODE = NeutralMode.Coast;
+    public static double NEUTRAL_DEADBAND = 0.04;
+    public static boolean ENABLE_CURRENT_LIMIT = false;
+    public static boolean ENABLE_SOFT_LIMIT = false;
+    public static boolean ENABLE_LIMIT_SWITCH = false;
+    public static int FORWARD_SOFT_LIMIT = 0;
+    public static int REVERSE_SOFT_LIMIT = 0;
+    public static int CONTROL_FRAME_PERIOD_MS = 5;
+    public static int VELOCITY_MEASUREMENT_ROLLING_AVERAGE_WINDOW = 1;
+    public static double OPEN_LOOP_RAMP_RATE = 0.0;
+    public static double CLOSED_LOOP_RAMP_RATE = 0.0;
 
     // Create a CANTalon with the default (out of the box) configuration.
     public static IGreenMotor createDefaultTalon(
@@ -156,10 +157,9 @@ public class MotorFactory {
 
     public static CANCoder createCanCoder(int canCoderID, boolean invertCanCoder) {
         CANCoder canCoder = new CANCoder(canCoderID);
-        // TODO test if a new CANCoder is by default a factoryDefault CANCoder
         if (factory.getConstant("resetFactoryDefaults", 0) > 0) {
             canCoder.configFactoryDefault(kTimeoutMs);
-            canCoder.configAllSettings(configureCanCoder(invertCanCoder), kTimeoutMs);
+            canCoder.configAllSettings(configureCanCoder(invertCanCoder), kTimeoutMsLONG);
         }
         return canCoder;
     }

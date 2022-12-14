@@ -1,4 +1,4 @@
-package com.team1816.lib.hardware.components;
+package com.team1816.lib.hardware.components.gyro;
 
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
@@ -17,6 +17,12 @@ public class GhostPigeonIMU implements IPigeonIMU {
     @Override
     public double getYaw() {
         return dummyYaw;
+    }
+
+    @Override
+    public double[] getAcceleration() {
+        double[] accel = new double[] { 0d, 0d, 9.8d };
+        return accel;
     }
 
     @Override

@@ -44,16 +44,17 @@ public class Spindexer extends Subsystem {
         COAST = factory.getConstant(NAME, "coastPow", -.1);
     }
 
-    private void spindexerControl(double spindexerPower) {
+    /** actions */
+    private void setSpindexer(double spindexerPower) {
         this.desiredPower = spindexerPower;
         spindexer.set(ControlMode.PercentOutput, spindexerPower);
     }
 
     private void lockToElevator() { // bear in mind this might never fire if shooter not implemented - not rly important tho
         if (robotState.elevatorState == Elevator.STATE.FIRE) {
-            spindexerControl(FIRE);
+            setSpindexer(FIRE);
         } else {
-            spindexerControl(INDEX);
+            setSpindexer(INDEX);
             outputsChanged = true; // keep looping through writeToHardWare if shooter not up to speed
         }
     }
@@ -65,6 +66,7 @@ public class Spindexer extends Subsystem {
         }
     }
 
+    /** periodic */
     @Override
     public void readFromHardware() {
         // since no other subsystems rely on spindexer being up to speed to perform an action,
@@ -81,27 +83,28 @@ public class Spindexer extends Subsystem {
             outputsChanged = false;
             switch (desiredState) {
                 case STOP:
-                    spindexerControl(0);
+                    setSpindexer(0);
                     break;
                 case COLLECT:
-                    spindexerControl(COLLECT);
+                    setSpindexer(COLLECT);
                     break;
                 case INDEX:
-                    spindexerControl(INDEX);
+                    setSpindexer(INDEX);
                     break;
                 case FLUSH:
-                    spindexerControl(FLUSH);
+                    setSpindexer(FLUSH);
                     break;
                 case FIRE:
                     lockToElevator();
                     break;
                 case COAST:
-                    spindexerControl(COAST);
+                    setSpindexer(COAST);
                     break;
             }
         }
     }
 
+    /** config and tests */
     @Override
     public void zeroSensors() {}
 
@@ -121,6 +124,7 @@ public class Spindexer extends Subsystem {
         return true;
     }
 
+    /** states */
     public enum STATE {
         STOP,
         COLLECT,

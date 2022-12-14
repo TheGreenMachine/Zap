@@ -11,7 +11,7 @@ import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.lib.util.EnhancedMotorChecker;
-import com.team1816.season.Constants;
+import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.util.sendable.SendableBuilder;
 
@@ -62,6 +62,7 @@ public class Shooter extends Subsystem implements PidProvider {
         VELOCITY_THRESHOLD = pidConfig.allowableError.intValue();
     }
 
+    /** actions */
     private void configCurrentLimits(int currentLimitAmps) {
         shooterMain.configSupplyCurrentLimit(
             new SupplyCurrentLimitConfiguration(true, currentLimitAmps, 0, 0),
@@ -86,7 +87,7 @@ public class Shooter extends Subsystem implements PidProvider {
         return Math.abs(actualVelocity - desiredVelocity);
     }
 
-    public void velocityControl(double velocity) {
+    public void setVelocity(double velocity) {
         desiredVelocity = velocity;
         shooterMain.set(ControlMode.Velocity, desiredVelocity);
     }
@@ -100,8 +101,7 @@ public class Shooter extends Subsystem implements PidProvider {
     public boolean isVelocityNearTarget() {
         if (!isImplemented()) {
             /*
-            this is here to let us use rampUpShooterAction or getShoot on a robot that doesn't have a shooter without
-            having the robot freeze up (ie: a path won't continue until the shooter has finished ramping up)
+            allows use of rampUpShooterAction or getShoot on a ghost subsystem without crash / failure (ie: a path won't continue until the shooter has finished ramping up)
             */
             return true;
         }
@@ -114,8 +114,6 @@ public class Shooter extends Subsystem implements PidProvider {
     @Override
     public void readFromHardware() {
         actualVelocity = shooterMain.getSelectedSensorVelocity(0);
-
-        robotState.shooterMPS = convertShooterTicksToMetersPerSecond(actualVelocity);
 
         if (desiredState != robotState.shooterState) {
             if (actualVelocity < VELOCITY_THRESHOLD) {
@@ -134,12 +132,12 @@ public class Shooter extends Subsystem implements PidProvider {
             outputsChanged = false;
             switch (desiredState) {
                 case STOP:
-                    velocityControl(0);
+                    setVelocity(0);
                     break;
                 case REVVING: // velocity is set in higher classes (superstructure)
                     break;
                 case COASTING:
-                    velocityControl(COAST_VELOCITY);
+                    setVelocity(COAST_VELOCITY);
                     break;
             }
         }
@@ -148,15 +146,7 @@ public class Shooter extends Subsystem implements PidProvider {
     @Override
     public void zeroSensors() {}
 
-    public double convertShooterTicksToMetersPerSecond(double ticks) {
-        return 0.00019527 * ticks; //TODO: verify conversion (roughly accurate based on recorded data)
-        // this can be corroborated by looking at the troughs in logs and computing the expected output
-    }
-
-    public double convertShooterMetersToTicksPerSecond(double metersPerSecond) {
-        return (metersPerSecond + 0.53) / 0.0248;
-    }
-
+    /** config and tests */
     @Override
     public void initSendable(SendableBuilder builder) {}
 

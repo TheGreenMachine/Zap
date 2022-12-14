@@ -12,7 +12,9 @@ public class AutoModeManager {
 
     // Auto mode selection
     private final SendableChooser<DesiredAuto> autoModeChooser;
+    private final SendableChooser<Color> sideChooser;
     private DesiredAuto desiredAuto;
+    private Color desiredColor;
 
     // Auto mode execution
     private AutoMode autoMode;
@@ -21,6 +23,7 @@ public class AutoModeManager {
     public AutoModeManager() {
         // Sendable chooser represents the dropdown menu in shuffleboard to pick our desired auto mode
         autoModeChooser = new SendableChooser<>();
+        sideChooser = new SendableChooser<>();
         // Populate dropdown menu with all possible auto modes (represented as DesiredMode enums)
         SmartDashboard.putData("Auto mode", autoModeChooser);
 
@@ -32,6 +35,12 @@ public class AutoModeManager {
             DesiredAuto.DRIVE_STRAIGHT
         );
 
+        // Populate dropdown with all possible sides
+        SmartDashboard.putData("Robot color", sideChooser);
+
+        sideChooser.setDefaultOption(Color.BLUE.name(), Color.BLUE);
+        sideChooser.addOption(Color.RED.name(), Color.RED);
+
         // Initialize auto mode and its respective thread
         reset();
     }
@@ -40,22 +49,29 @@ public class AutoModeManager {
         autoMode = new DriveStraightMode();
         autoModeThread = new Thread(autoMode::run);
         desiredAuto = DesiredAuto.DRIVE_STRAIGHT;
+        desiredColor = Color.RED;
     }
 
     public boolean update() {
         DesiredAuto selectedAuto = autoModeChooser.getSelected();
+        Color selectedColor = sideChooser.getSelected();
         boolean autoChanged = desiredAuto != selectedAuto;
-
+        boolean colorChanged = desiredColor != selectedColor;
         // if auto has been changed, update selected auto mode + thread
-        if (autoChanged) {
-            System.out.println(
-                "Auto changed from: " + desiredAuto + ", to: " + selectedAuto.name()
-            );
-
+        if (autoChanged || colorChanged) {
+            if (autoChanged) {
+                System.out.println(
+                    "Auto changed from: " + desiredAuto + ", to: " + selectedAuto.name()
+                );
+            }
+            if (colorChanged) {
+                System.out.println("Robot color: " + selectedColor);
+            }
             autoMode = generateAutoMode(selectedAuto);
             autoModeThread = new Thread(autoMode::run);
         }
         desiredAuto = selectedAuto;
+        desiredColor = selectedColor;
 
         return autoChanged;
     }
@@ -64,10 +80,17 @@ public class AutoModeManager {
         if (desiredAuto != null) {
             SmartDashboard.putString("AutoModeSelected", desiredAuto.name());
         }
+        if (desiredColor != null) {
+            SmartDashboard.putString("RobotColorSelected", desiredColor.name());
+        }
     }
 
     public AutoMode getSelectedAuto() {
         return autoMode;
+    }
+
+    public Color getSelectedColor() {
+        return desiredColor;
     }
 
     // Auto Mode Executor
@@ -90,7 +113,6 @@ public class AutoModeManager {
         DRIVE_STRAIGHT,
 
         // 2022
-        DRIVE_STRAIGHT_SHOOT,
         TWO_BALL_A,
         TWO_BALL_B,
         FOUR_BALL_B,
@@ -101,10 +123,13 @@ public class AutoModeManager {
         ONE_BALL_C_BORDER,
     }
 
+    public enum Color {
+        RED,
+        BLUE,
+    }
+
     private AutoMode generateAutoMode(DesiredAuto mode) {
         switch (mode) {
-            case DRIVE_STRAIGHT_SHOOT:
-                return new DriveStraightShootMode();
             case DO_NOTHING:
                 return new DoNothingMode();
             case TUNE_DRIVETRAIN:

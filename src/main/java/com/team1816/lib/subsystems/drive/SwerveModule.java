@@ -12,7 +12,7 @@ import com.team1816.lib.hardware.PIDSlotConfiguration;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.math.DriveConversions;
 import com.team1816.lib.math.SwerveKinematics;
-import com.team1816.season.Constants;
+import com.team1816.season.configuration.Constants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
@@ -56,7 +56,7 @@ public class SwerveModule implements ISwerveModule {
         driveMotor =
             factory.getMotor(
                 subsystemName,
-                mModuleConfig.driveMotorID,
+                mModuleConfig.driveMotorName,
                 factory.getSubsystem(subsystemName).swerveModules.drivePID,
                 -1
             );
@@ -65,7 +65,7 @@ public class SwerveModule implements ISwerveModule {
         azimuthMotor =
             factory.getMotor(
                 subsystemName,
-                mModuleConfig.azimuthMotorID,
+                mModuleConfig.azimuthMotorName,
                 factory.getSubsystem(subsystemName).swerveModules.azimuthPID,
                 canCoder == null ? -1 : canCoder.getDeviceID()
             );
@@ -227,11 +227,11 @@ public class SwerveModule implements ISwerveModule {
     public String toString() {
         return (
             "SwerveModule{ " +
-            mModuleConfig.driveMotorID +
+            mModuleConfig.driveMotorName +
             " id: " +
             driveMotor.getDeviceID() +
             "  " +
-            mModuleConfig.azimuthMotorID +
+            mModuleConfig.azimuthMotorName +
             " id: " +
             azimuthMotor.getDeviceID() +
             " offset: " +
@@ -244,8 +244,8 @@ public class SwerveModule implements ISwerveModule {
         public ModuleConfig() {}
 
         public String moduleName = "Name";
-        public String driveMotorID = "";
-        public String azimuthMotorID = "";
+        public String driveMotorName = "";
+        public String azimuthMotorName = "";
 
         public PIDSlotConfiguration azimuthPid;
         public PIDSlotConfiguration drivePid;

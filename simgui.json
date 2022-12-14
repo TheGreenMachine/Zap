@@ -77,9 +77,11 @@
       "/LiveWindow/Ungrouped/PIDController[9]": "PIDController",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/LiveWindow/drivetrain": "Gyro",
+      "/SmartDashboard/Alliance color": "String Chooser",
       "/SmartDashboard/Auto mode": "String Chooser",
       "/SmartDashboard/Demo Mode": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Robot color": "String Chooser",
       "/SmartDashboard/SendableChooser[0]": "String Chooser",
       "/SmartDashboard/SendableChooser[2]": "String Chooser",
       "/SmartDashboard/Starting Position": "String Chooser",
@@ -92,6 +94,29 @@
         }
       },
       "/SmartDashboard/Field": {
+        "April Tags": {
+          "arrows": false,
+          "color": [
+            0.8354430198669434,
+            0.0,
+            1.0,
+            255.0
+          ],
+          "length": 0.25,
+          "style": "Box/Image",
+          "weight": 2.0,
+          "width": 0.25
+        },
+        "EstimatedRobot": {
+          "arrowColor": [
+            0.5980392098426819,
+            0.5247501134872437,
+            0.5247501134872437,
+            55.0
+          ],
+          "arrowWeight": 0.20000000298023224,
+          "weight": 0.20000000298023224
+        },
         "Robot": {
           "arrowColor": [
             0.5980392098426819,
@@ -108,6 +133,18 @@
           "style": "Line",
           "weight": 1.0
         },
+        "camera": {
+          "arrowSize": 0,
+          "arrows": false,
+          "color": [
+            0.30379724502563477,
+            0.0,
+            1.0,
+            255.0
+          ],
+          "length": 0.10000000149011612,
+          "width": 0.10000000149011612
+        },
         "height": 8.229599952697754,
         "image": "season.png",
         "turret": {
@@ -118,13 +155,15 @@
         "window": {
           "visible": true
         }
+      },
+      "/SmartDashboard/Robot color": {
+        "window": {
+          "visible": true
+        }
       }
     }
   },
   "NetworkTables": {
-    "FMSInfo": {
-      "open": true
-    },
     "LiveWindow": {
       "drivetrain": {
         "open": true
@@ -139,8 +178,13 @@
       },
       "Starting Position": {
         "open": true
-      },
-      "open": true
+      }
+    },
+    "photonvision": {
+      "open": true,
+      "zed": {
+        "open": true
+      }
     }
   },
   "NetworkTables View": {

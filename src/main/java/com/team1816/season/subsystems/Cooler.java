@@ -10,9 +10,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-/*
-this is an example of a subsystem that's currently simple enough that it needs no marked difference between desired and actual states
-- no other subsystems depend on this subsystem in order to perform an action
+/**
+ * This subsystem models a compressed air cooling system for motors to ensure optimal performance and prevent overheating.
+ * This is also an example of a subsystem that needs no marked difference between desired and actual states
+ * i.e. no other subsystems depend on this subsystem in order to perform an action
  */
 @Singleton
 public class Cooler extends Subsystem {
@@ -99,6 +100,7 @@ public class Cooler extends Subsystem {
         }
     }
 
+    /** config and tests */
     @Override
     public void zeroSensors() {
         needsDump = false;
@@ -118,6 +120,7 @@ public class Cooler extends Subsystem {
         return true;
     }
 
+    /** states */
     public enum STATE {
         WAIT,
         DUMP,
