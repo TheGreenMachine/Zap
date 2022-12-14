@@ -154,6 +154,7 @@ public class Camera extends Subsystem {
         p.id = bestTarget.getFiducialId();
         p.cameraToTarget = bestTarget.getCameraToTarget();
         targets.add(p);
+        bestTrackedTarget = bestTarget;
         return targets;
         //        var result = cam.getLatestResult();
         //        if (!result.hasTargets()) {
@@ -186,6 +187,7 @@ public class Camera extends Subsystem {
         return robotState.getDistanceToGoal();
     }
 
+    //for 2D mode
     public double getDeltaX() {
         if (RobotBase.isSimulation()) { //simulate feedback loop
             return simulateDeltaX();
@@ -194,6 +196,17 @@ public class Camera extends Subsystem {
             getPoints();
         }
         return bestTrackedTarget.getYaw();
+    }
+
+    //for 3D mode
+    public double getRotation() {
+        if (RobotBase.isSimulation()) { //simulate feedback loop
+            return simulateDeltaX();
+        }
+        if (bestTrackedTarget == null) {
+            getPoints();
+        }
+        return bestTrackedTarget.getCameraToTarget().getY();
     }
 
     public boolean checkSystem() {

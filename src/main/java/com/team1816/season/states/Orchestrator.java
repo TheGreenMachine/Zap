@@ -157,6 +157,15 @@ public class Orchestrator {
         }
     }
 
+    public void rotateToTarget(){
+        if (Constants.kUseVision ){
+            drive.setTeleopInputs(0,0, camera.getRotation()/90);
+        }
+        else {
+            System.out.println("can't rotate b/c camera not on");
+        }
+    }
+
     /** superstructure state */
     public void setSuperstructureState(STATE state) {
         superstructureState = state;

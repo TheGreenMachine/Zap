@@ -40,4 +40,5 @@ operator:
     buttons:
         start: toggleTopClamp
         back: toggleBottomClamp
+        leftBumper: autoAim
 demoMode: false

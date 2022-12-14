@@ -261,6 +261,11 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         }
     }
 
+    @Override
+    public void driveToHeading(double degrees) {
+
+    }
+
     public synchronized void setVelocity(DriveSignal signal) {
         if (controlState == ControlState.OPEN_LOOP) {
             System.out.println("Switching to Velocity");

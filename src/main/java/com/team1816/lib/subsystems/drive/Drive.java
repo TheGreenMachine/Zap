@@ -52,6 +52,8 @@ public abstract class Drive
     protected boolean isBraking;
     protected boolean isSlowMode;
 
+    protected boolean isAutoRotating;
+
     /** Trajectory */
     protected double trajectoryStartTime = 0;
 
@@ -233,6 +235,9 @@ public abstract class Drive
     public void setControlState(ControlState controlState) {
         this.controlState = controlState;
     }
+
+    public abstract void driveToHeading(double degrees);
+
 
     public void setSlowMode(boolean slowMode) {
         isSlowMode = slowMode;

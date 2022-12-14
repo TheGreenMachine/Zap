@@ -266,6 +266,11 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     @Override
+    public void driveToHeading(double degrees) {
+    setTeleopInputs();
+    }
+
+    @Override
     public synchronized void setBraking(boolean braking) {
         isBraking = braking;
         if (braking) {
