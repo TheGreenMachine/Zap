@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 /**
  * Base class that all events that send data extend from
  * @param <T> T is the type of data that is sent
+ * @see EventBase
  */
 public class PubSubConsumer<T> extends EventBase {
 

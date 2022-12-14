@@ -2,6 +2,10 @@ package com.team1816.lib.events;
 
 import java.util.HashMap;
 
+/**
+ * A class the aggregates events into a registry of events that can then be called upon to trigger an event
+ * @see IEventAggregator
+ */
 public class EventAggregator implements IEventAggregator {
 
     private final HashMap<Object, EventBase> _events = new HashMap<>();

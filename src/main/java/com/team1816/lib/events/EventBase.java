@@ -3,7 +3,9 @@ package com.team1816.lib.events;
 import java.util.ArrayList;
 
 /**
- * This is the base event that all events extend from
+ * The base event that all events extend from
+ * @see PubSubRunnable
+ * @see PubSubConsumer
  */
 public abstract class EventBase {
 
