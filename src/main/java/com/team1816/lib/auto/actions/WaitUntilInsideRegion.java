@@ -6,14 +6,39 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
+/**
+ * Action that stops processes / waits inside a region.
+ * Dependents: RobotState
+ * @see RobotState
+ * @see Action
+ */
 public class WaitUntilInsideRegion implements Action {
 
+    /**
+     * State: RobotState
+     * @see RobotState
+     */
     private static RobotState mRobotState;
 
+    /**
+     * State: Bottom left of rectangular region to wait inside
+     */
     private final Translation2d mBottomLeft;
+    /**
+     * State: Top right of rectangular region to wait inside
+     */
     private final Translation2d mTopRight;
+    /**
+     * State: Name of region
+     */
     private String name = "";
 
+    /**
+     * Instantiates a WaitUntilInsideRegion action based on state parameters
+     * @param bottomLeft
+     * @param topRight
+     * @param name
+     */
     public WaitUntilInsideRegion(
         Translation2d bottomLeft,
         Translation2d topRight,
@@ -25,6 +50,25 @@ public class WaitUntilInsideRegion implements Action {
         mRobotState = Injector.get(RobotState.class);
     }
 
+    /**
+     * Starts the action (empty)
+     * @see Action#start()
+     */
+    @Override
+    public void start() {}
+
+    /**
+     * Updates the action (empty)
+     * @see Action#update()
+     */
+    @Override
+    public void update() {}
+
+    /**
+     * Checks if position criteria is met based on robotState
+     * @return boolean isFinished
+     * @see Action#isFinished()
+     */
     @Override
     public boolean isFinished() {
         Pose2d position = mRobotState.fieldToVehicle;
@@ -32,20 +76,18 @@ public class WaitUntilInsideRegion implements Action {
         var y = Units.metersToInches(position.getY());
         return (
             x > mBottomLeft.getX() &&
-            x < mTopRight.getX() &&
-            y > mBottomLeft.getY() &&
-            y < mTopRight.getY()
+                x < mTopRight.getX() &&
+                y > mBottomLeft.getY() &&
+                y < mTopRight.getY()
         );
     }
 
-    @Override
-    public void update() {}
-
+    /**
+     * Standard cleanup procedure: prints out action
+     * @see Action#done()
+     */
     @Override
     public void done() {
         System.out.println("INSIDE DESIRED REGION: " + name);
     }
-
-    @Override
-    public void start() {}
 }
