@@ -362,7 +362,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
 
     /** config and tests */
     @Override
-    public boolean checkSystem() {
+    public boolean testSubsystem() {
         boolean leftSide = EnhancedMotorChecker.checkMotor(this, leftMain);
         boolean rightSide = EnhancedMotorChecker.checkMotor(this, rightMain);
 

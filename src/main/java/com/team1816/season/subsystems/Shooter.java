@@ -101,8 +101,7 @@ public class Shooter extends Subsystem implements PidProvider {
     public boolean isVelocityNearTarget() {
         if (!isImplemented()) {
             /*
-            this is here to let us use rampUpShooterAction or getShoot on a robot that doesn't have a shooter without
-            having the robot freeze up (ie: a path won't continue until the shooter has finished ramping up)
+            allows use of rampUpShooterAction or getShoot on a ghost subsystem without crash / failure (ie: a path won't continue until the shooter has finished ramping up)
             */
             return true;
         }
@@ -144,6 +143,9 @@ public class Shooter extends Subsystem implements PidProvider {
         }
     }
 
+    @Override
+    public void zeroSensors() {}
+
     /** config and tests */
     @Override
     public void initSendable(SendableBuilder builder) {}
@@ -152,7 +154,7 @@ public class Shooter extends Subsystem implements PidProvider {
     public void stop() {}
 
     @Override
-    public boolean checkSystem() {
+    public boolean testSubsystem() {
         boolean checkShooter = EnhancedMotorChecker.checkMotor(this, shooterMain);
 
         return checkShooter;

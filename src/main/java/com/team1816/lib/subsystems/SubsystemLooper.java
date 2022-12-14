@@ -8,21 +8,24 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Used to zero, enable, stop, and update all subsystems at once
+ * Loops through subsystem read/write methods
+ * <p>
+ * Also used to zero, enable, stop, and update all subsystems at once
+ * </p>
  */
-public class SubsystemManager implements ILooper {
+public class SubsystemLooper implements ILooper {
 
     private List<Subsystem> mAllSubsystems;
     private List<Loop> mLoops = new ArrayList<>();
 
-    public SubsystemManager() {}
+    public SubsystemLooper() {}
 
     public boolean checkSubsystems() {
         boolean ret_val = true;
 
         for (Subsystem s : mAllSubsystems) {
             System.out.println("SUBSYSTEM: " + s.getSubsystemName());
-            ret_val &= s.checkSystem();
+            ret_val &= s.testSubsystem();
         }
 
         return ret_val;
@@ -52,12 +55,6 @@ public class SubsystemManager implements ILooper {
             }
         }
         System.out.println("********** Subsystems set **********");
-    }
-
-    public void createLogs() {
-        for (Subsystem subsystem : mAllSubsystems) {
-            subsystem.createLogs();
-        }
     }
 
     private class EnabledLoop implements Loop {

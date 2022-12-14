@@ -10,7 +10,6 @@ import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.util.sendable.SendableRegistry;
 import java.util.function.Supplier;
 
 /**
@@ -39,24 +38,23 @@ public abstract class Subsystem implements Sendable {
         this.name = name;
         robotState = rs;
         infrastructure = inf;
-        SendableRegistry.addLW(this, name, name);
     }
 
     /** Read/Write Periodic */
     // Optional design pattern for caching periodic reads to avoid hammering the HAL/CAN.
-    public void readFromHardware() {}
+    public abstract void readFromHardware();
 
     // Optional design pattern for caching periodic writes to avoid hammering the HAL/CAN.
-    public void writeToHardware() {}
+    public abstract void writeToHardware();
 
     /** Tests, logging, and general functionality */
     public void registerEnabledLoops(ILooper mEnabledLooper) {}
 
-    public void zeroSensors() {}
+    public abstract void zeroSensors();
 
     public abstract void stop();
 
-    public abstract boolean checkSystem();
+    public abstract boolean testSubsystem();
 
     public void createLogs() {}
 

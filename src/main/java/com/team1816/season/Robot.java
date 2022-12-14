@@ -10,7 +10,7 @@ import com.team1816.lib.controlboard.Controller;
 import com.team1816.lib.controlboard.IControlBoard;
 import com.team1816.lib.hardware.factory.RobotFactory;
 import com.team1816.lib.loops.Looper;
-import com.team1816.lib.subsystems.SubsystemManager;
+import com.team1816.lib.subsystems.SubsystemLooper;
 import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.DrivetrainLogger;
 import com.team1816.season.auto.AutoModeManager;
@@ -38,7 +38,7 @@ public class Robot extends TimedRobot {
     private ActionManager actionManager;
 
     private final Infrastructure infrastructure;
-    private final SubsystemManager subsystemManager;
+    private final SubsystemLooper subsystemManager;
 
     //State managers
     private final Orchestrator orchestrator;
@@ -67,7 +67,7 @@ public class Robot extends TimedRobot {
 
     // hack variables
     private final Turret.ControlMode defaultTurretControlMode =
-        Turret.ControlMode.FIELD_FOLLOWING;
+        Turret.ControlMode.ABSOLUTE_FOLLOWING;
     private boolean faulted;
     private boolean useManualShoot = false;
 
@@ -91,7 +91,7 @@ public class Robot extends TimedRobot {
         robotState = Injector.get(RobotState.class);
         distanceManager = Injector.get(DistanceManager.class);
         ledManager = Injector.get(LedManager.class);
-        subsystemManager = Injector.get(SubsystemManager.class);
+        subsystemManager = Injector.get(SubsystemLooper.class);
         autoModeManager = Injector.get(AutoModeManager.class);
     }
 

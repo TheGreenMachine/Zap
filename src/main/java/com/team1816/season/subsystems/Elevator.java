@@ -155,10 +155,14 @@ public class Elevator extends Subsystem {
 
     /** config and tests */
     @Override
+    public void zeroSensors() {}
+
+    @Override
     public void stop() {}
 
     @Override
-    public boolean checkSystem() {
+    public boolean testSubsystem() {
+        // no checking is being performed
         boolean passed = true;
         elevatorMotor.set(ControlMode.PercentOutput, 0.2);
         Timer.delay(1);

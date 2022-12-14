@@ -469,7 +469,7 @@ public class Turret extends Subsystem implements PidProvider {
     }
 
     @Override
-    public boolean checkSystem() {
+    public boolean testSubsystem() {
         boolean passed;
         turretMotor.set(com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput, .2);
         Timer.delay(2);

@@ -324,7 +324,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
 
     /** config and tests */
     @Override
-    public boolean checkSystem() {
+    public boolean testSubsystem() {
         boolean modulesPassed = true;
         for (SwerveModule swerveModule : swerveModules) {
             if (!swerveModule.checkSystem()) {

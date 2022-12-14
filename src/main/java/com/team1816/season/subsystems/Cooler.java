@@ -116,8 +116,8 @@ public class Cooler extends Subsystem {
     }
 
     @Override
-    public boolean checkSystem() {
-        return false;
+    public boolean testSubsystem() {
+        return true;
     }
 
     /** states */

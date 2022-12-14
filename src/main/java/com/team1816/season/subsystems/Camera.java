@@ -118,6 +118,11 @@ public class Camera extends Subsystem {
 
     public void stop() {}
 
+    @Override
+    public boolean testSubsystem() {
+        return false;
+    }
+
     public void readFromHardware() {
         if (RobotBase.isSimulation()) {
             simVisionSystem.moveCamera(
@@ -142,6 +147,12 @@ public class Camera extends Subsystem {
         }
         robotState.visibleTargets = getPoints();
     }
+
+    @Override
+    public void writeToHardware() {}
+
+    @Override
+    public void zeroSensors() {}
 
     public ArrayList<VisionPoint> getPoints() {
         ArrayList<VisionPoint> targets = new ArrayList<>();

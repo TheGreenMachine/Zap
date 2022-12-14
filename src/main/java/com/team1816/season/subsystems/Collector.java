@@ -62,6 +62,9 @@ public class Collector extends Subsystem {
 
     /** periodic */
     @Override
+    public void readFromHardware() {}
+
+    @Override
     public void writeToHardware() {
         if (outputsChanged) {
             outputsChanged = false;
@@ -94,10 +97,14 @@ public class Collector extends Subsystem {
 
     /** config and tests */
     @Override
+    public void zeroSensors() {}
+
+    @Override
     public void stop() {}
 
     @Override
-    public boolean checkSystem() {
+    public boolean testSubsystem() {
+        // pretty sure this is faulty
         setDesiredState(STATE.COLLECTING);
         Timer.delay(1);
         if (

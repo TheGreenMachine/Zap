@@ -249,7 +249,7 @@ public class Climber extends Subsystem {
     public void stop() {}
 
     @Override
-    public boolean checkSystem() {
+    public boolean testSubsystem() {
         // currently just running the climber in percent output to make sure it can unclamp and spin
         // WARNING - pos/neg values may be inverted!
         climberMain.set(PercentOutput, 0.2);

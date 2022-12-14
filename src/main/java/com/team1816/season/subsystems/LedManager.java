@@ -22,7 +22,6 @@ public class LedManager extends Subsystem {
     private boolean blinkLedOn = false;
     private boolean outputsChanged = false;
     private boolean cameraLedChanged = false;
-    private int loopDelay = 0;
 
     private int ledR;
     private int ledG;
@@ -126,6 +125,9 @@ public class LedManager extends Subsystem {
 
     /** periodic */
     @Override
+    public void readFromHardware() {}
+
+    @Override
     public void writeToHardware() {
         if (outputsChanged) {
             outputsChanged = false;
@@ -165,10 +167,14 @@ public class LedManager extends Subsystem {
 
     /** config and tests */
     @Override
+    public void zeroSensors() {}
+
+    @Override
     public void stop() {}
 
     @Override
-    public boolean checkSystem() {
+    public boolean testSubsystem() {
+        // no checking performed
         System.out.println("Checking LED systems");
         controlState = LedControlState.STANDARD;
         setLedColor(MAX, 0, 0); // set red
@@ -185,7 +191,6 @@ public class LedManager extends Subsystem {
     }
 
     private void testDelay() {
-        loopDelay = 10;
         writeToHardware();
         Timer.delay(1.5);
     }
