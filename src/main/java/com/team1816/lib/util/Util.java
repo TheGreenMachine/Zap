@@ -3,7 +3,7 @@ package com.team1816.lib.util;
 import java.util.List;
 
 /**
- * Contains basic functions that are used often.
+ * Contains basic functions that are used often in other utilities such as the EnhancedMotorChecker, Drive Conversions, and CheesyDriveHelper.
  */
 public class Util {
 

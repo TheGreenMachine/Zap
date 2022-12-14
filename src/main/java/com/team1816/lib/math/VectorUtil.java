@@ -2,7 +2,7 @@ package com.team1816.lib.math;
 
 import edu.wpi.first.math.geometry.Translation2d;
 
-public class PoseUtil {
+public class VectorUtil {
 
     public static double getAngleBetween(Translation2d a, Translation2d b) {
         double dot = (a.getNorm() * b.getNorm() == 0)

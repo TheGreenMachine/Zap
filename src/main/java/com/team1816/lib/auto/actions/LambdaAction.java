@@ -1,14 +1,17 @@
 package com.team1816.lib.auto.actions;
 
+/**
+ * The LambdaAction class is an instance of the Action interface and employs a base voidInterface that is empty. Performs nothing, old class carried over.
+ */
 public class LambdaAction implements Action {
 
-    public interface VoidInterace {
+    public interface VoidInterface {
         void f();
     }
 
-    VoidInterace mF;
+    VoidInterface mF;
 
-    public LambdaAction(VoidInterace f) {
+    public LambdaAction(VoidInterface f) {
         this.mF = f;
     }
 

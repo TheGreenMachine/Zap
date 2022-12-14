@@ -1,4 +1,4 @@
-package com.team1816.season.subsystems;
+package com.team1816.lib.subsystems.turret;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.google.inject.Inject;
@@ -11,6 +11,8 @@ import com.team1816.lib.subsystems.PidProvider;
 import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
+import com.team1816.season.subsystems.Camera;
+import com.team1816.season.subsystems.LedManager;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;

@@ -155,7 +155,7 @@ public class CheesyDriveHelper implements DriveHelper {
     }
 
     public DriveSignal cheesyDrive(double throttle, double wheel, boolean isQuickTurn) {
-        return cheesyDrive(throttle, wheel, isQuickTurn, false); // TODO: no gearshift, isHighGear = true?
+        return cheesyDrive(throttle, wheel, isQuickTurn, false);
     }
 
     public double handleDeadband(double val, double deadband) {

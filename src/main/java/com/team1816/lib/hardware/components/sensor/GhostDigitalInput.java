@@ -1,4 +1,4 @@
-package com.team1816.lib.hardware.components.sensors;
+package com.team1816.lib.hardware.components.sensor;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 

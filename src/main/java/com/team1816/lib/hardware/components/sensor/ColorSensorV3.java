@@ -26,7 +26,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.team1816.lib.hardware.components.sensors;
+package com.team1816.lib.hardware.components.sensor;
 
 import com.revrobotics.CIEColor;
 import edu.wpi.first.hal.SimDevice;

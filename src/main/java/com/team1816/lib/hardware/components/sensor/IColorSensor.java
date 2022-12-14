@@ -5,8 +5,6 @@ import edu.wpi.first.wpilibj.util.Color;
 public interface IColorSensor {
     int getId();
 
-    String getName();
-
     Color getColor();
 
     int getRed();
@@ -14,4 +12,6 @@ public interface IColorSensor {
     int getGreen();
 
     int getBlue();
+
+    int[] getRGB();
 }

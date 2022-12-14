@@ -1,12 +1,11 @@
 package com.team1816.lib.hardware.factory;
 
 import com.revrobotics.ColorSensorV3;
-import com.team1816.lib.hardware.components.sensors.GhostColorSensor;
+import com.team1816.lib.hardware.components.sensor.GhostColorSensor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.I2C;
-import java.awt.*;
 
-public class GreenSensorFactory {
+public class SensorFactory {
 
     private ColorSensorV3 createColorSensor(I2C.Port id, boolean ghost) {
         if (ghost) {

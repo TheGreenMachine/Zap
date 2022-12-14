@@ -30,15 +30,12 @@ public class Camera extends Subsystem {
     // Constants
     private static final String NAME = "camera";
 
-    // TODO find accurate values for below vars
     private static final double CAMERA_FOCAL_LENGTH = 700; // px
     private static final double VIDEO_WIDTH = 1280; // px
     private static final double VIDEO_HEIGHT = 720; // px
 
-    // zed dfov - checked for accuracy
-    private static final double CAMERA_DFOV = 100; // degrees - officially 110 degrees?
+    private static final double CAMERA_DFOV = 100; // degrees
 
-    // for debugging rn
     private final double MAX_DIST = factory.getConstant(NAME, "maxDist", 20);
     private static final double CAMERA_HFOV = 85;
 
@@ -57,7 +54,6 @@ public class Camera extends Subsystem {
     public Camera(LedManager ledManager, Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
         led = ledManager;
-        // 2023 dep on 2022 server
 
         if (RobotBase.isSimulation()) {
             simVisionSystem =
