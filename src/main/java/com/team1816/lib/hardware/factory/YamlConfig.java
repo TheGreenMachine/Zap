@@ -7,6 +7,12 @@ import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.BeanAccess;
 import org.yaml.snakeyaml.representer.Representer;
 
+/**
+ * This class is the yaml integration bridge for main robot configurations and uses SnakeYaml's Yaml parser alongside
+ * JSONSchema2Pojo to parse and organize yaml files into accessible objects
+ */
+
+// NOTE:
 // Since the Collections of configurations are injected by SnakeYaml,
 // IDEs will report that the collections are never updated.
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")

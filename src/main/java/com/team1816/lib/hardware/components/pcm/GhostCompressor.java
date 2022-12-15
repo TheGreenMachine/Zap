@@ -2,6 +2,10 @@ package com.team1816.lib.hardware.components.pcm;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
 
+/**
+ * This class emulates the behaviour of a Compressor that is not physically implemented on a robot
+ * @see ICompressor
+ */
 public class GhostCompressor implements ICompressor {
 
     private boolean enabled = false;

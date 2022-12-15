@@ -11,7 +11,7 @@ import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 
 /**
- * A class that represents a GhostMotor that is not physically attached to a robot
+ * This class emulates the behaviour of a Motor that is not physically implemented on a robot
  */
 public class GhostMotor implements IGreenMotor, IMotorSensor {
 

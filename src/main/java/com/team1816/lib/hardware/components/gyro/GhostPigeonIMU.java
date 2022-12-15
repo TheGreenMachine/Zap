@@ -5,7 +5,7 @@ import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 
 /**
- * A class that represents a Ghost Pigeon that is not physically implemented
+ * This class emulates the behaviour of a Pigeon that is not physically implemented on a robot
  * @see IPigeonIMU
  */
 public class GhostPigeonIMU implements IPigeonIMU {

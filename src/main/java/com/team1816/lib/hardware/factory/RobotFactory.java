@@ -21,6 +21,13 @@ import java.util.Map;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 
+/**
+ * This class employs the MotorFactory and SensorFactory with yaml integrations and is the initial entry point to
+ * create and initialize any and all components on a robot.
+ * @see MotorFactory
+ * @see SensorFactory
+ * @see YamlConfig
+ */
 @Singleton
 public class RobotFactory {
 

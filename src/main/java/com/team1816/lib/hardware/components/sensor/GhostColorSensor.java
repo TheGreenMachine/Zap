@@ -4,6 +4,9 @@ import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.util.Color;
 
+/**
+ * This class emulates the values of a color sensor that is not physically implemented on a robot
+ */
 public class GhostColorSensor extends ColorSensorV3 implements IColorSensor {
 
     public GhostColorSensor(I2C.Port port) {

@@ -2,6 +2,9 @@ package com.team1816.lib.hardware.components.sensor;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 
+/**
+ * This class emulates the behaviour of a DigitalInput based sensor that is not physically implemented on a robot
+ */
 public class GhostDigitalInput extends DigitalInput {
 
     //states

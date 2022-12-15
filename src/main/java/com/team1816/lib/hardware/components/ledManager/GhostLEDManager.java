@@ -6,7 +6,7 @@ import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 
 /**
- * A class that represents a LEDManager that is not physically implemented
+ * This class emulates the behaviour of a LEDManager that is not physically implemented on a robot
  * @see ILEDManager
  */
 public class GhostLEDManager implements ILEDManager {

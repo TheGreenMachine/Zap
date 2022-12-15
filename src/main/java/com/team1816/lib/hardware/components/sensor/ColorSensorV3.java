@@ -35,7 +35,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.util.Color;
 
-/** REV Robotics Color Sensor V3 */
+/** This class is an adapted REV Robotics Color Sensor V3 implementation */
 public class ColorSensorV3 implements IColorSensor {
 
     private static final byte kAddress = 0x52;

@@ -5,6 +5,10 @@ import com.team1816.lib.hardware.components.sensor.GhostColorSensor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.I2C;
 
+/**
+ * This class like MotorFactory is the ultimate entry point for creating any and all sensors:
+ * Color Sensors, Beam Breaks, Limit Switches, Hall Effects, etc.
+ */
 public class SensorFactory {
 
     private ColorSensorV3 createColorSensor(I2C.Port id, boolean ghost) {

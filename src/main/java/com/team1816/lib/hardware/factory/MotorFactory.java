@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import java.util.*;
 
 /**
- * A class to create Falcon (TalonFX), TalonSRX, VictorSPX, SparkMax and GhostMotor objects.
+ * A class to create and configure Falcon (TalonFX), TalonSRX, VictorSPX, SparkMax and GhostMotor objects.
  * Based on FRC Team 254 The Cheesy Poof's 2018 TalonSRXFactory
  */
 public class MotorFactory {
