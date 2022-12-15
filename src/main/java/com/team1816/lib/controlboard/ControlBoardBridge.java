@@ -10,7 +10,7 @@ import java.util.HashMap;
 /**
  * A finite bridging class that allows for yaml based control mappings and distribution in a driver-operator system.
  * @see Robot#robotInit()
- * @see com.team1816.season.controlboard.ControlBoard
+ * @see ControlBoard
  */
 public class ControlBoardBridge {
 

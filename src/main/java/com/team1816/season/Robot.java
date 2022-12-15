@@ -1,7 +1,7 @@
 package com.team1816.season;
 
-import static com.team1816.season.controlboard.ControlUtils.createAction;
-import static com.team1816.season.controlboard.ControlUtils.createHoldAction;
+import static com.team1816.lib.controlboard.ControlUtils.createAction;
+import static com.team1816.lib.controlboard.ControlUtils.createHoldAction;
 
 import badlog.lib.BadLog;
 import com.team1816.lib.Infrastructure;
@@ -16,7 +16,7 @@ import com.team1816.lib.subsystems.drive.DrivetrainLogger;
 import com.team1816.lib.subsystems.turret.Turret;
 import com.team1816.season.auto.AutoModeManager;
 import com.team1816.season.configuration.Constants;
-import com.team1816.season.controlboard.ActionManager;
+import com.team1816.lib.controlboard.ActionManager;
 import com.team1816.season.states.Orchestrator;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.*;

@@ -1,9 +1,12 @@
-package com.team1816.season.controlboard;
+package com.team1816.lib.controlboard;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.team1816.lib.controlboard.*;
 
+/**
+ * This class is the main ControlBoard and through a series of hashmaps in ControlBoardBridge associates buttons to actions
+ */
 @Singleton
 public class ControlBoard implements IControlBoard {
 

@@ -2,7 +2,7 @@ package com.team1816.season;
 
 import com.google.inject.AbstractModule;
 import com.team1816.lib.controlboard.IControlBoard;
-import com.team1816.season.controlboard.ControlBoard;
+import com.team1816.lib.controlboard.ControlBoard;
 
 public class SeasonModule extends AbstractModule {
 
