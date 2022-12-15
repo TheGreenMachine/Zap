@@ -1,9 +1,5 @@
 package com.team1816.lib.controlboard;
 
-import com.team1816.lib.controlboard.Controller;
-import com.team1816.lib.controlboard.LogitechController;
-import com.team1816.lib.controlboard.WasdController;
-import com.team1816.lib.controlboard.XboxController;
 import com.team1816.lib.util.team254.LatchedBoolean;
 import com.team1816.season.Robot;
 import edu.wpi.first.wpilibj.Joystick;
