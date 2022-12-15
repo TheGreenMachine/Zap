@@ -124,7 +124,8 @@ public class PathUtil {
         ) {
             int iStart = waypointIndexes.get(nextCheckpoint - 1);
             int iEnd = waypointIndexes.get(nextCheckpoint);
-            double totalDHeading = (
+            double totalDHeading =
+                (
                     swerveHeadings.get(nextCheckpoint).getDegrees() -
                     swerveHeadings.get(nextCheckpoint - 1).getDegrees()
                 );

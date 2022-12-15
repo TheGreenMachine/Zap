@@ -76,9 +76,9 @@ public class WaitUntilInsideRegion implements Action {
         var y = Units.metersToInches(position.getY());
         return (
             x > mBottomLeft.getX() &&
-                x < mTopRight.getX() &&
-                y > mBottomLeft.getY() &&
-                y < mTopRight.getY()
+            x < mTopRight.getX() &&
+            y > mBottomLeft.getY() &&
+            y < mTopRight.getY()
         );
     }
 

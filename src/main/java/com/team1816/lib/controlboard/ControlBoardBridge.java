@@ -29,7 +29,6 @@ public class ControlBoardBridge {
     private HashMap<String, Integer> operatorDpadMap = new HashMap<>();
     private boolean operatorRumble = false;
 
-
     /**
      * Instantiates the ControlBoardBridge which maps controllable axes and buttons
      */

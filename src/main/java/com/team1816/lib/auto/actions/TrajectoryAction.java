@@ -145,7 +145,6 @@ public class TrajectoryAction implements Action {
         command.execute();
     }
 
-
     /**
      * Returns whether or not the command has been executed
      * @return boolean isFinished

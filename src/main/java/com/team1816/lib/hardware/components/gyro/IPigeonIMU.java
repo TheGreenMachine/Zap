@@ -7,7 +7,6 @@ import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
  * The root interface for the CTRE Pigeon component
  */
 public interface IPigeonIMU {
-
     /**
      * Returns gyroscopic yaw / transverse planar angle
      * @return yaw (degrees)

@@ -9,7 +9,6 @@ import com.ctre.phoenix.led.CANdle;
  * The base interface that connects to all LEDManagers
  */
 public interface ILEDManager {
-
     /**
      * Sets LEDs on a strip
      * @param r (red value 0-255)
