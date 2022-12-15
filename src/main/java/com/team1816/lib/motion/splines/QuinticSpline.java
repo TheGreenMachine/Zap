@@ -2,6 +2,12 @@ package com.team1816.lib.motion.splines;
 
 import java.util.ArrayList;
 
+/**
+ * This class models a quintic spline offering four degrees of differentiable continuity for a smooth mapping via
+ * direct coefficient computation.
+ * @see Spline for documentation
+ */
+
 public class QuinticSpline extends Spline {
 
     public static ArrayList<Double[]> coordinates;

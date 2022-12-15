@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 /**
  * This class is also not in most senses a "spline" but represents a basic linearly continuous mapping of values
+ * @see Spline for documentation
  */
 
 public class LinearPiecewiseSpline extends Spline {

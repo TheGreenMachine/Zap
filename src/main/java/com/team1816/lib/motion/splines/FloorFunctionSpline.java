@@ -3,7 +3,8 @@ package com.team1816.lib.motion.splines;
 import java.util.ArrayList;
 
 /**
- * This class is not a spline as per say the mathematical function, but represents a floor function mapping of values.
+ * This class is not a spline in a traditional sense of a mathematical function, but represents a floor function mapping of values.
+ * @see Spline for documentation
  */
 
 public class FloorFunctionSpline extends Spline {

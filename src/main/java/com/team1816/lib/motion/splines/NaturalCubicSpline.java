@@ -2,6 +2,11 @@ package com.team1816.lib.motion.splines;
 
 import java.util.ArrayList;
 
+/**
+ * This class represents a fully functional natural third degree spline computed via a matrix equation
+ * @see Spline for documentation
+ */
+
 public class NaturalCubicSpline extends Spline {
 
     public static ArrayList<Double[]> coordinates;
