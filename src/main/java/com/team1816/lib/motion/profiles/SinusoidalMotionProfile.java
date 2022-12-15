@@ -2,7 +2,9 @@ package com.team1816.lib.motion.profiles;
 
 /**
  * This class will construct a sinusoidal motion profile.
- * Unlike a simple trapezoidal motion profile, this will allow for arbitrary n-levels of smooth continuity
+ * Unlike a simple trapezoidal motion profile, this will allow for arbitrary n-levels of smooth continuity and only uses
+ * three segmented phases which is lower than the SCurveMotionProfile
+ * @see MotionProfile for documentation
  */
 
 public class SinusoidalMotionProfile extends MotionProfile {

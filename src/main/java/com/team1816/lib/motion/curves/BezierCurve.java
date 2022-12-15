@@ -16,7 +16,7 @@ public class BezierCurve {
      */
     public static class ControlPoint {
 
-        /** State */
+        /** Properties */
         public double x;
         public double y;
 

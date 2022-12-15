@@ -1,9 +1,11 @@
 package com.team1816.lib.motion.profiles;
 
 /**
- * This class will construct a jerk limited motion profile, by which it will take in parameters of maximum rate of change
+ * This class will construct a jerk limited motion profile i.e. it will take in parameters of maximum rate of change
  * of position, maximum rate of change of velocity, and maximum rate of change of acceleration and then construct the
- * appropriate motion profile. Note, that this is not the same as a trapezoidal motion profile but one degree higher.
+ * appropriate motion profile. Note, that this is not the same as a trapezoidal motion profile but one degree higher
+ * and employs a seven segmented phase path.
+ * @see MotionProfile for documentation
  */
 
 public class SCurveMotionProfile extends MotionProfile {

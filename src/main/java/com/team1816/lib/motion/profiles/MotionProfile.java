@@ -1,5 +1,8 @@
 package com.team1816.lib.motion.profiles;
 
+/**
+ * This class provides an abstract foundation for a MotionProfile which is a simple velocity curve for finer positional control
+ */
 public abstract class MotionProfile {
 
     /**
@@ -64,35 +67,65 @@ public abstract class MotionProfile {
         }
     }
 
+    /** Properties */
     private Constraints constraints;
     private State initial;
     private State target;
 
+    /**
+     * Instantiates a default empty profile
+     */
     public MotionProfile() {
         constraints = new Constraints();
         initial = new State();
         target = new State();
     }
 
+    /**
+     * Instantiates a Motion Profile
+     * @param c constraints
+     * @param i initial state
+     * @param t final state
+     */
     public MotionProfile(Constraints c, State i, State t) {
         constraints = c;
         initial = i;
         target = t;
     }
 
-    public double getPosition() {
+    /**
+     * Returns the position of the motion profile at a specific time
+     * @param t time
+     * @return position
+     */
+    public double getPosition(double t) {
         return 0;
     }
 
-    public double getVelocity() {
+    /**
+     * Returns the velocity of the motion profile at a specific time
+     * @param t time
+     * @return velocity
+     */
+    public double getVelocity(double t) {
         return 0;
     }
 
-    public double getAcceleration() {
+    /**
+     * Returns the acceleration of the motion profile at a specific time
+     * @param t time
+     * @return acceleration
+     */
+    public double getAcceleration(double t) {
         return 0;
     }
 
-    public double getJerk() {
+    /**
+     * Returns the jerk of the motion profile at a specific time (only useful for sinusoidal and s-curve profiles)
+     * @param t time
+     * @return jerk
+     */
+    public double getJerk(double t) {
         return 0;
     }
 }

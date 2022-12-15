@@ -1,7 +1,9 @@
 package com.team1816.lib.motion.profiles;
 
 /**
- * This class will construct a standard trapezoidal motion profile.
+ * This class will construct a standard smooth trapezoidal motion profile constrained by a maximum velocity and
+ * acceleration. It uses three segmented phases to execute the output.
+ * @see MotionProfile for documentation
  */
 
 public class TrapezoidalMotionProfile extends MotionProfile {
