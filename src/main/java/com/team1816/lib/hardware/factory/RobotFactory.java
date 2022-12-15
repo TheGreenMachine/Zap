@@ -284,7 +284,6 @@ public class RobotFactory {
             if (isHardwareValid(subsystem.canifier)) {
                 ledManager = new CanifierImpl(subsystem.canifier);
             } else if (isHardwareValid(subsystem.candle)) {
-                // TODO make candle able to act on rio canbus
                 ledManager =
                     new CANdleImpl(
                         subsystem.candle,

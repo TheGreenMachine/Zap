@@ -9,8 +9,10 @@ import com.team1816.season.configuration.Constants;
 import edu.wpi.first.wpilibj.DriverStation;
 
 /**
- * This class is a thin wrapper around the CANTalon that reduces CAN bus / CPU overhead by skipping duplicate set
- * commands. (By default the Talon flushes the Tx buffer on every set call).
+ * This class is a thin wrapper around the TalonSRX that reduces CAN bus / CPU overhead.
+ * Connects with CTRE TalonSRX motor controllers and adapts it for the universal IGreenMotor.
+ * @see IGreenMotor
+ * @see TalonSRX
  */
 public class LazyTalonSRX extends TalonSRX implements IGreenMotor, IMotorSensor {
 

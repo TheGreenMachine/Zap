@@ -9,6 +9,12 @@ import com.ctre.phoenix.motorcontrol.can.BaseTalonConfiguration;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.DriverStation;
 
+/**
+ * This class is a thin wrapper around the VictorSPX that reduces CAN bus / CPU overhead.
+ * Connects with CTRE VictorSPX motor controllers and adapts it for the universal IGreenMotor.
+ * @see IGreenMotor
+ * @see VictorSPX
+ */
 public class LazyVictorSPX extends VictorSPX implements IGreenMotor {
 
     protected String name = "";

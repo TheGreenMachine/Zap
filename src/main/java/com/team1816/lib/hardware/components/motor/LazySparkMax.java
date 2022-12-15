@@ -14,6 +14,12 @@ import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 
+/**
+ * This class is a thin wrapper around the CANSparkMax that reduces CAN bus / CPU overhead.
+ * Connects with REV SparkMax motor controllers and adapts it for the universal IGreenMotor.
+ * @see IGreenMotor
+ * @see CANSparkMax
+ */
 public class LazySparkMax implements IGreenMotor {
 
     private CANSparkMax motor;

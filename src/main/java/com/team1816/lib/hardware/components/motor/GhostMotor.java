@@ -10,17 +10,20 @@ import com.ctre.phoenix.motorcontrol.can.BaseTalonConfiguration;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 
+/**
+ * A class that represents a GhostMotor that is not physically attached to a robot
+ */
 public class GhostMotor implements IGreenMotor, IMotorSensor {
 
     protected String name = "";
-    // Characterization
+    /** Characterization */
     private final int maxVelTicks100ms;
     private final int absInitOffset;
     private int fwdLimit;
     private int revLimit;
     private boolean usingLimit = false;
     private final int absMotorPPR = 4096;
-    // State
+    /** State */
     private ControlMode controlMode;
     private final double[] desiredDemand = new double[] { 0, 0, 0 }; // 0: %out, 1: vel, 2: pos
     private final double[] actualOutput = new double[] { 0, 0, 0 }; // 0: %out, 1: vel, 2: pos

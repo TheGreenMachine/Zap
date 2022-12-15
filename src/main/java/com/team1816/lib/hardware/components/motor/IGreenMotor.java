@@ -4,6 +4,9 @@ import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
 import com.ctre.phoenix.motorcontrol.can.BaseTalonConfiguration;
 
+/**
+ * The base universal interface for all motors
+ */
 public interface IGreenMotor extends IMotorControllerEnhanced {
     String getName();
 
