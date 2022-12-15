@@ -1,6 +1,6 @@
 package com.team1816.lib.util.team254;
 
-import static com.team1816.lib.math.DriveConversions.inchesPerSecondToTicksPer100ms;
+import static com.team1816.lib.util.driveUtil.DriveConversions.inchesPerSecondToTicksPer100ms;
 import static com.team1816.lib.subsystems.drive.Drive.kOpenLoopMaxVelMeters;
 import static com.team1816.lib.subsystems.drive.SwerveDrive.kFrontLeft;
 import static com.team1816.lib.subsystems.drive.SwerveDrive.kFrontRight;

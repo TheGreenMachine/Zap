@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- * This class currently lacks derivative and curvature functions
+ * This class is a lighter fixed-case computational environment for a cubic Bézier curve. For documentation
+ * @see BezierCurve
  */
 public class CubicBezierCurve {
 

@@ -1,4 +1,4 @@
-package com.team1816.lib.math;
+package com.team1816.lib.util;
 
 import edu.wpi.first.math.geometry.Translation2d;
 

@@ -1,4 +1,4 @@
-package com.team1816.lib.math;
+package com.team1816.lib.util.driveUtil;
 
 import static com.team1816.lib.subsystems.drive.Drive.*;
 
@@ -8,6 +8,9 @@ import com.team1816.lib.util.Util;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 
+/**
+ * Utility class and constants dump for Drivetrain conversions and miscellaneous math
+ */
 public class DriveConversions {
 
     private static final double azimuthPPR = SwerveModule.ModuleConfig.kAzimuthPPR;

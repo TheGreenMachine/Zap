@@ -1,4 +1,4 @@
-package com.team1816.lib.math;
+package com.team1816.lib.util.driveUtil;
 
 import static com.team1816.lib.subsystems.drive.SwerveDrive.*;
 
@@ -21,6 +21,7 @@ import java.util.List;
 
 public class SwerveKinematics {
 
+    /** State */
     private static Translation2d[] moduleRelativePositions = kModulePositions;
     private static List<Translation2d> moduleRotationDirections = updateRotationDirections();
 
@@ -87,7 +88,7 @@ public class SwerveKinematics {
     }
 
     /**
-     * Use Gyro for dtheta
+     * Use gyroscope for delta theta
      */
     public static Twist2d forwardKinematics(
         SwerveDriveSignal drive_signal,

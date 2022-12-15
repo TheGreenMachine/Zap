@@ -4,6 +4,10 @@ import com.team1816.lib.motion.splines.NaturalCubicSpline;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * This class is a lighter fixed-case computational environment for a quadratic Bézier curve. For documentation
+ * @see BezierCurve
+ */
 public class QuadraticBezierCurve {
 
     public static class ControlPoint {
