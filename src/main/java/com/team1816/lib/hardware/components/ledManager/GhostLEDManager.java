@@ -5,6 +5,10 @@ import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 
+/**
+ * A class that represents a LEDManager that is not physically implemented
+ * @see ILEDManager
+ */
 public class GhostLEDManager implements ILEDManager {
 
     @Override
