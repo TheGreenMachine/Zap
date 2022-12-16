@@ -1,11 +1,14 @@
 package com.team1816.lib.subsystems.drive;
 
+/**
+ * Base interface for any drivetrain that has an odometry and kinematics that can be tracked relative to its initial position
+ */
 public interface TrackableDrivetrain {
-    double getFieldXDistance();
-    double getFieldYDistance();
+    double getFieldXDisplacement();
+    double getFieldYDisplacement();
 
-    double getFieldDesiredXDistance();
-    double getFieldDesiredYDistance();
+    double getFieldDesiredXDisplacement();
+    double getFieldDesiredYDisplacement();
 
     double getActualHeadingDegrees();
     double getDesiredHeadingDegrees();

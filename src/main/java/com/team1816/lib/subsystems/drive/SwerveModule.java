@@ -19,23 +19,30 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class SwerveModule implements ISwerveModule {
 
-    // Components
+    /** Components */
     private final IGreenMotor driveMotor;
-    private final IGreenMotor azimuthMotor; // angle motor (the pivot part of a shopping cart except motorized)
+    private final IGreenMotor azimuthMotor;
     public final CANCoder canCoder;
 
-    // State
+    /** State */
     public double driveDemand;
     public double driveActual;
     public double azimuthDemand;
     public double azimuthActual;
-    public double motorTemp; // drive motor temperature
+    public double motorTemp; // Drive Motor Temperature
 
-    // Constants
+    /** Constants */
     private final ModuleConfig mModuleConfig;
     private final int AZIMUTH_TICK_MASK;
     private final double allowableError;
 
+    /**
+     * Instantiates and configures a swerve module with a CANCoder
+     * @param subsystemName name of the subsystem for yaml purposes
+     * @param moduleConfig configuration of the module
+     * @param canCoder attached CANCoder of the module
+     * @see CANCoder
+     */
     public SwerveModule(
         String subsystemName,
         ModuleConfig moduleConfig,
@@ -93,6 +100,12 @@ public class SwerveModule implements ISwerveModule {
         this.canCoder = canCoder;
     }
 
+    /**
+     * Sets the desired state of the swerve module
+     * @param desiredState desiredState
+     * @param isOpenLoop are the (drive) motors in openLoop (%output) or do they use closed loop control
+     * @see SwerveModuleState
+     */
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
         SwerveModuleState desired_state = SwerveKinematics.optimize(
             desiredState,
@@ -113,6 +126,11 @@ public class SwerveModule implements ISwerveModule {
         azimuthMotor.set(ControlMode.Position, azimuthDemand);
     }
 
+    /**
+     * Returns the actual state of the swerve module
+     * @return swerve module state
+     * @see SwerveModuleState
+     */
     public SwerveModuleState getActualState() {
         driveActual =
             DriveConversions.ticksToMeters(driveMotor.getSelectedSensorVelocity(0)) * 10;
@@ -128,46 +146,83 @@ public class SwerveModule implements ISwerveModule {
         return new SwerveModuleState(driveActual, angleActual);
     }
 
+    /**
+     * Returns the drive motor temperature
+     * @return motorTemp
+     */
     @Override
     public double getMotorTemp() {
         return motorTemp;
     }
 
+    /**
+     * Returns the module name (part of config)
+     * @return moduleName
+     */
     @Override
     public String getModuleName() {
         return mModuleConfig.moduleName;
     }
 
+    /**
+     * Returns the desired Azimuth position (what it is set to)
+     * @return azimuthDemand
+     */
     @Override
     public double getDesiredAzimuth() {
         return azimuthDemand;
     }
 
+    /**
+     * Returns the actual Azimuth position (what it actually is at)
+     * @return azimuthActual
+     */
     @Override
     public double getActualAzimuth() {
         return azimuthActual;
     }
 
+    /**
+     * Returns the closed loop error of the Azimuth motor (in-built)
+     * @return azimuthError
+     */
     @Override
     public double getAzimuthError() {
         return azimuthMotor.getClosedLoopError(0);
     }
 
+    /**
+     * Returns the desired Drive motor state (what it is set to)
+     * @return driveDemand
+     */
     @Override
     public double getDesiredDrive() {
         return driveDemand;
     }
 
+    /**
+     * Returns the actual Drive motor state (what it actually is at)
+     * @return driveActual
+     */
     @Override
     public double getActualDrive() {
         return driveActual;
     }
 
+    /**
+     * Returns the closed loop error of the Drive motor (in-built)
+     * @return driveError
+     */
     @Override
     public double getDriveError() {
         return driveMotor.getClosedLoopError(0);
     }
 
+    /**
+     * If there is no attached absolute CANCoder then this will "zero" / configure the Azimuth sensor on the motor to
+     * its initial position
+     * @see com.team1816.lib.hardware.components.motor.IMotorSensor
+     */
     public void zeroAzimuthSensor() {
         if (azimuthMotor instanceof TalonSRX && canCoder == null) {
             var sensors = ((TalonSRX) azimuthMotor).getSensorCollection();
@@ -178,6 +233,10 @@ public class SwerveModule implements ISwerveModule {
         }
     }
 
+    /**
+     * Tests the Swerve Module based on its ability to move back and forth and rotate
+     * @return true if tests passed
+     */
     public boolean checkSystem() {
         boolean checkDrive = true;
         double actualmaxVelTicks100ms = factory.getConstant(NAME, "maxVelTicks100ms"); // if this isn't calculated right this test will fail
@@ -223,6 +282,10 @@ public class SwerveModule implements ISwerveModule {
         return checkDrive && checkAzimuth;
     }
 
+    /**
+     * toString()
+     * @return information on the SwerveModule
+     */
     @Override
     public String toString() {
         return (
@@ -239,6 +302,9 @@ public class SwerveModule implements ISwerveModule {
         );
     }
 
+    /**
+     * Lightweight module configuration class for the entire swerve module including offsets and PID
+     */
     public static class ModuleConfig {
 
         public ModuleConfig() {}

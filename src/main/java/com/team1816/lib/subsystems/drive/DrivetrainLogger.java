@@ -2,6 +2,9 @@ package com.team1816.lib.subsystems.drive;
 
 import com.team1816.lib.subsystems.Subsystem;
 
+/**
+ * Class solely meant for logging drivetrain topics using the Badlogs logging utility.
+ */
 public class DrivetrainLogger {
 
     public static void init(TrackableDrivetrain drivetrain) {
@@ -116,28 +119,28 @@ public class DrivetrainLogger {
         subsystem.createBadLogTopic(
             "Drivetrain/X Desired",
             "Inches",
-            drivetrain::getFieldDesiredXDistance,
+            drivetrain::getFieldDesiredXDisplacement,
             "hide",
             "join:Drivetrain/Distance"
         );
         subsystem.createBadLogTopic(
             "Drivetrain/Y Desired",
             "Inches",
-            drivetrain::getFieldDesiredYDistance,
+            drivetrain::getFieldDesiredYDisplacement,
             "hide",
             "join:Drivetrain/Distance"
         );
         subsystem.createBadLogTopic(
             "Drivetrain/X Actual",
             "Inches",
-            drivetrain::getFieldXDistance,
+            drivetrain::getFieldXDisplacement,
             "hide",
             "join:Drivetrain/Distance"
         );
         subsystem.createBadLogTopic(
             "Drivetrain/Y Actual",
             "Inches",
-            drivetrain::getFieldYDistance,
+            drivetrain::getFieldYDisplacement,
             "hide",
             "join:Drivetrain/Distance"
         );
