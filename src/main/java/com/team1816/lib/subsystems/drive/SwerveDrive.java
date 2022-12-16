@@ -114,7 +114,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     /** Read/Write Periodic */
 
     /**
-     * Writes outputs / demands to hardware on the drivetrain such as motors and handles the desired state
+     * Writes outputs / demands to hardware on the drivetrain such as motors and handles the desired state of the modules.
+     * Inputs sent to kinematics.
+     * @see SwerveDriveKinematics
      */
     @Override
     public synchronized void writeToHardware() {
@@ -130,7 +132,10 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     /**
-     * Reads outputs from hardware on the drivetrain such as sensors and handles the actual state
+     * Reads outputs from hardware on the drivetrain such as sensors and handles the actual state of the swerve modules and
+     * drivetrain speeds. Used to update odometry and other related data.
+     * @see Infrastructure
+     * @see RobotState
      */
     @Override
     public synchronized void readFromHardware() {
@@ -154,6 +159,11 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     /** General getters and setters */
+
+    /**
+     * Returns the list of headings for following a path that are transposed onto a path
+     * @return trajectoryHeadings
+     */
     public Rotation2d getTrajectoryHeadings() {
         if (headingsList == null) {
             return Constants.EmptyRotation;
@@ -186,7 +196,12 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         return heading;
     }
 
-    // trajectory following
+    /**
+     * Starts a trajectory to be followed with headings (rotate while moving)
+     * @param trajectory Trajectory
+     * @param headings Headings (for swerve)
+     * @see Drive#startTrajectory(Trajectory, List)
+     */
     @Override
     public void startTrajectory(Trajectory trajectory, List<Rotation2d> headings) {
         super.startTrajectory(trajectory, headings);
@@ -194,7 +209,11 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         trajectoryIndex = 0;
     }
 
-    /* Used by SwerveControllerCommand in Auto */
+    /**
+     * Sets the module states to a desired set of states
+     * @param desiredStates desiredModuleStates
+     * @see com.team1816.lib.auto.actions.TrajectoryAction
+     */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         if (controlState != ControlState.TRAJECTORY_FOLLOWING) {
             controlState = ControlState.TRAJECTORY_FOLLOWING;
@@ -209,6 +228,10 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
     }
 
+    /**
+     * Updates robotState based on values from odometry and sensor readings in readFromHardware
+     * @see RobotState
+     */
     @Override
     public void updateRobotState() {
         robotState.fieldToVehicle = swerveOdometry.getPoseMeters();
@@ -245,6 +268,12 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     /** Open Loop control */
+
+    /**
+     * Sets the ControlState to OPEN_LOOP and modifies the desired SwerveModuleState based on the DriveSignal
+     * @param signal DriveSignal
+     * @see SwerveDriveSignal
+     */
     @Override
     public void setOpenLoop(DriveSignal signal) {
         if (controlState != ControlState.OPEN_LOOP) {
@@ -263,6 +292,15 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         desiredModuleStates = desiredStatesSignal;
     }
 
+    /**
+     * Translates tele-operated inputs into a SwerveDriveSignal to be used in setTeleOpInputs()
+     * @param forward forward demand
+     * @param strafe strafe demand
+     * @param rotation rotation demand
+     * @see this#setOpenLoop(DriveSignal)
+     * @see Drive#setTeleopInputs(double, double, double)
+     * @see SwerveDriveSignal
+     */
     @Override
     public void setTeleopInputs(double forward, double strafe, double rotation) {
         if (controlState != ControlState.OPEN_LOOP) {
@@ -283,6 +321,11 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
     }
 
+    /**
+     * Sets whether the drivetrain is braking
+     * @param braking boolean
+     * @see Drive#setBraking(boolean)
+     */
     @Override
     public synchronized void setBraking(boolean braking) {
         isBraking = braking;
@@ -292,15 +335,31 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     /** general getters */
+
+    /**
+     * Returns the SwerveModules associated with the drivetrain
+     * @return SwerveModule[]
+     */
     @Override
     public SwerveModule[] getSwerveModules() {
         return swerveModules;
     }
 
+    /**
+     * Returns the actual module states of the drivetrain with the help of kinematics
+     * @return SwerveModuleState[]
+     * @see SwerveDriveKinematics#toSwerveModuleStates(ChassisSpeeds, Translation2d)
+     */
     public SwerveModuleState[] getStates() {
         return swerveKinematics.toSwerveModuleStates(chassisSpeed);
     }
 
+    /**
+     * Resets the odometry calculations to a specific pose (typically used in parallel with a vision processing env)
+     * to accurately re-localize position
+     * @param pose Pose2d
+     * @see Drive#resetOdometry(Pose2d)
+     */
     @Override
     public void resetOdometry(Pose2d pose) {
         actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
@@ -309,6 +368,12 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         updateRobotState();
     }
 
+    /**
+     * Zeroes the azimuth sensors of the swerve modules based on a certain pose
+     * @param pose Pose2d
+     * @see SwerveModule#zeroAzimuthSensor()
+     * @see Drive#zeroSensors()
+     */
     @Override
     public void zeroSensors(Pose2d pose) {
         System.out.println("Zeroing drive sensors!");
@@ -325,6 +390,10 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         isBraking = false;
     }
 
+    /**
+     * Stops the drivetrain
+     * @see Drive#stop()
+     */
     @Override
     public synchronized void stop() {
         for (int i = 0; i < 4; i++) {
@@ -341,6 +410,13 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     /** config and tests */
+
+    /**
+     * Tests the drivetrain by testing each swerve module
+     * @return true if tests passed
+     * @see SwerveModule#checkSystem()
+     * @see Drive#testSubsystem()
+     */
     @Override
     public boolean testSubsystem() {
         boolean modulesPassed = true;
@@ -354,6 +430,11 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         return modulesPassed;
     }
 
+    /**
+     * Returns the drive motor pid configuration of the drivetrain
+     * @return PIDSlotConfiguration
+     * @see Drive#getPIDConfig()
+     */
     @Override
     public PIDSlotConfiguration getPIDConfig() {
         PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();

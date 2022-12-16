@@ -11,6 +11,7 @@ import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import com.team1816.lib.util.EnhancedMotorChecker;
 import com.team1816.lib.util.team254.CheesyDriveHelper;
 import com.team1816.lib.util.team254.DriveSignal;
+import com.team1816.lib.util.team254.SwerveDriveSignal;
 import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import com.team1816.season.subsystems.LedManager;
@@ -18,10 +19,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
-import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
-import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.wpilibj.RobotBase;
 
 @Singleton
@@ -50,6 +48,13 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     double leftErrorClosedLoop;
     double rightErrorClosedLoop;
 
+    /**
+     * Instantiates a swerve drivetrain from base subsystem parameters
+     * @param lm LEDManager
+     * @param inf Infrastructure
+     * @param rs RobotState
+     * @see Drive#Drive(LedManager, Infrastructure, RobotState)
+     */
     @Inject
     public TankDrive(LedManager lm, Infrastructure inf, RobotState rs) {
         super(lm, inf, rs);
@@ -102,6 +107,11 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
      * Read/Write Periodic
      */
 
+    /**
+     * Writes outputs / demands to hardware on the drivetrain such as motors and handles the desired state of the left
+     * and right sides. Directly writes to the motors.
+     * @see IGreenMotor
+     */
     @Override
     public synchronized void writeToHardware() { // sets the demands for hardware from the inputs provided
         if (controlState == ControlState.OPEN_LOOP) {
@@ -119,6 +129,12 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         }
     }
 
+    /**
+     * Reads outputs from hardware on the drivetrain such as sensors and handles the actual state the wheels and
+     * drivetrain speeds. Used to update odometry and other related data.
+     * @see Infrastructure
+     * @see RobotState
+     */
     @Override
     public synchronized void readFromHardware() {
         // update current motor velocities and distance traveled
@@ -146,15 +162,17 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         infrastructure.update();
         actualHeading = Rotation2d.fromDegrees(infrastructure.getYaw());
 
-        // send updated information to robotState and odometry calculator
         tankOdometry.update(actualHeading, leftActualDistance, rightActualDistance);
         updateRobotState();
     }
 
-    /**
-     * config
-     */
+    /** Config */
 
+    /**
+     * Zeroes the encoders and odometry based on a certain pose
+     * @param pose Pose2d
+     * @see Drive#zeroSensors()
+     */
     @Override
     public void zeroSensors(Pose2d pose) {
         System.out.println("Zeroing drive sensors!");
@@ -168,6 +186,10 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         isBraking = false;
     }
 
+    /**
+     * Stops the drivetrain
+     * @see Drive#stop()
+     */
     @Override
     public synchronized void stop() {
         setOpenLoop(
@@ -178,6 +200,10 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         setBraking(controlState == ControlState.TRAJECTORY_FOLLOWING);
     }
 
+    /**
+     * Resets the encoders to hold the zero value
+     * @see this#zeroSensors(Pose2d)
+     */
     public synchronized void resetEncoders() {
         leftMain.setSelectedSensorPosition(0, 0, 0);
         rightMain.setSelectedSensorPosition(0, 0, 0);
@@ -185,6 +211,10 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         rightActualDistance = 0;
     }
 
+    /**
+     * Resets the odometry to a certain pose
+     * @param pose Pose2d
+     */
     @Override
     public void resetOdometry(Pose2d pose) {
         tankOdometry.resetPosition(pose, getActualHeading());
@@ -192,6 +222,10 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         updateRobotState();
     }
 
+    /**
+     * Updates robotState based on values from odometry and sensor readings in readFromHardware
+     * @see RobotState
+     */
     @Override
     public void updateRobotState() {
         robotState.fieldToVehicle = tankOdometry.getPoseMeters();
@@ -224,10 +258,13 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         robotState.triAxialAcceleration = infrastructure.getAcceleration();
     }
 
-    /**
-     * Open loop control
-     */
+    /** Open loop control */
 
+    /**
+     * Sets open loop percent output commands based on the DriveSignal from setTeleOpInputs()
+     * @param signal DriveSignal
+     * @see Drive#setOpenLoop(DriveSignal)
+     */
     @Override
     public synchronized void setOpenLoop(DriveSignal signal) {
         if (controlState != ControlState.OPEN_LOOP) {
@@ -243,6 +280,15 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         rightVelDemand = rightPowerDemand * maxVelTicks100ms;
     }
 
+    /**
+     * Translates tele-operated inputs into a DriveSignal to be used in setTeleOpInputs()
+     * @param forward forward demand
+     * @param strafe strafe demand
+     * @param rotation rotation demand
+     * @see this#setOpenLoop(DriveSignal)
+     * @see Drive#setTeleopInputs(double, double, double)
+     * @see SwerveDriveSignal
+     */
     @Override
     public void setTeleopInputs(double forward, double strafe, double rotation) {
         if (controlState != ControlState.OPEN_LOOP) {
@@ -261,6 +307,10 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         }
     }
 
+    /**
+     * Adapts a DriveSignal for closed loop PID controlled motion
+     * @param signal DriveSignal
+     */
     public synchronized void setVelocity(DriveSignal signal) {
         if (controlState == ControlState.OPEN_LOOP) {
             System.out.println("Switching to Velocity");
@@ -276,6 +326,11 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         rightVelDemand = signal.getRight();
     }
 
+    /**
+     * Utilizes a DriveSignal to adapt Trajectory demands for TRAJECTORY_FOLLOWING and closed loop control
+     * @param leftVel left velocity
+     * @param rightVel right velocity
+     */
     public void updateTrajectoryVelocities(Double leftVel, Double rightVel) {
         // Velocities are in m/sec comes from trajectory command
         var signal = new DriveSignal(
@@ -289,6 +344,11 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
      * General getters and setters
      */
 
+    /**
+     * Sets whether the drivetrain is braking
+     * @param braking boolean
+     * @see Drive#setBraking(boolean)
+     */
     @Override
     public synchronized void setBraking(boolean braking) {
         if (isBraking != braking) {
@@ -312,55 +372,107 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         }
     }
 
+    /**
+     * Returns the actual velocity of the left side in meters per second
+     * @return left velocity (m/s)
+     * @see com.team1816.lib.util.driveUtil.DriveConversions#ticksPer100MSToMPS(double)
+     */
     public double getLeftMPSActual() {
         return ticksPer100MSToMPS(leftActualVelocity);
     }
 
+    /**
+     * Returns the actual velocity of the right side in meters per second
+     * @return right velocity (m/s)
+     * @see com.team1816.lib.util.driveUtil.DriveConversions#ticksPer100MSToMPS(double)
+     */
     public double getRightMPSActual() {
         return ticksPer100MSToMPS(rightActualVelocity);
     }
 
+    /**
+     * Returns the left velocity demand in ticks per 100ms
+     * @return leftVelDemand
+     */
     @Override
     public double getLeftVelocityTicksDemand() {
         return leftVelDemand;
     }
 
+    /**
+     * Returns the right velocity demand in ticks per 100ms
+     * @return rightVelDemand
+     */
     @Override
     public double getRightVelocityTicksDemand() {
         return rightVelDemand;
     }
 
+    /**
+     * Returns the actual left velocity in ticks per 100ms
+     * @return leftVelActual
+     * @see IMotorController
+     * @see IGreenMotor
+     */
     @Override
     public double getLeftVelocityTicksActual() {
         return leftMain.getSelectedSensorVelocity(0);
     }
 
+    /**
+     * Returns the actual right velocity in ticks per 100ms
+     * @return rightVelActual
+     * @see IMotorController
+     * @see IGreenMotor
+     */
     @Override
     public double getRightVelocityTicksActual() {
         return rightMain.getSelectedSensorVelocity(0);
     }
 
+    /**
+     * Returns the total distance (not displacement) traveled by the left side of the drivetrain
+     * @return leftActualDistance
+     */
     @Override
     public double getLeftDistance() {
         return leftActualDistance;
     }
 
+    /**
+     * Returns the total distance (not displacement) traveled by the right side of the drivetrain
+     * @return rightActualDistance
+     */
     @Override
     public double getRightDistance() {
         return rightActualDistance;
     }
 
+    /**
+     * Returns the left side closed loop error (in-built)
+     * @return leftErrorClosedLoop
+     */
     @Override
     public double getLeftError() {
         return leftErrorClosedLoop;
     }
 
+    /**
+     * Returns the right side closed loop error (in-built)
+     * @return rightErrorClosedLoop
+     */
     @Override
     public double getRightError() {
         return rightErrorClosedLoop;
     }
 
     /** config and tests */
+
+    /**
+     * Tests the drivetrain by seeing if each side can go back and forth
+     * @return true if tests passed
+     * @see Drive#testSubsystem()
+     */
     @Override
     public boolean testSubsystem() {
         boolean leftSide = EnhancedMotorChecker.checkMotor(this, leftMain);
@@ -377,6 +489,11 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
         return leftSide && rightSide;
     }
 
+    /**
+     * Returns the pid configuration of the motors
+     * @return PIDSlotConfiguration
+     * @see Drive#getPIDConfig()
+     */
     @Override
     public PIDSlotConfiguration getPIDConfig() {
         PIDSlotConfiguration defaultPIDConfig = new PIDSlotConfiguration();
