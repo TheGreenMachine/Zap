@@ -21,6 +21,9 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.List;
 
+/**
+ * A class that models a Swerve drivetrain
+ */
 @Singleton
 public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider {
 
@@ -36,6 +39,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     public static final int kBackLeft = 2;
     public static final int kBackRight = 3;
 
+    // module positions
     public static final Translation2d kFrontLeftModulePosition = new Translation2d(
         moduleDeltaX,
         moduleDeltaY
@@ -60,7 +64,7 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         kBackLeftModulePosition,
     };
 
-    // See https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/swerve-drive-kinematics.html
+    // Kinematics (https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/swerve-drive-kinematics.html)
     public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
         kFrontLeftModulePosition,
         kFrontRightModulePosition,
@@ -84,6 +88,13 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     SwerveModuleState[] actualModuleStates = new SwerveModuleState[4];
     public double[] motorTemperatures = new double[4];
 
+    /**
+     * Instantiates a swerve drivetrain from base subsystem parameters
+     * @param lm LEDManager
+     * @param inf Infrastructure
+     * @param rs RobotState
+     * @see Drive#Drive(LedManager, Infrastructure, RobotState)
+     */
     @Inject
     public SwerveDrive(LedManager lm, Infrastructure inf, RobotState rs) {
         super(lm, inf, rs);
@@ -101,6 +112,10 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
     }
 
     /** Read/Write Periodic */
+
+    /**
+     * Writes outputs / demands to hardware on the drivetrain such as motors and handles the desired state
+     */
     @Override
     public synchronized void writeToHardware() {
         if (controlState == ControlState.OPEN_LOOP) {
@@ -114,6 +129,9 @@ public class SwerveDrive extends Drive implements SwerveDrivetrain, PidProvider 
         }
     }
 
+    /**
+     * Reads outputs from hardware on the drivetrain such as sensors and handles the actual state
+     */
     @Override
     public synchronized void readFromHardware() {
         for (int i = 0; i < 4; i++) {
