@@ -3,7 +3,6 @@ package com.team1816.lib.util;
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.CANSparkMax;
 import com.team1816.lib.hardware.components.motor.IGreenMotor;
 import edu.wpi.first.wpilibj.DriverStation;
