@@ -26,6 +26,9 @@ import java.util.function.Supplier;
  */
 public abstract class Subsystem implements Sendable {
 
+    /**
+     * Properties
+     */
     private final String name;
     public static RobotFactory factory = Robot.getFactory();
 
@@ -33,6 +36,12 @@ public abstract class Subsystem implements Sendable {
 
     public static Infrastructure infrastructure;
 
+    /**
+     * Base parameters needed to instantiate a subsystem
+     * @param name String
+     * @param inf Infrastructure
+     * @param rs RobotState
+     */
     @Inject
     public Subsystem(String name, Infrastructure inf, RobotState rs) {
         this.name = name;
@@ -41,23 +50,49 @@ public abstract class Subsystem implements Sendable {
     }
 
     /** Read/Write Periodic */
-    // Optional design pattern for caching periodic reads to avoid hammering the HAL/CAN.
-    public abstract void readFromHardware();
 
-    // Optional design pattern for caching periodic writes to avoid hammering the HAL/CAN.
-    public abstract void writeToHardware();
+    /**
+     * Reads outputs written by hardware i.e. sensors and similar
+     */
+    public abstract void readFromHardware(); // Optional design pattern for caching periodic reads to avoid hammering the HAL/CAN.
+
+    /**
+     * Writes outputs to hardware i.e. motors and solenoids
+     */
+    public abstract void writeToHardware();  // Optional design pattern for caching periodic writes to avoid hammering the HAL/CAN
 
     /** Tests, logging, and general functionality */
+
+    /**
+     * Registers all subsystems on their own loops, through the ILooper
+     * @param mEnabledLooper ILooper
+     * @see ILooper
+     */
     public void registerEnabledLoops(ILooper mEnabledLooper) {}
 
+    /**
+     * Zeroes the subsystem and its sensors to a known zero state
+     */
     public abstract void zeroSensors();
 
+    /**
+     * Stops the subsystem
+     */
     public abstract void stop();
 
+    /**
+     * Tests the subsystem based on various criteria
+     * @return true if tests passed
+     */
     public abstract boolean testSubsystem();
 
-    public void createLogs() {}
-
+    /**
+     * Creates a BadLog topic for the subsystem
+     * @param topicName String
+     * @param unit String
+     * @param supplier Supplier
+     * @param attrs String Attributes
+     */
     public void createBadLogTopic(
         String topicName,
         String unit,
@@ -69,19 +104,37 @@ public abstract class Subsystem implements Sendable {
         }
     }
 
+    /**
+     * Creates a BadLog value for the subsystem
+     * @param badLogName String
+     * @param value String
+     */
     public void createBadLogValue(String badLogName, String value) {
         if (factory.getSubsystem(name).implemented && Constants.kIsBadlogEnabled) {
             BadLog.createValue(badLogName, value);
         }
     }
 
+    /**
+     * Initializes a SmartDashboard / ShuffleBoard SendableBuilder to convey subsystem information
+     * @param builder SendableBuilder
+     * @see SendableBuilder
+     */
     @Override
     public void initSendable(SendableBuilder builder) {}
 
+    /**
+     * Returns the subsystem name
+     * @return name
+     */
     public String getSubsystemName() {
         return name;
     }
 
+    /**
+     * Returns whether the subsystem is implemented or is in ghost mode
+     * @return boolean implemented
+     */
     public boolean isImplemented() {
         return factory.getSubsystem(name).implemented;
     }

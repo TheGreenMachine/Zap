@@ -7,9 +7,16 @@ import java.io.*;
 import java.net.*;
 import javax.inject.Singleton;
 
+/**
+ * This class is the base interface for a socket and client server based communication alternative to the network tables
+ * @see edu.wpi.first.networktables.NetworkTable
+ */
 @Singleton
 public class VisionSocket {
 
+    /**
+     * Properties
+     */
     private final String PROTOCOL_LINE = "\\|";
     private Socket socket;
     private BufferedReader socketIn;
@@ -18,10 +25,18 @@ public class VisionSocket {
     private boolean enabled = false;
     private boolean useDebug = false;
 
+    /**
+     * Utility for using debug prints
+     * @param debug
+     */
     public void setDebug(boolean debug) {
         useDebug = debug;
     }
 
+    /**
+     * Connects to the client based on the host address and specified port
+     * @return true if connection was successful
+     */
     public boolean connect() {
         if (!enabled) return false;
         try {
@@ -40,12 +55,18 @@ public class VisionSocket {
         return true;
     }
 
-    // todo make this configurable
+    /**
+     * Basic debug print for a specific message
+     * @param message String
+     */
     private void debug(String message) {
         if (!useDebug) return;
         System.out.println("CAMERA DEBUG: " + message);
     }
 
+    /**
+     * Closes the socket connection
+     */
     public void close() {
         try {
             if (socket != null) {
@@ -57,6 +78,9 @@ public class VisionSocket {
         }
     }
 
+    /**
+     * Clean-up for socket connection to close all open streams and reset all fields
+     */
     private void cleanup() {
         try {
             if (!socket.isClosed()) socket.close();
@@ -72,6 +96,10 @@ public class VisionSocket {
         }
     }
 
+    /**
+     * Sets the socket connection to be enabled or not
+     * @param enabled boolean
+     */
     public void setEnabled(boolean enabled) {
         if (this.enabled != enabled) {
             this.enabled = enabled;
@@ -85,6 +113,10 @@ public class VisionSocket {
         }
     }
 
+    /**
+     * Returns if the connection has been established based on a simple cached boolean system
+     * @return true if the socket and client are connected
+     */
     public boolean isConnected() {
         if (!enabled || needsReconnect != 0) return false;
         boolean connected = socket != null && socket.isConnected();
@@ -94,6 +126,11 @@ public class VisionSocket {
         return connected;
     }
 
+    /**
+     * Queries for a message in the input stream based on an established protocol
+     * @param message Message that is being queried
+     * @return parsed outputs
+     */
     public String[] request(String message) {
         // we can safely return new String[0] because
         // all the code already checks for length > 1 as a safety measure
@@ -118,6 +155,10 @@ public class VisionSocket {
         }
     }
 
+    /**
+     * Returns true if the connection should be re-established
+     * @return boolean
+     */
     public boolean shouldReconnect() {
         if (!enabled) return false;
         if (needsReconnect == 0) return false;
