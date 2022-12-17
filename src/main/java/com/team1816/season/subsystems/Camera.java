@@ -65,7 +65,7 @@ public class Camera extends Subsystem {
                     new Transform2d(
                         new Translation2d(-.12065, .13335),
                         Constants.EmptyRotation
-                    ), //TODO update this value
+                    ),
                     CAMERA_HEIGHT_METERS,
                     9000,
                     3840,
@@ -84,15 +84,15 @@ public class Camera extends Subsystem {
                             FieldConfig.fieldTargets.get(i).getRotation().toRotation2d()
                         ),
                         FieldConfig.fieldTargets.get(i).getZ(),
-                        .1651, // Estimated width & height of the AprilTag
-                        .1651,
+                        .1651, // Width of the AprilTag
+                        .1651, // Height of the AprilTag
                         i
                     )
                 );
             }
         }
         GreenPhotonCamera.setVersionCheckEnabled(false);
-        cam = new PhotonCamera("microsoft");
+        cam = new PhotonCamera("microsoft"); // Camera name
     }
 
     public void setCameraEnabled(boolean cameraEnabled) {
@@ -100,7 +100,7 @@ public class Camera extends Subsystem {
             this.cameraEnabled = cameraEnabled;
             led.setCameraLed(cameraEnabled);
         } else {
-            System.out.println("not enabling camera because camera not implemented...");
+            System.out.println("Camera Not Implemented...");
         }
     }
 
@@ -162,31 +162,35 @@ public class Camera extends Subsystem {
         p.cameraToTarget = bestTarget.getCameraToTarget();
         targets.add(p);
         return targets;
-        //        var result = cam.getLatestResult();
-        //        if (!result.hasTargets()) {
-        //            return targets;
-        //        }
-        //
-        //        double m = 0xFFFFFF; // big number
-        //        var principal_RANSAC = new PhotonTrackedTarget();
-        //
-        //        for (PhotonTrackedTarget target : result.targets) {
-        //            var p = new Point();
-        //            if (target.getCameraToTarget() != null) {
-        //                p.cameraToTarget = target.getCameraToTarget();
-        //                p.id = target.getFiducialId();
-        //                targets.add(p);
-        //
-        //                if (m > p.cameraToTarget.getTranslation().getNorm()) {
-        //                    m = p.cameraToTarget.getTranslation().getNorm();
-        //                    principal_RANSAC = target;
-        //                }
-        //            }
-        //        }
-        //
-        //        bestTrackedTarget = principal_RANSAC;
-        //
-        //        return targets;
+    }
+
+    public ArrayList<VisionPoint> getPointsAlternate() {
+        ArrayList<VisionPoint> targets = new ArrayList<>();
+        var result = cam.getLatestResult();
+        if (!result.hasTargets()) {
+            return targets;
+        }
+
+        double m = 0xFFFFFF; // big number
+        var principal_RANSAC = new PhotonTrackedTarget();
+
+        for (PhotonTrackedTarget target : result.targets) {
+            var p = new VisionPoint();
+            if (target.getCameraToTarget() != null) {
+                p.cameraToTarget = target.getCameraToTarget();
+                p.id = target.getFiducialId();
+                targets.add(p);
+
+                if (m > p.cameraToTarget.getTranslation().getNorm()) {
+                    m = p.cameraToTarget.getTranslation().getNorm();
+                    principal_RANSAC = target;
+                }
+            }
+        }
+
+        bestTrackedTarget = principal_RANSAC;
+
+        return targets;
     }
 
     public double getDistance() {
