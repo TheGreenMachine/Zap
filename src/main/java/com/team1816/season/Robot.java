@@ -516,7 +516,7 @@ public class Robot extends TimedRobot {
 
             ledManager.blinkStatus(LedManager.RobotStatus.DISABLED);
 
-            if (subsystemManager.checkSubsystems()) {
+            if (subsystemManager.testSubsystems()) {
                 System.out.println("ALL SYSTEMS PASSED");
                 ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
             } else {
