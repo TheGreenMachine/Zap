@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This wraps the GUICE injector for ease of use
+ * A wrapper for the GUICE injector to register modules and straighten instantiation pathways for run-time optimization
  */
 public class Injector {
 
@@ -25,6 +25,11 @@ public class Injector {
         _modules.add(module);
     }
 
+    /**
+     * Registers an instance as a module
+     * @param instance
+     * @param <T>
+     */
     public static <T> void register(T instance) {
         _modules.add(
             new AbstractModule() {
@@ -36,6 +41,12 @@ public class Injector {
         );
     }
 
+    /**
+     * Registers a class as a module
+     * @param type
+     * @param instance
+     * @param <T>
+     */
     public static <T> void register(Class<T> type, Class<? extends T> instance) {
         _modules.add(
             new AbstractModule() {
@@ -47,6 +58,12 @@ public class Injector {
         );
     }
 
+    /**
+     * Returns a module based on its associated class
+     * @param type
+     * @param <T>
+     * @return
+     */
     public static <T> T get(Class<T> type) {
         // on first retrieval lock in the modules and create injector
         if (_injector == null) {
