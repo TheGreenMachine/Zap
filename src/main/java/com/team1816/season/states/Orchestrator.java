@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Main superstructure class and logical operator for handling and delegating subsystem tasks. Consists of an integrated
+ * Main superstructure-style class and logical operator for handling and delegating subsystem tasks. Consists of an integrated
  * drivetrain, turret, collector, spindexer, elevator, shooter, and ledManager and utilizes closed loop state dependent
  * control via RobotState.
  * @see RobotState
