@@ -41,12 +41,19 @@ public class RobotState {
     public Cooler.STATE coolState = Cooler.STATE.WAIT;
     public double drivetrainTemp = 0;
 
+    /**
+     * Initializes RobotState and field
+     */
     public RobotState() {
         resetPosition();
         FieldConfig.setupField(field);
     }
 
-    /** Resetting state */
+    /**
+     * Resets drivetrain and turret position to a specified pose of drivetrain and rotation of turret
+     * @param initial_field_to_vehicle
+     * @param initial_vehicle_to_turret
+     */
     public synchronized void resetPosition(
         Pose2d initial_field_to_vehicle,
         Rotation2d initial_vehicle_to_turret
@@ -55,14 +62,25 @@ public class RobotState {
         vehicleToTurret = initial_vehicle_to_turret;
     }
 
+    /**
+     * Resets drivetrain position to a specified pose of drivetrain
+     * @param initial_field_to_vehicle
+     */
     public synchronized void resetPosition(Pose2d initial_field_to_vehicle) {
         fieldToVehicle = initial_field_to_vehicle;
     }
 
+    /**
+     * Resets the drivetrain to its default "zero" pose
+     * @see Constants
+     */
     public synchronized void resetPosition() {
         resetPosition(Constants.kDefaultZeroingPose);
     }
 
+    /**
+     * Resets all values stored in RobotState
+     */
     public synchronized void resetAllStates() {
         superstructureState = Orchestrator.STATE.LITTLE_MAN;
         collectorState = Collector.STATE.STOP;
@@ -78,19 +96,35 @@ public class RobotState {
         drivetrainTemp = 0;
     }
 
-    /** Base State getters */
+    /**
+     * Returns rotation of the turret with respect to the field
+     * @return Rotation2d
+     */
     public Rotation2d getLatestFieldToTurret() {
         return fieldToTurret.getRotation();
     }
 
+    /**
+     * Returns rotation of the camera with respect to the field
+     * @return Rotation2d
+     * @see Orchestrator#calculateSingleTargetTranslation(VisionPoint) ()
+     */
     public Rotation2d getLatestFieldToCamera() {
         return fieldToTurret.getRotation();
     }
 
+    /**
+     * Returns pose of the turret with respect ot the field
+     * @return Pose2d
+     */
     public synchronized Pose2d getFieldToTurretPos() {
         return fieldToTurret;
     }
 
+    /**
+     * Returns the estimated pose of the turret with respect to the field based on a look-ahead time
+     * @return Pose2d
+     */
     public synchronized Pose2d getEstimatedFieldToTurretPos() {
         return new Pose2d(
             extrapolatedFieldToVehicle
@@ -105,11 +139,18 @@ public class RobotState {
         );
     }
 
+    /**
+     * Returns the estimated / calculated acceleration of the robot based on sensor readings
+     * @return ChassisSpeeds
+     */
     public synchronized ChassisSpeeds getCalculatedAccel() {
         return calculatedVehicleAccel;
     }
 
-    /** Distance calculation */
+    /**
+     * Returns the distance from the goal based on the pose of the robot
+     * @return distance (meters)
+     */
     public double getDistanceToGoal() {
         double estimatedDistanceToGoalMeters = fieldToVehicle
             .getTranslation()
@@ -117,6 +158,10 @@ public class RobotState {
         return estimatedDistanceToGoalMeters;
     }
 
+    /**
+     * Returns the extrapolated distance form the goal considering a look-ahead time and using the estimated pose of the robot
+     * @return extrapolatedDistance (meters)
+     */
     public double getExtrapolatedDistanceToGoal() {
         double extrapolatedDistanceToGoalMeters = extrapolatedFieldToVehicle
             .getTranslation()
@@ -124,7 +169,9 @@ public class RobotState {
         return extrapolatedDistanceToGoalMeters;
     }
 
-    /** Shuffleboard real-time telemetry data */
+    /**
+     * Outputs real-time telemetry data to Shuffleboard / SmartDahsboard
+     */
     public synchronized void outputToSmartDashboard() {
         field.setRobotPose(fieldToVehicle);
         field.getObject("EstimatedRobot").setPose(extrapolatedFieldToVehicle);

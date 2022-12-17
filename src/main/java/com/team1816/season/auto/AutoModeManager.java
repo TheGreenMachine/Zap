@@ -7,25 +7,34 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import javax.inject.Singleton;
 
+/**
+ * An integrated and optimized manager for autonomous mode selection and configuration
+ */
 @Singleton
 public class AutoModeManager {
 
-    // Auto mode selection
+    /**
+     * Properties: Selection
+     */
     private final SendableChooser<DesiredAuto> autoModeChooser;
     private final SendableChooser<Color> sideChooser;
     private DesiredAuto desiredAuto;
     private Color desiredColor;
 
-    // Auto mode execution
+    /**
+     * Properties: Execution
+     */
     private AutoMode autoMode;
     private static Thread autoModeThread;
 
+    /**
+     * Instantiates and AutoModeManager with a default option and selective computation
+     */
     public AutoModeManager() {
-        // Sendable chooser represents the dropdown menu in shuffleboard to pick our desired auto mode
-        autoModeChooser = new SendableChooser<>();
-        sideChooser = new SendableChooser<>();
-        // Populate dropdown menu with all possible auto modes (represented as DesiredMode enums)
-        SmartDashboard.putData("Auto mode", autoModeChooser);
+        autoModeChooser = new SendableChooser<>(); // Shuffleboard dropdown menu to choose desired auto mode
+        sideChooser = new SendableChooser<>(); // Shuffleboard dropdown menu to choose desired side / bumper color
+
+        SmartDashboard.putData("Auto mode", autoModeChooser); // appends chooser to shuffleboard
 
         for (DesiredAuto desiredAuto : DesiredAuto.values()) {
             autoModeChooser.addOption(desiredAuto.name(), desiredAuto);
@@ -35,16 +44,17 @@ public class AutoModeManager {
             DesiredAuto.DRIVE_STRAIGHT
         );
 
-        // Populate dropdown with all possible sides
-        SmartDashboard.putData("Robot color", sideChooser);
+        SmartDashboard.putData("Robot color", sideChooser); // appends chooser to shuffleboard
 
-        sideChooser.setDefaultOption(Color.BLUE.name(), Color.BLUE);
-        sideChooser.addOption(Color.RED.name(), Color.RED);
+        sideChooser.setDefaultOption(Color.BLUE.name(), Color.BLUE); // initialize options
+        sideChooser.addOption(Color.RED.name(), Color.RED); // initialize options
 
-        // Initialize auto mode and its respective thread
         reset();
     }
 
+    /**
+     * Resets properties to default and resets the thread
+     */
     public void reset() {
         autoMode = new DriveStraightMode();
         autoModeThread = new Thread(autoMode::run);
@@ -52,6 +62,10 @@ public class AutoModeManager {
         desiredColor = Color.RED;
     }
 
+    /**
+     * Updates the choosers in realtime
+     * @return true if updated
+     */
     public boolean update() {
         DesiredAuto selectedAuto = autoModeChooser.getSelected();
         Color selectedColor = sideChooser.getSelected();
@@ -76,6 +90,9 @@ public class AutoModeManager {
         return autoChanged;
     }
 
+    /**
+     * Outputs values to SmartDashboard
+     */
     public void outputToSmartDashboard() {
         if (desiredAuto != null) {
             SmartDashboard.putString("AutoModeSelected", desiredAuto.name());
@@ -85,19 +102,34 @@ public class AutoModeManager {
         }
     }
 
+    /**
+     * Returns the selected autonomous mode
+     * @return AutoMode
+     * @see AutoMode
+     */
     public AutoMode getSelectedAuto() {
         return autoMode;
     }
 
+    /**
+     * Returns the selected color
+     * @return Color
+     * @see Color
+     */
     public Color getSelectedColor() {
         return desiredColor;
     }
 
-    // Auto Mode Executor
+    /**
+     * Executes the auto mode and respective thread
+     */
     public void startAuto() {
         autoModeThread.start();
     }
 
+    /**
+     * Stops the auto mode
+     */
     public void stopAuto() {
         if (autoMode != null) {
             autoMode.stop();
@@ -105,8 +137,11 @@ public class AutoModeManager {
         }
     }
 
+    /**
+     * Enum for AutoModes
+     */
     enum DesiredAuto {
-        // 2020
+        // Test / 2020
         DO_NOTHING,
         TUNE_DRIVETRAIN,
         LIVING_ROOM,
@@ -123,11 +158,20 @@ public class AutoModeManager {
         ONE_BALL_C_BORDER,
     }
 
+    /**
+     * Enum for bumper colors
+     */
     public enum Color {
         RED,
         BLUE,
     }
 
+    /**
+     * Generates each AutoMode by demand
+     * @param mode desiredMode
+     * @return AutoMode
+     * @see AutoMode
+     */
     private AutoMode generateAutoMode(DesiredAuto mode) {
         switch (mode) {
             case DO_NOTHING:
