@@ -59,7 +59,7 @@ public abstract class Subsystem implements Sendable {
     /**
      * Writes outputs to hardware i.e. motors and solenoids
      */
-    public abstract void writeToHardware();  // Optional design pattern for caching periodic writes to avoid hammering the HAL/CAN
+    public abstract void writeToHardware(); // Optional design pattern for caching periodic writes to avoid hammering the HAL/CAN
 
     /** Tests, logging, and general functionality */
 
