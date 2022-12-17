@@ -11,9 +11,13 @@ import java.util.Arrays;
 
 /**
  * A drivetrain signal containing the speed and azimuth for each wheel
+ * @see DriveSignal
  */
 public class SwerveDriveSignal extends DriveSignal {
 
+    /**
+     * Properties
+     */
     public static final double[] ZERO_SPEED = new double[] { 0, 0, 0, 0 };
     public static final Rotation2d[] ZERO_AZIMUTH = new Rotation2d[] {
         new Rotation2d(),
@@ -49,10 +53,20 @@ public class SwerveDriveSignal extends DriveSignal {
     private Rotation2d[] mWheelAzimuths; // Radians!
     private boolean mBrakeMode;
 
+    /**
+     * Instantiates a SwerveDriveSignal
+     * @see this#SwerveDriveSignal(double[], Rotation2d[], boolean)
+     * @see DriveSignal
+     */
     public SwerveDriveSignal() {
         this(ZERO_SPEED, ZERO_AZIMUTH, false);
     }
 
+    /**
+     * Instantiates a SwerveDriveSignal
+     * @see this#SwerveDriveSignal(double[], Rotation2d[], boolean)
+     * @see DriveSignal
+     */
     public SwerveDriveSignal(double left, double right) {
         super(left, right);
         mWheelSpeeds = new double[4];
@@ -60,6 +74,10 @@ public class SwerveDriveSignal extends DriveSignal {
         mBrakeMode = false;
     }
 
+    /**
+     * Instantiates a SwerveDriveSignal
+     * @see DriveSignal
+     */
     public SwerveDriveSignal(
         double[] wheelSpeeds,
         Rotation2d[] wheelAzimuths,
@@ -86,14 +104,26 @@ public class SwerveDriveSignal extends DriveSignal {
         );
     }
 
+    /**
+     * Returns the wheel azimuth rotations
+     * @return Rotation2d[]
+     */
     public Rotation2d[] getWheelAzimuths() {
         return mWheelAzimuths;
     }
 
+    /**
+     * Returns if brake mode is implemented
+     * @return mBrakeMode
+     */
     public boolean getBrakeMode() {
         return mBrakeMode;
     }
 
+    /**
+     * toString() print-out utility
+     * @return String
+     */
     @Override
     public String toString() {
         String ret_val = "DriveSignal - \n";

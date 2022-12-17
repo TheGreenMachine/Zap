@@ -26,8 +26,22 @@ public class SwerveDriveHelper implements DriveHelper {
     private static final double kDeadband = 0.15;
     private static final double kRotationDeadband = 0.15;
 
+    /**
+     * Instantiates a SwerveDriveHelper
+     */
     public SwerveDriveHelper() {}
 
+    /**
+     * Calculates a DriveSignal based on inputs with vector modulated polling
+     * @param forwardInput throttle
+     * @param strafeInput strafe
+     * @param rotationInput rotation
+     * @param low_power boolean
+     * @param field_relative boolean (field-centric)
+     * @param use_heading_controller boolean
+     * @return SwerveDriveSignal
+     * @see SwerveDriveSignal
+     */
     @Override
     public SwerveDriveSignal calculateDriveSignal(
         double forwardInput,
@@ -128,6 +142,11 @@ public class SwerveDriveHelper implements DriveHelper {
         );
     }
 
+    /**
+     * Calculates the nearest Rotation2d pole with a matrix sign function for rotation inputs
+     * @param rotation Rotation2d
+     * @return Rotation2d
+     */
     public Rotation2d nearestPole(Rotation2d rotation) {
         double pole_sin = 0.0;
         double pole_cos = 0.0;
