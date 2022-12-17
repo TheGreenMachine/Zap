@@ -344,7 +344,7 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("turretJogLeft"),
                         moving -> {
-                            turret.setTurretSpeed(moving ? Turret.kJogSpeed : 0);
+                            turret.setTurretVelocity(moving ? Turret.kJogSpeed : 0);
                             ledManager.indicateStatus(
                                 LedManager.RobotStatus.MANUAL_TURRET
                             );
@@ -353,7 +353,7 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("turretJogRight"),
                         moving -> {
-                            turret.setTurretSpeed(moving ? -Turret.kJogSpeed : 0);
+                            turret.setTurretVelocity(moving ? -Turret.kJogSpeed : 0);
                             ledManager.indicateStatus(
                                 LedManager.RobotStatus.MANUAL_TURRET
                             );
