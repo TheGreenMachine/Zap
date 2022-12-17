@@ -281,7 +281,7 @@ public class TankDrive extends Drive implements DifferentialDrivetrain {
     }
 
     /**
-     * Translates tele-operated inputs into a DriveSignal to be used in setTeleOpInputs()
+     * Translates teleoperated inputs into a DriveSignal to be used in setTeleOpInputs()
      * @param forward forward demand
      * @param strafe strafe demand
      * @param rotation rotation demand
