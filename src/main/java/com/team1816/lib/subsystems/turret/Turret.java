@@ -474,6 +474,7 @@ public class Turret extends Subsystem implements PidProvider {
      * Sets the desired position of the turret based on a feedback loop demand basis with the Camera
      * @see Turret#cameraFollowingOffset()
      */
+    @Deprecated
     private void autoHome() {
         var cameraOffset = cameraFollowingOffset();
         int adj = followingPos + cameraOffset;

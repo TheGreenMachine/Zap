@@ -10,13 +10,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 import javax.inject.Singleton;
 
-/** A helper class that maps distance outputs to subsystem outputs through the definition of control points */
+/**
+ * A helper class that maps distance outputs to subsystem outputs through the definition of control points
+ * @see com.team1816.season.states.Orchestrator
+ */
 @Singleton
 public class DistanceManager {
 
     private static final RobotFactory factory = Robot.getFactory();
 
-    /** state */
+    /** State */
     private int lastBucketIndex;
     private static boolean allowBucketOffset = false;
     private static Spline buckets;
@@ -47,6 +50,9 @@ public class DistanceManager {
         }
     };
 
+    /**
+     * Instantiates the DistanceManager and decides computational routes based on factory
+     */
     public DistanceManager() {
         lastBucketIndex = 0;
         allowBucketOffset = false;
@@ -59,15 +65,34 @@ public class DistanceManager {
         outputBucketOffsets();
     }
 
-    /** subsystem outputs */
+    /** Subsystem Outputs */
+
+    /**
+     * Returns the output of the spindexer based on a distance
+     * @param distance
+     * @return output
+     * @see Spindexer
+     */
     private double getSpindexerOutput(double distance) {
         return .38;
     }
 
+    /**
+     * Returns the output of the elevator based on a distance
+     * @param distance
+     * @return output
+     * @see Elevator
+     */
     private double getElevatorOutput(double distance) {
         return .50;
     }
 
+    /**
+     * Returns the output of the shooter based on a distance
+     * @param distance
+     * @return output
+     * @see Shooter
+     */
     private double getShooterOutput(double distance) {
         // used determine the last index at which any change to a certain "bucket" should be applied to
         allowBucketOffset = true;
@@ -80,6 +105,12 @@ public class DistanceManager {
         return buckets.getValue(distance);
     }
 
+    /**
+     * Universal get output for registered subsystems
+     * @param distance
+     * @param subsystem SUBSYSTEM
+     * @return output
+     */
     public double getOutput(double distance, SUBSYSTEM subsystem) {
         switch (subsystem) {
             case SPINDEXER:
@@ -93,7 +124,12 @@ public class DistanceManager {
         return 0;
     }
 
-    /** actions */
+    /** Actions */
+
+    /**
+     * Increments a specific bucket by a certain value and recomputes the path
+     * @param incrementVal increment
+     */
     public void incrementBucket(double incrementVal) {
         if (allowBucketOffset) {
             allowBucketOffset = false;
@@ -112,6 +148,10 @@ public class DistanceManager {
     }
 
     /** Smart Dashboard */
+
+    /**
+     * Displays knotPoint buckets on SmartDashboard / Shuffleboard
+     */
     public void outputBucketOffsets() {
         for (int i = 0; i < points.size(); i++) {
             SmartDashboard.putNumber(
@@ -121,6 +161,9 @@ public class DistanceManager {
         }
     }
 
+    /**
+     * Changes the outputs displayed based on the lasBucketIndex for any changes made
+     */
     public void outputCurrentBucketOffset() {
         SmartDashboard.putNumber(
             "Buckets/Bucket #" + points.get(lastBucketIndex)[0],
@@ -128,11 +171,12 @@ public class DistanceManager {
         );
     }
 
-    /** subsystems */
+    /**
+     * Base enum for recognized subsystems that rely on the DistanceManager
+     */
     public enum SUBSYSTEM {
         SPINDEXER,
         ELEVATOR,
         SHOOTER,
-        HOOD,
     }
 }

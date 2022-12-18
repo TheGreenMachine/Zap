@@ -19,15 +19,23 @@ import java.util.*;
 import org.photonvision.*;
 import org.photonvision.targeting.*;
 
+/**
+ * Camera interface that utilizes PhotonVision for target detection and measurement
+ */
 @Singleton
 public class Camera extends Subsystem {
 
-    // Components
+    /**
+     * Components
+     */
     static LedManager led;
 
     private PhotonCamera cam;
     private GreenSimVisionSystem simVisionSystem;
-    // Constants
+
+    /**
+     * Properties
+     */
     private static final String NAME = "camera";
 
     private static final double CAMERA_FOCAL_LENGTH = 700; // px
@@ -46,10 +54,19 @@ public class Camera extends Subsystem {
     private final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(
         Constants.kCameraMountingAngleY
     );
-    // state
+
+    /**
+     * State
+     */
     private boolean cameraEnabled;
     private PhotonTrackedTarget bestTrackedTarget;
 
+    /**
+     * Instantiates a camera with the base subsystem properties
+     * @param ledManager LedManager
+     * @param inf Infrastructure
+     * @param rs RobotState
+     */
     @Inject
     public Camera(LedManager ledManager, Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
@@ -95,6 +112,10 @@ public class Camera extends Subsystem {
         cam = new PhotonCamera("microsoft"); // Camera name
     }
 
+    /**
+     * Sets the camera to be enabled
+     * @param cameraEnabled boolean
+     */
     public void setCameraEnabled(boolean cameraEnabled) {
         if (this.isImplemented()) {
             this.cameraEnabled = cameraEnabled;
@@ -104,21 +125,29 @@ public class Camera extends Subsystem {
         }
     }
 
+    /**
+     * Returns if the camera is enabled
+     * @return cameraEnabled
+     */
     public boolean isEnabled() {
         return cameraEnabled;
     }
 
+    /**
+     * Toggles the enabled state of the camera
+     */
     public void toggleEnabled() {
         setCameraEnabled(!cameraEnabled);
     }
 
+    /**
+     * Stops the camera
+     */
     public void stop() {}
 
-    @Override
-    public boolean testSubsystem() {
-        return false;
-    }
-
+    /**
+     * Periodically reads inputs and polls visible camera targets
+     */
     public void readFromHardware() {
         if (RobotBase.isSimulation()) {
             simVisionSystem.moveCamera(
@@ -144,12 +173,23 @@ public class Camera extends Subsystem {
         robotState.visibleTargets = getPoints();
     }
 
+    /**
+     * Functionality: nonexistent
+     */
     @Override
     public void writeToHardware() {}
 
+    /**
+     * Functionality: nonexistent
+     */
     @Override
     public void zeroSensors() {}
 
+    /**
+     * Polls targets from the camera and returns the best target as a list of VisionPoints (reduces computational overhead)
+     * @return List of VisionPoint
+     * @see VisionPoint
+     */
     public ArrayList<VisionPoint> getPoints() {
         ArrayList<VisionPoint> targets = new ArrayList<>();
         VisionPoint p = new VisionPoint();
@@ -164,6 +204,10 @@ public class Camera extends Subsystem {
         return targets;
     }
 
+    /**
+     * Polls targets from the camera and returns all targets as a list of VisionPoints
+     * @return List of VisionPoints
+     */
     public ArrayList<VisionPoint> getPointsAlternate() {
         ArrayList<VisionPoint> targets = new ArrayList<>();
         var result = cam.getLatestResult();
@@ -193,10 +237,20 @@ public class Camera extends Subsystem {
         return targets;
     }
 
+    /**
+     * Returns the distance to the goal (direct reference to RobotState)
+     * @return distance (meters)
+     */
+    @Deprecated
     public double getDistance() {
         return robotState.getDistanceToGoal();
     }
 
+    /**
+     * Returns the pixel / angular difference of the target to the center of the camera
+     * @return deltaX
+     */
+    @Deprecated
     public double getDeltaX() {
         if (RobotBase.isSimulation()) { //simulate feedback loop
             return simulateDeltaX();
@@ -207,7 +261,11 @@ public class Camera extends Subsystem {
         return bestTrackedTarget.getYaw();
     }
 
-    public boolean checkSystem() {
+    /**
+     * Tests the camera
+     * @return true if tests passed
+     */
+    public boolean testSubsystem() {
         if (this.isImplemented()) {
             setCameraEnabled(true);
             Timer.delay(2);
@@ -225,6 +283,11 @@ public class Camera extends Subsystem {
         return true;
     }
 
+    /**
+     * Simulates a deltaX calculation (would just be yaw)
+     * @return double
+     */
+    @Deprecated
     public double simulateDeltaX() {
         double opposite =
             Constants.fieldCenterY - robotState.getFieldToTurretPos().getY();
