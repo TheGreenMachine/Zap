@@ -141,7 +141,6 @@ public class Collector extends Subsystem {
      */
     @Override
     public boolean testSubsystem() {
-        // pretty sure this is faulty
         setDesiredState(STATE.COLLECTING);
         Timer.delay(1);
         if (

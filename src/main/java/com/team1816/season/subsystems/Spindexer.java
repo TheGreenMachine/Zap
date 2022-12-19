@@ -10,26 +10,40 @@ import com.team1816.season.states.RobotState;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 
+/**
+ * Subsystem to indexes game elements
+ */
 @Singleton
 public class Spindexer extends Subsystem {
 
+    /**
+     * Properties
+     */
     private static final String NAME = "spindexer";
 
-    // Components
+    /**
+     * Components
+     */
     private final IGreenMotor spindexer;
 
-    // State
+    /**
+     * State
+     */
     private STATE desiredState = STATE.STOP;
     private double desiredPower;
     private boolean outputsChanged;
 
-    // Constants
     private final double COLLECT;
     private final double INDEX;
     private final double FLUSH;
     private final double FIRE;
     private final double COAST;
 
+    /**
+     * Instantiates a spindexer with base subsystem properties
+     * @param inf Infrastructure
+     * @param rs RobotState
+     */
     @Inject
     public Spindexer(Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
@@ -44,21 +58,33 @@ public class Spindexer extends Subsystem {
         COAST = factory.getConstant(NAME, "coastPow", -.1);
     }
 
-    /** actions */
+    /** Actions */
+
+    /**
+     * Sets the spindexer based on demand
+     * @param spindexerPower demand
+     */
     private void setSpindexer(double spindexerPower) {
         this.desiredPower = spindexerPower;
         spindexer.set(ControlMode.PercentOutput, spindexerPower);
     }
 
-    private void lockToElevator() { // bear in mind this might never fire if shooter not implemented - not rly important tho
+    /**
+     * Feeds ball into elevator if firing otherwise indexes
+     */
+    private void lockToElevator() {
         if (robotState.elevatorState == Elevator.STATE.FIRE) {
             setSpindexer(FIRE);
         } else {
             setSpindexer(INDEX);
-            outputsChanged = true; // keep looping through writeToHardWare if shooter not up to speed
+            outputsChanged = true;
         }
     }
 
+    /**
+     * Sets the desired state of the spindexer
+     * @param state STATE
+     */
     public void setDesiredState(STATE state) {
         if (desiredState != state) {
             desiredState = state;
@@ -66,19 +92,23 @@ public class Spindexer extends Subsystem {
         }
     }
 
-    /** periodic */
+    /** Periodic */
+
+    /**
+     * Updates RobotState
+     */
     @Override
     public void readFromHardware() {
-        // since no other subsystems rely on spindexer being up to speed to perform an action,
-        // we're just claiming that the true spindexer state matches its desired state
         if (desiredState != robotState.spinState) {
             robotState.spinState = desiredState;
         }
     }
 
+    /**
+     * Sends outputs to the spindexerMotor based on desiredState
+     */
     @Override
     public void writeToHardware() {
-        // avoid setting the spindexer motor unless outputs (ie: state) are changed
         if (outputsChanged) {
             outputsChanged = false;
             switch (desiredState) {
@@ -104,16 +134,31 @@ public class Spindexer extends Subsystem {
         }
     }
 
-    /** config and tests */
+    /** Config and Tests */
+
+    /**
+     * Functionality: nonexistent
+     */
     @Override
     public void zeroSensors() {}
 
+    /**
+     * Initializes a SendableBuilder for SmartDhasboard
+     * @param builder SendableBuilder
+     */
     @Override
     public void initSendable(SendableBuilder builder) {}
 
+    /**
+     * Stops the spindexer
+     */
     @Override
     public void stop() {}
 
+    /**
+     * Tests the subsystem
+     * @return true if tests passed
+     */
     @Override
     public boolean testSubsystem() {
         spindexer.set(ControlMode.PercentOutput, .3);
@@ -124,7 +169,9 @@ public class Spindexer extends Subsystem {
         return true;
     }
 
-    /** states */
+    /**
+     * Base enum for spindexer states
+     */
     public enum STATE {
         STOP,
         COLLECT,

@@ -71,7 +71,7 @@ public abstract class Subsystem implements Sendable {
     public void registerEnabledLoops(ILooper mEnabledLooper) {}
 
     /**
-     * Zeroes the subsystem and its sensors to a known zero state
+     * Zeroes the subsystem and its sensors to a known zero state for position control
      */
     public abstract void zeroSensors();
 

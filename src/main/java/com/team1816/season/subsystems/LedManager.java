@@ -10,15 +10,31 @@ import edu.wpi.first.wpilibj.Timer;
 import java.awt.*;
 import javax.inject.Singleton;
 
+/**
+ * Subsystem container for an LEDManager
+ * @see ILEDManager
+ */
 @Singleton
 public class LedManager extends Subsystem {
 
+    /**
+     * Properties
+     */
     public static final String NAME = "ledmanager";
 
-    // Components
+    private static final boolean RAVE_ENABLED =
+        factory.getConstant(NAME, "raveEnabled") > 0;
+    private static final double RAVE_SPEED = factory.getConstant(NAME, "raveSpeed", 1.0);
+    private static final int MAX = (int) factory.getConstant(NAME, "maxLevel", 255);
+
+    /**
+     * Components
+     */
     private final ILEDManager ledManager;
 
-    // State
+    /**
+     * State
+     */
     private boolean blinkLedOn = false;
     private boolean outputsChanged = false;
     private boolean cameraLedChanged = false;
@@ -35,13 +51,18 @@ public class LedManager extends Subsystem {
     private float raveHue;
     private Color lastRaveColor;
 
-    /** states */
+    /** Base enum for LED states  */
     public enum LedControlState {
         RAVE,
         BLINK,
         STANDARD,
     }
 
+    /**
+     * Instantiates an LedManager with base subsystem properties
+     * @param inf Infrastructure
+     * @param rs RobotState
+     */
     @Inject
     public LedManager(Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
@@ -54,7 +75,12 @@ public class LedManager extends Subsystem {
         cameraLedOn = false;
     }
 
-    /** actions */
+    /** Actions */
+
+    /**
+     * Sets the Camera led(s) to be on or off
+     * @param cameraOn boolean
+     */
     public void setCameraLed(boolean cameraOn) {
         if (cameraLedOn != cameraOn) {
             cameraLedChanged = true;
@@ -62,6 +88,12 @@ public class LedManager extends Subsystem {
         }
     }
 
+    /**
+     * Sets led color
+     * @param r Red
+     * @param g Green
+     * @param b Bluee
+     */
     private void setLedColor(int r, int g, int b) {
         if (ledR != r || ledG != g || ledB != b) {
             ledR = r;
@@ -72,18 +104,23 @@ public class LedManager extends Subsystem {
     }
 
     /**
+     * Sets LEDs to blink with a certain color
      * @param r LED color red value (0-255)
      * @param g LED color green value (0-255)
      * @param b LED color blue value (0-255)
      */
     private void setLedColorBlink(int r, int g, int b) {
-        // Period is in milliseconds
         setLedColor(r, g, b);
         controlState = LedControlState.BLINK;
         this.period = 1000;
         outputsChanged = true;
     }
 
+    /**
+     * Indicates status
+     * @param status RobotStatues
+     * @see RobotStatus
+     */
     public void indicateStatus(RobotStatus status) {
         controlState = LedControlState.STANDARD;
         setLedColor(status.getRed(), status.getGreen(), status.getBlue());
@@ -165,13 +202,24 @@ public class LedManager extends Subsystem {
         }
     }
 
-    /** config and tests */
+    /** Config and Tests */
+
+    /**
+     * Functionality: nonexistent
+     */
     @Override
     public void zeroSensors() {}
 
+    /**
+     * Functionality: nonexistent
+     */
     @Override
     public void stop() {}
 
+    /**
+     * Tests the subsystem
+     * @return returns true if tests passed
+     */
     @Override
     public boolean testSubsystem() {
         // no checking performed
@@ -190,19 +238,24 @@ public class LedManager extends Subsystem {
         return true;
     }
 
+    /**
+     * Tests set latency
+     */
     private void testDelay() {
         writeToHardware();
         Timer.delay(1.5);
     }
 
+    /**
+     * Initializes SendableBuilder for SmartDashboard
+     * @param builder SendableBuilder
+     */
     @Override
     public void initSendable(SendableBuilder builder) {}
 
-    private static final boolean RAVE_ENABLED =
-        factory.getConstant(NAME, "raveEnabled") > 0;
-    private static final double RAVE_SPEED = factory.getConstant(NAME, "raveSpeed", 1.0);
-    private static final int MAX = (int) factory.getConstant(NAME, "maxLevel", 255);
-
+    /**
+     * Base enum for RobotStatus
+     */
     public enum RobotStatus {
         ENABLED(0, MAX, 0), // green
         DISABLED(MAX, MAX / 5, 0), // orange

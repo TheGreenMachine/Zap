@@ -14,31 +14,39 @@ import com.team1816.season.configuration.Constants;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.wpilibj.Timer;
 
+/**
+ * Subsystem that models a "windmill" style climber
+ */
 @Singleton
 public class Climber extends Subsystem {
 
-    // this class uses some logic from the turret (positionControl logic) and from the distanceManager (Stage behaves like bucket Entries)
+    /**
+     * Properties
+     */
     private static final String NAME = "climber";
 
-    // Components
+    /**
+     * Components
+     */
     private final IGreenMotor climberMain;
     private final IGreenMotor climberFollower;
     private final ISolenoid topClamp;
     private final ISolenoid bottomClamp;
 
-    // State
+    /**
+     * State
+     */
     private ControlMode controlMode = ControlMode.MANUAL;
     private double error;
     private boolean unlocked;
     private boolean needsOverShoot = false;
     private boolean needsClamp = false;
     private boolean climbDelay = false;
-    // Position
+
     private int currentStage;
     private final Stage[] stages;
     private double climberPosition;
-    private double currentDraw;
-    // Manual
+
     private double climberPower = 0;
     private boolean topClamped = false;
     private boolean bottomClamped = false;
@@ -46,6 +54,11 @@ public class Climber extends Subsystem {
 
     private final double ALLOWABLE_ERROR;
 
+    /**
+     * Instantiates a climber from base subsystem properties
+     * @param inf Infrastructure
+     * @param rs RobotState
+     */
     @Inject
     public Climber(Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
@@ -91,15 +104,22 @@ public class Climber extends Subsystem {
             };
     }
 
-    /** actions */
+    /** Actions */
+
+    /**
+     * Unlocks the climber
+     */
     public void unlock() {
-        System.out.println("unlocking climber !");
+        System.out.println("Unlocking Climber!");
         unlocked = true;
     }
 
-    public void incrementClimberStage() { // we can't go backwards (descend rungs) using this logic, but it shouldn't really matter
+    /**
+     * Increments climber stage
+     */
+    public void incrementClimberStage() {
         if (!unlocked) {
-            System.out.println("climber not unlocked!");
+            System.out.println("Climber NOT Unlocked!");
             return;
         }
         if (currentStage < stages.length - 1 && (!needsOverShoot || currentStage == 2)) {
@@ -107,7 +127,7 @@ public class Climber extends Subsystem {
                 controlMode = ControlMode.POSITION;
             }
             System.out.println(
-                "incrementing climber to stage " + (currentStage + 1) + " ....."
+                "Incrementing Climber To Stage " + (currentStage + 1) + " ....."
             );
             currentStage++;
             needsOverShoot = true;
@@ -116,13 +136,17 @@ public class Climber extends Subsystem {
             outputsChanged = true;
         } else {
             System.out.println(
-                "climber not safely at stage " +
+                "Climber NOT safely at stage " +
                 currentStage +
                 " - not incrementing stage!"
             );
         }
     }
 
+    /**
+     * Sets the climber power based on demand
+     * @param power demand
+     */
     public void setClimberPower(double power) {
         if (!unlocked) {
             System.out.println("climber not unlocked!");
@@ -135,9 +159,12 @@ public class Climber extends Subsystem {
         outputsChanged = true;
     }
 
+    /**
+     * Toggles the top clamp
+     */
     public void setTopClamp() {
         if (!unlocked) {
-            System.out.println("climber not unlocked!");
+            System.out.println("Climber NOT Unlocked!");
             return;
         }
         if (controlMode != ControlMode.MANUAL) {
@@ -148,9 +175,12 @@ public class Climber extends Subsystem {
         outputsChanged = true;
     }
 
+    /**
+     * Toggles the bottom clamp
+     */
     public void setBottomClamp() {
         if (!unlocked) {
-            System.out.println("climber not unlocked!");
+            System.out.println("Climber NOT Unlocked!");
             return;
         }
         if (controlMode != ControlMode.MANUAL) {
@@ -162,8 +192,12 @@ public class Climber extends Subsystem {
         outputsChanged = true;
     }
 
+    /**
+     * Sets the climber to a desired position
+     * @param position desiredPosition
+     */
     private void positionControl(double position) {
-        if (needsOverShoot) { // keep looping if we aren't past the overshoot value
+        if (needsOverShoot) {
             climberMain.set(Position, position);
             if (climbDelay) {
                 climbDelay = false;
@@ -174,10 +208,16 @@ public class Climber extends Subsystem {
             }
             outputsChanged = true;
         } else {
-            climberMain.set(PercentOutput, 0); // coast so that the climber falls down to lock
+            climberMain.set(PercentOutput, 0);
         }
     }
 
+    /**
+     * Sets the top and bottom clamps based on desired states and order
+     * @param topClamped boolean
+     * @param bottomClamped boolean
+     * @param topFirst boolean clampTopFirst
+     */
     private void setClamps(boolean topClamped, boolean bottomClamped, boolean topFirst) {
         if (needsClamp) {
             needsClamp = false;
@@ -195,26 +235,36 @@ public class Climber extends Subsystem {
         }
     }
 
+    /**
+     * Returns the climber position
+     * @return position
+     */
     public double getClimberPosition() {
         return climberPosition;
     }
 
-    public double getCurrentDraw() {
-        return currentDraw;
-    }
-
+    /**
+     * Returns the current stage
+     * @return stage index
+     */
     public int getCurrentStage() {
         return currentStage;
     }
 
-    /** periodic */
+    /** Periodic */
+
+    /**
+     * Reads from motor values and updates state
+     */
     @Override
     public void readFromHardware() {
         error = climberMain.getSelectedSensorPosition(0) - stages[currentStage].position;
         climberPosition = climberMain.getSelectedSensorPosition(0);
-        //        currentDraw = climberMain.getOutputCurrent();
     }
 
+    /**
+     * Writes outputs to the motor based on controlMode and desired state
+     */
     @Override
     public void writeToHardware() {
         if (outputsChanged) {
@@ -230,7 +280,11 @@ public class Climber extends Subsystem {
         }
     }
 
-    /** config and tests */
+    /** Config and Tests */
+
+    /**
+     * Zeroes the climber motor position
+     */
     @Override
     public void zeroSensors() {
         currentStage = 0;
@@ -245,13 +299,18 @@ public class Climber extends Subsystem {
         );
     }
 
+    /**
+     * Functionality: nonexistent
+     */
     @Override
     public void stop() {}
 
+    /**
+     * Tests the subsystem
+     * @return true if tests passed
+     */
     @Override
     public boolean testSubsystem() {
-        // currently just running the climber in percent output to make sure it can unclamp and spin
-        // WARNING - pos/neg values may be inverted!
         climberMain.set(PercentOutput, 0.2);
         Timer.delay(.5);
         climberMain.set(PercentOutput, 0);
@@ -263,12 +322,19 @@ public class Climber extends Subsystem {
         return true;
     }
 
-    /** modes and stages */
+    /** Modes and Stages */
+
+    /**
+     * Base enum for control modes
+     */
     public enum ControlMode {
         MANUAL,
         POSITION,
     }
 
+    /**
+     * Base static class for climber stages
+     */
     static class Stage {
 
         public final double position;

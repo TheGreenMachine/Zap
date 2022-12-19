@@ -11,16 +11,28 @@ import com.team1816.season.states.RobotState;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 
+/**
+ * Subsystem that feeds indexed game elements into the shooter
+ * @see Shooter
+ * @see Spindexer
+ */
 @Singleton
 public class Elevator extends Subsystem {
 
+    /**
+     * Properties
+     */
     private static final String NAME = "elevator";
 
-    // Components
+    /**
+     * Components
+     */
     private final IGreenMotor elevatorMotor;
     private final DigitalInput ballSensor;
 
-    // State
+    /**
+     * State
+     */
     private double desiredOutput;
     private double actualOutput;
     private boolean outputsChanged;
@@ -32,6 +44,11 @@ public class Elevator extends Subsystem {
     private final double FIRE;
     private final boolean isVelocity;
 
+    /**
+     * Instantiates an Elevator with base subsystem properties
+     * @param inf Infrastructure
+     * @param rs RobotState
+     */
     @Inject
     public Elevator(Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
@@ -57,7 +74,12 @@ public class Elevator extends Subsystem {
         ALLOWABLE_ERROR = config.allowableError;
     }
 
-    /** actions */
+    /** Actions */
+
+    /**
+     * Sets the elevator to the desired output
+     * @param elevatorOutput demand
+     */
     private void setElevator(double elevatorOutput) {
         if (desiredOutput != elevatorOutput) {
             desiredOutput = elevatorOutput;
@@ -70,23 +92,33 @@ public class Elevator extends Subsystem {
         }
     }
 
+    /**
+     * Locks ball to shooter and revs in teh forward direction
+     */
     private void lockToShooter() {
         if (robotState.shooterState == Shooter.STATE.REVVING) {
             setElevator(FIRE);
         } else {
-            outputsChanged = true; // keep looping through writeToHardware if shooter not up to speed
+            outputsChanged = true; // feedback
         }
     }
 
+    /**
+     * Locks ball to the ball sensor to be fed into the shooter
+     */
     private void lockToSensor() {
         if (hasBallInElevator()) {
             setDesiredState(STATE.STOP);
         } else {
             setElevator(INTAKE);
-            outputsChanged = true; // keep looping through writeToHardware if no ball seen
+            outputsChanged = true; // feedback
         }
     }
 
+    /**
+     * Sets the desired state of the elevator
+     * @param state STATE
+     */
     public void setDesiredState(STATE state) {
         if (this.desiredState != state) {
             this.desiredState = state;
@@ -94,14 +126,26 @@ public class Elevator extends Subsystem {
         }
     }
 
+    /**
+     * Returns the actual output of the elevator
+     * @return actualOutput
+     */
     public double getActualOutput() {
         return actualOutput;
     }
 
+    /**
+     * Returns the desired output of the elevator
+     * @return desiredOutput
+     */
     public double getDesiredOutput() {
         return desiredOutput;
     }
 
+    /**
+     * Returns the beam break digital input reading
+     * @return true if ball is in elevator
+     */
     public boolean hasBallInElevator() {
         if (ballSensor.getChannel() == 0) {
             return true;
@@ -110,7 +154,11 @@ public class Elevator extends Subsystem {
         }
     }
 
-    /** periodic */
+    /** Periodic */
+
+    /**
+     * Reads actual output and state from motors and sensors
+     */
     @Override
     public void readFromHardware() {
         if (desiredState != robotState.elevatorState) {
@@ -132,6 +180,9 @@ public class Elevator extends Subsystem {
         }
     }
 
+    /**
+     * Writes demand to the elevatorMotor based on the desiredState
+     */
     @Override
     public void writeToHardware() {
         if (outputsChanged) {
@@ -153,16 +204,26 @@ public class Elevator extends Subsystem {
         }
     }
 
-    /** config and tests */
+    /** Config and Tests */
+
+    /**
+     * Functionality: nonexistent
+     */
     @Override
     public void zeroSensors() {}
 
+    /**
+     * Functionality: nonexistent
+     */
     @Override
     public void stop() {}
 
+    /**
+     * Tests the subsystem
+     * @return true if test passed
+     */
     @Override
     public boolean testSubsystem() {
-        // no checking is being performed
         boolean passed = true;
         elevatorMotor.set(ControlMode.PercentOutput, 0.2);
         Timer.delay(1);
@@ -172,7 +233,9 @@ public class Elevator extends Subsystem {
         return true;
     }
 
-    /** states */
+    /**
+     * Base enum for elevator states
+     */
     public enum STATE {
         STOP,
         INTAKE,
