@@ -20,12 +20,16 @@ import edu.wpi.first.wpilibj.RobotBase;
 import java.util.ArrayList;
 import java.util.List;
 
-/** The class responsible for organizing the collector, spindexer, elevator, and shooter into runnable actions - manages the robot's DESIRED states */
-
+/**
+ * Main superstructure-style class and logical operator for handling and delegating subsystem tasks. Consists of an integrated
+ * drivetrain, turret, collector, spindexer, elevator, shooter, and ledManager and utilizes closed loop state dependent
+ * control via RobotState.
+ * @see RobotState
+ */
 @Singleton
 public class Orchestrator {
 
-    /** subsystems */
+    /** Subsystems */
     private static Drive drive;
     private static Turret turret;
     private static Collector collector;
@@ -37,7 +41,7 @@ public class Orchestrator {
     private static DistanceManager distanceManager;
     private static Camera camera;
 
-    /** state */
+    /** State */
     private STATE superstructureState;
     private boolean collecting;
     private boolean revving;
@@ -52,6 +56,18 @@ public class Orchestrator {
         0.15
     );
 
+    /**
+     * Instantiates an Orchestrator with all its subsystems
+     * @param dm DistanceManager
+     * @param cam Camera
+     * @param df Drive.Factory (derives drivetrain)
+     * @param tur Turret
+     * @param col Collector
+     * @param spin Spindexer
+     * @param elev Elevator
+     * @param shoot Shooter
+     * @param led LedManager
+     */
     @Inject
     public Orchestrator(
         DistanceManager dm,
@@ -80,7 +96,12 @@ public class Orchestrator {
         useVision = Constants.kUseVision;
     }
 
-    /** actions */
+    /** Actions */
+
+    /**
+     * Stops all actions on the robot
+     * @param notCoasting boolean shooterCoasting
+     */
     public void setStopped(boolean notCoasting) {
         collector.setDesiredState(Collector.STATE.STOP);
         elevator.setDesiredState(Elevator.STATE.STOP);
@@ -97,10 +118,19 @@ public class Orchestrator {
         System.out.println("stopping/starting superstructure");
     }
 
+    /**
+     * Sets the robot to collect a ball
+     * @param backSpin boolean
+     */
     public void setCollecting(boolean backSpin) {
         setCollecting(!collecting, backSpin);
     }
 
+    /**
+     * Controls the collector
+     * @param collecting boolean
+     * @param backSpin boolean
+     */
     public void setCollecting(boolean collecting, boolean backSpin) {
         this.collecting = collecting;
         updateDesiredSpindexer(backSpin);
@@ -108,10 +138,21 @@ public class Orchestrator {
         updateDesiredCollector(backSpin);
     }
 
+    /**
+     * Sets the robot to the revving state which is preparing to shoot
+     * @param revving boolean
+     * @param shooterVel desiredShooterVelocity
+     */
     public void setRevving(boolean revving, double shooterVel) {
         setRevving(revving, shooterVel, false);
     }
 
+    /**
+     * Sets the robot to the revving state which is preparing to shoot based on various parameters and subsystem states
+     * @param revving boolean
+     * @param shooterVel desiredShooterVelocity
+     * @param manual boolean isManualControl
+     */
     public void setRevving(boolean revving, double shooterVel, boolean manual) {
         this.revving = revving;
         System.out.println("struct - rev " + revving);
@@ -139,6 +180,10 @@ public class Orchestrator {
         updateDesiredCollector(false);
     }
 
+    /**
+     * Sets the robot to fire by running the elevator
+     * @param firing boolean
+     */
     public void setFiring(boolean firing) {
         this.firing = firing;
         System.out.println("struct - fire " + firing);
@@ -147,6 +192,9 @@ public class Orchestrator {
         updateDesiredCollector(false);
     }
 
+    /**
+     * Auto-aims to a target
+     */
     public void autoAim() {
         if (Constants.kUseVision) {
             ledManager.setCameraLed(true);
@@ -154,16 +202,24 @@ public class Orchestrator {
             turret.setControlMode(Turret.ControlMode.CAMERA_FOLLOWING);
             ledManager.setDefaultStatus(LedManager.RobotStatus.SEEN_TARGET);
         } else {
-            System.out.println("can't auto aim b/c camera not on");
+            turret.setControlMode(Turret.ControlMode.TARGET_FOLLOWING);
         }
     }
 
-    /** superstructure state */
+    /** Superstructure State */
+
+    /**
+     * Sets the superstructure state
+     * @param state STATE
+     */
     public void setSuperstructureState(STATE state) {
         superstructureState = state;
         robotState.superstructureState = superstructureState;
     }
 
+    /**
+     * Logic handling for motion independent shooting and ejection of game elements
+     */
     public void fatBoy() {
         if (
             turret.getControlMode() != Turret.ControlMode.EJECT &&
@@ -177,11 +233,19 @@ public class Orchestrator {
         );
     }
 
+    /**
+     * Logic handling for normal shooting
+     */
     public void littleMan() {
         shooter.setVelocity(getOutput(DistanceManager.SUBSYSTEM.SHOOTER));
     }
 
-    /** update subsystem state */
+    /** Update Subsystem States */
+
+    /**
+     * Updates the desired collector state
+     * @param backspin boolean
+     */
     public void updateDesiredCollector(boolean backspin) {
         if (collecting) {
             if (backspin) {
@@ -196,6 +260,10 @@ public class Orchestrator {
         }
     }
 
+    /**
+     * Updates the desired spindexer state
+     * @param backSpin boolean
+     */
     public void updateDesiredSpindexer(boolean backSpin) {
         if (firing) {
             spindexer.setDesiredState(Spindexer.STATE.FIRE);
@@ -212,6 +280,9 @@ public class Orchestrator {
         }
     }
 
+    /**
+     * Updates the desired elevator state
+     */
     public void updateDesiredElevator() {
         if (firing) {
             elevator.setDesiredState(Elevator.STATE.FIRE);
@@ -220,6 +291,12 @@ public class Orchestrator {
         }
     }
 
+    /**
+     * Returns the distance manager controlled output for a subsystem registered in the manager
+     * @param subsystem DistanceManager.SUBSYSTEM
+     * @return double output
+     * @see DistanceManager
+     */
     public double getOutput(DistanceManager.SUBSYSTEM subsystem) {
         if (useVision) {
             double dist = robotState.getDistanceToGoal();
@@ -231,11 +308,15 @@ public class Orchestrator {
         }
     }
 
-    public boolean needsVisionUpdate() { // true means that the pose needs to be updated
+    /**
+     * Returns true if the pose of the drivetrain needs to be updated in a cached boolean system
+     * @return boolean
+     */
+    public boolean needsVisionUpdate() {
         if (!robotState.isPoseUpdated) {
             return true;
         }
-        if (RobotBase.isSimulation() || RobotBase.isReal()) return false; // simulation requires too much effort, reality can't happen right now
+        if (RobotBase.isSimulation() || RobotBase.isReal()) return false;
         boolean needsVisionUpdate =
             (
                 Math.abs(
@@ -257,6 +338,12 @@ public class Orchestrator {
         return needsVisionUpdate; // placeHolder
     }
 
+    /**
+     * Calculates the absolute pose of the drivetrain based on a single target
+     * @param target VisionPoint
+     * @return Pose2d
+     * @see VisionPoint
+     */
     public Pose2d calculateSingleTargetTranslation(VisionPoint target) {
         Pose2d targetPos = new Pose2d(
             FieldConfig.fieldTargets.get(target.id).getX(),
@@ -294,6 +381,10 @@ public class Orchestrator {
         return p;
     }
 
+    /**
+     * Calculates the absolute pose of the drivetrain as a function of all visible targets
+     * @return Pose2d
+     */
     public Pose2d calculatePoseFromCamera() {
         var cameraPoints = robotState.visibleTargets;
         List<Pose2d> poses = new ArrayList<>();
@@ -316,6 +407,9 @@ public class Orchestrator {
         return robotState.fieldToVehicle;
     }
 
+    /**
+     * Updates the pose of the drivetrain based on specified criteria
+     */
     public void updatePoseWithCamera() {
         Pose2d newRobotPose = calculatePoseFromCamera();
         if (
@@ -341,6 +435,9 @@ public class Orchestrator {
         }
     }
 
+    /**
+     * Base enum for Orchestrator states
+     */
     public enum STATE {
         FAT_BOY,
         LITTLE_MAN,

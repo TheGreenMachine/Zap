@@ -41,10 +41,26 @@ public class CheesyDriveHelper implements DriveHelper {
     private double leftPrevPwm = 0;
     private double rightPrevPwm = 0;
 
+    /**
+     * Returns a modified DriveSignal for an arcade style control path
+     * @param throttle throttle
+     * @param wheel rotation
+     * @return DriveSignal
+     * @see DriveSignal
+     */
     public DriveSignal arcadeDrive(double throttle, double wheel) {
         return null;
     }
 
+    /**
+     * Generates a modified DriveSignal for a tank drive with inertial scaling and point power management based on inputs
+     * @param throttle throttle
+     * @param wheel rotation
+     * @param isQuickTurn boolean
+     * @param isHighGear boolean for an optional transmission
+     * @return DriveSignal
+     * @see DriveSignal
+     */
     public DriveSignal cheesyDrive(
         double throttle,
         double wheel,
@@ -154,14 +170,39 @@ public class CheesyDriveHelper implements DriveHelper {
         return new DriveSignal(leftPwm, rightPwm);
     }
 
+    /**
+     * Alternatively generates a DriveSignal based on inputs
+     * @param throttle throttle
+     * @param wheel rotation
+     * @param isQuickTurn boolean
+     * @return DriveSignal
+     * @see DriveSignal
+     */
     public DriveSignal cheesyDrive(double throttle, double wheel, boolean isQuickTurn) {
         return cheesyDrive(throttle, wheel, isQuickTurn, false);
     }
 
+    /**
+     * Modulates demand at a deadband value
+     * @param val input
+     * @param deadband deadband
+     * @return output
+     */
     public double handleDeadband(double val, double deadband) {
         return (Math.abs(val) > Math.abs(deadband)) ? val : 0.0;
     }
 
+    /**
+     * Interface inherited method for mapping to a swerve drive signal
+     * @param forwardInput throttle
+     * @param strafeInput strafe
+     * @param rotationInput rotation
+     * @param low_power boolean
+     * @param field_relative boolean (field-centric)
+     * @param use_heading_controller boolean
+     * @return SwerveDriveSignal
+     * @see SwerveDriveSignal
+     */
     @Override
     public SwerveDriveSignal calculateDriveSignal(
         double forwardInput,

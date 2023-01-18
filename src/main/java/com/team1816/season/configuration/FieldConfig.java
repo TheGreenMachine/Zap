@@ -134,7 +134,6 @@ public class FieldConfig {
                 );
             }
             field.getObject("April Tags").setPoses(aprilTagPoses);
-            // set up field boundaries TODO
         }
     }
 }

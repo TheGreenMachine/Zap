@@ -10,6 +10,9 @@ import com.team1816.lib.util.team254.DriveSignal;
  *
  * This is based off of the team 254 code with 2 changes.  Added auto quick turn when not commanding throttle
  * and fixed the quickTurn code to not exceed += 1.0
+ *
+ * @see com.team1816.lib.util.team254.DriveHelper
+ * @see com.team1816.lib.util.team254.CheesyDriveHelper
  */
 public class GreenDriveHelper {
 

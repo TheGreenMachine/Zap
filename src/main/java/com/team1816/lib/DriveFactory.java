@@ -6,6 +6,10 @@ import com.team1816.lib.subsystems.drive.Drive;
 import com.team1816.lib.subsystems.drive.SwerveDrive;
 import com.team1816.lib.subsystems.drive.TankDrive;
 
+/**
+ * Decides between drivetrain type based on factory constants. Allows for differential / swerve duality.
+ * @see Drive
+ */
 @Singleton
 public class DriveFactory implements Drive.Factory {
 

@@ -10,8 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 
+/**
+ * An enhanced motor checking utility
+ */
 public class EnhancedMotorChecker {
 
+    /**
+     * Configuration
+     */
     public static class CheckerConfig {
 
         public double mCurrentFloor = 5;
@@ -43,6 +49,12 @@ public class EnhancedMotorChecker {
         }
     }
 
+    /**
+     * Checks a certain motor
+     * @param subsystem Subsystem that the motor belongs to
+     * @param motorToCheck IGreenMotor to check
+     * @return true if tests passed
+     */
     public static boolean checkMotor(Subsystem subsystem, IGreenMotor... motorToCheck) {
         // Note: We've only checked one motor at a time - the checkerConfig is only for the first motor but is used for all motors!
         CheckerConfig checkerConfig = CheckerConfig.getForSubsystemMotor(

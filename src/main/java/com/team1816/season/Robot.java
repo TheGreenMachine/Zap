@@ -29,23 +29,25 @@ import java.util.Date;
 
 public class Robot extends TimedRobot {
 
+    /** Looper */
     private final Looper enabledLoop;
     private final Looper disabledLoop;
 
+    /** Logger */
     private static BadLog logger;
 
-    // controls
+    /** Controls */
     private IControlBoard controlBoard;
     private ActionManager actionManager;
 
     private final Infrastructure infrastructure;
     private final SubsystemLooper subsystemManager;
 
-    //State managers
+    /** State Managers */
     private final Orchestrator orchestrator;
     private final RobotState robotState;
 
-    // subsystems
+    /** Subsystems */
     private final Drive drive;
     private final Collector collector;
     private final Shooter shooter;
@@ -58,27 +60,31 @@ public class Robot extends TimedRobot {
     private final LedManager ledManager;
     private final DistanceManager distanceManager;
 
+    /** Factory */
     private static RobotFactory factory;
 
-    // autonomous
+    /** Autonomous */
     private final AutoModeManager autoModeManager;
 
-    // timing
+    /** Timing */
     private double loopStart;
 
-    // hack variables
+    /** Properties */
     private final Turret.ControlMode defaultTurretControlMode =
         Turret.ControlMode.ABSOLUTE_FOLLOWING;
     private boolean faulted;
     private boolean useManualShoot = false;
 
+    /**
+     * Instantiates the Robot by injecting all systems and creating the enabled and disabled loopers
+     */
     Robot() {
         super();
         // initialize injector
         Injector.registerModule(new SeasonModule());
         enabledLoop = new Looper(this);
         disabledLoop = new Looper(this);
-        drive = (Injector.get(Drive.Factory.class)).getInstance(); //TODO: need to fix this get drive instance should just return the proper one
+        drive = (Injector.get(Drive.Factory.class)).getInstance();
         turret = Injector.get(Turret.class);
         climber = Injector.get(Climber.class);
         collector = Injector.get(Collector.class);
@@ -96,23 +102,40 @@ public class Robot extends TimedRobot {
         autoModeManager = Injector.get(AutoModeManager.class);
     }
 
+    /**
+     * Returns the static factory instance of the Robot
+     * @return RobotFactory
+     */
     public static RobotFactory getFactory() {
         if (factory == null) factory = Injector.get(RobotFactory.class);
         return factory;
     }
 
+    /**
+     * Returns the length of the last loop that the Robot was on
+     * @return duration (ms)
+     */
     public Double getLastRobotLoop() {
         return (Timer.getFPGATimestamp() - loopStart) * 1000;
     }
 
+    /**
+     * Returns the duration of the last enabled loop
+     * @return duration (ms)
+     * @see Looper#getLastLoop()
+     */
     public Double getLastEnabledLoop() {
         return enabledLoop.getLastLoop();
     }
 
+    /**
+     * Actions to perform when the robot has just begun being powered and is done booting up.
+     * Initializes the robot by injecting the controlboard, registering all subsystems, and setting up BadLogs.
+     */
     @Override
     public void robotInit() {
         try {
-            // register all subsystems
+            /** Register All Subsystems */
             controlBoard = Injector.get(IControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
 
@@ -242,7 +265,7 @@ public class Robot extends TimedRobot {
             subsystemManager.registerDisabledLoops(disabledLoop);
             subsystemManager.zeroSensors();
 
-            /** register controlboard */
+            /** Register ControlBoard */
             controlBoard = Injector.get(IControlBoard.class);
             DriverStation.silenceJoystickConnectionWarning(true);
 
@@ -344,7 +367,7 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("turretJogLeft"),
                         moving -> {
-                            turret.setTurretSpeed(moving ? Turret.kJogSpeed : 0);
+                            turret.setTurretVelocity(moving ? Turret.kJogSpeed : 0);
                             ledManager.indicateStatus(
                                 LedManager.RobotStatus.MANUAL_TURRET
                             );
@@ -353,7 +376,7 @@ public class Robot extends TimedRobot {
                     createHoldAction(
                         () -> controlBoard.getAsBool("turretJogRight"),
                         moving -> {
-                            turret.setTurretSpeed(moving ? -Turret.kJogSpeed : 0);
+                            turret.setTurretVelocity(moving ? -Turret.kJogSpeed : 0);
                             ledManager.indicateStatus(
                                 LedManager.RobotStatus.MANUAL_TURRET
                             );
@@ -431,6 +454,9 @@ public class Robot extends TimedRobot {
         }
     }
 
+    /**
+     * Actions to perform when the robot has entered the disabled period
+     */
     @Override
     public void disabledInit() {
         try {
@@ -459,6 +485,9 @@ public class Robot extends TimedRobot {
         }
     }
 
+    /**
+     * Actions to perform when the robot has entered the autonomous period
+     */
     @Override
     public void autonomousInit() {
         disabledLoop.stop();
@@ -474,6 +503,9 @@ public class Robot extends TimedRobot {
         enabledLoop.start();
     }
 
+    /**
+     * Actions to perform when the robot has entered the teleoperated period
+     */
     @Override
     public void teleopInit() {
         try {
@@ -496,6 +528,9 @@ public class Robot extends TimedRobot {
         }
     }
 
+    /**
+     * Actions to perform when the robot has entered the test period
+     */
     @Override
     public void testInit() {
         try {
@@ -516,7 +551,7 @@ public class Robot extends TimedRobot {
 
             ledManager.blinkStatus(LedManager.RobotStatus.DISABLED);
 
-            if (subsystemManager.checkSubsystems()) {
+            if (subsystemManager.testSubsystems()) {
                 System.out.println("ALL SYSTEMS PASSED");
                 ledManager.indicateStatus(LedManager.RobotStatus.ENABLED);
             } else {
@@ -529,21 +564,24 @@ public class Robot extends TimedRobot {
         }
     }
 
+    /**
+     * Actions to perform periodically on the robot when the robot is powered
+     */
     @Override
     public void robotPeriodic() {
         try {
-            // update shuffleboard for subsystem values
-            subsystemManager.outputToSmartDashboard();
-            // update robot state on field for Field2D widget
-            robotState.outputToSmartDashboard();
-            // update shuffleboard selected auto mode
-            autoModeManager.outputToSmartDashboard();
+            subsystemManager.outputToSmartDashboard(); // update shuffleboard for subsystem values
+            robotState.outputToSmartDashboard(); // update robot state on field for Field2D widget
+            autoModeManager.outputToSmartDashboard(); // update shuffleboard selected auto mode
         } catch (Throwable t) {
             faulted = true;
             System.out.println(t.getMessage());
         }
     }
 
+    /**
+     * Actions to perform periodically when the robot is in the disabled period
+     */
     @Override
     public void disabledPeriodic() {
         loopStart = Timer.getFPGATimestamp();
@@ -570,8 +608,7 @@ public class Robot extends TimedRobot {
                     );
             }
 
-            // check if demo mode speed multiplier changed
-            if (drive.isDemoMode()) { //todo: should be using injector
+            if (drive.isDemoMode()) { // Demo-mode
                 drive.update();
             }
         } catch (Throwable t) {
@@ -580,6 +617,9 @@ public class Robot extends TimedRobot {
         }
     }
 
+    /**
+     * Actions to perform periodically when the robot is in the autonomous period
+     */
     @Override
     public void autonomousPeriodic() {
         loopStart = Timer.getFPGATimestamp();
@@ -593,13 +633,16 @@ public class Robot extends TimedRobot {
         }
     }
 
+    /**
+     * Actions to perform periodically when the robot is in the teleoperated period
+     */
     @Override
     public void teleopPeriodic() {
         loopStart = Timer.getFPGATimestamp();
 
         try {
-            manualControl(); // controls drivetrain and turret joystick control mode
-            //            if (orchestrator.needsVisionUpdate() || !robotState.isPoseUpdated) { //TODO Future function, uncomment later
+            manualControl();
+            //            if (orchestrator.needsVisionUpdate() || !robotState.isPoseUpdated) {
             //                robotState.isPoseUpdated = false;
             //                orchestrator.calculatePoseFromCamera();
             //            }
@@ -613,11 +656,12 @@ public class Robot extends TimedRobot {
         }
     }
 
+    /**
+     * Sets manual inputs for subsystems like the turret and drivetrain when criteria met
+     */
     public void manualControl() {
-        // update what's currently being imputed from both driver and operator controllers
         actionManager.update();
 
-        // Field-relative controls for turret (ie: left on joystick makes turret point left on the field, instead of left relative to the robot)
         if (
             Math.abs(controlBoard.getAsDouble("manualTurretXVal")) > 0.90 ||
             Math.abs(controlBoard.getAsDouble("manualTurretYVal")) > 0.90
@@ -640,6 +684,9 @@ public class Robot extends TimedRobot {
         );
     }
 
+    /**
+     * Actions to perform periodically when the robot is in the test period
+     */
     @Override
     public void testPeriodic() {}
 }

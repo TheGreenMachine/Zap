@@ -10,16 +10,26 @@ import com.team1816.lib.subsystems.Subsystem;
 import com.team1816.season.states.RobotState;
 import edu.wpi.first.wpilibj.Timer;
 
+/**
+ * Subsystem that models a four-bar intake style collector
+ */
 @Singleton
 public class Collector extends Subsystem {
 
+    /**
+     * Properties
+     */
     private static final String NAME = "collector";
 
-    // Components
+    /**
+     * Components
+     */
     private final ISolenoid armPiston;
     private final IGreenMotor intakeMotor;
 
-    // State
+    /**
+     * State
+     */
     private double intakeVel;
     private boolean armDown;
     private boolean outputsChanged = false;
@@ -31,6 +41,11 @@ public class Collector extends Subsystem {
 
     private boolean isVelocity;
 
+    /**
+     * Instantiates a collector from the base subsystem methods
+     * @param inf
+     * @param rs
+     */
     @Inject
     public Collector(Infrastructure inf, RobotState rs) {
         super(NAME, inf, rs);
@@ -52,7 +67,11 @@ public class Collector extends Subsystem {
         }
     }
 
-    /** actions */
+    /** Actions */
+
+    /**
+     * Sets the desired state of the collector
+     */
     public void setDesiredState(STATE state) {
         if (desiredState != state) {
             desiredState = state;
@@ -60,10 +79,17 @@ public class Collector extends Subsystem {
         }
     }
 
-    /** periodic */
+    /** Periodic */
+
+    /**
+     * Functionality: nonexistent
+     */
     @Override
     public void readFromHardware() {}
 
+    /**
+     * Writes outputs to the intakeMotor based on the desiredState and isVelocity
+     */
     @Override
     public void writeToHardware() {
         if (outputsChanged) {
@@ -95,16 +121,26 @@ public class Collector extends Subsystem {
         }
     }
 
-    /** config and tests */
+    /** Config and Tests */
+
+    /**
+     * Functionality: nonexistent
+     */
     @Override
     public void zeroSensors() {}
 
+    /**
+     * Stops the collector
+     */
     @Override
     public void stop() {}
 
+    /**
+     * Tests the collector
+     * @return true if tests passed
+     */
     @Override
     public boolean testSubsystem() {
-        // pretty sure this is faulty
         setDesiredState(STATE.COLLECTING);
         Timer.delay(1);
         if (
@@ -118,7 +154,9 @@ public class Collector extends Subsystem {
         return true;
     }
 
-    /** states */
+    /**
+     * Base enum for Collector states
+     */
     public enum STATE {
         STOP,
         COLLECTING,
