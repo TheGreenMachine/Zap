@@ -159,7 +159,7 @@ infrastructure:
     # pigeon
     pigeonId: 9
     isPigeon2: false
-controlboard: example # demo
+controlboard: demo # demo
 constants:
     # drivetrain misc
     maxAllowablePoseError: 0.1
