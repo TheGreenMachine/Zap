@@ -102,7 +102,7 @@ subsystems:
             isVelocity: 0
             maxVelTicks100ms: 20000
             ballSensor: 0
-            firePow: 0.35
+            firePow: 0.5
             flushPow: -0.3
             intakePow: 0
     spindexer:

@@ -147,7 +147,7 @@ public class Robot extends TimedRobot {
                 collector,
                 turret,
                 climber,
-                camera,
+                //                camera,
                 ledManager,
                 cooler
             );

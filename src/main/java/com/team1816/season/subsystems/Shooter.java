@@ -148,7 +148,7 @@ public class Shooter extends Subsystem implements PidProvider {
             return true;
         }
         return (
-            Math.abs(desiredVelocity - actualVelocity) < VELOCITY_THRESHOLD &&
+            Math.abs(desiredVelocity - actualVelocity) > VELOCITY_THRESHOLD &&
             desiredState != STATE.COASTING
         );
     }
