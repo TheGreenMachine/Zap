@@ -1,0 +1,86 @@
+subsystems:
+    drivetrain:
+        implemented: true
+        talons:
+            leftMain: 3
+            leftFollower: 1
+            leftFollowerTwo: 7
+            rightMain: 2
+            rightFollower: 6
+            rightFollowerTwo: 12
+        pidConfig:
+            slot0:
+                kP: 1.6 #/ 0.18
+                kI: 0.001 # 0.018
+                kD: 15 # 3.6
+                kF: 0.538
+        invertMotor:
+            - leftMain
+        constants:
+            maxVelTicks100ms: 12275.7
+            openLoopRampRate: 0.8
+            isSwerve: 0
+            encPPR: 22220.8
+            currentLimit: 40
+            maxVelPathFollowing: 3 # meters/s
+            maxVelOpenLoop: 10 # meters/s
+            maxRotVel: 7.2
+            maxAccel: 0.5 # meters/s^2
+            trackWidth: 22 #inches
+            wheelbaseLength: 30 #inches
+            wheelDiameter: 7.35 #inches
+            kTrackScrubFactor: 1.0
+            isDemoMode: 0
+    turret:
+        implemented: false
+        talons:
+            turretMotor: 3
+        invertMotor:
+            - turretMotor
+        pidConfig:
+            slot0:
+                kP: 2
+                kI: 0
+                kD: 10
+                kF: 0 # Should be 0 for position control
+                allowableError: 40
+        constants:
+            absPPR: 4096
+            turretPPR: 4096
+            revLimit: -2250
+            fwdLimit: 2603
+            currentFloorCheck: 0
+            currentEpsilonCheck: .2
+            rpmFloorCheck: 0
+            absPosTicksSouth: -704
+            rpmEpsilonCheck: 60
+            deltaXScalar: 150
+            maxVelTicks100ms: 1
+infrastructure:
+    canivoreBusName: rio
+    # power distribution
+    pdId: 18
+    pdIsRev: false
+    # pneumatics control
+    compressorEnabled: false
+    pcmIsRev: false
+    pcmId: 10
+    # pigeon
+    pigeonId: 9
+    isPigeon2: false
+controlboard: example
+constants:
+    ## Drivetrain Dimensions and Parameters ##
+    maxAllowablePoseError: 0.1
+    ## Logging Config ##
+    logTeleOp: 1
+    logAuto: 1
+    badLogEnabled: 1
+    configStatusFrames: 0
+    verbose: 0 # 0 or 1
+    ## General ##
+    kLooperDt: .020
+    resetFactoryDefaults: 0 # whether motors get reset to factory default - if motors reset, rebooting the robot mid-match would kill the turret
+
+
+
